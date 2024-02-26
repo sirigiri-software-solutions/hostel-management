@@ -1,0 +1,113 @@
+import React from 'react'
+import bedIcon from '../../images/Icons (3).png'
+import Table from '../../Elements/Table'
+
+const CreateBedsGirls = () => {
+  const columns = [
+    'S. No',
+    'Bed Number',
+    'Room. No',
+    'Floor',
+    'Rent',
+    'Last Updated date',
+    'Status'
+  ]
+
+  const rows = [
+    {
+      s_no : 1,
+      bed_number : 2,
+      room_no : 125,
+      floor: "1st",
+      rent: "Rs. 5000",
+      last_updated_by: "21 Aug 2021",
+      edit: {
+        icon: false,
+        variant: {color:'#ff8a00', radius:'10px'},
+        text: 'Occupied'
+      }
+    },
+    {
+      s_no : 1,
+      bed_number : 2,
+      room_no : 125,
+      floor: "1st",
+      rent: "Rs. 5000",
+      last_updated_by: "21 Aug 2021",
+      edit: {
+        icon: false,
+        variant: {color:'#ff8a00', radius:'10px'},
+        text: 'Occupied'
+      }
+    },
+    {
+      s_no : 1,
+      bed_number : 2,
+      room_no : 125,
+      floor: "1st",
+      rent: "Rs. 5000",
+      last_updated_by: "21 Aug 2021",
+      edit: {
+        icon: false,
+        variant: {color:'#ff8a00', radius:'10px'},
+        text: 'Occupied'
+      }
+    },
+    {
+      s_no : 1,
+      bed_number : 2,
+      room_no : 125,
+      floor: "1st",
+      rent: "Rs. 5000",
+      last_updated_by: "21 Aug 2021",
+      edit: {
+        icon: false,
+        variant: {color:'#ff8a00', radius:'10px'},
+        text: 'Occupied'
+      }
+    },
+    {
+      s_no : 1,
+      bed_number : 2,
+      room_no : 125,
+      floor: "1st",
+      rent: "Rs. 5000",
+      last_updated_by: "21 Aug 2021",
+      edit: {
+        icon: false,
+        variant: {color:'#ff8a00', radius:'10px'},
+        text: 'Occupied'
+      }
+    },
+  ]
+
+  return (
+    <div className='h-100'>
+        <div className='d-flex justify-content-between align-items-center'>
+            <div className='d-flex align-items-center'>
+                <div className='roomlogo-container'>
+                    <img src={bedIcon} alt="RoomsIcon" className='roomlogo'/>
+                </div>
+                <h1 className='fs-5'>Rooms Management</h1>
+            </div>
+            <div>
+                <input type="search" placeholder='Search' className='userinput'/>
+            </div>
+            <div>
+                <input type="button" value="Add Rooms" className='button'/>
+            </div>
+        </div>
+        <div className="table-container rounded-table">   
+            <Table columns={columns} rows={rows}/>
+        </div>
+        <div className='d-flex justify-content-end mt-2'>
+            <span className='btn btn-outline-dark m-1'>1</span>
+            <span className='btn btn-outline-dark m-1'>2</span>
+            <span className='btn btn-outline-dark m-1'>...</span>
+            <span className='btn btn-outline-dark m-1'>10</span>
+        </div>
+    </div>
+  )
+}
+
+export default CreateBedsGirls

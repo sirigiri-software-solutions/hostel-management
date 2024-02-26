@@ -1,0 +1,20 @@
+.top-div{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0px;
+}
+
+.dashboard-icon{
+    width: 25px;
+    margin-right: 10px;
+}
+
+.dashboard-heading{
+    font-size: 20px;
+}
+
+.dashboard-welcome{
+    font-size: 20px;
+    margin-bottom: 20px;
+}

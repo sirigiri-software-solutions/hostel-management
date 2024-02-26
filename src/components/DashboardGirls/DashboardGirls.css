@@ -1,0 +1,62 @@
+.menu-item{
+    display: flex;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+    min-width: 180px;
+    margin-bottom: 10px;
+    margin-right: 5px;
+}
+
+.menu{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.dashboardGirls{
+    width: 100%;
+}
+
+.image{
+    width: 25px;
+    height: 35px;
+}
+
+.heading-women{
+    font-size: 20px;
+    background-color: rgb(249, 216, 154);
+    width: 100px;
+    padding: 5px 5px 5px 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.image-container{
+    background-color: rgb(215, 194, 153);
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px 10px 10px 10px;
+    width: 50px;
+}
+
+.text-container{
+    padding: 10px;
+}
+
+.text-heading{
+    margin: 0px;
+    font-size: 16px;
+}
+
+.text-number{
+    font-weight: bold;
+    margin: 0px;
+    font-size: 20px;
+}
+
+.dashboardGirls{
+    width: 100%;
+}

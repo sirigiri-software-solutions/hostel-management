@@ -1,16 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
-import Login from './Pages/Login';
+import React from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import Sidebar from './components/Sidebar/Sidebar'
+// import Dashboard from './pages/Dashboard/Dashboard'
+// import Rooms from './pages/Rooms/Rooms'
+// import Beds from './pages/Beds/Beds'
+// import Rent from './pages/Rent'
+// import Tenants from './pages/Tenants'
+// import Expenses from './pages/Expenses'
+// import Settings from './pages/Settings'
+import './App.css'
 
-function App() {
+const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Login/>} />
+        <Route path="/" element={<Sidebar />} />
+
+        {/* <Route path="/rooms" element={<Rooms/>} />
+        <Route path="/beds" element={<Beds/>} />
+        <Route path="/rent" element={<Rent/>} />
+        <Route path="/tenants" element={<Tenants/>} />
+        <Route path="/expenses" element={<Expenses/>} />
+        <Route path="/settings" element={<Settings/>} /> */}
       </Routes>
     </BrowserRouter>
-  );
+  )
 }
 
-export default App;
+export default App

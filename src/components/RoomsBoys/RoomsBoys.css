@@ -1,0 +1,64 @@
+.roomlogo-container{
+    background-color: white;
+    width: 100px;
+    box-shadow:000000 2px 10px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 70%;
+    margin-right: 10px;
+}
+
+.roomlogo{
+    padding: 25px 10px;
+}
+
+.userinput{
+    border-radius: 25px;
+    padding: 5px 10px 5px 20px;
+    outline: none;
+    border: 2px solid grey;
+}
+
+.search-icon{
+    position: relative;
+    right: 40px;
+}
+
+.button{
+    background-color: #FF8A00;
+    border-radius: 20px;
+    padding: 5px 20px;
+    outline: none;
+    border: none;
+    color: white;
+    box-shadow: 0 10px 10px rgba(0,0,0,0.15);
+}
+
+.bttn{
+    background-color: #FF8A00;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 20px;
+    margin: 5px 0px 5px 0px;
+}
+
+.thead-color {
+    background-color: #FF8A00;
+}
+
+.tbody-color {
+    background-color: #f8f9fa;
+}
+
+.table-container{
+    background-color: #f0c38f;
+    margin-top: 20px;
+    border-radius: 10px;
+}
+
+.rounded-table {
+    border-radius: 10px; 
+    overflow: hidden;
+}

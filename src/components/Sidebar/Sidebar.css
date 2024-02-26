@@ -1,0 +1,31 @@
+.bg-container{
+    box-sizing: border-box;
+}
+
+.logo{
+    width: 150px;
+}
+
+.link{
+    display: flex;
+    margin-bottom: 20px;
+    align-items: center;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.link:hover{
+    background-color: hsla(30, 100%, 50%, 0.41);
+    border-radius: 10px;
+}
+
+.icon{
+    height: 25px;
+    margin-right: 10px;
+    width: 35px;
+}
+
+.link-text{
+    font-weight: 500;
+    color: black;
+}

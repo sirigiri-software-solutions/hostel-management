@@ -1,7 +1,7 @@
 .menu-item{
     display: flex;
     background-color: white;
-    border-radius: 10px;
+    border-radius: 15px;
     box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
     min-width: 220px;
     margin-bottom: 10px;
@@ -15,6 +15,9 @@
 
 .dashboardboys{
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap:30px;
 }
 
 .image{
@@ -23,22 +26,23 @@
 }
 
 .heading{
-    font-size: 20px;
-    background-color: rgb(249, 216, 154);
-    width: 70px;
-    padding: 5px 10px 5px 10px;
+    font-size: 24px;
+    background-color: rgba(255,141,7, 0.41);
+    width: fit-content;
+    font-weight: bold;
+    padding: 10px 15px;
     border-radius: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 }
 
-.image-container{
+/* .image-container{
     background-color: rgb(215, 194, 153);
-    padding: 5px;
+    padding: 30px 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 10px 10px 10px 10px;
-}
+} */
 
 .text-container{
     padding: 10px;
@@ -58,7 +62,7 @@
 .button-container{
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
 }
 
 .button-container h1{

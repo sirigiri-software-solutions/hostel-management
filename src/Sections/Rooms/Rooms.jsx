@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import Admin from '../../images/Icons.png';
 import { Tab, Tabs } from 'react-bootstrap';
-import CreateBedsBoys from '../../components/CreateBedsBoys/CreateBedsBoys';
-import CreateBedsGirls from '../../components/CreateBedsGirls/CreateBedsGirls';
+import RoomsBoys from '../../Components/RoomsBoys/RoomsBoys';
+import RoomsGirls from '../../Components/RoomsGirls/RoomsGirls';
 
-function Beds() {
+function Rooms() {
     const [activeTab, setActiveTab] = useState('boys');
 
     const handleTabSelect = (tab) => {
@@ -17,17 +17,16 @@ function Beds() {
                 <img src={Admin} alt="admin" className='dashboard-icon' />
                 <h1 className='dashboard-heading'>Admin</h1>
             </div>
-            <h1 className='dashboard-welcome'>&lt;-- Back</h1>
             <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
                 <Tab eventKey="boys" title="Men's">
-                    <CreateBedsBoys />
+                    <RoomsBoys />
                 </Tab>
                 <Tab eventKey="girls" title="Women's">
-                    <CreateBedsGirls />
+                    <RoomsGirls />
                 </Tab>
             </Tabs>
         </div>
     );
 }
 
-export default Beds;
+export default Rooms;

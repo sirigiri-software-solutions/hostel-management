@@ -1,10 +1,13 @@
-import React, { useState } from 'react'
-import RoomsIcon from '../../images/Icons (2).png'
-import SearchIcon from '../../images/Icons (9).png'
-import './RoomsBoys.css'
-import Table from '../../Elements/Table'
-import Button from '../../Elements/Button'
-import CreateRoomsBoys from './CreateRoomsBoys'
+import React, { useState } from 'react';
+import RoomsIcon from '../../images/Icons (2).png';
+import SearchIcon from '../../images/Icons (9).png';
+import './RoomsBoys.css';
+import Table from '../../Elements/Table';
+import Button from '../../Elements/Button';
+import CreateRoomsBoys from './CreateRoomsBoys';
+import { AgGridReact } from 'ag-grid-react';
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
 
 const RoomsBoys = () => {
   const columns = [
@@ -16,6 +19,22 @@ const RoomsBoys = () => {
     'Last Updated date',
     'Edit'
   ]
+
+  // const [columnsData, setColumnsData] = useState([
+  //   {field: "sno"},
+  //   {field: "roomno"},
+  //   {field: "floor"},
+  //   {field: "remarks"},
+  //   {field: "createdby"},
+  //   {field: "lastupdateddate"},
+  //   // {field: "edit"},
+  // ]);
+  // const [rowsData, setRowsData] = useState([
+  //   {sno:1, roomno:125, floor: "1st", remarks:"Two Sharing", createdby:"Admin", lastupdateddate:"21 Aug 2021"},
+  //   {sno:2, roomno:125, floor: "1st", remarks:"Two Sharing", createdby:"Admin", lastupdateddate:"21 Aug 2021"},
+  //   {sno:3, roomno:125, floor: "1st", remarks:"Two Sharing", createdby:"Admin", lastupdateddate:"21 Aug 2021"},
+
+  // ])
 
   const rows = [
     {
@@ -86,7 +105,6 @@ const RoomsBoys = () => {
   ]
 
   const [showCreateRoomsBoys, setShowCreateRoomsBoys] = useState(false);
-
   const toggleCreateRoomsBoys = () => {
     setShowCreateRoomsBoys(!showCreateRoomsBoys);
   };
@@ -114,8 +132,11 @@ const RoomsBoys = () => {
                 <button type="button" className='button' onClick={toggleCreateRoomsBoys}>Add Rooms</button>
             </div>
         </div>
-        <div className="table-container rounded-table">   
+        <div className={
+        "ag-theme-quartz"
+      }>   
             <Table columns={columns} rows={rows}/>
+            {/* <AgGridReact rowData = {rowsData} columnDefs={columns} /> */}
         </div>
         <div className='d-flex justify-content-end mt-2'>
               <Button

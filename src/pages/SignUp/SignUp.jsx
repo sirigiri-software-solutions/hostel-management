@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import './Signup.css';
+import './SignUp.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-const Signup = () => {
+const SignUp = () => {
   const [data, setData] = useState({
     firstname: '',
     lastname: '',
@@ -30,7 +30,6 @@ const Signup = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-
     let formValid = true;
     const newErrors = { ...errors };
 
@@ -178,4 +177,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default SignUp;

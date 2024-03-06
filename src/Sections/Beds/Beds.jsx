@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Adminlogo from '../images/Icons (6).png'
+import Admin from '../../images/Icons.png';
 import { Tab, Tabs } from 'react-bootstrap';
-import RentPageBoys from '../components/RentPageBoys/RentPageBoys';
-import RentPageGirls from '../components/RentPageGirls/RentPageGirls';
+import CreateBedsBoys from '../../Components/CreateBedsBoys/CreateBedsBoys';
+import CreateBedsGirls from '../../Components/CreateBedsGirls/CreateBedsGirls';
 
-function Rent() {
+const Beds = () => {
     const [activeTab, setActiveTab] = useState('boys');
 
     const handleTabSelect = (tab) => {
@@ -14,19 +14,20 @@ function Rent() {
     return (
         <div className="container">
             <div className='top-div'>
-                <img src={Adminlogo} alt="admin" className='dashboard-icon' />
+                <img src={Admin} alt="admin" className='dashboard-icon' />
                 <h1 className='dashboard-heading'>Admin</h1>
             </div>
+            <h1 className='dashboard-welcome'>&lt;-- Back</h1>
             <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
                 <Tab eventKey="boys" title="Men's">
-                    <RentPageBoys />
+                    <CreateBedsBoys />
                 </Tab>
                 <Tab eventKey="girls" title="Women's">
-                    <RentPageGirls />
+                    <CreateBedsGirls />
                 </Tab>
             </Tabs>
         </div>
     );
 }
 
-export default Rent;
+export default Beds;

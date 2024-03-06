@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Admin from '../../images/Icons.png';
 import { Tab, Tabs } from 'react-bootstrap';
-import CreateBedsBoys from '../../Components/CreateBedsBoys/CreateBedsBoys';
-import CreateBedsGirls from '../../Components/CreateBedsGirls/CreateBedsGirls';
+import CreateBedsBoys from '../../components/CreateBedsBoys/CreateBedsBoys';
+import CreateBedsGirls from '../../components/CreateBedsGirls/CreateBedsGirls';
 
 const Beds = () => {
     const [activeTab, setActiveTab] = useState('boys');

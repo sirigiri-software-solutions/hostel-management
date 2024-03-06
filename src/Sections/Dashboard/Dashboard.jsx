@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Admin from '../../images/Icons.png';
-import DashboardBoys from '../../Components/DashboardBoys/DashboardBoys';
-import DashboardGirls from '../../Components/DashboardGirls/DashboardGirls';
+import DashboardBoys from '../../components/DashboardBoys/DashboardBoys';
+import DashboardGirls from '../../components/DashboardGirls/DashboardGirls';
 import { Tab, Tabs } from 'react-bootstrap';
 import './Dashboard.css';
 

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Adminlogo from '../../images/Icons (6).png'
 import { Tab, Tabs } from 'react-bootstrap';
-import RentPageBoys from '../../Components/RentPageBoys/RentPageBoys';
-import RentPageGirls from '../../Components/RentPageGirls/RentPageGirls';
+import RentPageBoys from '../../components/RentPageBoys/RentPageBoys';
+import RentPageGirls from '../../components/RentPageGirls/RentPageGirls';
 
 const Rents = () => {
     const [activeTab, setActiveTab] = useState('boys');

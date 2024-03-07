@@ -3,6 +3,8 @@ import RentIcon from '../../images/Icons (6).png'
 import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
 import Button from '../../Elements/Button'
+import CreateRentsGirls from './CreateRentsGirls'
+import { useState } from 'react'
 
 const RentPageGirls = () => {
   const columns = [
@@ -95,12 +97,21 @@ const RentPageGirls = () => {
     },
   ]
 
+  const [showCreateRentsGirls, setShowCreateRentsGirls] = useState(false);
+
+  const toggleCreateRentsGirls = () => {
+    setShowCreateRentsGirls(!showCreateRentsGirls)
+  }
+
+
   const handleClick = () => {
     console.log("clicked")
   }
 
   return (
     <div className='h-100'>
+      {!showCreateRentsGirls ? (
+        <>
         <div className='d-flex justify-content-between align-items-center'>
             <div className='d-flex align-items-center'>
                 <div className='roomlogo-container'>
@@ -113,7 +124,7 @@ const RentPageGirls = () => {
                 <img src={SearchIcon} alt="SearchIcon" className='search-icon'/>
             </div>
             <div>
-                <input type="button" value="Add Rooms" className='button'/>
+                <button type="button" className='button' onClick={toggleCreateRentsGirls}>Add Rents</button>
             </div>
         </div>
         <div className="table-container rounded-table">   
@@ -131,6 +142,9 @@ const RentPageGirls = () => {
             <span className='btn btn-outline-dark m-1'>...</span>
             <span className='btn btn-outline-dark m-1'>10</span>
         </div>
+        </>) : (
+          <CreateRentsGirls />
+        )}
     </div>
   )
 }

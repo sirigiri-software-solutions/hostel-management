@@ -1,21 +1,21 @@
 import React, {useState} from 'react'
-import RoomsBoys from './RoomsBoys'
+import RentPageGirls from './RentPageGirls'
 
-const CreateRoomsBoys = () => {
+const CreateRentsGirls = () => {
 
-  const[showCreateRoomsBoys, setShowCreateRoomsBoys] = useState(false)
+  const [showCreateRentsGirls, setShowCreateRentsGirls] = useState(false)
 
-  const toggleCreateRoomsBoys = () => {
-      setShowCreateRoomsBoys(!showCreateRoomsBoys)
+  const toggleCreateRentsGirls = () => {
+    setShowCreateRentsGirls(!showCreateRentsGirls)
   }
 
-  return (
+  return ( 
     <div className='h-100'>
-      {!showCreateRoomsBoys ? (
+      {!showCreateRentsGirls ? (
       <div className="container-fluid">
-        <h1 className='fs-5' onClick={toggleCreateRoomsBoys}>&lt;-- Back</h1>
+        <h1 className='fs-5' onClick={toggleCreateRentsGirls}>&lt;-- Back</h1>
         <h1 className='text-center mb-2 fs-5'>
-            Create Beds
+            Create Rents
         </h1>
         <form class="row g-3">
           <div class="col-md-6">
@@ -38,12 +38,11 @@ const CreateRoomsBoys = () => {
             <button type="submit" class="btn btn-warning">Create</button>
           </div>
         </form>
-      </div>
-      ) : (
-        <RoomsBoys/>
+      </div>) : (
+        <RentPageGirls />
       )}
     </div>
   )
 }
 
-export default CreateRoomsBoys
+export default CreateRentsGirls

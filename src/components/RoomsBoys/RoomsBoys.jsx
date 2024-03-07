@@ -106,9 +106,9 @@ const RoomsBoys = () => {
                 </div>
                 <h1 className='fs-5'>Rooms Management</h1>
             </div>
-            <div>
-                <input type="search" placeholder='Search' className='userinput'/>
-                <img src={SearchIcon} alt="SearchIcon" className='search-icon'/>
+            <div style={{position:"relative", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                <input type="text" placeholder='Search' className='userinput'/>
+                <img src={SearchIcon} alt="search-icon" style={{position:"absolute", right:"10px", width:"20px"}}/>
             </div>
             <div>
                 <button type="button" className='button' onClick={toggleCreateRoomsBoys}>Add Rooms</button>
@@ -118,12 +118,12 @@ const RoomsBoys = () => {
             <Table columns={columns} rows={rows}/>
         </div>
         <div className='d-flex justify-content-end mt-2'>
-              <Button
-                onClick={handleClick}
-                icon={false}
-                variant={{ color: '#ff8a00', radius: '10px', padding: "1px" }}
-                text={'0'}
-              />
+            <Button
+              onClick={handleClick}
+              icon={false}
+              variant={{ color: '#ff8a00', radius: '10px', padding: "1px" }}
+              text={'0'}
+            />
             <span className='btn btn-outline-dark m-1'>1</span>
             <span className='btn btn-outline-dark m-1'>2</span>
             <span className='btn btn-outline-dark m-1'>...</span>

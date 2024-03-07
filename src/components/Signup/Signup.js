@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 const Signup = () => {
+
   const [data, setData] = useState({
     firstname: '',
     lastname: '',
@@ -12,6 +13,7 @@ const Signup = () => {
     password: '',
     confirmpassword: '',
   });
+  
   const [errors, setErrors] = useState({
     firstname: '',
     lastname: '',

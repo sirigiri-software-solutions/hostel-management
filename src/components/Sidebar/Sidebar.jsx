@@ -77,8 +77,8 @@ const Sidebar = () => {
 
   return (
     <div className='bg-container' style={{display:'flex', width:'100%', margin:"0px"}}>
-      <div className='sidebar' style={{width:'16%', backgroundColor:"#ECECEC", padding:"20px", borderRadius:"0px 80px 80px 0px"}}>
-        <div className='top-section'>
+      <div className='d-flex flex-column justify-content-center' style={{minWidth:'auto', backgroundColor:"#ECECEC", padding:"20px", borderRadius:"0px 80px 80px 0px"}}>
+        <div className='top-section text-center'>
           <img src={logo} alt="logo" className='logo' />
         </div>
         {
@@ -90,7 +90,7 @@ const Sidebar = () => {
           ))
         }
       </div>
-      <div style={{width:'80%'}}>
+      <div style={{minWidth:'86%', padding:"10px"}}>
         {Components && Components.map((item, index) => <div key={index} style={flag === index+1 ? {display:'block'} : {display: 'none'}}>{item}</div>)}
       </div>
     </div>

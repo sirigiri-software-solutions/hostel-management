@@ -3,6 +3,8 @@ import Table from '../../Elements/Table'
 import Button from '../../Elements/Button'
 import RentIcon from '../../images/Icons (6).png'
 import SearchIcon from '../../images/Icons (9).png'
+import { useState } from 'react'
+import CreateRentsBoys from './CreateRentsBoys'
 
 const RentPageBoys = () => {
   const columns = [
@@ -29,7 +31,7 @@ const RentPageBoys = () => {
       last_fee : "21 Aug 2021",
       edit: {
         icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
+        variant: {color:'#f71313', radius:'10px'},
         text: 'Unpaid'
       }
     },
@@ -44,7 +46,7 @@ const RentPageBoys = () => {
       last_fee : "21 Aug 2021",
       edit: {
         icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
+        variant: {color:'#166919', radius:'10px'},
         text: 'paid'
       }
     },
@@ -59,7 +61,7 @@ const RentPageBoys = () => {
       last_fee : "21 Aug 2021",
       edit: {
         icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
+        variant: {color:'#166919', radius:'10px'},
         text: 'paid'
       }
     },
@@ -74,7 +76,7 @@ const RentPageBoys = () => {
       last_fee : "21 Aug 2021",
       edit: {
         icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
+        variant: {color:'#166919', radius:'10px'},
         text: 'paid'
       }
     },
@@ -89,11 +91,17 @@ const RentPageBoys = () => {
       last_fee : "21 Aug 2021",
       edit: {
         icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
+        variant: {color:'#f71313', radius:'10px'},
         text: 'Unpaid'
       }
     },
   ]
+
+  const [showCreateRentsBoys, setShowCreateRentsBoys] = useState(false);
+
+  const toggleCreateRentsBoys = () => {
+    setShowCreateRentsBoys(!showCreateRentsBoys)
+  }
 
   const handleClick = () => {
     console.log("clicked")
@@ -101,6 +109,8 @@ const RentPageBoys = () => {
 
   return (
     <div className='h-100'>
+      {!showCreateRentsBoys ? (
+        <>
         <div className='d-flex justify-content-between align-items-center'>
             <div className='d-flex align-items-center'>
                 <div className='roomlogo-container'>
@@ -113,7 +123,7 @@ const RentPageBoys = () => {
                 <img src={SearchIcon} alt="SearchIcon" className='search-icon'/>
             </div>
             <div>
-                <input type="button" value="Add Rooms" className='button'/>
+                <button type="button" className='button' onClick={toggleCreateRentsBoys}>Add Rents</button>
             </div>
         </div>
         <div className="table-container rounded-table">   
@@ -131,6 +141,9 @@ const RentPageBoys = () => {
             <span className='btn btn-outline-dark m-1'>...</span>
             <span className='btn btn-outline-dark m-1'>10</span>
         </div>
+        </>) : (
+          <CreateRentsBoys />
+        )}
     </div>
   )
 }

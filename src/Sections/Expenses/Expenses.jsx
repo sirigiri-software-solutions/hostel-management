@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Adminlogo from '../images/Icons.png';
+import Adminlogo from '../../images/Icons.png'
 import { Tab, Tabs } from 'react-bootstrap';
-import TenantsBoys from '../components/TenantsBoys/TenantsBoys';
-import TenantsGirls from '../components/TenantsGirls/TenantsGirls';
+import ExpensesBoys from '../../components/ExpensesBoys/ExpensesBoys';
+import ExpensesGirls from '../../components/ExpensesGirls/ExpensesGirls';
 
-function Tenants() {
+function Expenses() {
     const [activeTab, setActiveTab] = useState('boys');
 
     const handleTabSelect = (tab) => {
@@ -19,14 +19,14 @@ function Tenants() {
             </div>
             <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
                 <Tab eventKey="boys" title="Men's">
-                    <TenantsBoys/>
+                    <ExpensesBoys />
                 </Tab>
                 <Tab eventKey="girls" title="Women's">
-                    <TenantsGirls/>
+                    <ExpensesGirls />
                 </Tab>
             </Tabs>
         </div>
     );
 }
 
-export default Tenants;
+export default Expenses;

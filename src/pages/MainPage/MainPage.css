@@ -8,10 +8,11 @@
 
 .link{
     display: flex;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
     align-items: center;
     text-decoration: none;
-    padding: 10px;
+    padding: 10px 15px;
+    gap: 20px;
 }
 
 .link:hover{
@@ -26,6 +27,7 @@
 }
 
 .link-text{
-    font-weight: 500;
+    font-weight: bold;
     color: black;
+    font-size: 24px;
 }

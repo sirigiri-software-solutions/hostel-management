@@ -9,13 +9,19 @@ import Sidebar from './components/Sidebar/Sidebar'
 // import Expenses from './pages/Expenses'
 // import Settings from './pages/Settings'
 import './App.css'
+import MainPage from './pages/MainPage/MainPage'
+import Login from './pages/Login/Login'
+import SignUp from './pages/SignUp/SignUp'
+//import { ToastContainer } from 'react-toastify'
 
 const App = () => {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/" element={<Sidebar />} />
-        
+        <Route path="/mainPage" element={<MainPage />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/signUp" element={<SignUp/>} />
+
         {/* <Route path="/rooms" element={<Rooms/>} />
         <Route path="/beds" element={<Beds/>} />
         <Route path="/rent" element={<Rent/>} />

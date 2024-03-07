@@ -35,6 +35,12 @@ const DashboardGirls = () => {
     console.log("clicked button")
   }
 
+  const Buttons = [
+    'Add Rooms',
+    'Add Beds',
+    'Add Tenants',
+    'Add Expenses'
+  ]
   return (
     <div className='dashboardGirls'>
         <h1 className='heading-women'>Women's</h1>
@@ -46,30 +52,13 @@ const DashboardGirls = () => {
           }
         </div>
         <div className='button-container'>
-            <Button
+          {Buttons?.map((item, index) => <Button
+                key={index}
                 onClick={handleClick}
                 icon={true}
-                variant={{ color: '#ff8a00', radius: '20px' }}
-                text={'Add Rooms'}
-            />
-            <Button
-                onClick={handleClick}
-                icon={true}
-                variant={{ color: '#ff8a00', radius: '20px' }}
-                text={'Add Beds'}
-            />
-            <Button
-                onClick={handleClick}
-                icon={true}
-                variant={{ color: '#ff8a00', radius: '20px' }}
-                text={'Add tenants'}
-            />
-            <Button
-                onClick={handleClick}
-                icon={true}
-                variant={{ color: '#ff8a00', radius: '20px' }}
-                text={'Add Expenses'}
-            />
+                variant={{ color: '#ff8a00', radius: '20px', padding:'8px 24px' }}
+                text={item}
+            />)}
         </div>
     </div>
   )

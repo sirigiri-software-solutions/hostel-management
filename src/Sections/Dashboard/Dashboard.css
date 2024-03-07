@@ -1,0 +1,31 @@
+.container_main{
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.top-div{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0px;
+    gap:20px;
+}
+
+.dashboard-icon{
+    width: 35px;
+    height: 40px;
+    /* margin-right: 10px; */
+}
+
+.dashboard-heading{
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 0px;
+}
+
+.dashboard-welcome{
+    font-size: 24px;
+    margin-bottom: 0px;
+    font-weight: bold;
+}

@@ -27,7 +27,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container">
+    <div className='container_main'>
       <div className='top-div'>
         <img src={Admin} alt="admin" className='dashboard-icon' />
         <h1 className='dashboard-heading'>Admin</h1>
@@ -44,9 +44,9 @@ const Dashboard = () => {
         </Tab>
       </Tabs>
       ) : (
-        <div>
-        <DashboardBoys />
-        <DashboardGirls />
+        <div style={{display:'flex', flexDirection:'column', gap:'40px'}}>
+            <DashboardBoys />
+            <DashboardGirls />
         </div>
       )
       }

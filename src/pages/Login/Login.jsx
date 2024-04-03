@@ -5,9 +5,8 @@ import ImageOne from "../../images/Vector 1 (1).png";
 import ImageTwo from "../../images/Vector 3 (2).png";
 import Logo from "../../images/Kiran Reddy Boys Hostel 1.png";
 import './Login.css'
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-
 
 export const loginContext = createContext();
 const Login = () => {
@@ -26,7 +25,7 @@ const Login = () => {
         let list = [];
         data.map((key) => list.push(data));
         setData(data);
-        console.log(data, "data response from firebase");
+        // console.log(data, "data response from firebase");
       });
   }, []);
 
@@ -50,36 +49,42 @@ const Login = () => {
           data[itemExist].password === loginData.password
         ) {
           setFlag(true);
-        //   toast.success("You Successfully Updated CryptoCoin Price", {
-            // position: "bottom-right",
-            // autoClose: 2000,
-            // hideProgressBar: false,
-            // closeOnClick: true,
-            // pauseOnHover: true,
-            // draggable: true,
-            // progress: undefined,
-            // theme: "light",
-        // });
-        //   toast.success("You are logged in successfully", {
-        //     position: "bottom-right",
-        //     autoClose: 2000,
-        //     hideProgressBar: false,
-        //     closeOnClick: true,
-        //     pauseOnHover: true,
-        //     draggable: true,
-        //     progress: undefined,
-        //     theme: "light",
-        //   })
-          alert("You are logged in successfully");
-          //   dispatch(editForm(data[itemExist]))
+          toast.success("You are logged in successfully.", {
+            position: "bottom-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          })
           setLoginData(initialState);
           navigate("/mainPage");
-          console.log(flag, "flag");
+          // console.log(flag, "flag");
         } else {
-          alert("Password Wrong, please enter correct password");
+          toast.error("Password Wrong, please enter correct password.", {
+            position: "bottom-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          })
         }
       } else {
-        alert("You are new user so, register please");
+        toast.warning("You are new user so, register please.", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        })
       }
     }
     //console.log(flag,'flag')
@@ -122,7 +127,6 @@ const Login = () => {
           style={{
             display: "flex",
             alignItems: "center",
-            // justifyContent:'space-evenly',
             margin:'auto',
             gap:'40px',
             width: "1200px",

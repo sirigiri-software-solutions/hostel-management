@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './SignUp.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const SignUp = () => {
   const [data, setData] = useState({
@@ -90,7 +92,16 @@ const SignUp = () => {
     axios
       .post('https://signuppage-2f4c8-default-rtdb.firebaseio.com/register.json', formData)
       .then(() => {
-        alert('Submitted Successfully');
+        toast.success("Your details Submitted Successfully.", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        })
         setData({
           firstname: '',
           lastname: '',
@@ -102,7 +113,16 @@ const SignUp = () => {
       })
       .catch(error => {
         console.error('Error submitting data:', error);
-        alert('An error occurred while submitting the form. Please try again.');
+        toast.error("An error occurred while submitting the form. Please try again.", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        })
       });
   };
 

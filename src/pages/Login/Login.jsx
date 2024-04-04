@@ -6,9 +6,8 @@ import ImageOne from "../../images/Vector 1 (1).png";
 import ImageTwo from "../../images/Vector 3 (2).png";
 import Logo from "../../images/Kiran Reddy Boys Hostel 1.png";
 import './Login.css'
-// import { ToastContainer, toast } from "react-toastify";
-// import 'react-toastify/dist/ReactToastify.css';
-
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export const loginContext = createContext();
 
@@ -75,17 +74,43 @@ const Login = () => {
           data[itemExist].password === loginData.password
         ) {
           setFlag(true);
-          alert("You are logged in successfully");
+          toast.success("You are logged in successfully.", {
+            position: "bottom-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          })
           setLoginData(initialState);
           navigate("/mainPage");
-          // console.log(flag, "flag");
-          // console.log(data);
           localStorage.setItem("username",singleLoginuser.firstname)
+          // console.log(flag, "flag");
         } else {
-          alert("Password Wrong, please enter correct password");
+          toast.error("Password Wrong, please enter correct password.", {
+            position: "bottom-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          })
         }
       } else {
-        alert("You are new user so, register please");
+        toast.warning("You are new user so, register please.", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        })
       }
     }
 

@@ -24,7 +24,7 @@ const RentPageBoys = () => {
       s_no : 1,
       room_no : 125,
       person_name : "ABCD",
-      person_mobile : "+91 9087654321",
+      person_mobile : "+91-9087654321",
       bed_no : 2,
       rent : "Rs. 5000",
       due_date : "21 sep 2021",
@@ -36,10 +36,10 @@ const RentPageBoys = () => {
       }
     },
     {
-      s_no : 1,
+      s_no : 2,
       room_no : 125,
       person_name : "ABCD",
-      person_mobile : "+91 9087654321",
+      person_mobile : "+91-9087654321",
       bed_no : 2,
       rent : "Rs. 5000",
       due_date : "21 sep 2021",
@@ -51,10 +51,10 @@ const RentPageBoys = () => {
       }
     },
     {
-      s_no : 1,
+      s_no : 3,
       room_no : 125,
       person_name : "ABCD",
-      person_mobile : "+91 9087654321",
+      person_mobile : "+91-9087654321",
       bed_no : 2,
       rent : "Rs. 5000",
       due_date : "21 sep 2021",
@@ -66,10 +66,10 @@ const RentPageBoys = () => {
       }
     },
     {
-      s_no : 1,
+      s_no : 4,
       room_no : 125,
       person_name : "ABCD",
-      person_mobile : "+91 9087654321",
+      person_mobile : "+91-9087654321",
       bed_no : 2,
       rent : "Rs. 5000",
       due_date : "21 sep 2021",
@@ -81,10 +81,10 @@ const RentPageBoys = () => {
       }
     },
     {
-      s_no : 1,
+      s_no : 5,
       room_no : 125,
       person_name : "ABCD",
-      person_mobile : "+91 9087654321",
+      person_mobile : "+91-9087654321",
       bed_no : 2,
       rent : "Rs. 5000",
       due_date : "21 sep 2021",

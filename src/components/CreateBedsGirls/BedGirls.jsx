@@ -1,19 +1,9 @@
-import React, {useState} from 'react'
-import RoomsBoys from './RoomsBoys'
+import React from 'react'
 
-const CreateRoomsBoys = () => {
-
-  const[showCreateRoomsBoys, setShowCreateRoomsBoys] = useState(false)
-
-  const toggleCreateRoomsBoys = () => {
-      setShowCreateRoomsBoys(!showCreateRoomsBoys)
-  }
-
+const BedGirls = () => {
   return (
-    <div className='h-100'>
-      {!showCreateRoomsBoys ? (
-      <div className="container-fluid">
-        <h1 className='fs-5' onClick={toggleCreateRoomsBoys}>&lt;-- Back</h1>
+    <>
+    <div className="container-fluid">
         <h1 className='text-center mb-2 fs-5'>
             Create Beds
         </h1>
@@ -38,12 +28,9 @@ const CreateRoomsBoys = () => {
             <button type="submit" class="btn btn-warning">Create</button>
           </div>
         </form>
-      </div>
-      ) : (
-        <RoomsBoys/>
-      )}
     </div>
+    </>
   )
 }
 
-export default CreateRoomsBoys
+export default BedGirls

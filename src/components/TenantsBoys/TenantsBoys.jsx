@@ -3,9 +3,10 @@ import TenantsIcon from '../../images/Icons (4).png'
 import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
 import ImageIcon from '../../images/Icons (10).png'
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import CreateTenantsBoys from './CreateTenantsBoys'
-
+import './TenantsBoys.css';
+ 
 const TenantsBoys = () => {
     const columns = [
       'S. No',
@@ -17,7 +18,7 @@ const TenantsBoys = () => {
       'Payment Date',
       'Status'
     ]
-  
+ 
     const rows = [
       {
         s_no : 1,
@@ -90,61 +91,93 @@ const TenantsBoys = () => {
         }
       },
     ]
-
-const[showCreateTenantsBoys, setShowCreateTenantsBoys] = useState(false)
-
+ 
+    const[isMobile, setIsMobile] = useState(window.innerWidth<=768);
+    useEffect(() => {
+  const handleResize = () => setIsMobile(window.innerWidth <= 760);
+  window.addEventListener('resize', handleResize);
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
+const[showCreateTenantsBoys,setShowCreateTenantsBoys]=useState(false);
+ 
 const toggleCreateTenantsBoys = () => {
     setShowCreateTenantsBoys(!showCreateTenantsBoys)
 }
-
+ 
   return (
     <div className='h-100'>
-    {!showCreateTenantsBoys ?(
-    <>
-      <div className="row d-flex align-items-center justify-content-between">
-        <div className="col-12 col-md-4 d-flex align-items-center mr-5">
-          <div className='roomlogo-container'>
-            <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo'/>
-          </div>
-          <h1 className='fs-5'>Tenants Management</h1>
-        </div>
-        <div className="col-6 col-md-4 search-wrapper">
-          <input type="text" placeholder='Search' className='search-input'/>
-          <img src={SearchIcon} alt="search-icon" className='search-icon'/>
-        </div>
-        <div className="col-6 col-md-4 d-flex justify-content-end">
-          <button type="button" className='button cursor-pointer' onClick={toggleCreateTenantsBoys}>Add Rooms</button>
-        </div>
-      </div>
-      <div>   
-          <Table columns={columns} rows={rows}/>
-      </div>
-      <div className='d-flex justify-content-end mt-4'>
-        <div className='d-flex justify-content-between w-100'>
-          <div className='d-flex align-items-center'>
+    <div className='d-flex justify-content-between align-items-center'>
             <div className='d-flex align-items-center'>
-              <span style={{width:"35px", height:"35px", backgroundColor:"#166919", marginRight:"10px", borderRadius:"10px"}}></span>
-              <h1 style={{fontSize:"10px", marginRight:"10px", marginTop:"10px"}}>Occupied</h1>
+                <div className='roomlogo-container'>
+                    <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo'/>
+                </div>
+                <h1 className='fs-5'>Tenants Management</h1>
             </div>
+            <div style={{position:"relative", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                <input type="search" placeholder='Search' className='userinput'/>
+                <img src={SearchIcon} alt="SearchIcon" style={{position:"absolute", right:"10px", width:"20px"}}/>
+            </div>
+            <div>
+                <button type="button" className='button' onClick={toggleCreateTenantsBoys}>Add Rooms</button>
+            </div>
+        </div>
+        {!showCreateTenantsBoys &&(
+          <div className="data-view">
+          {isMobile ? (
+              <div className="cards-view">
+                {
+                        
+                            rows.map((row, index) => (
+                              <div className="card" key={index}>
+                                   <p><strong>S.No</strong> {row.s_no}</p>
+                                  {/* <p><strong>column</strong> {row.floor}</p> */}
+                                  <p><strong>Image:</strong><img src={row.image} alt=''/></p>
+                                  <p><strong>Name:</strong> {row.name}</p>
+                                  <p><strong>ID:</strong> {row.id}</p>
+                                  <p><b>Mobile.No:</b>{row.mobile_no}</p>
+                                  <p><b>Room/Bed No:</b>{row.room_bed_no}</p>
+                                  <p><b>Payment Date:</b>{row.payment_date}</p>
+                                  <button className="editbtn">Edit{row.edit.text} </button>
+                                  </div>
+                                  ))
+                     }
+                 
+
+              </div>
+      
+          ):(
+        <div className="rounded-table">  
+            <Table columns={columns} rows={rows}/>
+        </div>
+          )}
+        </div>
+        )}
+        <div className='d-flex justify-content-end mt-4'>
+          <div className='d-flex justify-content-between w-100'>
             <div className='d-flex align-items-center'>
-              <span style={{width:"35px", height:"35px", backgroundColor:"grey", marginRight:"10px", borderRadius:"10px"}}></span>
-              <h1 style={{fontSize:"10px", marginTop:"10px"}}>Unoccupied</h1>
+              <div className='d-flex align-items-center'>
+                <span style={{width:"35px", height:"35px", backgroundColor:"#166919", marginRight:"10px", borderRadius:"10px"}}></span>
+                <h1 style={{fontSize:"10px", marginRight:"10px", marginTop:"10px"}}>Occupied</h1>
+              </div>
+              <div className='d-flex align-items-center'>
+                <span style={{width:"35px", height:"35px", backgroundColor:"grey", marginRight:"10px", borderRadius:"10px"}}></span>
+                <h1 style={{fontSize:"10px", marginTop:"10px"}}>Unoccupied</h1>
+              </div>
             </div>
-          </div>
-          <div className='d-flex justify-content-end'>
-            <span className='btn btn-outline-dark m-1'>1</span>
-            <span className='btn btn-outline-dark m-1'>2</span>
-            <span className='btn btn-outline-dark m-1'>...</span>
-            <span className='btn btn-outline-dark m-1'>10</span>
+            <div className='d-flex justify-content-end'>
+              <span className='btn btn-outline-dark m-1'>1</span>
+              <span className='btn btn-outline-dark m-1'>2</span>
+              <span className='btn btn-outline-dark m-1'>...</span>
+              <span className='btn btn-outline-dark m-1'>10</span>
+            </div>
           </div>
         </div>
-      </div>
-    </>
-    ) : (
-        <CreateTenantsBoys />
-    )}
+    {
+    
+      showCreateTenantsBoys && <CreateTenantsBoys />
+}
     </div>
   )
 }
-
-export default TenantsBoys
+ 
+export default TenantsBoys;

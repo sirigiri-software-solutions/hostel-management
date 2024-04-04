@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import TenantsBoys from './TenantsBoys';
+import TenantsGirls from './TenantsGirls';
 
-const CreateTenantsBoys = () => {
-  const [showCreateTenantsBoys, setShowCreateTenantsBoys] = useState(false);
+const CreateTenantsGirls = () => {
+  const [showCreateTenantsGirls, setShowCreateTenantsGirls] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const toggleCreateTenantsBoys = () => {
-    setShowCreateTenantsBoys(!showCreateTenantsBoys);
+  const toggleCreateTenantsGirls = () => {
+    setShowCreateTenantsGirls(!showCreateTenantsGirls);
     setErrors({}); // Clear errors when toggling
   };
 
@@ -50,10 +50,10 @@ const CreateTenantsBoys = () => {
 
   return (
     <div className='h-100'>
-      {!showCreateTenantsBoys ? (
+      {!showCreateTenantsGirls ? (
         <>
           <div className="container-fluid">
-            <h1 className='fs-5' onClick={toggleCreateTenantsBoys}>&lt;-- Back</h1>
+            <h1 className='fs-5' onClick={toggleCreateTenantsGirls}>&lt;-- Back</h1>
             <h1 className='text-center mb-2 fs-5'>Create Beds</h1>
             <form className="row g-3" onSubmit={handleSubmit}>
               <div className="col-md-6">
@@ -119,10 +119,10 @@ const CreateTenantsBoys = () => {
           </div>
         </>
       ) : (
-        <TenantsBoys />
+        <TenantsGirls />
       )}
     </div>
   );
 };
 
-export default CreateTenantsBoys;
+export default CreateTenantsGirls;

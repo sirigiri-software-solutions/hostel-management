@@ -1,166 +1,180 @@
-import React, { createContext, useEffect, useState } from "react";
-import axios from "axios";
-//import { useNavigate } from "react-router-dom";
-
-//import './Login.css'
-
-export const loginContext = createContext();
-
-const SignIn = () => {
-  //const navigate = useNavigate();
-  const initialState = { Id: "", email: "", password: "" };
-  const [loginData, setLoginData] = useState(initialState);
-  const [data, setData] = useState([]);
-  const [flag, setFlag] = useState(false);
-  const [loginErrors, setLoginErrors] = useState({});
-
-  useEffect(() => {
+import React, { useState } from 'react';
+import './SignUp.css';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+ 
+const SignUp = () => {
+  const [data, setData] = useState({
+    firstname: '',
+    lastname: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmpassword: '',
+  });
+  const [errors, setErrors] = useState({
+    firstname: '',
+    lastname: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmpassword: '',
+  });
+ 
+  const { firstname, lastname, email, phone, password, confirmpassword } = data;
+ 
+  const changeHandler = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: '' }); // Reset error when input changes
+  };
+ 
+  const submitHandler = (e) => {
+    e.preventDefault();
+    let formValid = true;
+    const newErrors = { ...errors };
+ 
+    // Check for empty fields
+    if (firstname.trim() === '') {
+      newErrors.firstname = 'Please enter your first name';
+      formValid = false;
+    }
+ 
+    if (lastname.trim() === '') {
+      newErrors.lastname = 'Please enter your last name';
+      formValid = false;
+    }
+ 
+    if (email.trim() === '') {
+      newErrors.email = 'Please enter your email';
+      formValid = false;
+    }
+ 
+    if (phone.trim() === '') {
+      newErrors.phone = 'Please enter your phone number';
+      formValid = false;
+    }
+ 
+    if (password.trim() === '') {
+      newErrors.password = 'Please enter your password';
+      formValid = false;
+    } else if (!isPasswordValid(password)) {
+      newErrors.password =
+        'Password must be at least 8 characters long and contain at least 1 character, 1 symbol, and 1 number';
+      formValid = false;
+    }
+ 
+    if (confirmpassword.trim() === '') {
+      newErrors.confirmpassword = 'Please confirm your password';
+      formValid = false;
+    } else if (password !== confirmpassword) {
+      newErrors.confirmpassword = 'Passwords do not match';
+      formValid = false;
+    }
+ 
+    if (!formValid) {
+      setErrors(newErrors);
+      return; // Don't proceed with submission if form is invalid
+    }
+ 
+    // Create a data object for submission without errors
+    const formData = {
+      firstname,
+      lastname,
+      email,
+      phone,
+      password,
+      confirmpassword,
+    };
+ 
+    // Proceed with form submission if all fields are filled
     axios
-      .get("https://signuppage-2f4c8-default-rtdb.firebaseio.com/register.json")
-      .then((response) => {
-        let data = Object.values(response.data);
-        let list = [];
-        data.map((key) => list.push(data));
-        setData(data);
-        console.log(data, "data response from firebase");
+      .post('https://signuppage-2f4c8-default-rtdb.firebaseio.com/register.json', formData)
+      .then(() => {
+        alert('Submitted Successfully');
+        setData({
+          firstname: '',
+          lastname: '',
+          email: '',
+          phone: '',
+          password: '',
+          confirmpassword: '',
+        }); // Clear input fields after successful submission
+      })
+      .catch(error => {
+        console.error('Error submitting data:', error);
+        alert('An error occurred while submitting the form. Please try again.');
       });
-  }, []);
-
-  const handleData = (event) => {
-    setLoginData({
-      ...loginData,
-      [event.target.name]: event.target.value,
-    });
   };
-
-  const checkData = (event) => {
-    event.preventDefault();
-    if (validateForm()) {
-      const itemExist = data.findIndex(
-        (item) => item.email === loginData.email
-      );
-      //console.log(data[itemExist])
-      if (itemExist > -1) {
-        if (
-          data[itemExist].email === loginData.email &&
-          data[itemExist].password === loginData.password
-        ) {
-
-          setFlag(true);
-       
-          alert("You are logged in successfully");
-        //   dispatch(editForm(data[itemExist]))
-          setLoginData(initialState);
-          // navigate("/mainPage");
-          console.log(flag, "flag");
-        } else {
-          alert("Password Wrong, please enter correct password");
-        }
-      } else {
-        alert("You are new user so, register please");
-      }
-    }
-    //console.log(flag,'flag')
+ 
+  const isPasswordValid = (password) => {
+    // Password must be at least 8 characters long and contain at least 1 character, 1 symbol, and 1 number
+    return /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
   };
-  const hideErrors = (event) => {
-    setLoginErrors({
-      ...loginErrors,
-      [event.target.name]: "",
-    });
-  };
-
-  const checkErrors = (event) => {
-    if (event.target.value === "") {
-      setLoginErrors({
-        ...loginErrors,
-        [event.target.name]: "Enter " + event.target.name,
-      });
-    }
-  };
-
-  const validateForm = () => {
-    let isValid = true;
-    let errors = {};
-    if (loginData.email === "") {
-      errors.email = "Enter email to login";
-      isValid = false;
-    }
-    if (loginData.password === "") {
-      errors.password = "Enter password to login";
-      isValid = false;
-    }
-    setLoginErrors(errors);
-    return isValid;
-  };
-//   console.log(myId,'outside')
+ 
   return (
-    <React.Fragment>
-      <main>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            // justifyContent:'space-evenly',
-            margin:'auto',
-            gap:'40px',
-            width: "1200px",
-            height: "800px",
-            backgroundColor: "rgba(255, 255, 255, 0.4)",
-            position: "relative",
-            // marginBottom:'100px',
-            background:
-              "linear-gradient(to bottom left, #efefef 20%, #ffffff 35%)",
-          }}
-        >
-          
-          
-          <form onSubmit={checkData} style={{display:'flex', flexDirection:'column', gap: '20px', alignItems:'center', zIndex:'9'}}>
-            <div style={{fontSize:'40px', fontWeight:'bold', color:'#FDA339'}}>LOGIN</div>
-            <div style={{display:'flex', flexDirection:'column'}}>
-                <input
-                    type="text"
-                    className={`login_page_username ${loginErrors?.email && 'border border-danger'}`}
-                    placeholder="Username or Email"
-                    onChange={handleData}
-                    onFocus={hideErrors}
-                    onBlur={checkErrors}
-                    value={loginData.email}
-                    name="email"
-                />
-                {loginErrors.email ? (
-                    <small className="ms-3 text-danger">{loginErrors.email}</small>
-                ) : null
-                }
-            </div>
-            <div style={{display:'flex', flexDirection:'column'}}>
-                <input
-                    type="text"
-                    className={`login_page_username ${loginErrors?.password && 'border border-danger'}`}
-                    placeholder="Password"
-                    onChange={handleData}
-                    onFocus={hideErrors}
-                    onBlur={checkErrors}
-                    value={loginData.password}
-                    name="password"
-                />
-                {loginErrors.password ? (
-                    <small className="ms-3 text-danger">{loginErrors.password}</small>
-                ) : null
-                }
-            </div>
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%'}}>
-                <div style={{display:'flex', alignItems:'center', gap:'14px'}}>
-                    <input type="checkbox" id='remember' style={{width:'24px', height:'24px', border:'1px solid #555'}} />
-                    <label for='remember' className="login_page_rememberMe">Remember me</label>
-                </div>
-                <label className="login_page_forgotPassword" style={{fontSize:'16px'}}>Forgot Password?</label>
-            </div>
-            <input type="submit" value='Login' style={{color:'#fff', padding:'15px 24px', backgroundColor:'#FDA339', border:'none', borderRadius:'50px', fontSize:'18px', fontWeight:'bold'}}  />
-          </form>
-        </div>
-      </main>
-    </React.Fragment>
+    <div className='signup-page'>
+      <div className='signup-form'>
+        <form autoComplete='off' onSubmit={submitHandler}>
+          <input
+            type='text'
+            name='firstname'
+            value={firstname}
+            onChange={changeHandler}
+            placeholder='Enter Your FirstName'
+          />
+          <br />
+          {errors.firstname && <div className='error'>{errors.firstname}</div>}
+          <input
+            type='text'
+            name='lastname'
+            value={lastname}
+            onChange={changeHandler}
+            placeholder='Enter Your LastName'
+          />
+          <br />
+          {errors.lastname && <div className='error'>{errors.lastname}</div>}
+          <input
+            type='email'
+            name='email'
+            value={email}
+            onChange={changeHandler}
+            placeholder='Enter Your Email'
+          />
+          <br />
+          {errors.email && <div className='error'>{errors.email}</div>}
+          <input
+            type='tel' // corrected from 'phone'
+            name='phone'
+            value={phone}
+            onChange={changeHandler}
+            placeholder='Mobile number'
+          />
+          <br />
+          {errors.phone && <div className='error'>{errors.phone}</div>}
+          <input
+            type='password'
+            name='password'
+            value={password}
+            onChange={changeHandler}
+            placeholder='Enter Your Password'
+          />
+          <br />
+          {errors.password && <div className='error'>{errors.password}</div>}
+          <input
+            type='password'
+            name='confirmpassword'
+            value={confirmpassword}
+            onChange={changeHandler}
+            placeholder='Confirm Your Password'
+          />
+          <br />
+          {errors.confirmpassword && <div className='error'>{errors.confirmpassword}</div>}
+          <input type='submit' className='Signup' value='Sign up' />
+        </form>
+        <p>Already have an account <Link to="/login">Login</Link></p>
+      </div>
+    </div>
   );
 };
-//export {demoId}
-export default SignIn;
+ 
+export default SignUp;

@@ -3,8 +3,10 @@ import TenantsIcon from '../../images/Icons (4).png'
 import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
 import ImageIcon from '../../images/Icons (10).png'
-import { useState } from 'react'
-
+import { useState,useEffect } from 'react'
+import CreateTenantsGirls from './CreateTenantsGirls'
+// import Cards from '../../Elements/Cards'
+ 
 const TenantsGirls = () => {
     const columns = [
       'S. No',
@@ -15,7 +17,7 @@ const TenantsGirls = () => {
       'Room/Bed No',
       'Status'
     ]
-  
+ 
     const rows = [
       {
         s_no : 1,
@@ -84,34 +86,66 @@ const TenantsGirls = () => {
       },
     ]
 
-const[showCreateTenantsGirls, setShowCreateTenantsGirls] = useState(false)
-
+    const[isMobile, setIsMobile] = useState(window.innerWidth<=768);
+    useEffect(() => {
+  const handleResize = () => setIsMobile(window.innerWidth <= 760);
+  window.addEventListener('resize', handleResize);
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
+ 
+const[showCreateTenantsGirls,setShowCreateTenantsGirls]=useState(false);
+ 
 const toggleCreateTenantsGirls = () => {
     setShowCreateTenantsGirls(!showCreateTenantsGirls)
 }
-
-  return (
-    <div className='h-100'>
-    {!showCreateTenantsGirls ?(
-    <>
-        <div className="row d-flex align-items-center justify-content-between">
-          <div className="col-12 col-md-4 d-flex align-items-center mr-5">
-            <div className='roomlogo-container'>
-              <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo'/>
+return(
+  <div className='h-100'>
+    <div className='d-flex justify-content-between align-items-center'>
+            <div className='d-flex align-items-center'>
+                <div className='roomlogo-container'>
+                    <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo'/>
+                </div>
+                <h1 className='fs-5'>Tenants Management</h1>
             </div>
-            <h1 className='fs-5'>Beds Management</h1>
-          </div>
-          <div className="col-6 col-md-4 search-wrapper">
-            <input type="text" placeholder='Search' className='search-input'/>
-            <img src={SearchIcon} alt="search-icon" className='search-icon'/>
-          </div>
-          <div className="col-6 col-md-4 d-flex justify-content-end">
-            <button type="button" className='button cursor-pointer' onClick={toggleCreateTenantsGirls}>Add Tenants</button>
-          </div>
+            <div style={{position:"relative", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                <input type="search" placeholder='Search' className='userinput'/>
+                <img src={SearchIcon} alt="SearchIcon" style={{position:"absolute", right:"10px", width:"20px"}}/>
+            </div>
+            <div>
+                <button type="button" className='button' onClick={toggleCreateTenantsGirls}>Add Rooms</button>
+            </div>
         </div>
-        <div>   
+        {!showCreateTenantsGirls &&(
+          <div className="data-view">
+          {isMobile ? (
+              <div className="cards-view">
+                {
+                        
+                            rows.map((row, index) => (
+                              <div className="card" key={index}>
+                                   <p><strong>S.No</strong> {row.s_no}</p>
+                                  {/* <p><strong>column</strong> {row.floor}</p> */}
+                                  <p><strong>Image:</strong><img src={row.image} alt=''/></p>
+                                  <p><strong>Name:</strong> {row.name}</p>
+                                  <p><strong>ID:</strong> {row.id}</p>
+                                  <p><b>Mobile.No:</b>{row.mobile_no}</p>
+                                  <p><b>Room/Bed No:</b>{row.room_bed_no}</p>
+                                  <p><b>Payment Date:</b>{row.payment_date}</p>
+                                  <button className="editbtn">Edit{row.edit.text} </button>
+                                  </div>
+                                  ))
+                     }
+                 
+
+              </div>
+      
+          ):(
+        <div className="rounded-table">  
             <Table columns={columns} rows={rows}/>
         </div>
+          )}
+        </div>
+        )}
         <div className='d-flex justify-content-end mt-4'>
           <div className='d-flex justify-content-between w-100'>
             <div className='d-flex align-items-center'>
@@ -132,38 +166,10 @@ const toggleCreateTenantsGirls = () => {
             </div>
           </div>
         </div>
-    </>
-    ) : (
-      <>
-      <div className="container-fluid">
-      <h1 className='fs-5 cursor-pointer' onClick={toggleCreateTenantsGirls}>&lt;-- Back</h1>
-      <h1 className='text-center mb-2 fs-5'>
-          Create Beds
-      </h1>
-      <form class="row g-3">
-        <div class="col-md-6">
-          <label for="inputNumber" class="form-label">Number</label>
-          <input type="number" class="form-control" id="inputNumber"/>
-        </div>
-        <div class="col-md-6">
-          <label for="inputRent" class="form-label">Rent</label>
-          <input type="number" class="form-control" id="inputRent"/>
-        </div>
-        <div class="col-md-6">
-          <label for="inputRent" class="form-label">Select Rooms</label>
-          <input type="number" class="form-control" id="inputRent"/>
-        </div>
-        <div class="col-md-6">
-          <label for="inputRent" class="form-label">Select Status</label>
-          <input type="number" class="form-control" id="inputRent"/>
-        </div>
-        <div class="col-12 text-center">
-          <button type="submit" class="btn btn-warning">Create</button>
-        </div>
-      </form>
-      </div>
-      </>
-    )}
+    {
+    
+      showCreateTenantsGirls && <CreateTenantsGirls />
+}
     </div>
   )
 }

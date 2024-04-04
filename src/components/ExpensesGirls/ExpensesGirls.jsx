@@ -4,7 +4,6 @@ import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
 import ImageIcon from '../../images/Icons (10).png'
 import CreateExpensesGirls from './CreateExpensesGirls'
-
 const ExpensesGirls = () => {
     const columns = [
       'S. No',
@@ -145,5 +144,4 @@ const toggleCreateExpensesGirls = () => {
     </div>
   )
 }
-
 export default ExpensesGirls

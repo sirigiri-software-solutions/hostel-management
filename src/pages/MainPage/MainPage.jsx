@@ -19,9 +19,8 @@ import Settings from '../../Sections/Settings/Settings'
 import { GiHamburgerMenu } from "react-icons/gi";
 import Popup from 'reactjs-popup'
 import { AiOutlineClose} from 'react-icons/ai'
-
 const MainPage = () => {
-
+ 
   const menuItems = [
     {
       id:1,
@@ -66,20 +65,20 @@ const MainPage = () => {
       icon: SettingsImage
     },
   ]
-
+ 
   const Components = [<Dashboard />, <Rooms/>, <Beds />, <Rents/>, <Tenants />, <Expenses />, <Settings />]
-
+ 
   const [flag, setFlag] = useState(1);
-
+ 
   const handlesideBar = (value) => {
     setFlag(value);
   }
-
  
-  
-
-  // by using resize 
-
+ 
+ 
+ 
+  // by using resize
+ 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
@@ -89,7 +88,6 @@ const MainPage = () => {
         setSidebarItems({display:'none'});
         setrightSectionMainContainer({width:'100%',padding:'20px'})
         setHamburgerMenu({fontSize:'40px'})
-       
         
       } else {
         // For larger screens
@@ -101,43 +99,43 @@ const MainPage = () => {
         setHamburgerMenuItems(false);
       }
     };
-  
+ 
     // Call handleResize initially
     handleResize();
-  
+ 
     // Add event listener for window resize
     window.addEventListener('resize', handleResize);
-  
+ 
     // Cleanup the event listener
     return () => window.removeEventListener('resize', handleResize);
   }, []); // Empty dependency array ensures that the effect only runs once after component mount
-  
-
-
+ 
+ 
+ 
   const [mainBackgroundContainerStyle, setMainBackgroundContainerStyle] =useState({})
   const [sidebarStyle, setSidebarStyle] = useState({})
   const [sidebarItems,setSidebarItems] = useState({})
   const [rightSectionMainContainer,setrightSectionMainContainer] =useState({})
-  const [hamburgerMenu,setHamburgerMenu] = useState(false)
+  const[hamburgerMenu,setHamburgerMenu] = useState(false)
   const [hamburgerMenuItems,setHamburgerMenuItems] = useState(false)
-  
-
-
+ 
+ 
+ 
   const handleHamburgerMenu = () => {
     setHamburgerMenuItems(!hamburgerMenuItems)
   }
-
-
-
-  // CSS 
-
+ 
+ 
+ 
+  // CSS
+ 
   // const [mainBackgroundContainerStyle, setMainBackgroundContainerStyle] = useState({
   //   display: 'flex',
   //   width: '100%',
   //   margin: '0px',
   //   flexDirection: 'row',
   // });
-
+ 
   // const [sidebarStyle, setSidebarStyle] = useState({
   //   width: '21%',
   //   backgroundColor: '#ECECEC',
@@ -146,28 +144,28 @@ const MainPage = () => {
   //   display:'flex',
   //   flexDirection:'column',
   // });
-
+ 
   // const [sidebarItems,setSidebarItems] = useState({
-  //   display:'flex', 
-  //   flexDirection:'column', 
+  //   display:'flex',
+  //   flexDirection:'column',
   //   gap:'15px'
   // })
-
-
+ 
+ 
   // const [rightSectionMainContainer,setrightSectionMainContainer] = useState({
-  //   width:'80%', 
+  //   width:'80%',
   //   padding:'16px 20px'
-
+ 
   // })
    
-
+ 
   const handleSidebarItemClick = (itemId, close) => {
     handlesideBar(itemId);
     close(); // Close the popup modal
   }
-  
-
-
+ 
+ 
+ 
   return (
     <div className='bg-container' style={mainBackgroundContainerStyle}>
         <div className='sidebar' style={sidebarStyle}>
@@ -184,7 +182,7 @@ const MainPage = () => {
                 ))
                 }
             </div>
-
+ 
             {/* Hamberger icon */}
             {/* <GiHamburgerMenu style={hamburgerMenu} onClick={handleHamburgerMenu} /> */}
             {/* {
@@ -192,14 +190,14 @@ const MainPage = () => {
                 <label key={index}>{item.name}</label>
               ))
             } */}
-            
+           
           {/*another approach popup model */}
-
-
-          <Popup modal 
+ 
+ 
+          <Popup modal
           trigger={<GiHamburgerMenu style={hamburgerMenu} onClick={handleHamburgerMenu} />}>
             {close => (
-              <div style={{ 
+              <div style={{
                       backgroundColor: "#fff",
                       minHeight: "100vh",
                       minWidth: "100vw",
@@ -217,28 +215,28 @@ const MainPage = () => {
                             <label className='link-text'>{item.name}</label>
                             </div>
                         ))
-
+ 
                       }
                       </div>
                       <AiOutlineClose
                       style={{
-                        position: "absolute", 
-                        top: "10px", 
-                        right: "10px", 
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
        
                       }}
                         onClick={() => close()}/>
-                      
+                     
               </div>
-
-
+ 
+ 
             )}
           </Popup>
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
         </div>
         {/* <div style={mobileMenuItems}>
         {
@@ -251,12 +249,12 @@ const MainPage = () => {
               )
             }
             </div> */}
-          
+         
         <div style={rightSectionMainContainer}>
             {Components && Components.map((item, index) => <div key={index} style={flag === index+1 ? {display:'block'} : {display: 'none'}}>{item}</div>)}
         </div>
     </div>
   )
 }
-
+ 
 export default MainPage;

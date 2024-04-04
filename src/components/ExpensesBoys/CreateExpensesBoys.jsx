@@ -1,45 +1,46 @@
+
 import React, { useState } from 'react';
 import ExpensesBoys from './ExpensesBoys';
-
+ 
 const CreateExpensesBoys = () => {
   const [showCreateExpensesBoys, setShowCreateExpensesBoys] = useState(false);
   const [errors, setErrors] = useState({});
-
+ 
   const toggleCreateExpensesBoys = () => {
     setShowCreateExpensesBoys(!showCreateExpensesBoys);
     setErrors({}); // Clear errors when toggling
   };
-
+ 
   const handleSubmit = (event) => {
     event.preventDefault();
     const form = event.target;
     const formData = new FormData(form);
     const newErrors = {};
-
+ 
     // Required field validation
     ['inputName', 'inputDate', 'inputMonth', 'inputAmount', 'inputYear', 'inputMobile', 'inputdes', 'inputCreatedOn'].forEach((field) => {
       if (!formData.get(field)) {
         newErrors[field] = 'This field is required';
       }
     });
-
+ 
     // Mobile number format validation
     const mobileRegex = /^[0-9]{10}$/;
     if (!mobileRegex.test(formData.get('inputMobile'))) {
       newErrors['inputMobile'] = 'Mobile number must be 10 digits';
     }
-
+ 
     // Amount validation
     if (formData.get('inputAmount') <= 0) {
       newErrors['inputAmount'] = 'Amount must be greater than zero';
     }
-
+ 
     // Due date validation
     const currentDate = new Date().toISOString().split('T')[0];
     if (formData.get('inputDate') < currentDate) {
       newErrors['inputDate'] = 'Due date must be after today';
     }
-
+ 
     if (Object.keys(newErrors).length === 0) {
       // Submit form if there are no errors
       // console.log('Form submitted successfully');
@@ -48,14 +49,14 @@ const CreateExpensesBoys = () => {
       setErrors(newErrors); // Set errors state to trigger re-render with error messages
     }
   };
-
+ 
   return (
-    <div className="h-100">
+    <div className="h-100" style={{backgroundColor:"hsla(30, 100%, 50%, 0.41)"}}>
       {!showCreateExpensesBoys ? (
         <>
           <div className="container-fluid">
             <h1 className="fs-5" onClick={toggleCreateExpensesBoys}>
-              &lt;-- Back
+              &lt;--Back
             </h1>
             <h1 className="text-center mb-2 fs-5">Create Expenses</h1>
             <form className="row g-3" onSubmit={handleSubmit}>
@@ -99,14 +100,14 @@ const CreateExpensesBoys = () => {
                 <label htmlFor="inputMobile" className="form-label">
                   Mobile
                 </label>
-                <input type="number" className="form-control" id="inputMobile" name="inputMobile" />
+                <input type="tel" className="form-control" id="inputMobile" name="inputMobile" />
                 {errors['inputMobile'] && <div className="text-danger">{errors['inputMobile']}</div>}
               </div>
               <div className="col-md-6">
                 <label htmlFor="inputdes" className="form-label">
                   Small Description
                 </label>
-                <input type="text" className="form-control" id="inputdes" name="inputdes" />
+                <textarea type="textarea" className="form-control" id="inputdes" name="inputdes" />
                 {errors['inputdes'] && <div className="text-danger">{errors['inputdes']}</div>}
               </div>
               <div className="col-md-6">
@@ -130,5 +131,6 @@ const CreateExpensesBoys = () => {
     </div>
   );
 };
-
+ 
 export default CreateExpensesBoys;
+ 

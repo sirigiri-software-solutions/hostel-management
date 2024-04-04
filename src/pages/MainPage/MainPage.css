@@ -1,7 +1,7 @@
 .bg-container{
     box-sizing: border-box;
 }
-
+ 
 .logo{
     width: 150px;
 }
@@ -10,7 +10,7 @@
         width:80px;
     }
 }
-
+ 
 .link{
     display: flex;
     /* margin-bottom: 20px; */
@@ -19,23 +19,23 @@
     padding: 10px 15px;
     gap: 20px;
 }
-
+ 
 .link:hover{
     background-color: hsla(30, 100%, 50%, 0.41);
     border-radius: 10px;
 }
-
+ 
 .icon{
     height:35px;
     width: 32px;
 }
-
+ 
 .link-text{
     font-weight: bold;
     color: black;
     font-size:22px;
 }
-
+ 
 @media screen and (max-width:1060px){
     .icon{
         height:15px;
@@ -43,7 +43,7 @@
     }
     .link-text{
         font-size:15px;
-        
+       
     }
 }
 @media screen and (max-width:850px){
@@ -53,16 +53,15 @@
     .icon{
         height:12px;
         width:28px;
-        
+       
     }
 }
-
 @media screen and (max-width:767px){
     .link-text{
         font-size:25px;
     }
     .icon{
-        height:18px;
+        height:18px;    
         width:30px;
     }
 }

@@ -257,12 +257,8 @@ const DashboardBoys = () => {
             <label for="inputRoomNo" class="form-label">Room No</label>
             <input type="number" class="form-control" id="inputRoomNo"/>
           </div>
-         
- 
-         
     </form>
- 
-        )
+    )
  
       case "Add Expenses":
         return (

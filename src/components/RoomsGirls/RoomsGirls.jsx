@@ -3,9 +3,7 @@ import RoomsIcon from '../../images/Icons (2).png'
 import SearchIcon from '../../images/Icons (9).png'
 import './RoomsGirls.css'
 import Table from '../../Elements/Table'
-import Button from '../../Elements/Button'
 import { database, push, ref } from "../../firebase"; 
-//import CreateRoomsGirls from './CreateRoomsGirls'
 
 const RoomsGirls = () => {
 
@@ -168,10 +166,6 @@ const RoomsGirls = () => {
     },
   ]
 
-  const handleClick = () => {
-    // console.log("clicked")
-  }
-
   return (
     <div className='h-100'>
       
@@ -193,20 +187,9 @@ const RoomsGirls = () => {
         </button>
       </div>
     </div>
+
     <div>   
         <Table columns={columns} rows={rows}/>
-    </div>
-    <div className='d-flex justify-content-end mt-2'>
-        <Button
-          onClick={handleClick}
-          icon={false}
-          variant={{ color: '#ff8a00', radius: '10px', padding: "1px" }}
-          text={'0'}
-        />
-        <span className='btn btn-outline-dark m-1'>1</span>
-        <span className='btn btn-outline-dark m-1'>2</span>
-        <span className='btn btn-outline-dark m-1'>...</span>
-        <span className='btn btn-outline-dark m-1'>10</span>
     </div>
 
     <div class="modal fade" id="exampleModalGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

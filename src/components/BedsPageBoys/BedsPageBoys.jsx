@@ -2,7 +2,6 @@ import React, {useState} from 'react'
 import bedIcon from '../../images/Icons (3).png'
 import Table from '../../Elements/Table'
 import SearchIcon from '../../images/Icons (9).png'
-//import CreateBedsBoys from './CreateBedsBoys'
 import { database, push, ref } from "../../firebase"; 
 
 const BedsPageBoys = () => {
@@ -192,14 +191,9 @@ const BedsPageBoys = () => {
         </button>
       </div>
     </div>
+
     <div>   
         <Table columns={columns} rows={rows}/>
-    </div>
-    <div className='d-flex justify-content-end mt-2'>
-        <span className='btn btn-outline-dark m-1'>1</span>
-        <span className='btn btn-outline-dark m-1'>2</span>
-        <span className='btn btn-outline-dark m-1'>...</span>
-        <span className='btn btn-outline-dark m-1'>10</span>
     </div>
 
     <div class="modal fade" id="exampleModalBedsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

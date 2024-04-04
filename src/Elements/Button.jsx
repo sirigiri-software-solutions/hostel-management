@@ -1,10 +1,14 @@
 import React from 'react'
 import PlusIcon from '../images/Icons (8).png'
 
-const Button = ({icon, variant, text}) => {
+const Button = ({icon, variant, text, onClick}) => {
+
+  const onClickBtn = () => {
+    onClick()
+  }
 
   return (
-    <button style={{backgroundColor:`${variant.color}`, borderRadius: `${variant.radius}`, color: "white", border: "none", minWidth: "100px", padding:`${variant.padding}`}}>
+    <button onClick={onClickBtn} style={{backgroundColor:`${variant.color}`, borderRadius: `${variant.radius}`, color: "white", border: "none", minWidth: "100px", padding:`${variant.padding}`}}>
         {icon && <img src={PlusIcon} alt='Plus-Icon' style={{width:"20px"}}/>}
         {text}
     </button>

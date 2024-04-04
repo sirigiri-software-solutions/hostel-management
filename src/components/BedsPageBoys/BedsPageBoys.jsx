@@ -1,14 +1,11 @@
-import React, { useState } from 'react'
-import RoomsIcon from '../../images/Icons (2).png'
-import SearchIcon from '../../images/Icons (9).png'
-import './RoomsGirls.css'
+import React, {useState} from 'react'
+import bedIcon from '../../images/Icons (3).png'
 import Table from '../../Elements/Table'
-import Button from '../../Elements/Button'
+import SearchIcon from '../../images/Icons (9).png'
+//import CreateBedsBoys from './CreateBedsBoys'
 import { database, push, ref } from "../../firebase"; 
-//import CreateRoomsGirls from './CreateRoomsGirls'
 
-const RoomsGirls = () => {
-
+const BedsPageBoys = () => {
   const [formData, setFormData] = useState({
     number: '',
     rent: '',
@@ -92,104 +89,106 @@ const RoomsGirls = () => {
 
   const columns = [
     'S. No',
-    'Room.No',
+    'Bed Number',
+    'Room. No',
     'Floor',
-    'Remarks',
-    'Created By',
+    'Rent',
     'Last Updated date',
-    'Edit'
+    'Status'
   ]
 
   const rows = [
     {
       s_no : 1,
+      bed_number : 2,
       room_no : 125,
-      floor : "1st",
-      remarks: "Two Sharing",
-      created_by: "Admin",
+      floor: "1st",
+      rent: "Rs. 5000",
       last_updated_by: "21 Aug 2021",
       edit: {
         icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
-        text: 'Edit'
+        variant: {color:'#166919', radius:'10px'},
+        text: 'Occupied'
       }
     },
     {
       s_no : 1,
+      bed_number : 2,
       room_no : 125,
-      floor : "1st",
-      remarks: "Two Sharing",
-      created_by: "Admin",
+      floor: "1st",
+      rent: "Rs. 5000",
       last_updated_by: "21 Aug 2021",
       edit: {
         icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
-        text: 'Edit'
+        variant: {color:'#166919', radius:'10px'},
+        text: 'Occupied'
       }
     },
     {
       s_no : 1,
+      bed_number : 2,
       room_no : 125,
-      floor : "1st",
-      remarks: "Two Sharing",
-      created_by: "Admin",
+      floor: "1st",
+      rent: "Rs. 5000",
       last_updated_by: "21 Aug 2021",
       edit: {
         icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
-        text: 'Edit'
+        variant: {color:'#166919', radius:'10px'},
+        text: 'Occupied'
       }
     },
     {
       s_no : 1,
+      bed_number : 2,
       room_no : 125,
-      floor : "1st",
-      remarks: "Two Sharing",
-      created_by: "Admin",
+      floor: "1st",
+      rent: "Rs. 5000",
       last_updated_by: "21 Aug 2021",
       edit: {
         icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
-        text: 'Edit'
+        variant: {color:'#166919', radius:'10px'},
+        text: 'Occupied'
       }
     },
     {
       s_no : 1,
+      bed_number : 2,
       room_no : 125,
-      floor : "1st",
-      remarks: "Two Sharing",
-      created_by: "Admin",
+      floor: "1st",
+      rent: "Rs. 5000",
       last_updated_by: "21 Aug 2021",
       edit: {
         icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
-        text: 'Edit'
+        variant: {color:'grey', radius:'10px'},
+        text: 'Unoccupied'
       }
     },
   ]
 
-  const handleClick = () => {
-    // console.log("clicked")
-  }
+  // const [showCreateBedsBoys, setShowCreateBedsBoys] = useState(false);
+
+  // const toggleCreateBedsBoys = () => {
+  //   setShowCreateBedsBoys(!showCreateBedsBoys)
+  // }
 
   return (
     <div className='h-100'>
       
     <>
     <div className="row d-flex align-items-center justify-content-between">
-      <div className="col-md-4 d-flex align-items-center mr-5 image-section">
+      <div className="col-12 col-md-4 d-flex align-items-center mr-5">
         <div className='roomlogo-container'>
-          <img src={RoomsIcon} alt="RoomsIcon" className='roomlogo'/>
+          <img src={bedIcon} alt="RoomsIcon" className='roomlogo'/>
         </div>
-        <h1 className='fs-5'>Rooms Management</h1>
+        <h1 className='fs-5'>Beds Management</h1>
       </div>
       <div className="col-6 col-md-4 search-wrapper">
         <input type="text" placeholder='Search' className='search-input'/>
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
       </div>
       <div className="col-6 col-md-4 d-flex justify-content-end">
-        <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalGirls">
-          Add Rooms
+        <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalBedsBoys">
+          Add Beds
         </button>
       </div>
     </div>
@@ -197,19 +196,13 @@ const RoomsGirls = () => {
         <Table columns={columns} rows={rows}/>
     </div>
     <div className='d-flex justify-content-end mt-2'>
-        <Button
-          onClick={handleClick}
-          icon={false}
-          variant={{ color: '#ff8a00', radius: '10px', padding: "1px" }}
-          text={'0'}
-        />
         <span className='btn btn-outline-dark m-1'>1</span>
         <span className='btn btn-outline-dark m-1'>2</span>
         <span className='btn btn-outline-dark m-1'>...</span>
         <span className='btn btn-outline-dark m-1'>10</span>
     </div>
 
-    <div class="modal fade" id="exampleModalGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="exampleModalBedsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -257,8 +250,8 @@ const RoomsGirls = () => {
     </div>
 
     </>
-  </div>
+    </div>
   )
 }
 
-export default RoomsGirls
+export default BedsPageBoys

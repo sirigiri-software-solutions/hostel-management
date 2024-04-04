@@ -12,7 +12,6 @@ import './App.css'
 import MainPage from './pages/MainPage/MainPage'
 import Login from './pages/Login/Login'
 import SignUp from './pages/SignUp/SignUp'
-import { ToastContainer } from 'react-toastify'
 
 const App = () => {
   return (
@@ -22,8 +21,8 @@ const App = () => {
         <Route path="/" element={<Login />} />
         <Route path="/signUp" element={<SignUp/>} />
 
-        {/* <Route path="/rooms" element={<Rooms/>} />
-        <Route path="/beds" element={<Beds/>} />
+        {/* <Route path="/rooms" element={<Rooms/>} /> */}
+        {/* <Route path="/beds" element={<Beds/>} />
         <Route path="/rent" element={<Rent/>} />
         <Route path="/tenants" element={<Tenants/>} />
         <Route path="/expenses" element={<Expenses/>} />
@@ -34,3 +33,22 @@ const App = () => {
 }
 
 export default App
+
+// import React from 'react'
+// import data from './data.json'
+// console.log(data)
+
+// const App = () => {
+//   return (
+//     <div>
+//       {data.map(item => (
+//         <div key={item.command}>
+//           <h2>{item.command}</h2>
+//           <p>{item.text}</p>
+//         </div>
+//       ))}
+//     </div>
+//   )
+// }
+
+// export default App

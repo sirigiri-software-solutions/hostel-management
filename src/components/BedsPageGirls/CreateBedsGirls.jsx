@@ -1,8 +1,20 @@
-import React from 'react'
+import React, {useState} from 'react'
+import BedsPageGirls from './BedsPageGirls'
+
 
 const CreateBedsGirls = () => {
+
+  const [showCreateBedsGirls, setShowCreateBedsGirls] = useState(false)
+
+  const toggleCreateBedsGirls = () => {
+    setShowCreateBedsGirls(!showCreateBedsGirls)
+  }
+
   return ( 
-    <div className="container-fluid">
+    <div className='h-100'>
+      {!showCreateBedsGirls ? (
+      <div className="container-fluid">
+        <h1 className='fs-5' onClick={toggleCreateBedsGirls}>&lt;-- Back</h1>
         <h1 className='text-center mb-2 fs-5'>
             Create Beds
         </h1>
@@ -27,6 +39,9 @@ const CreateBedsGirls = () => {
             <button type="submit" class="btn btn-warning">Create</button>
           </div>
         </form>
+      </div>) : (
+        <BedsPageGirls />
+      )}
     </div>
   )
 }

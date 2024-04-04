@@ -3,6 +3,8 @@ import RentIcon from '../../images/Icons (6).png'
 import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
 import Button from '../../Elements/Button'
+import CreateRentsGirls from './CreateRentsGirls'
+import { useState } from 'react'
 
 const RentPageGirls = () => {
   const columns = [
@@ -95,28 +97,39 @@ const RentPageGirls = () => {
     },
   ]
 
+  const [showCreateRentsGirls, setShowCreateRentsGirls] = useState(false);
+
+  // const toggleCreateRentsGirls = () => {
+  //   setShowCreateRentsGirls(!showCreateRentsGirls)
+  // }
+
+
   const handleClick = () => {
-    console.log("clicked")
+    // console.log("clicked")
   }
 
   return (
     <div className='h-100'>
-        <div className='d-flex justify-content-between align-items-center'>
-            <div className='d-flex align-items-center'>
-                <div className='roomlogo-container'>
-                    <img src={RentIcon} alt="RoomsIcon" className='roomlogo'/>
-                </div>
-                <h1 className='fs-5'>Rents Management</h1>
-            </div>
-            <div>
-                <input type="search" placeholder='Search' className='userinput'/>
-                <img src={SearchIcon} alt="SearchIcon" className='search-icon'/>
-            </div>
-            <div>
-                <input type="button" value="Add Rooms" className='button'/>
-            </div>
+      {!showCreateRentsGirls ? (
+        <>
+      <div className="row d-flex align-items-center justify-content-between">
+        <div className="col-12 col-md-4 d-flex align-items-center mr-5">
+          <div className='roomlogo-container'>
+            <img src={RentIcon} alt="RoomsIcon" className='roomlogo'/>
+          </div>
+          <h1 className='fs-5'>Rents Management</h1>
         </div>
-        <div className="table-container rounded-table">   
+        <div className="col-6 col-md-4 search-wrapper">
+          <input type="text" placeholder='Search' className='search-input'/>
+          <img src={SearchIcon} alt="search-icon" className='search-icon'/>
+        </div>
+        <div className="col-6 col-md-4 d-flex justify-content-end">
+          <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Add Rents
+          </button>
+        </div>
+      </div>
+        <div>   
             <Table columns={columns} rows={rows}/>
         </div>
         <div className='d-flex justify-content-end mt-2'>
@@ -131,6 +144,9 @@ const RentPageGirls = () => {
             <span className='btn btn-outline-dark m-1'>...</span>
             <span className='btn btn-outline-dark m-1'>10</span>
         </div>
+        </>) : (
+          <CreateRentsGirls />
+        )}
     </div>
   )
 }

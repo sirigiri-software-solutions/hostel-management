@@ -42,7 +42,7 @@ const CreateExpensesBoys = () => {
 
     if (Object.keys(newErrors).length === 0) {
       // Submit form if there are no errors
-      console.log('Form submitted successfully');
+      // console.log('Form submitted successfully');
       form.reset(); // Reset form after successful submission
     } else {
       setErrors(newErrors); // Set errors state to trigger re-render with error messages

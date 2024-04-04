@@ -1,6 +1,6 @@
 import React from 'react'
-import { HashRouter, Route, Routes } from 'react-router-dom'
-import Sidebar from './components/Sidebar/Sidebar'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+// import Sidebar from './Components/Sidebar/Sidebar'
 // import Dashboard from './pages/Dashboard/Dashboard'
 // import Rooms from './pages/Rooms/Rooms'
 // import Beds from './pages/Beds/Beds'
@@ -12,25 +12,43 @@ import './App.css'
 import MainPage from './pages/MainPage/MainPage'
 import Login from './pages/Login/Login'
 import SignUp from './pages/SignUp/SignUp'
-//import { ToastContainer } from 'react-toastify'
 
 const App = () => {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Routes>
         <Route path="/mainPage" element={<MainPage />} />
         <Route path="/" element={<Login />} />
         <Route path="/signUp" element={<SignUp/>} />
 
-        {/* <Route path="/rooms" element={<Rooms/>} />
-        <Route path="/beds" element={<Beds/>} />
+        {/* <Route path="/rooms" element={<Rooms/>} /> */}
+        {/* <Route path="/beds" element={<Beds/>} />
         <Route path="/rent" element={<Rent/>} />
         <Route path="/tenants" element={<Tenants/>} />
         <Route path="/expenses" element={<Expenses/>} />
         <Route path="/settings" element={<Settings/>} /> */}
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   )
 }
 
 export default App
+
+// import React from 'react'
+// import data from './data.json'
+// console.log(data)
+
+// const App = () => {
+//   return (
+//     <div>
+//       {data.map(item => (
+//         <div key={item.command}>
+//           <h2>{item.command}</h2>
+//           <p>{item.text}</p>
+//         </div>
+//       ))}
+//     </div>
+//   )
+// }
+
+// export default App

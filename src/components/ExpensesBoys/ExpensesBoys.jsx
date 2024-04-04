@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
-import TenantsIcon from '../../images/Icons (4).png'
+import ExpenseIcon from '../../images/Icons (5).png'
 import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
-import ImageIcon from '../../images/Icons (10).png'
+//import ImageIcon from '../../images/Icons (10).png'
 import CreateExpensesBoys from './CreateExpensesBoys'
 
 const ExpensesBoys = () => {
@@ -32,6 +32,62 @@ const ExpensesBoys = () => {
           text: 'Edit'
         }
       },
+      {
+        s_no : 1,
+        room_no :"125/2",
+        name : "ABCDE",
+        month_year: "Aug/2021",
+        rent: "Rs. 5000",
+        created_on: "21 Aug 2021",
+        created_by: "Admin  ",
+        edit: {
+          icon: false,
+          variant: {color:'#ff8a00', radius:'10px'},
+          text: 'Edit'
+        }
+      },
+      {
+        s_no : 1,
+        room_no :"125/2",
+        name : "ABCDE",
+        month_year: "Aug/2021",
+        rent: "Rs. 5000",
+        created_on: "21 Aug 2021",
+        created_by: "Admin  ",
+        edit: {
+          icon: false,
+          variant: {color:'#ff8a00', radius:'10px'},
+          text: 'Edit'
+        }
+      },
+      {
+        s_no : 1,
+        room_no :"125/2",
+        name : "ABCDE",
+        month_year: "Aug/2021",
+        rent: "Rs. 5000",
+        created_on: "21 Aug 2021",
+        created_by: "Admin  ",
+        edit: {
+          icon: false,
+          variant: {color:'#ff8a00', radius:'10px'},
+          text: 'Edit'
+        }
+      },
+      {
+        s_no : 1,
+        room_no :"125/2",
+        name : "ABCDE",
+        month_year: "Aug/2021",
+        rent: "Rs. 5000",
+        created_on: "21 Aug 2021",
+        created_by: "Admin  ",
+        edit: {
+          icon: false,
+          variant: {color:'#ff8a00', radius:'10px'},
+          text: 'Edit'
+        }
+      },
     ]
 
 const[showCreateExpensesBoys, setShowCreateExpensesBoys] = useState(false)
@@ -44,22 +100,22 @@ const toggleCreateExpensesBoys = () => {
     <div className='h-100'>
     {!showCreateExpensesBoys ?(
     <>
-        <div className='d-flex justify-content-between align-items-center'>
-            <div className='d-flex align-items-center'>
-                <div className='roomlogo-container'>
-                    <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo'/>
-                </div>
-                <h1 className='fs-5'>Expenses Management</h1>
+        <div className="row d-flex align-items-center justify-content-between">
+          <div className="col-12 col-md-4 d-flex align-items-center mr-5">
+            <div className='roomlogo-container'>
+              <img src={ExpenseIcon} alt="RoomsIcon" className='roomlogo'/>
             </div>
-            <div>
-                <input type="search" placeholder='Search' className='userinput'/>
-                <img src={SearchIcon} alt="SearchIcon" className='search-icon'/>
-            </div>
-            <div>
-                <button type="button" className='button' onClick={toggleCreateExpensesBoys}>Add Rooms</button>
-            </div>
+            <h1 className='fs-5'>Expenses Management</h1>
+          </div>
+          <div className="col-6 col-md-4 search-wrapper">
+            <input type="text" placeholder='Search' className='search-input'/>
+            <img src={SearchIcon} alt="search-icon" className='search-icon'/>
+          </div>
+          <div className="col-6 col-md-4 d-flex justify-content-end">
+            <button type="button" className='button cursor-pointer' onClick={toggleCreateExpensesBoys}>Add Expenses</button>
+          </div>
         </div>
-        <div className="table-container rounded-table">
+        <div>
             <Table columns={columns} rows={rows}/>
         </div>
         <div className='d-flex justify-content-end mt-4'>

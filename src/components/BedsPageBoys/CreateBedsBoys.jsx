@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import BedsPageBoys from './BedsPageBoys';
 
 const CreateBedsBoys = () => {
-  const [showCreateBedsBoys, setShowCreateBedsBoys] = useState(false);
+  
   const [formData, setFormData] = useState({
     number: '',
     rent: '',
@@ -15,10 +14,6 @@ const CreateBedsBoys = () => {
     rooms: '',
     status: ''
   });
-
-  const toggleCreateBedsBoys = () => {
-    setShowCreateBedsBoys(!showCreateBedsBoys);
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -56,7 +51,7 @@ const CreateBedsBoys = () => {
 
     // If form is valid, proceed with submission
     if (formIsValid) {
-      console.log('Form submitted successfully:', formData);
+      // console.log('Form submitted successfully:', formData);
       // You can perform further actions here, such as sending data to server
     } else {
       setFormErrors(errors);
@@ -65,9 +60,9 @@ const CreateBedsBoys = () => {
 
   return (
     <div className='h-100'>
-      {!showCreateBedsBoys ? (
         <div className="container-fluid">
-          <h1 className='fs-5' onClick={toggleCreateBedsBoys}>&lt;-- Back</h1>
+          {/* <h1 className='fs-5' onClick={toggleCreateBedsBoys}>&lt;-- Back</h1> */}
+          <h1 className='fs-5'>&lt;-- Back</h1>
           <h1 className='text-center mb-2 fs-5'>
             Create Beds
           </h1>
@@ -96,9 +91,7 @@ const CreateBedsBoys = () => {
               <button type="submit" className="btn btn-warning">Create</button>
             </div>
           </form>
-        </div>) : (
-          <BedsPageBoys />
-        )}
+        </div>
     </div>
   );
 };

@@ -94,22 +94,22 @@ const toggleCreateTenantsGirls = () => {
     <div className='h-100'>
     {!showCreateTenantsGirls ?(
     <>
-        <div className='d-flex justify-content-between align-items-center'>
-            <div className='d-flex align-items-center'>
-                <div className='roomlogo-container'>
-                    <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo'/>
-                </div>
-                <h1 className='fs-5'>Tenants Management</h1>
+        <div className="row d-flex align-items-center justify-content-between">
+          <div className="col-12 col-md-4 d-flex align-items-center mr-5">
+            <div className='roomlogo-container'>
+              <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo'/>
             </div>
-            <div>
-                <input type="search" placeholder='Search' className='userinput'/>
-                <img src={SearchIcon} alt="SearchIcon" className='search-icon'/>
-            </div>
-            <div>
-                <button type="button" className='button cursor-pointer' onClick={toggleCreateTenantsGirls}>Add Rooms</button>
-            </div>
+            <h1 className='fs-5'>Beds Management</h1>
+          </div>
+          <div className="col-6 col-md-4 search-wrapper">
+            <input type="text" placeholder='Search' className='search-input'/>
+            <img src={SearchIcon} alt="search-icon" className='search-icon'/>
+          </div>
+          <div className="col-6 col-md-4 d-flex justify-content-end">
+            <button type="button" className='button cursor-pointer' onClick={toggleCreateTenantsGirls}>Add Tenants</button>
+          </div>
         </div>
-        <div className="table-container rounded-table">   
+        <div>   
             <Table columns={columns} rows={rows}/>
         </div>
         <div className='d-flex justify-content-end mt-4'>

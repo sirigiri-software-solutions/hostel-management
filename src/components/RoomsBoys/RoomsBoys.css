@@ -1,7 +1,8 @@
 .roomlogo-container{
     background-color: white;
     width: 100px;
-    box-shadow:000000 2px 10px 0px;
+    height: 100px;
+    box-shadow:#000000 2px 10px 0px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -10,7 +11,7 @@
 }
 
 .roomlogo{
-    padding: 25px 10px;
+  padding: 25px 10px;
 }
 
 .userinput{
@@ -20,45 +21,77 @@
     border: 2px solid grey;
 }
 
-.search-icon{
-    position: relative;
-    right: 40px;
-}
-
 .button{
-    background-color: #FF8A00;
-    border-radius: 20px;
-    padding: 5px 20px;
-    outline: none;
-    border: none;
-    color: white;
-    box-shadow: 0 10px 10px rgba(0,0,0,0.15);
+  background-color: #FF8A00;
+  border-radius: 20px;
+  padding: 5px 20px;
+  outline: none;
+  border: none;
+  color: white;
+  box-shadow: 0 10px 10px rgba(0,0,0,0.15);
 }
 
 .bttn{
-    background-color: #FF8A00;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 5px 20px;
-    margin: 5px 0px 5px 0px;
-}
-
-.thead-color {
-    background-color: #FF8A00;
-}
-
-.tbody-color {
-    background-color: #f8f9fa;
-}
-
-.table-container{
-    background-color: #f0c38f;
-    margin-top: 20px;
-    border-radius: 10px;
+  background-color: #FF8A00;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 20px;
+  margin: 5px 0px 5px 0px;
 }
 
 .rounded-table {
-    border-radius: 10px; 
-    overflow: hidden;
+  border-radius: 10px; 
+  overflow:auto;
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+  
+.section {
+  display: flex;
+  align-items: center;
+}
+  
+.icon-container {
+  margin-right: 10px;
+}
+  
+.section-title {
+  font-size: 24px;
+  margin: 0;
+}
+  
+  
+  .add-button {
+    padding: 7px 20px;
+    background-color: #FDA339;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+
+  .search-wrapper {
+    position: relative;
+  }
+  
+  .search-input {
+    width: calc(100% - 0px); /* Adjusted width to accommodate the icon */
+    padding: 5px 10px 5px 10px;
+    border-radius: 20px;
+    border: 2px solid grey;
+  }
+  
+  .search-icon {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+  }

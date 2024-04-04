@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ImageOne from "../../images/Vector 1 (1).png";
 import ImageTwo from "../../images/Vector 3 (2).png";
 import Logo from "../../images/Kiran Reddy Boys Hostel 1.png";
@@ -26,7 +26,7 @@ const Login = () => {
         let list = [];
         data.map((key) => list.push(data));
         setData(data);
-        console.log(data, "data response from firebase");
+        // console.log(data, "data response from firebase");
       });
   }, []);
 
@@ -71,10 +71,10 @@ const Login = () => {
         //     theme: "light",
         //   })
           alert("You are logged in successfully");
-          //   dispatch(editForm(data[itemExist]))
+        //   dispatch(editForm(data[itemExist]))
           setLoginData(initialState);
           navigate("/mainPage");
-          console.log(flag, "flag");
+          // console.log(flag, "flag");
         } else {
           alert("Password Wrong, please enter correct password");
         }

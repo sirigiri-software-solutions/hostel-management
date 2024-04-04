@@ -29,8 +29,8 @@ const RoomsGirls = () => {
         }
       },
       {
-        s_no : 1,
-        room_no : 125,
+        s_no : 2,
+        room_no : 126,
         floor : "1st",
         remarks: "Two Sharing",
         created_by: "Admin",
@@ -42,8 +42,8 @@ const RoomsGirls = () => {
         }
       },
       {
-        s_no : 1,
-        room_no : 125,
+        s_no : 3,
+        room_no : 127,
         floor : "1st",
         remarks: "Two Sharing",
         created_by: "Admin",
@@ -55,8 +55,8 @@ const RoomsGirls = () => {
         }
       },
       {
-        s_no : 1,
-        room_no : 125,
+        s_no : 4,
+        room_no : 128,
         floor : "1st",
         remarks: "Two Sharing",
         created_by: "Admin",
@@ -68,8 +68,8 @@ const RoomsGirls = () => {
         }
       },
       {
-        s_no : 1,
-        room_no : 125,
+        s_no : 5,
+        room_no : 129,
         floor : "1st",
         remarks: "Two Sharing",
         created_by: "Admin",

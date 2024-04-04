@@ -1,7 +1,8 @@
 import React from 'react'
 
-const CreateRoomsBoys = () => {
-  return ( 
+const BedGirls = () => {
+  return (
+    <>
     <div className="container-fluid">
         <h1 className='text-center mb-2 fs-5'>
             Create Beds
@@ -28,7 +29,8 @@ const CreateRoomsBoys = () => {
           </div>
         </form>
     </div>
+    </>
   )
 }
 
-export default CreateRoomsBoys
+export default BedGirls

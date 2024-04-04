@@ -96,7 +96,7 @@ const RentPageGirls = () => {
   ]
 
   const handleClick = () => {
-    console.log("clicked")
+    // console.log("clicked")
   }
 
   return (

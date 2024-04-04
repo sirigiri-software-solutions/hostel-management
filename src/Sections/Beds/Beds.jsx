@@ -6,7 +6,7 @@ import CreateBedsGirls from '../../components/CreateBedsGirls/CreateBedsGirls';
 
 const Beds = () => {
     const [activeTab, setActiveTab] = useState('boys');
-
+    const name=localStorage.getItem("username")
     const handleTabSelect = (tab) => {
         setActiveTab(tab);
     };
@@ -15,7 +15,7 @@ const Beds = () => {
         <div className="container">
             <div className='top-div'>
                 <img src={Admin} alt="admin" className='dashboard-icon' />
-                <h1 className='dashboard-heading'>Admin</h1>
+                <h1 className='dashboard-heading'>{name}</h1>
             </div>
             <h1 className='dashboard-welcome'>&lt;-- Back</h1>
             <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">

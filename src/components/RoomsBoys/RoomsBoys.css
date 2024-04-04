@@ -4,9 +4,11 @@
     box-shadow:000000 2px 10px 0px;
     display: flex;
     justify-content: center;
+
     align-items: center;
     border-radius: 70%;
     margin-right: 10px;
+    
 }
 
 .roomlogo{

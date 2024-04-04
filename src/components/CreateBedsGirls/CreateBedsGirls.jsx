@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import bedIcon from '../../images/Icons (3).png'
 import Table from '../../Elements/Table'
+import BedGirls from './BedGirls'
+import Button from '../../Elements/Button'
 
 const CreateBedsGirls = () => {
   const columns = [
@@ -28,7 +30,7 @@ const CreateBedsGirls = () => {
       }
     },
     {
-      s_no : 1,
+      s_no : 2,
       bed_number : 2,
       room_no : 125,
       floor: "1st",
@@ -41,7 +43,7 @@ const CreateBedsGirls = () => {
       }
     },
     {
-      s_no : 1,
+      s_no : 3,
       bed_number : 2,
       room_no : 125,
       floor: "1st",
@@ -54,7 +56,7 @@ const CreateBedsGirls = () => {
       }
     },
     {
-      s_no : 1,
+      s_no : 4,
       bed_number : 2,
       room_no : 125,
       floor: "1st",
@@ -67,7 +69,7 @@ const CreateBedsGirls = () => {
       }
     },
     {
-      s_no : 1,
+      s_no : 5,
       bed_number : 2,
       room_no : 125,
       floor: "1st",
@@ -80,9 +82,15 @@ const CreateBedsGirls = () => {
       }
     },
   ]
+  const [showCreateRoomGirls,setShowcreateRoomGirls]=useState(false)
+  const toggleCreateRoomGirls=() =>{
+   setShowcreateRoomGirls(!showCreateRoomGirls);
+  }
 
   return (
     <div className='h-100'>
+       {!showCreateRoomGirls ?(
+        <>
         <div className='d-flex justify-content-between align-items-center'>
             <div className='d-flex align-items-center'>
                 <div className='roomlogo-container'>
@@ -94,18 +102,28 @@ const CreateBedsGirls = () => {
                 <input type="search" placeholder='Search' className='userinput'/>
             </div>
             <div>
-                <input type="button" value="Add Rooms" className='button'/>
+                <button type="submit" value="Add Rooms" className='button' onClick={toggleCreateRoomGirls}>Add Rooms</button>
             </div>
         </div>
         <div className="table-container rounded-table">   
             <Table columns={columns} rows={rows}/>
         </div>
         <div className='d-flex justify-content-end mt-2'>
+              <Button
+                
+                icon={false}
+                variant={{ color: '#ff8a00', radius: '10px', padding: "1px" }}
+                text={'0'}
+              />
+        <div className='d-flex justify-content-end mt-2'>
             <span className='btn btn-outline-dark m-1'>1</span>
             <span className='btn btn-outline-dark m-1'>2</span>
             <span className='btn btn-outline-dark m-1'>...</span>
             <span className='btn btn-outline-dark m-1'>10</span>
         </div>
+        </div>
+        </>
+        ):(<BedGirls/>)}
     </div>
   )
 }

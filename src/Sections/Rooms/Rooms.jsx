@@ -6,6 +6,7 @@ import RoomsGirls from '../../components/RoomsGirls/RoomsGirls';
 
 function Rooms() {
     const [activeTab, setActiveTab] = useState('boys');
+    const name=localStorage.getItem("username");
 
     const handleTabSelect = (tab) => {
         setActiveTab(tab);
@@ -15,7 +16,7 @@ function Rooms() {
         <div className="container">
             <div className='top-div'>
                 <img src={Admin} alt="admin" className='dashboard-icon' />
-                <h1 className='dashboard-heading'>Admin</h1>
+                <h1 className='dashboard-heading'>{name}</h1>
             </div>
             <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
                 <Tab eventKey="boys" title="Men's">

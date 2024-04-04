@@ -22,40 +22,40 @@ const SignUp = () => {
     password: '',
     confirmpassword: '',
   });
-
+ 
   const { firstname, lastname, email, phone, password, confirmpassword } = data;
-
+ 
   const changeHandler = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: '' }); // Reset error when input changes
   };
-
+ 
   const submitHandler = (e) => {
     e.preventDefault();
     let formValid = true;
     const newErrors = { ...errors };
-
+ 
     // Check for empty fields
     if (firstname.trim() === '') {
       newErrors.firstname = 'Please enter your first name';
       formValid = false;
     }
-
+ 
     if (lastname.trim() === '') {
       newErrors.lastname = 'Please enter your last name';
       formValid = false;
     }
-
+ 
     if (email.trim() === '') {
       newErrors.email = 'Please enter your email';
       formValid = false;
     }
-
+ 
     if (phone.trim() === '') {
       newErrors.phone = 'Please enter your phone number';
       formValid = false;
     }
-
+ 
     if (password.trim() === '') {
       newErrors.password = 'Please enter your password';
       formValid = false;
@@ -64,7 +64,7 @@ const SignUp = () => {
         'Password must be at least 8 characters long and contain at least 1 character, 1 symbol, and 1 number';
       formValid = false;
     }
-
+ 
     if (confirmpassword.trim() === '') {
       newErrors.confirmpassword = 'Please confirm your password';
       formValid = false;
@@ -72,12 +72,12 @@ const SignUp = () => {
       newErrors.confirmpassword = 'Passwords do not match';
       formValid = false;
     }
-
+ 
     if (!formValid) {
       setErrors(newErrors);
       return; // Don't proceed with submission if form is invalid
     }
-
+ 
     // Create a data object for submission without errors
     const formData = {
       firstname,
@@ -87,7 +87,7 @@ const SignUp = () => {
       password,
       confirmpassword,
     };
-
+ 
     // Proceed with form submission if all fields are filled
     axios
       .post('https://signuppage-2f4c8-default-rtdb.firebaseio.com/register.json', formData)
@@ -125,12 +125,12 @@ const SignUp = () => {
         })
       });
   };
-
+ 
   const isPasswordValid = (password) => {
     // Password must be at least 8 characters long and contain at least 1 character, 1 symbol, and 1 number
     return /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
   };
-
+ 
   return (
     <div className='signup-page'>
       <div className='signup-form'>
@@ -196,5 +196,5 @@ const SignUp = () => {
     </div>
   );
 };
-
+ 
 export default SignUp;

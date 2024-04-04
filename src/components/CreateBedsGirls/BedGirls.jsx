@@ -1,7 +1,8 @@
 import React from 'react'
 
-const CreateBedsGirls = () => {
-  return ( 
+const BedGirls = () => {
+  return (
+    <>
     <div className="container-fluid">
         <h1 className='text-center mb-2 fs-5'>
             Create Beds
@@ -21,14 +22,15 @@ const CreateBedsGirls = () => {
           </div>
           <div class="col-md-6">
             <label for="inputRent" class="form-label">Select Status</label>
-            <input type="number" class="form-control" id="inputRent"/>
+            <input type="text" class="form-control" id="inputRent"/>
           </div>
           <div class="col-12 text-center">
             <button type="submit" class="btn btn-warning">Create</button>
           </div>
         </form>
     </div>
+    </>
   )
 }
 
-export default CreateBedsGirls
+export default BedGirls

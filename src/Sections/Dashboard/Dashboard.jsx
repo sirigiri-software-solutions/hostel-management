@@ -8,6 +8,7 @@ import './Dashboard.css';
 const Dashboard = () => {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [activeTab, setActiveTab] = useState('boys');
+  const name = localStorage.getItem("username")
 
   useEffect(() => {
     const handleResize = () => {
@@ -30,7 +31,7 @@ const Dashboard = () => {
     <div className='container_main'>
       <div className='top-div'>
         <img src={Admin} alt="admin" className='dashboard-icon' />
-        <h1 className='dashboard-heading'>Admin</h1>
+        <h1 className='dashboard-heading'>{name}</h1>
       </div>
       <h1 className='dashboard-welcome'>Welcome</h1>
       {isSmallScreen ? 

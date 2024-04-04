@@ -1,6 +1,7 @@
+
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ImageOne from "../../images/Vector 1 (1).png";
 import ImageTwo from "../../images/Vector 3 (2).png";
 import Logo from "../../images/Kiran Reddy Boys Hostel 1.png";
@@ -9,6 +10,7 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 export const loginContext = createContext();
+
 const Login = () => {
   const navigate = useNavigate();
   const initialState = { Id: "", email: "", password: "" };
@@ -16,14 +18,35 @@ const Login = () => {
   const [data, setData] = useState([]);
   const [flag, setFlag] = useState(false);
   const [loginErrors, setLoginErrors] = useState({});
+  // const [oldPassword,setoldPassword]=useState("");
+  // const [username, setUsername] = useState('');
+  // const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  // setLoginData({...loginData,[loginData.email]:localStorage.getItem('rememberedUsername')|| " "})
+  // setLoginData({...loginData,[]})
+
+  useEffect(()=>{
+    const rememberedUsername=localStorage.getItem('rememberedUsername');
+    const rememberedPassword=localStorage.getItem('rememberedPassword');
+    if (rememberedUsername && rememberedPassword) {
+      setLoginData({...loginData,[loginData.email]:rememberedUsername});
+      setLoginData({...loginData,[loginData.password]:rememberedPassword});
+      setRememberMe(true);
+    }
+
+  },[])
+  const handleRememberme=(e)=>{
+    // console.log(e);
+    // setRememberMe(e.target.checked)
+    setRememberMe(!rememberMe);
+
+  }
 
   useEffect(() => {
     axios
       .get("https://signuppage-2f4c8-default-rtdb.firebaseio.com/register.json")
       .then((response) => {
         let data = Object.values(response.data);
-        let list = [];
-        data.map((key) => list.push(data));
         setData(data);
         // console.log(data, "data response from firebase");
       });
@@ -42,7 +65,9 @@ const Login = () => {
       const itemExist = data.findIndex(
         (item) => item.email === loginData.email
       );
-      //console.log(data[itemExist])
+      
+      const singleLoginuser = data.find((item)=>item.email === loginData.email);
+      // console.log(singleLoginuser);
       if (itemExist > -1) {
         if (
           data[itemExist].email === loginData.email &&
@@ -61,6 +86,7 @@ const Login = () => {
           })
           setLoginData(initialState);
           navigate("/mainPage");
+          localStorage.setItem("username",singleLoginuser.firstname)
           // console.log(flag, "flag");
         } else {
           toast.error("Password Wrong, please enter correct password.", {
@@ -87,8 +113,18 @@ const Login = () => {
         })
       }
     }
-    //console.log(flag,'flag')
+
+    // If Remember Me is checked, store login information in localStorage
+    if (rememberMe) {
+      localStorage.setItem('rememberedUsername', loginData.email);
+      localStorage.setItem('rememberedPassword', loginData.password);
+    } else {
+      // If Remember Me is unchecked, remove stored login information from localStorage
+      localStorage.removeItem('rememberedUsername');
+      localStorage.removeItem('rememberedPassword');
+    }
   };
+
   const hideErrors = (event) => {
     setLoginErrors({
       ...loginErrors,
@@ -119,95 +155,92 @@ const Login = () => {
     setLoginErrors(errors);
     return isValid;
   };
-//   console.log(myId,'outside')
+
+  
   return (
     <React.Fragment>
-      <main>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            margin:'auto',
-            gap:'40px',
-            width: "1200px",
-            height: "800px",
-            backgroundColor: "rgba(255, 255, 255, 0.4)",
-            position: "relative",
-            // marginBottom:'100px',
-            background:
-              "linear-gradient(to bottom left, #efefef 20%, #ffffff 35%)",
-          }}
-        >
-          <img
-            src={ImageOne}
-            alt="imageOne"
-            className="login_page_imageOne"
-          />
-          <div style={{display: 'flex', flexDirection:'column', alignItems:'center', gap:'20px'}}>
-            <img src={Logo} style={{width:'250px', height:'250px'}} alt="logo" />
-            <label style={{width:'600px', padding:'10px 15px', fontWeight:'bold', fontSize:'16px', color:'#000'}}>A Home away from home, where strangers become friends and every day is an adventure.</label>
+      <main  className="  col-lg-11 col-md-8 col-sm-8 col-12" id="main">
+        <div className="" >
+          <img src={ImageOne} alt="" className="img-fluid animatedimg"/>
+         <div className="smallscrn">
+          <div className="d-flex flex-column align-items-center imgcontainer">
+            <img src={Logo} alt="" className="img" />
+            <p className="p"><b>A Home away from home, where strangers become friends and every
+                day is an adventure.</b></p>
           </div>
-          <form onSubmit={checkData} style={{display:'flex', flexDirection:'column', gap: '20px', alignItems:'center', zIndex:'9'}}>
-            <div style={{fontSize:'40px', fontWeight:'bold', color:'#FDA339'}}>LOGIN</div>
-            <div style={{display:'flex', flexDirection:'column'}}>
-                <input
-                    type="text"
-                    className={`login_page_username ${loginErrors?.email && 'border border-danger'}`}
-                    placeholder="Username or Email"
-                    onChange={handleData}
-                    onFocus={hideErrors}
-                    onBlur={checkErrors}
-                    value={loginData.email}
-                    name="email"
+          <form onSubmit={checkData} className="d-flex flex-column frm ">
+            <div className="text-center font-weight-bold login">LOGIN</div>
+            <div>
+            <input
+                  type="email"
+                  className={`form-control ${loginErrors?.email && "is-invalid"}`}
+                  placeholder="Username or Email"
+                  onChange={handleData}
+                  onFocus={hideErrors}
+                  onBlur={checkErrors}
+                  value={loginData.email}
+                  name="email"
+                  id="mail"
                 />
-                {loginErrors.email ? (
-                    <small className="ms-3 text-danger">{loginErrors.email}</small>
-                ) : null
-                }
-            </div>
-            <div style={{display:'flex', flexDirection:'column'}}>
-                <input
-                    type="text"
-                    className={`login_page_username ${loginErrors?.password && 'border border-danger'}`}
-                    placeholder="Password"
-                    onChange={handleData}
-                    onFocus={hideErrors}
-                    onBlur={checkErrors}
-                    value={loginData.password}
-                    name="password"
-                />
-                {loginErrors.password ? (
-                    <small className="ms-3 text-danger">{loginErrors.password}</small>
-                ) : null
-                }
-            </div>
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%'}}>
-                <div style={{display:'flex', alignItems:'center', gap:'14px'}}>
-                    <input type="checkbox" id='remember' style={{width:'24px', height:'24px', border:'1px solid #555'}} />
-                    <label for='remember' className="login_page_rememberMe">Remember me</label>
+                {loginErrors.email && (
+                  <div className="invalid-feedback">{loginErrors.email}</div>
+                )}
                 </div>
-                <label className="login_page_forgotPassword" style={{fontSize:'16px'}}>Forgot Password?</label>
-            </div>
-            <input type="submit" value='Login' style={{color:'#fff', padding:'15px 24px', backgroundColor:'#FDA339', border:'none', borderRadius:'50px', fontSize:'18px', fontWeight:'bold'}}  />
+                <div className="d-flex flex-column">
+                <input
+                  type="password"
+                  className={`form-control ${loginErrors?.password && "is-invalid"}`}
+                  placeholder="Password"
+                  onChange={handleData}
+                  onFocus={hideErrors}
+                  onBlur={checkErrors}
+                  value={loginData.password}
+                  name="password"
+                  id="pass"
+                />
+                {loginErrors.password && (
+                  <div className="invalid-feedback">{loginErrors.password}</div>
+                )}
+                </div>
+                <div className="check">
+                  <div>
+                  <input
+                    type="checkbox"
+                    id="remember"
+                    className="form-check-input"
+                    checked={rememberMe}
+                    onChange={handleRememberme}
+                  />
+                  <label id="rememberText" className="form-check-label">
+                    Remember me
+                  </label>
+                  </div>
+                  <p className="text" >Forgot Password?</p>
+                  {/* <Updatepass oldPassword={oldPassword} /> */}
+                </div>
+                <div className="text-center btndiv">
+                <button
+                type="submit"
+                className="btn btn-lg btn-block "
+                Id='btn'
+              >
+                 Login
+              </button>
+              </div>
           </form>
-          <img
-            src={ImageTwo}
-            alt="imageTwo"
-            style={{
-            //   transform: 'rotate(180deg)',
-              position: "absolute",
-              bottom: "0",
-              right: "0",
-              width: "550px",
-              height: "330px",
-              zIndex:'0'
-            }}
-          />
-        {/* <ToastContainer /> */}
+        </div>
+          <img src={ImageTwo} alt="" className="img-fluid animatedimg" id="imgtwo"/>
         </div>
       </main>
+
+    
     </React.Fragment>
   );
 };
-//export {demoId}
+
 export default Login;
+
+
+
+
+

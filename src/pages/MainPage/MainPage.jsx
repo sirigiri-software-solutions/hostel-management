@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import DashboardImage from '../../images/Icons (1).png'
 import RoomsImage from '../../images/Icons (2).png'
 import BedsImage from '../../images/Icons (3).png'
@@ -16,9 +16,11 @@ import Expenses from '../../Sections/Expenses/Expenses'
 import Rents from '../../Sections/Rents/Rents'
 import Tenants from '../../Sections/Tenants/Tenants'
 import Settings from '../../Sections/Settings/Settings'
-
+import { GiHamburgerMenu } from "react-icons/gi";
+import Popup from 'reactjs-popup'
+import { AiOutlineClose} from 'react-icons/ai'
 const MainPage = () => {
-
+ 
   const menuItems = [
     {
       id:1,
@@ -63,39 +65,196 @@ const MainPage = () => {
       icon: SettingsImage
     },
   ]
-
+ 
   const Components = [<Dashboard />, <Rooms/>, <Beds />, <Rents/>, <Tenants />, <Expenses />, <Settings />]
-
+ 
   const [flag, setFlag] = useState(1);
-
+ 
   const handlesideBar = (value) => {
     setFlag(value);
   }
-
-  // console.log(flag, 'flag')
-
+ 
+ 
+ 
+ 
+  // by using resize
+ 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        // For smaller screens
+        setMainBackgroundContainerStyle({ display: 'flex', width: '100%', margin: '0px', flexDirection: 'column' });
+        setSidebarStyle({ width: '100%', backgroundColor: '#ECECEC', padding: '20px',display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center' });
+        setSidebarItems({display:'none'});
+        setrightSectionMainContainer({width:'100%',padding:'20px'})
+        setHamburgerMenu({fontSize:'40px'})
+        
+      } else {
+        // For larger screens
+        setMainBackgroundContainerStyle({ display: 'flex', width: '100%', margin: '0px', flexDirection: 'row' });
+        setSidebarStyle({ width: '21%', backgroundColor: '#ECECEC', padding: '20px', borderRadius: '0px 65px 65px 0px',display:'flex',flexDirection:'column' });
+        setSidebarItems({display:'flex', flexDirection:'column',gap:'15px'})
+        setrightSectionMainContainer({width:'80%',padding:'16px 20px'})
+        setHamburgerMenu({display:'none'})
+        setHamburgerMenuItems(false);
+      }
+    };
+ 
+    // Call handleResize initially
+    handleResize();
+ 
+    // Add event listener for window resize
+    window.addEventListener('resize', handleResize);
+ 
+    // Cleanup the event listener
+    return () => window.removeEventListener('resize', handleResize);
+  }, []); // Empty dependency array ensures that the effect only runs once after component mount
+ 
+ 
+ 
+  const [mainBackgroundContainerStyle, setMainBackgroundContainerStyle] =useState({})
+  const [sidebarStyle, setSidebarStyle] = useState({})
+  const [sidebarItems,setSidebarItems] = useState({})
+  const [rightSectionMainContainer,setrightSectionMainContainer] =useState({})
+  const[hamburgerMenu,setHamburgerMenu] = useState(false)
+  const [hamburgerMenuItems,setHamburgerMenuItems] = useState(false)
+ 
+ 
+ 
+  const handleHamburgerMenu = () => {
+    setHamburgerMenuItems(!hamburgerMenuItems)
+  }
+ 
+ 
+ 
+  // CSS
+ 
+  // const [mainBackgroundContainerStyle, setMainBackgroundContainerStyle] = useState({
+  //   display: 'flex',
+  //   width: '100%',
+  //   margin: '0px',
+  //   flexDirection: 'row',
+  // });
+ 
+  // const [sidebarStyle, setSidebarStyle] = useState({
+  //   width: '21%',
+  //   backgroundColor: '#ECECEC',
+  //   padding: '20px',
+  //   borderRadius: '0px 65px 65px 0px',
+  //   display:'flex',
+  //   flexDirection:'column',
+  // });
+ 
+  // const [sidebarItems,setSidebarItems] = useState({
+  //   display:'flex',
+  //   flexDirection:'column',
+  //   gap:'15px'
+  // })
+ 
+ 
+  // const [rightSectionMainContainer,setrightSectionMainContainer] = useState({
+  //   width:'80%',
+  //   padding:'16px 20px'
+ 
+  // })
+   
+ 
+  const handleSidebarItemClick = (itemId, close) => {
+    handlesideBar(itemId);
+    close(); // Close the popup modal
+  }
+ 
+ 
+ 
   return (
-    <div className='bg-container' style={{display:'flex', width:'100%', margin:"0px"}}>
-        <div className='sidebar' style={{width:'19%', backgroundColor:"#ECECEC", padding:"20px", borderRadius:"0px 80px 80px 0px"}}>
+    <div className='bg-container' style={mainBackgroundContainerStyle}>
+        <div className='sidebar' style={sidebarStyle}>
             <div className='top-section'>
             <img src={logo} alt="logo" className='logo' />
             </div>
-            <div style={{display:'flex', flexDirection:'column', gap:'30px'}}>
+            <div style={sidebarItems}>
                 {
                 menuItems.map((item, index) =>(
-                    <div key={index} className="link" style={flag === item.id ? {backgroundColor: 'hsla(30, 100%, 50%, 0.41)',  borderRadius: '10px'} : {borderRadius:'10px'} } onClick={() => handlesideBar(item.id)}>
-                    <img src={item.icon} style={{width:'50px', height:'32px'}} alt={item.name} className='icon'/>
+                    <div key={index} className="link" style={flag === item.id ? {backgroundColor: 'hsla(30, 100%, 50%, 0.41)',  borderRadius: '10px'} : {borderRadius:'10px'} } onClick={() =>handlesideBar(item.id)}>
+                    <img src={item.icon} alt={item.name}  className='icon'/>
                     <label className='link-text'>{item.name}</label>
                     </div>
                 ))
                 }
             </div>
+ 
+            {/* Hamberger icon */}
+            {/* <GiHamburgerMenu style={hamburgerMenu} onClick={handleHamburgerMenu} /> */}
+            {/* {
+              hamburgerMenuItems && menuItems.map((item, index) => (
+                <label key={index}>{item.name}</label>
+              ))
+            } */}
+           
+          {/*another approach popup model */}
+ 
+ 
+          <Popup modal
+          trigger={<GiHamburgerMenu style={hamburgerMenu} onClick={handleHamburgerMenu} />}>
+            {close => (
+              <div style={{
+                      backgroundColor: "#fff",
+                      minHeight: "100vh",
+                      minWidth: "100vw",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      position: "relative"
+                    }}>
+                      <div style={{display:"flex",flexDirection:"Column"}}>
+                      {
+                         
+                        menuItems.map((item, index) => (
+                          <div key={index} className="link" style={flag === item.id ? {backgroundColor: 'hsla(30, 100%, 50%, 0.41)',  borderRadius: '10px'} : {borderRadius:'10px'} } onClick={() =>handleSidebarItemClick(item.id, close) }>
+                            <img src={item.icon} alt={item.name}  className='icon'/>
+                            <label className='link-text'>{item.name}</label>
+                            </div>
+                        ))
+ 
+                      }
+                      </div>
+                      <AiOutlineClose
+                      style={{
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
+       
+                      }}
+                        onClick={() => close()}/>
+                     
+              </div>
+ 
+ 
+            )}
+          </Popup>
+ 
+ 
+ 
+ 
+ 
         </div>
-        <div style={{width:'80%', padding:'16px 20px'}}>
+        {/* <div style={mobileMenuItems}>
+        {
+              hamburgerMenu && (
+                hamburgerMenuItems && menuItems.map((item, index) => (
+                  <div key={index} className="link" style={flag === item.id ? {backgroundColor: 'hsla(30, 100%, 50%, 0.41)',  borderRadius: '10px'} : {borderRadius:'10px'} } onClick={() => handlesideBar(item.id)}>
+                    <label className='link-text'>{item.name}</label>
+                    </div>
+                ))
+              )
+            }
+            </div> */}
+         
+        <div style={rightSectionMainContainer}>
             {Components && Components.map((item, index) => <div key={index} style={flag === index+1 ? {display:'block'} : {display: 'none'}}>{item}</div>)}
         </div>
     </div>
   )
 }
-
+ 
 export default MainPage;

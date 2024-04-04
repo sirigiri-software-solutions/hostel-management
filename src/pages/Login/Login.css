@@ -220,7 +220,6 @@
 
 @media screen and (max-width:340px) {
      .check{
-
         flex-direction: column;
         text-align: center;
      }

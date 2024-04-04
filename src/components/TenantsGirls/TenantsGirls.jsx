@@ -1,4 +1,3 @@
-
 import React from 'react'
 import TenantsIcon from '../../images/Icons (4).png'
 import SearchIcon from '../../images/Icons (9).png'

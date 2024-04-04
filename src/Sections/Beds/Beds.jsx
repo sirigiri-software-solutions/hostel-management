@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Admin from '../../images/Icons.png';
 import { Tab, Tabs } from 'react-bootstrap';
-import CreateBedsBoys from '../../components/CreateBedsBoys/CreateBedsBoys';
-import CreateBedsGirls from '../../components/CreateBedsGirls/CreateBedsGirls';
+import BedsPageBoys from '../../components/BedsPageBoys/BedsPageBoys';
+import BedsPageGirls from '../../components/BedsPageGirls/BedsPageGirls';
 
 const Beds = () => {
     const [activeTab, setActiveTab] = useState('boys');
@@ -17,13 +17,12 @@ const Beds = () => {
                 <img src={Admin} alt="admin" className='dashboard-icon' />
                 <h1 className='dashboard-heading'>{name}</h1>
             </div>
-            <h1 className='dashboard-welcome'>&lt;-- Back</h1>
             <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
                 <Tab eventKey="boys" title="Men's">
-                    <CreateBedsBoys />
+                    <BedsPageBoys />
                 </Tab>
                 <Tab eventKey="girls" title="Women's">
-                    <CreateBedsGirls />
+                    <BedsPageGirls />
                 </Tab>
             </Tabs>
         </div>

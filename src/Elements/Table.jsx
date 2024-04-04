@@ -1,6 +1,7 @@
 
 import React, { useEffect,useState} from 'react'
 import Button from './Button'
+import './Table.css'
  
 const Table = ({columns, rows}) => {
  
@@ -175,4 +176,4 @@ const handleSave=(id)=>{
   )
 }
  
-export default Table
+export default Table;

@@ -7,7 +7,7 @@ import ExpensesGirls from '../../components/ExpensesGirls/ExpensesGirls';
  
 function Expenses() {
     const [activeTab, setActiveTab] = useState('boys');
-    const name=localStorage.getItem("username")
+    const name=localStorage.getItem("username");
  
     const handleTabSelect = (tab) => {
         setActiveTab(tab);

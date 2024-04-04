@@ -4,7 +4,6 @@ import Beds from '../../images/Icons (3).png'
 import Tenants from '../../images/Icons (4).png'
 import Expenses from '../../images/Icons (5).png'
 import './DashboardGirls.css'
-import Button from '../../Elements/Button'
 import SmallCard from '../../Elements/SmallCard'
 import PlusIcon from '../../images/Icons (8).png'
 

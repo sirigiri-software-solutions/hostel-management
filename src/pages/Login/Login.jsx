@@ -1,15 +1,13 @@
 
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ImageOne from "../../images/Vector 1 (1).png";
 import ImageTwo from "../../images/Vector 3 (2).png";
 import Logo from "../../images/Kiran Reddy Boys Hostel 1.png";
-// import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import './Login.css'
-// import Updatepass from "./Updatepass";
+// import { ToastContainer, toast } from "react-toastify";
+// import 'react-toastify/dist/ReactToastify.css';
 
 
 export const loginContext = createContext();

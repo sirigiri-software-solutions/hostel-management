@@ -30,6 +30,11 @@ function Tenants() {
         </div>
     );
 }
+<<<<<<< HEAD
  
 export default Tenants;
  
+=======
+
+export default Tenants;
+>>>>>>> f4d63b408381c4baf95f6c381e922f2cfef47cdb

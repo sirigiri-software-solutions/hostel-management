@@ -19,8 +19,7 @@ const Button = ({ icon, variant, text }) => {
       >
       {icon && <img src={PlusIcon} alt="Plus-Icon" style={{ width: "20px" }} />}
       {text}
-    </button>
-    
+    </button>    
     </>
   );
 };

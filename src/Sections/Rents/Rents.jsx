@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Adminlogo from '../../images/Icons (6).png'
+import Adminlogo from '../../images/Icons.png'
 import { Tab, Tabs } from 'react-bootstrap';
 import RentPageBoys from '../../components/RentPageBoys/RentPageBoys';
 import RentPageGirls from '../../components/RentPageGirls/RentPageGirls';

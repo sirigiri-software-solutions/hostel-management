@@ -1,11 +1,13 @@
-// import React, { useEffect, useState } from 'react';
-// import Rooms from '../../images/Icons (2).png';
-// import Beds from '../../images/Icons (3).png';
-// import Tenants from '../../images/Icons (4).png';
-// import Expenses from '../../images/Icons (5).png';
-// import './DashboardBoys.css';
-// import SmallCard from '../../Elements/SmallCard';
-// import Button from '../../Elements/Button';
+import React, { useEffect, useState } from 'react';
+import Rooms from '../../images/Icons (2).png'
+import Beds from '../../images/Icons (3).png'
+import Tenants from '../../images/Icons (4).png'
+import Expenses from '../../images/Icons (5).png'
+import './DashboardBoys.css'
+import SmallCard from '../../Elements/SmallCard'
+import './DashboardBoys.css';
+import PlusIcon from "../../images/Icons (8).png"
+//import PlusIcon from '../../images/Icons (8).png'
 
 // const DashboardBoys = () => {
 //   const [btn, setBtn] = useState(false);
@@ -97,16 +99,6 @@
 
 // export default DashboardBoys;
 
-
-
-import React, { useEffect, useState } from 'react';
-import Rooms from '../../images/Icons (2).png';
-import Beds from '../../images/Icons (3).png';
-import Tenants from '../../images/Icons (4).png';
-import Expenses from '../../images/Icons (5).png';
-import './DashboardBoys.css';
-import SmallCard from '../../Elements/SmallCard';
-import PlusIcon from "../../images/Icons (8).png"
  
  
 const DashboardBoys = () => {

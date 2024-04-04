@@ -1,4 +1,3 @@
-
 import React from 'react'
 import TenantsIcon from '../../images/Icons (4).png'
 import SearchIcon from '../../images/Icons (9).png'
@@ -24,7 +23,7 @@ const TenantsBoys = () => {
       {
         s_no : 1,
         image :ImageIcon,
-        namee : "Jhonson",
+        name : "Jhonson",
         id: "Adhaar",
         mobile_no: "+91 9010987123",
         room_bed_no: "125/2",
@@ -38,7 +37,7 @@ const TenantsBoys = () => {
       {
         s_no : 2,
         image :ImageIcon,
-        namee : "Jhonson",
+        name : "Jhonson",
         id: "Adhaar",
         mobile_no: "+91 9010987123",
         room_bed_no: "125/2",
@@ -52,7 +51,7 @@ const TenantsBoys = () => {
       {
         s_no : 3,
         image :ImageIcon,
-        namee : "Jhonson",
+        name : "Jhonson",
         id: "Adhaar",
         mobile_no: "+91 9010987123",
         room_bed_no: "125/2",
@@ -66,7 +65,7 @@ const TenantsBoys = () => {
       {
         s_no : 4,
         image :ImageIcon,
-        namee : "Jhonson",
+        name : "Jhonson",
         id: "Adhaar",
         mobile_no: "+91 9010987123",
         room_bed_no: "125/2",
@@ -80,7 +79,7 @@ const TenantsBoys = () => {
       {
         s_no : 5,
         image :ImageIcon,
-        namee : "Jhonson",
+        name : "Jhonson",
         id: "Adhaar",
         mobile_no: "+91 9010987123",
         room_bed_no: "125/2",
@@ -181,4 +180,4 @@ const toggleCreateTenantsBoys = () => {
   )
 }
  
-export default TenantsBoys
+export default TenantsBoys;

@@ -1,4 +1,3 @@
-
 import React, { useState,useEffect } from 'react'
 import DashboardImage from '../../images/Icons (1).png'
 import RoomsImage from '../../images/Icons (2).png'
@@ -20,7 +19,6 @@ import Settings from '../../Sections/Settings/Settings'
 import { GiHamburgerMenu } from "react-icons/gi";
 import Popup from 'reactjs-popup'
 import { AiOutlineClose} from 'react-icons/ai'
- 
 const MainPage = () => {
  
   const menuItems = [
@@ -90,8 +88,7 @@ const MainPage = () => {
         setSidebarItems({display:'none'});
         setrightSectionMainContainer({width:'100%',padding:'20px'})
         setHamburgerMenu({fontSize:'40px'})
-       
-       
+        
       } else {
         // For larger screens
         setMainBackgroundContainerStyle({ display: 'flex', width: '100%', margin: '0px', flexDirection: 'row' });

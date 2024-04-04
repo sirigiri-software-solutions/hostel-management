@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-
 const SmallCard = (props) => {
+
     const {index, item} = props
     let [card,setCard]=useState(false)
 

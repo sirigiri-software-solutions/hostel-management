@@ -1,20 +1,24 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
 import MainPage from './pages/MainPage/MainPage'
 import Login from './pages/Login/Login'
 import SignUp from './pages/SignUp/SignUp'
 import { ToastContainer } from 'react-toastify'
+import { FetchData } from './ApiData/FetchData'
+import { DataProvider } from './ApiData/ContextProvider'
 
 const App = () => {
   return (
     <BrowserRouter>
-      <ToastContainer />
-      <Routes>
-        <Route index element={<Login />} />
-        <Route path="/mainPage" element={<MainPage />} />
-        <Route path="/signUp" element={<SignUp/>} />
-      </Routes>
+      <DataProvider>
+        <ToastContainer />
+          <Routes>
+            <Route index element={<Login />} />
+            <Route path="/mainPage" element={<MainPage />} />
+            <Route path="/signUp" element={<SignUp/>} />
+          </Routes>
+      </DataProvider>
     </BrowserRouter>
   )
 }

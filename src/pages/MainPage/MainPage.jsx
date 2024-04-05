@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect, useContext } from 'react'
 import DashboardImage from '../../images/Icons (1).png'
 import RoomsImage from '../../images/Icons (2).png'
 import BedsImage from '../../images/Icons (3).png'
@@ -19,8 +19,11 @@ import Settings from '../../Sections/Settings/Settings'
 import { GiHamburgerMenu } from "react-icons/gi";
 import Popup from 'reactjs-popup'
 import { AiOutlineClose} from 'react-icons/ai'
+import { DataContext } from '../../ApiData/ContextProvider'
 const MainPage = () => {
- 
+
+  // Refer here for fetched Api Data use like this in all pages don't fetch api url
+  const { data } = useContext(DataContext);
   const menuItems = [
     {
       id:1,
@@ -73,6 +76,8 @@ const MainPage = () => {
   const handlesideBar = (value) => {
     setFlag(value);
   }
+
+  // console.log(data, 'fetchApiData')
  
  
  

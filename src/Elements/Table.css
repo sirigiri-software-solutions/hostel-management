@@ -7,8 +7,8 @@
 /* Table.css */
 .table-container {
   margin-top: 20px;
-  overflow: auto;
-  border: 1px solid ;
+  /* overflow: auto; */
+  /* border: 1px solid ; */
   border-radius: 10px;
 }
 
@@ -23,7 +23,7 @@
 }
 
 .table thead tr th{
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.35px;
   color: black;
@@ -58,7 +58,8 @@
 
 @media (max-width: 799px){
   .table-container {
-    height: 300px;
+    height: 600px;
+    padding: 5px;
     overflow: auto;
   }
 
@@ -85,7 +86,7 @@
     width: 50%;
     padding-left: 15px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 18px;
     text-align: left;
   }
 }

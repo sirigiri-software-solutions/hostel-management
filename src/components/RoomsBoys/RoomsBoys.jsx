@@ -167,22 +167,43 @@ const RoomsBoys = () => {
   ]
 
   return (
-        <>
+        <div className='row'>
           <div className="row d-flex flex-wrap align-items-center justify-content-between">
-            <div className="col-12 col-md-4 d-flex align-items-center mr-5">
+            <div className="col-12 col-md-4 desktop-layout align-items-center mr-5">
               <div className='roomlogo-container'>
                 <img src={RoomsIcon} alt="RoomsIcon" className='roomlogo'/>
               </div>
               <h1 className='fs-5'>Rooms Management</h1>
             </div>
-            <div className="col-6 col-md-4 search-wrapper">
+            <div className="col-6 col-md-4 desktop-layout search-wrapper">
               <input type="text" placeholder='Search' className='search-input'/>
               <img src={SearchIcon} alt="search-icon" className='search-icon'/>
             </div>
-            <div className="col-6 col-md-4 d-flex justify-content-end">
+            <div className="col-6 col-md-4 desktop-layout justify-content-end">
               <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Add Rooms
               </button>
+            </div>
+            <div className='mobile-layout !sticky-top'>
+              <div className="d-flex align-items-center justify-content-between mr-5">
+                <div className='d-flex flex-column gap-2 !align-items-start'>
+                  <div className='roomlogo-container w-sm-[75px]'>
+                    <img src={RoomsIcon} alt="RoomsIcon" className='roomlogo'/>
+                  </div>
+                  <h1 className='fs-5'>Rooms Management</h1>
+                </div>
+                <div className='d-flex flex-column gap-2 align-items-center'>
+                  <div className="search-wrapper">
+                    <input type="text" placeholder='Search' className='search-input'/>
+                    <img src={SearchIcon} alt="search-icon" className='search-icon'/>
+                  </div>
+                  <div className="d-flex justify-content-end">
+                    <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                      Add Rooms
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div>   
@@ -235,7 +256,7 @@ const RoomsBoys = () => {
               </div>
             </div>
           </div>
-        </>
+        </div>
   )
 }
 

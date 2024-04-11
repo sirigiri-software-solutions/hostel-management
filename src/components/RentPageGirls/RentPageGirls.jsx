@@ -1,11 +1,36 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import RentIcon from '../../images/Icons (6).png'
 import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
 import { database, push, ref } from "../../firebase"; 
 import { useState } from 'react'
+import { DataContext } from '../../ApiData/ContextProvider';
 
 const RentPageGirls = () => {
+  const {data} = useContext(DataContext);
+  // console.log(data && data, 'rentsBoysApi')
+  const [searchQuery, setSearchQuery] = useState('');
+  let rentsData = [];
+ 
+  if (data !== null && data !== undefined && data.girls && data.girls.tenants) {
+    console.log(data,"know data")
+    const rentsBoysData = data.girls.tenants;
+    // console.log(rentsBoysData,"fetched all data")
+    // console.log(Object.values(rentsBoysData),"eachData")
+    for(let each of Object.values(rentsBoysData)){
+      if(each.rents !== undefined){
+      //   rentsData = Object.values(rentsBoysData).map(entry => Object.values(entry.rents))
+           rentsData.push(Object.values(each.rents));
+      //   console.log(rentsData,"see")
+      }
+      // console.log(each.rents,"rentsDefined")
+    }
+   
+    
+  } else {
+    console.error("Data structure mismatch or data is not available:", data);
+  }
+  
 
   const [formData, setFormData] = useState({
     number: '',
@@ -27,6 +52,11 @@ const RentPageGirls = () => {
       ...formData,
       [name]: value
     });
+  };
+
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
   };
 
   const handleSubmit = (e) => {
@@ -101,83 +131,111 @@ const RentPageGirls = () => {
     'Status'
   ]
 
-  const rows = [
-    {
-      s_no : 1,
-      room_no : 125,
-      person_name : "ABCD",
-      person_mobile : "+91 9087654321",
-      bed_no : 2,
-      rent : "Rs. 5000",
-      due_date : "21 sep 2021",
-      last_fee : "21 Aug 2021",
+  const flatRentsData = rentsData.flat();
+  const rows = flatRentsData.map((rentData, index) => {
+  
+    const tenantInfo = Object.values(data.girls.tenants).find(tenant => tenant.bedNo === rentData.bedNumber);
+  
+    return {
+      s_no: index + 1,
+      room_no: rentData.roomNumber,
+      person_name: tenantInfo.name ,
+      person_mobile: tenantInfo.mobileNo ,
+      bed_no: rentData.bedNumber,
+      rent: "Rs. " + rentData.totalFee,
+      due_date: rentData.dueDate,
+      last_fee: rentData.paidDate, 
       edit: {
-        icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
-        text: 'Unpaid'
+          icon: false,
+          variant: { color: rentData.status === 'Unpaid' ? '#f71313' : '#166919', radius: '10px' },
+          text: rentData.status === 'Unpaid' ? 'Unpaid' : 'Paid'
       }
-    },
-    {
-      s_no : 2,
-      room_no : 125,
-      person_name : "ABCD",
-      person_mobile : "+91 9087654321",
-      bed_no : 5,
-      rent : "Rs. 5000",
-      due_date : "21 sep 2021",
-      last_fee : "21 Aug 2021",
-      edit: {
-        icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
-        text: 'paid'
-      }
-    },
-    {
-      s_no : 3,
-      room_no : 125,
-      person_name : "ABCD",
-      person_mobile : "+91 9087654321",
-      bed_no : 1,
-      rent : "Rs. 5000",
-      due_date : "21 sep 2021",
-      last_fee : "21 Aug 2021",
-      edit: {
-        icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
-        text: 'paid'
-      }
-    },
-    {
-      s_no : 4,
-      room_no : 125,
-      person_name : "ABCD",
-      person_mobile : "+91 9087654321",
-      bed_no : 4,
-      rent : "Rs. 5000",
-      due_date : "21 sep 2021",
-      last_fee : "21 Aug 2021",
-      edit: {
-        icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
-        text: 'paid'
-      }
-    },
-    {
-      s_no : 5,
-      room_no : 125,
-      person_name : "ABCD",
-      person_mobile : "+91 9087654321",
-      bed_no : 2,
-      rent : "Rs. 5000",
-      due_date : "21 sep 2021",
-      last_fee : "21 Aug 2021",
-      edit: {
-        icon: false,
-        variant: {color:'#ff8a00', radius:'10px'},
-        text: 'Unpaid'
-      }
-    },
-  ]
+    };
+  });
+
+  // const rows = [
+  //   {
+  //     s_no : 1,
+  //     room_no : 125,
+  //     person_name : "ABCD",
+  //     person_mobile : "+91 9087654321",
+  //     bed_no : 2,
+  //     rent : "Rs. 5000",
+  //     due_date : "21 sep 2021",
+  //     last_fee : "21 Aug 2021",
+  //     edit: {
+  //       icon: false,
+  //       variant: {color:'#ff8a00', radius:'10px'},
+  //       text: 'Unpaid'
+  //     }
+  //   },
+  //   {
+  //     s_no : 2,
+  //     room_no : 125,
+  //     person_name : "ABCD",
+  //     person_mobile : "+91 9087654321",
+  //     bed_no : 5,
+  //     rent : "Rs. 5000",
+  //     due_date : "21 sep 2021",
+  //     last_fee : "21 Aug 2021",
+  //     edit: {
+  //       icon: false,
+  //       variant: {color:'#ff8a00', radius:'10px'},
+  //       text: 'paid'
+  //     }
+  //   },
+  //   {
+  //     s_no : 3,
+  //     room_no : 125,
+  //     person_name : "ABCD",
+  //     person_mobile : "+91 9087654321",
+  //     bed_no : 1,
+  //     rent : "Rs. 5000",
+  //     due_date : "21 sep 2021",
+  //     last_fee : "21 Aug 2021",
+  //     edit: {
+  //       icon: false,
+  //       variant: {color:'#ff8a00', radius:'10px'},
+  //       text: 'paid'
+  //     }
+  //   },
+  //   {
+  //     s_no : 4,
+  //     room_no : 125,
+  //     person_name : "ABCD",
+  //     person_mobile : "+91 9087654321",
+  //     bed_no : 4,
+  //     rent : "Rs. 5000",
+  //     due_date : "21 sep 2021",
+  //     last_fee : "21 Aug 2021",
+  //     edit: {
+  //       icon: false,
+  //       variant: {color:'#ff8a00', radius:'10px'},
+  //       text: 'paid'
+  //     }
+  //   },
+  //   {
+  //     s_no : 5,
+  //     room_no : 125,
+  //     person_name : "ABCD",
+  //     person_mobile : "+91 9087654321",
+  //     bed_no : 2,
+  //     rent : "Rs. 5000",
+  //     due_date : "21 sep 2021",
+  //     last_fee : "21 Aug 2021",
+  //     edit: {
+  //       icon: false,
+  //       variant: {color:'#ff8a00', radius:'10px'},
+  //       text: 'Unpaid'
+  //     }
+  //   },
+  // ]
+
+  const filteredRows = rows.filter(row => {
+    return Object.values(row).some(value =>
+      value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
   return (
     <div className='h-100'>
@@ -191,7 +249,8 @@ const RentPageGirls = () => {
           <h1 className='fs-5'>Rents Management</h1>
         </div>
         <div className="col-6 col-md-4 search-wrapper">
-          <input type="text" placeholder='Search' className='search-input'/>
+          <input type="text" placeholder='Search' className='search-input' value={searchQuery}
+              onChange={handleSearch}/>
           <img src={SearchIcon} alt="search-icon" className='search-icon'/>
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
@@ -202,7 +261,7 @@ const RentPageGirls = () => {
       </div>
 
         <div>   
-            <Table columns={columns} rows={rows}/>
+            <Table columns={columns} rows={filteredRows}/>
         </div>
 
       <div class="modal fade" id="exampleModalRGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

@@ -1,28 +1,75 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import TenantsIcon from '../../images/Icons (4).png'
 import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
 import ImageIcon from '../../images/Icons (10).png'
-import { useState } from 'react'
-import { database, push, ref } from "../../firebase"; 
+import { useState,useContext } from 'react'
+import { database, push, ref } from "../../firebase";
 import './TenantsBoys.css';
+import { DataContext } from '../../ApiData/ContextProvider'
+import { FetchData } from '../../ApiData/FetchData'
  
 const TenantsBoys = () => {
+ 
+  const { data } = useContext(DataContext);
 
+
+  const [boysTenants, setBoysTenants] = useState([]);
+  
+  const [searchQuery, setSearchQuery] = useState('');
+ 
+ 
+  // let boysTenants = null;
+  if(data!=null && data){
+   
+    // console.log(boysTenants);
+  console.log(data && data,"fetchApidata")
+  }
+ 
+ 
+ 
+ 
   const [formData, setFormData] = useState({
     number: '',
     rent: '',
     rooms: '',
     status: ''
   });
-  
+ 
   const [formErrors, setFormErrors] = useState({
     number: '',
     rent: '',
     rooms: '',
     status: ''
   });
-
+  useEffect(() => {
+    const fetchDataFromAPI = async () => {
+      try {
+        if (data) {
+          const boysTenantsData = Object.values(data.boys.tenants);
+          setBoysTenants(boysTenantsData);
+          
+        } else {
+          const apiData = await FetchData();
+          const boysTenantsData = Object.values(apiData.boys.tenants);
+          setBoysTenants(boysTenantsData);
+          
+        }
+      } catch (error) {
+        console.error('Error fetching tenants data:', error);
+      }
+    };
+ 
+    fetchDataFromAPI();
+  }, [data]);
+ 
+ 
+    // Filter tenants based on search query
+   
+    const handleSearchChange = (e) => {
+      setSearchQuery(e.target.value)
+     
+    };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -30,33 +77,33 @@ const TenantsBoys = () => {
       [name]: value
     });
   };
-
+ 
   const handleSubmit = (e) => {
     e.preventDefault();
     let errors = {};
     let formIsValid = true;
-
+ 
     // Basic validation for required fields
     if (!formData.number) {
       errors.number = 'Number is required';
       formIsValid = false;
     }
-
+ 
     if (!formData.rent) {
       errors.rent = 'Rent is required';
       formIsValid = false;
     }
-
+ 
     if (!formData.rooms) {
       errors.rooms = 'Rooms is required';
       formIsValid = false;
     }
-
+ 
     if (!formData.status) {
       errors.status = 'Status is required';
       formIsValid = false;
     }
-
+ 
     // If form is valid, proceed with submission
     if (formIsValid) {
       // console.log('Form submitted successfully:', formData);
@@ -66,7 +113,7 @@ const TenantsBoys = () => {
         rooms: formData.rooms,
         status: formData.status
       };
-
+ 
       // Push the new data to the 'beds' node
       push(ref(database, 'beds'), newData)
         .then(() => {
@@ -89,7 +136,7 @@ const TenantsBoys = () => {
       setFormErrors(errors);
     }
   };
-
+ 
     const columns = [
       'S. No',
       'Image',
@@ -97,82 +144,35 @@ const TenantsBoys = () => {
       'ID',
       'Mobile No',
       'Room/Bed No',
-      'Payment Date',
+      'Joining Date',
       'Status'
     ]
+   
  
-    const rows = [
-      {
-        s_no : 1,
-        image :ImageIcon,
-        name : "Jhonson",
-        id: "Adhaar",
-        mobile_no: "+91 9010987123",
-        room_bed_no: "125/2",
-        payment_date : "1 Jan 2024",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'More'
-        }
-      },
-      {
-        s_no : 2,
-        image :ImageIcon,
-        name : "Jhonson",
-        id: "Adhaar",
-        mobile_no: "+91 9010987123",
-        room_bed_no: "125/2",
-        payment_date : "1 Jan 2024",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'More'
-        }
-      },
-      {
-        s_no : 3,
-        image :ImageIcon,
-        name : "Jhonson",
-        id: "Adhaar",
-        mobile_no: "+91 9010987123",
-        room_bed_no: "125/2",
-        payment_date : "1 Jan 2024",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'More'
-        }
-      },
-      {
-        s_no : 4,
-        image :ImageIcon,
-        name : "Jhonson",
-        id: "Adhaar",
-        mobile_no: "+91 9010987123",
-        room_bed_no: "125/2",
-        payment_date : "1 Jan 2024",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'More'
-        }
-      },
-      {
-        s_no : 5,
-        image :ImageIcon,
-        name : "Jhonson",
-        id: "Adhaar",
-        mobile_no: "+91 9010987123",
-        room_bed_no: "125/2",
-        payment_date : "1 Jan 2024",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'More'
-        }
-      },
-    ]
+   
+     const rows = boysTenants.map((tenant, index) => ({
+      s_no: index + 1,
+      image: tenant.tenantImageUrl,
+      name: tenant.name, // Assuming 'name' property exists in the fetched data
+      id: tenant.idNumber, // Assuming 'id' property exists in the fetched data
+      mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
+      room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
+      joining_date: tenant.dateOfJoin, // Assuming 'payment_date' property exists in the fetched data
+      edit: {
+        icon: false,
+        variant: { color: '#ff8a00', radius: '10px' },
+        text: 'More'
+      }
+    }));
+
+
+    const filteredRows = rows.filter(row => {
+      return Object.values(row).some(value =>
+        value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    });
+  
+ 
  
   return (
     <>
@@ -184,8 +184,19 @@ const TenantsBoys = () => {
           <h1 className='fs-5'>Tenants Management</h1>
         </div>
         <div className="col-6 col-md-4 search-wrapper">
-          <input type="text" placeholder='Search' className='search-input'/>
-          <img src={SearchIcon} alt="search-icon" className='search-icon'/>
+          <input
+            type="text"
+            placeholder='Search'
+            className='search-input'
+            value={searchQuery}
+            onChange={handleSearchChange} // Handle search input change
+          />
+          <img
+            src={SearchIcon}
+            alt="search-icon"
+            className='search-icon'
+             
+            />      
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
           <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalTenantsBoys">
@@ -193,8 +204,8 @@ const TenantsBoys = () => {
           </button>
         </div>
       </div>
-      <div>   
-          <Table columns={columns} rows={rows}/>
+      <div>  
+          <Table columns={columns} rows={filteredRows}/>
       </div>
       <div class="modal fade" id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">

@@ -1,12 +1,19 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import TenantsIcon from '../../images/Icons (4).png'
 import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
 import ImageIcon from '../../images/Icons (10).png'
 import { useState,useEffect } from 'react'
 import { database, push, ref } from "../../firebase"; 
+import { DataContext } from '../../ApiData/ContextProvider'
+import { FetchData } from '../../ApiData/FetchData'
  
 const TenantsGirls = () => {
+
+  const {data} = useContext(DataContext);
+  const [girlsTenants, setGirlsTenants] = useState([]);
+  
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [formData, setFormData] = useState({
     number: '',
@@ -21,6 +28,27 @@ const TenantsGirls = () => {
     rooms: '',
     status: ''
   });
+
+  useEffect(() => {
+    const fetchDataFromAPI = async () => {
+      try {
+        if (data) {
+          const boysTenantsData = Object.values(data.girls.tenants);
+          setGirlsTenants(boysTenantsData);
+          
+        } else {
+          const apiData = await FetchData();
+          const boysTenantsData = Object.values(apiData.girls.tenants);
+          setGirlsTenants(boysTenantsData);
+          
+        }
+      } catch (error) {
+        console.error('Error fetching tenants data:', error);
+      }
+    };
+ 
+    fetchDataFromAPI();
+  }, [data]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -97,76 +125,106 @@ const TenantsGirls = () => {
       'ID',
       'Mobile No',
       'Room/Bed No',
+      'Joining Date',
       'Status'
     ]
+
+    const rows = girlsTenants.map((tenant, index) => ({
+      s_no: index + 1,
+      image: tenant.tenantImageUrl,
+      name: tenant.name, // Assuming 'name' property exists in the fetched data
+      id: tenant.idNumber, // Assuming 'id' property exists in the fetched data
+      mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
+      room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
+      joining_date: tenant.dateOfJoin, // Assuming 'payment_date' property exists in the fetched data
+      edit: {
+        icon: false,
+        variant: { color: '#ff8a00', radius: '10px' },
+        text: 'More'
+      }
+    }));
  
-    const rows = [
-      {
-        s_no : 1,
-        image :ImageIcon,
-        name : "Jhonson",
-        id: "Adhaar",
-        mobile_no: "+91 9010987123",
-        room_bed_no: "125/2",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'More'
-        }
-      },
-      {
-        s_no : 2,
-        image :ImageIcon,
-        name : "Jhonson",
-        id: "Adhaar",
-        mobile_no: "+91 9010987123",
-        room_bed_no: "125/2",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'More'
-        }
-      },
-      {
-        s_no : 3,
-        image :ImageIcon,
-        name : "Jhonson",
-        id: "Adhaar",
-        mobile_no: "+91 9010987123",
-        room_bed_no: "125/2",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'More'
-        }
-      },
-      {
-        s_no : 4,
-        image :ImageIcon,
-        name : "Jhonson",
-        id: "Adhaar",
-        mobile_no: "+91 9010987123",
-        room_bed_no: "125/2",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'More'
-        }
-      },
-      {
-        s_no : 5,
-        image :ImageIcon,
-        name : "Jhonson",
-        id: "Adhaar",
-        mobile_no: "+91 9010987123",
-        room_bed_no: "125/2",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'More'
-        }
-      },
-    ]
+    // const rows = [
+    //   {
+    //     s_no : 1,
+    //     image :ImageIcon,
+    //     name : "Jhonson",
+    //     id: "Adhaar",
+    //     mobile_no: "+91 9010987123",
+    //     room_bed_no: "125/2",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'More'
+    //     }
+    //   },
+    //   {
+    //     s_no : 2,
+    //     image :ImageIcon,
+    //     name : "Jhonson",
+    //     id: "Adhaar",
+    //     mobile_no: "+91 9010987123",
+    //     room_bed_no: "125/2",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'More'
+    //     }
+    //   },
+    //   {
+    //     s_no : 3,
+    //     image :ImageIcon,
+    //     name : "Jhonson",
+    //     id: "Adhaar",
+    //     mobile_no: "+91 9010987123",
+    //     room_bed_no: "125/2",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'More'
+    //     }
+    //   },
+    //   {
+    //     s_no : 4,
+    //     image :ImageIcon,
+    //     name : "Jhonson",
+    //     id: "Adhaar",
+    //     mobile_no: "+91 9010987123",
+    //     room_bed_no: "125/2",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'More'
+    //     }
+    //   },
+    //   {
+    //     s_no : 5,
+    //     image :ImageIcon,
+    //     name : "Jhonson",
+    //     id: "Adhaar",
+    //     mobile_no: "+91 9010987123",
+    //     room_bed_no: "125/2",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'More'
+    //     }
+    //   },
+    // ]
+  
+    const onChangeInput = (e) => {
+      setSearchQuery(e.target.value);
+    }
+
+    const filteredRows = rows.filter(row => {
+      return Object.values(row).some(value =>
+        value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    });
+
+
+
+
 
 return(
   <>
@@ -178,7 +236,7 @@ return(
         <h1 className='fs-5'>Rooms Management</h1>
       </div>
       <div className="col-6 col-md-4 search-wrapper">
-        <input type="text" placeholder='Search' className='search-input'/>
+        <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={onChangeInput}/>
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
       </div>
       <div className="col-6 col-md-4 d-flex justify-content-end">
@@ -189,7 +247,7 @@ return(
     </div>
 
     <div>   
-        <Table columns={columns} rows={rows}/>
+        <Table columns={columns} rows={filteredRows}/>
     </div>
 
     <div class="modal fade" id="exampleModalTenantsGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

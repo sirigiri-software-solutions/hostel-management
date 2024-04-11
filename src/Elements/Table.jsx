@@ -17,7 +17,7 @@ const Table = ({columns, rows}) => {
             {
               rows.map((item, index) => <tr>
                 {item.s_no && <td data-label="s_no" style={{padding:"7px"}}>{item.s_no}</td>}
-                {item.image && <td data-label="image"><img src={item.image} alt='img'/></td>}
+                {item.image && <td data-label="image"><img className='personImage' src={item.image} alt='img'/></td>}
                 {item.name && <td data-label="name">{item.name}</td>}
                 {item.id && <td data-label="id">{item.id}</td>}
                 {item.mobile_no && <td data-label="mobile_no">{item.mobile_no}</td>}
@@ -36,6 +36,7 @@ const Table = ({columns, rows}) => {
                 {item.created_on && <td data-label="created_on">{item.created_on}</td>}
                 {item.created_by && <td data-label="created_by">{item.created_by}</td>}
                 {item.last_updated_by && <td data-label="last_updated_by">{item.last_updated_by}</td>}
+                {item.joining_date && <td data-label="joining_date">{item.joining_date}</td>}
                 {item.payment_date && <td data-label="payment_date">{item.payment_date}</td>}
                 {item.edit && <td data-label="edit"><Button icon={item.edit.icon} variant={item.edit.variant} text={item.edit.text}/></td>}
               </tr>)

@@ -183,7 +183,7 @@ const MainPage = () => {
             <div className='top-section'>
               <img src={logo} alt="logo" className='logo' />
             </div>
-            <div className='top-div'>
+            <div className='nav-div'>
                 <img src={Admin} alt="admin" className='dashboard-icon' />
                 <h1 className='dashboard-heading'>{name}</h1>
             </div>

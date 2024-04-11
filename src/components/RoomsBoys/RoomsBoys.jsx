@@ -181,17 +181,17 @@ const RoomsBoys = () => {
   return (
         <div className='row'>
           <div className="row d-flex flex-wrap align-items-center justify-content-between">
-            <div className="col-12 col-md-4 desktop-layout align-items-center mr-5">
+            <div className="col-12 col-md-5 desktop-layout align-items-center mr-5">
               <div className='roomlogo-container'>
                 <img src={RoomsIcon} alt="RoomsIcon" className='roomlogo'/>
               </div>
               <h1 className='fs-5'>Rooms Management</h1>
             </div>
-            <div className="col-6 col-md-4 search-wrapper">
+            <div className="col-6 col-md-4 desktop-layout search-wrapper">
               <input type="text" placeholder='Search' className='search-input' onChange={handleChange} value={searchTerm}/>
               <img src={SearchIcon} alt="search-icon" className='search-icon'/>
             </div>
-            <div className="col-6 col-md-4 d-flex justify-content-end">
+            <div className="col-6 col-md-3 desktop-layout justify-content-end">
               <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalRoomsBoys">
                 Add Rooms
               </button>

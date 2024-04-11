@@ -3,6 +3,7 @@ import DashboardImage from '../../images/Icons (1).png'
 import RoomsImage from '../../images/Icons (2).png'
 import BedsImage from '../../images/Icons (3).png'
 import TenantsImage from '../../images/Icons (4).png'
+import Admin from '../../images/Icons.png';
 import ExpensesImage from '../../images/Icons (5).png'
 import RentImage from '../../images/Icons (6).png'
 import SettingsImage from '../../images/Icons (7).png'
@@ -21,7 +22,7 @@ import Popup from 'reactjs-popup'
 import { AiOutlineClose} from 'react-icons/ai'
 import { DataContext } from '../../ApiData/ContextProvider'
 const MainPage = () => {
-
+  const name=localStorage.getItem("username");
   // Refer here for fetched Api Data use like this in all pages don't fetch api url
   const { data } = useContext(DataContext);
   console.log("start")
@@ -180,7 +181,11 @@ const MainPage = () => {
     <div className='bg-container' style={mainBackgroundContainerStyle}>
         <div className='sidebar' style={sidebarStyle}>
             <div className='top-section'>
-            <img src={logo} alt="logo" className='logo' />
+              <img src={logo} alt="logo" className='logo' />
+            </div>
+            <div className='top-div'>
+                <img src={Admin} alt="admin" className='dashboard-icon' />
+                <h1 className='dashboard-heading'>{name}</h1>
             </div>
             <div style={sidebarItems}>
                 {

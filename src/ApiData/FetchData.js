@@ -1,6 +1,6 @@
 export const FetchData = async () => {
     try {
-        const response = await fetch('https://kiranreddy-e7a6c-default-rtdb.firebaseio.com/Hostel.json');
+        const response = await fetch('https://kiranreddy-58a8c-default-rtdb.firebaseio.com/Hostel.json');
         if(!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }

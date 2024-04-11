@@ -25,6 +25,11 @@ const MainPage = () => {
   const name=localStorage.getItem("username");
   // Refer here for fetched Api Data use like this in all pages don't fetch api url
   const { data } = useContext(DataContext);
+  console.log("start")
+  if(data != null) {
+    console.log(data && data);
+  }
+  console.log("end");
   const menuItems = [
     {
       id:1,
@@ -70,7 +75,7 @@ const MainPage = () => {
     },
   ]
  
-  const Components = [<Dashboard />, <Rooms/>, <Beds />, <Rents/>, <Tenants />, <Expenses />, <Settings />]
+  const Components = [<Dashboard />, <Rooms/>, <Beds />, <Rents />, <Tenants />, <Expenses />, <Settings />]
  
   const [flag, setFlag] = useState(1);
  
@@ -261,7 +266,10 @@ const MainPage = () => {
             </div> */}
          
         <div style={rightSectionMainContainer}>
-            {Components && Components.map((item, index) => <div key={index} style={flag === index+1 ? {display:'block'} : {display: 'none'}}>{item}</div>)}
+            {Components && Components.map((item, index) => <div key={index} style={flag === index+1 ? {display:'block'} : {display: 'none'}}>
+              {item}
+              </div>)}
+              
         </div>
     </div>
   )

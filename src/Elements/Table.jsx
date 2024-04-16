@@ -38,6 +38,9 @@ const Table = ({columns, rows}) => {
                 {item.last_updated_by && <td data-label="last_updated_by">{item.last_updated_by}</td>}
                 {item.joining_date && <td data-label="joining_date">{item.joining_date}</td>}
                 {item.payment_date && <td data-label="payment_date">{item.payment_date}</td>}
+                {item.status && <td data-label="status">{item.status}</td>}
+                {item.edit_room && <td data-label="status">{item.edit_room}</td>}
+                {item.actions && <td data-label="status">{item.actions}</td>}
                 {item.edit && <td data-label="edit"><Button icon={item.edit.icon} variant={item.edit.variant} text={item.edit.text}/></td>}
               </tr>)
             }

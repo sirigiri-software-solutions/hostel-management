@@ -99,7 +99,6 @@ const MainPage = () => {
         setSidebarItems({display:'none'});
         setrightSectionMainContainer({width:'100%',padding:'20px'})
         setHamburgerMenu({fontSize:'40px'})
-        
       } else {
         // For larger screens
         setMainBackgroundContainerStyle({ display: 'flex', width: '100%', margin: '0px', flexDirection: 'row' });

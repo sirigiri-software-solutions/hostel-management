@@ -6,7 +6,7 @@ import RoomsGirls from '../../components/RoomsGirls/RoomsGirls';
 
 function Rooms() {
     const [activeTab, setActiveTab] = useState('boys');
-    const name=localStorage.getItem("username");
+    // const name=localStorage.getItem("username");
 
     const handleTabSelect = (tab) => {
         setActiveTab(tab);
@@ -14,10 +14,10 @@ function Rooms() {
 
     return (
         <div className='container-fluid'>
-            <div className='top-div desktop-layout'>
+            {/* <div className='top-div desktop-layout'>
                 <img src={Admin} alt="admin" className='dashboard-icon' />
                 <h1 className='dashboard-heading'>{name}</h1>
-            </div>
+            </div> */}
             <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3 tabs-nav">
                 <Tab eventKey="boys" title="Men's">
                     <RoomsBoys />

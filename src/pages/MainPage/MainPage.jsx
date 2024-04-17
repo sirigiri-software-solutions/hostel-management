@@ -96,18 +96,10 @@ const MainPage = () => {
       if (window.innerWidth < 768) {
         // For smaller screens
         setMainBackgroundContainerStyle({ display: 'flex', width: '100%', margin: '0px', flexDirection: 'column' });
-<<<<<<< Updated upstream
-        setSidebarStyle({ width: '100%', backgroundColor: '#ECECEC', padding: '20px',display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center' });
-        setSidebarItems({display:'none'});
-        setrightSectionMainContainer({width:'100%',padding:'20px'})
-        setHamburgerMenu({fontSize:'40px'})
-        
-=======
         setSidebarStyle({ width: '100%', backgroundColor: '#ECECEC', padding: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' });
         setSidebarItems({ display: 'none' });
         setrightSectionMainContainer({ width: '100%', padding: '20px' })
         setHamburgerMenu({ fontSize: '40px' })
->>>>>>> Stashed changes
       } else {
         // For larger screens
         setMainBackgroundContainerStyle({ display: 'flex', width: '100%', margin: '0px', flexDirection: 'row' });

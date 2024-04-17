@@ -349,8 +349,8 @@ const DashboardBoys = () => {
                     ))}
                 </div>
               </React.Fragment>
- 
           )}   */}
+<<<<<<< Updated upstream
  
            { menu.map((item, index) => (
                   <>
@@ -366,6 +366,20 @@ const DashboardBoys = () => {
  
  
 
+=======
+
+        {menu.map((item, index) => (
+          <>
+            <SmallCard key={index} index={index} item={item} />
+            <button id="mbladdButton" key={index} onClick={() => handleClick(item.btntext)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' />{item.btntext}</button>
+          </>
+        ))}
+        <div className='button-container'>
+          {Buttons?.map((item, index) => (
+            <button id="deskaddButton" key={index} onClick={() => handleClick(item)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item}</button>
+          ))}
+        </div>
+>>>>>>> Stashed changes
       </div>
  
       {/* popup model */}

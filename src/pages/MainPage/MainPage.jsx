@@ -68,12 +68,12 @@ const MainPage = () => {
       name: "Expenses",
       icon: ExpensesImage
     },
-    {
-      id: 7,
-      path: "/Settings",
-      name: "Settings",
-      icon: SettingsImage
-    },
+    // {
+    //   id: 7,
+    //   path: "/Settings",
+    //   name: "Settings",
+    //   icon: SettingsImage
+    // },
   ]
 
   const Components = [<Dashboard />, <Rooms />, <Beds />, <Rents />, <Tenants />, <Expenses />, <Settings />]

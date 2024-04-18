@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import ExpenseIcon from '../../images/Icons (5).png'
 import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
@@ -6,6 +6,8 @@ import { database, push, ref } from "../../firebase";
 //import ImageIcon from '../../images/Icons (10).png'
 
 const ExpensesBoys = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [initialRows, setInitialRows] = useState([]);
 
   const [formData, setFormData] = useState({
     number: '',
@@ -159,10 +161,10 @@ const ExpensesBoys = () => {
       {
         s_no : 1,
         room_no :"125/2",
-        name : "ABCDE",
+        name : "ZBCDE",
         month_year: "Aug/2021",
         rent: "Rs. 5000",
-        created_on: "21 Aug 2021",
+        created_on: "21 Aug 2020",
         created_by: "Admin  ",
         edit: {
           icon: false,
@@ -171,6 +173,20 @@ const ExpensesBoys = () => {
         }
       },
     ]
+
+    useEffect(() => {
+      setInitialRows(rows)
+    },[])
+
+    const handleChange = (event) => {
+      setSearchTerm(event.target.value)
+    }
+
+    const filteredRows = initialRows.filter(row => {
+      return Object.values(row).some(value =>
+        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
 
   return (
     <div className='h-100'>
@@ -184,7 +200,7 @@ const ExpensesBoys = () => {
           <h1 className='fs-5'>Expenses Management</h1>
         </div>
         <div className="col-6 col-md-4 search-wrapper">
-          <input type="text" placeholder='Search' className='search-input'/>
+          <input type="text" placeholder='Search' className='search-input' onChange={handleChange} value={searchTerm}/>
           <img src={SearchIcon} alt="search-icon" className='search-icon'/>
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
@@ -194,7 +210,7 @@ const ExpensesBoys = () => {
         </div>
       </div>
       <div>   
-          <Table columns={columns} rows={rows}/>
+          <Table columns={columns} rows={filteredRows}/>
       </div>
       <div class="modal fade" id="exampleModalExpensesBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">

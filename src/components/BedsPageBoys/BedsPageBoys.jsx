@@ -164,8 +164,8 @@ const BedsPageBoys = () => {
    rent:beds.rent,
    status:beds.status
   }));
-
  
+
  
   return (
     <div className='h-100'> 

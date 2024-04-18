@@ -355,33 +355,47 @@ const RentPageGirls = () => {
     'Person Mobile',
     'Bed No',
     'Rent',
+    'Joining Date',
     'Due Date',
     'Last Fee',
     'Status',
     'update'
   ];
+  
+  const rentsRows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map((rent) => ({
+    roomNumber: rent.roomNumber,
+    name: tenant.name,
+    mobileNo: tenant.mobileNo,
+    bedNumber: rent.bedNumber,
+    totalFee: "Rs. " + rent.totalFee,
+    dateOfJoin: tenant.dateOfJoin,
+    dueDate: rent.dueDate,
+    paidDate: rent.paidDate,
+    status:rent.status==='Unpaid' ? 'Unpaid' : 'Paid',
+    tenantId: tenant.id,
+    rentId: rent.id,
+    })))
 
-
-  const rows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map(rent => ({
+  const rows = rentsRows.map((rent, index) => ({
     s_no: index + 1,
     room_no: rent.roomNumber,
-    person_name: tenant.name,
-    person_mobile: tenant.mobileNo,
+    person_name: rent.name,
+    person_mobile: rent.mobileNo,
     bed_no: rent.bedNumber,
     rent: "Rs. " + rent.totalFee,
+    joining_date: rent.dateOfJoin,
     due_date: rent.dueDate,
     last_fee: rent.paidDate,
     status: rent.status === 'Unpaid' ? 'Unpaid' : 'Paid',
     actions: <button
     style={{ backgroundColor: '#ff8a00', padding:'4px', borderRadius: '5px', color: 'white', border: 'none', }}
-    onClick={() => loadRentForEditing(tenant.id, rent.id)}
+    onClick={() => loadRentForEditing(rent.tenantId, rent.rentId)}
     data-bs-toggle="modal"
     data-bs-target="#exampleModalRGirls"
   >
     update
   </button>,
-  })));
-
+  }));
 
   // const flatRentsData = rentsData.flat();
   // const rows = flatRentsData.map((rentData, index) => {

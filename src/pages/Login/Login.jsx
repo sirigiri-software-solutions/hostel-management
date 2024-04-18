@@ -158,83 +158,79 @@ const Login = () => {
 
   
   return (
-    <React.Fragment>
-      <main  className="  col-lg-11 col-md-8 col-sm-8 col-12" id="main">
-        <div className="" >
-          <img src={ImageOne} alt="" className="img-fluid animatedimg"/>
-         <div className="smallscrn">
-          <div className="d-flex flex-column align-items-center imgcontainer">
-            <img src={Logo} alt="" className="img" />
-            <p className="p"><b>A Home away from home, where strangers become friends and every
-                day is an adventure.</b></p>
-          </div>
-          <form onSubmit={checkData} className="d-flex flex-column frm ">
-            <div className="text-center font-weight-bold login">LOGIN</div>
-            <div>
-            <input
-                  type="email"
-                  className={`form-control ${loginErrors?.email && "is-invalid"}`}
-                  placeholder="Username or Email"
-                  onChange={handleData}
-                  onFocus={hideErrors}
-                  onBlur={checkErrors}
-                  value={loginData.email}
-                  name="email"
-                  id="mail"
-                />
-                {loginErrors.email && (
-                  <div className="invalid-feedback">{loginErrors.email}</div>
-                )}
-                </div>
-                <div className="d-flex flex-column">
-                <input
-                  type="password"
-                  className={`form-control ${loginErrors?.password && "is-invalid"}`}
-                  placeholder="Password"
-                  onChange={handleData}
-                  onFocus={hideErrors}
-                  onBlur={checkErrors}
-                  value={loginData.password}
-                  name="password"
-                  id="pass"
-                />
-                {loginErrors.password && (
-                  <div className="invalid-feedback">{loginErrors.password}</div>
-                )}
-                </div>
-                <div className="check">
-                  <div>
-                  <input
-                    type="checkbox"
-                    id="remember"
-                    className="form-check-input"
-                    checked={rememberMe}
-                    onChange={handleRememberme}
-                  />
-                  <label id="rememberText" className="form-check-label">
-                    Remember me
-                  </label>
-                  </div>
-                  <p className="text" >Forgot Password?</p>
-                  {/* <Updatepass oldPassword={oldPassword} /> */}
-                </div>
-                <div className="text-center btndiv">
-                <button
-                type="submit"
-                className="btn btn-lg btn-block "
-                Id='btn'
-              >
-                 Login
-              </button>
-              </div>
-          </form>
-        </div>
-          <img src={ImageTwo} alt="" className="img-fluid animatedimg" id="imgtwo"/>
-        </div>
-      </main>
-
-    
-    </React.Fragment>
+    <>
+  <div className="main-div">
+    <div className="left-div">
+      <div className="image-container">
+        <img src={ImageOne} alt="imageone" className="up-image" />
+      </div>
+      <div className="logo-container">
+        <img src={Logo} alt="logo" className="img" />
+        <p className="p"><b>A Home away from home, where strangers become friends and every day is an adventure.</b></p>
+      </div>
+    </div>
+  <div className="right-div">
+    <div className="right-div-content">
+    <div className="form-container">
+    <form onSubmit={checkData} className="input-form">
+      <h1 className="login-heading">LOGIN</h1>
+      <div>
+        <input
+          type="email"
+          className={`form-control ${loginErrors?.email && "is-invalid"} ${loginData.email.trim() === "" && "empty-field"}`}
+          placeholder="Username or Email"
+          onChange={handleData}
+          onFocus={hideErrors}
+          onBlur={checkErrors}
+          value={loginData.email}
+          name="email"
+          id="mail"
+        />
+        {loginErrors.email && <div className="invalid-feedback">{loginErrors.email}</div>}
+      </div>
+      <div>
+        <input
+          type="password"
+          className={`form-control ${loginErrors?.password && "is-invalid"} ${loginData.password.trim() === "" && "empty-field"}`}
+          placeholder="Password"
+          onChange={handleData}
+          onFocus={hideErrors}
+          onBlur={checkErrors}
+          value={loginData.password}
+          name="password"
+          id="pass"
+        />
+        {loginErrors.password && <div className="invalid-feedback">{loginErrors.password}</div>}
+      </div>
+      <div className="check">
+        {/* <div>
+          <input
+            type="checkbox"
+            id="remember"
+            className="form-check-input"  
+            checked={rememberMe}
+            onChange={handleRememberme}
+          />
+          <label id="rememberText" className="form-check-label">
+            Remember me
+          </label>
+        </div> */}
+        <p className="text">Forgot Password?</p>
+      </div>
+      <div>
+        <button type="submit" className="login-button">
+          Login
+        </button>
+      </div>
+    </form>
+    </div>
+    <div className="image-right-container">
+      <img src={ImageTwo} alt="imagetwo" className="down-image" />
+    </div>
+    </div>
+  </div>
+    </div>
+    </>
   );
 };
 

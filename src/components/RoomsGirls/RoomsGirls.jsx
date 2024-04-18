@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import RoomsIcon from '../../images/Icons (2).png';
 import SearchIcon from '../../images/Icons (9).png';
 import './RoomsGirls.css';
@@ -10,15 +10,23 @@ const RoomsGirls = () => {
 
   let roomsData = []
   const {data} = useContext(DataContext);
-  const [searchQuery,setSearchQuery] = useState("")
+  const [editedData,setEditedData] = useState({
+    room_no : '',
+    no_of_beds : '',
+    floor : '',
+    rent : '',
+    last_updated_by : ''
+  })
 
-  console.log(data && data, "ApiData")
+  const [showEditPopup, setShowEditPopup] = useState(false);
+
+  //console.log(data && data, "ApiData")
 
   if(data !== null){
-  const RoomsBoysData = data.girls.rooms
-  console.log(RoomsBoysData, "RoomsBoys")
+  const RoomsGirlsData = data.girls.rooms
+  //console.log(RoomsGirlsData, "RoomsBoys")
 
-  roomsData = Object.values(RoomsBoysData)
+  roomsData = Object.values(RoomsGirlsData)
     console.log(roomsData)
   }
 
@@ -101,7 +109,7 @@ const RoomsGirls = () => {
         })
         .catch((error) => {
           // Handle errors
-          console.error('Error storing data in Firebase: ', error.message);
+          //console.error('Error storing data in Firebase: ', error.message);
         });
     } else {
       // Set errors for form validation
@@ -112,39 +120,76 @@ const RoomsGirls = () => {
   const columns = [
     'S. No',
     'Room.No',
+    'No.of Beds',
     'Floor',
-    'Remarks',
+    'Rent',
     'Created By',
     'Last Updated date',
     'Edit'
   ];
 
-  const rows = Object.keys(roomsData).map(index => {
-    const data = roomsData[index];
-    return {
-      s_no: parseInt(index) + 1, // Adding 1 to index to make it 1-based
-      room_no: data.roomNumber,
-      floor: `${data.floorNumber}st`, // Assuming you want to concatenate "st"
-      remarks: "Two Sharing",
-      created_by: data.createdBy,
-      last_updated_by: "13-03-2015",
-      edit: {
-        icon: false,
-        variant: { color: '#ff8a00', radius: '10px' },
-        text: 'Edit'
-      }
-    };
-  });
+  useEffect(() => {
+    if(data !== null){
+      const rows = Object.entries(data.girls.rooms).map(([id, roomData], index) => ({
+        id : id,
+        s_no : index + 1,
+        room_no : roomData.roomNumber,
+        no_of_beds : roomData.numberOfBeds,
+        floor : `${roomData.floorNumber}`,
+        rent: roomData.bedRent,
+        created_by : roomData.createdBy,
+        last_updated_by : roomData.updateDate,
+        edit : {
+          icon : false,
+          variant : {color : '#ff8a00', radius : '10px'},
+          text : 'Edit'
+        }
+      }));
+      setInitialRows(rows);
+    }
+  }, [data]);
+
+  // const rows = Object.keys(roomsData).map(index => {
+  //   const data = roomsData[index];
+  //   return {
+  //     s_no: parseInt(index) + 1, // Adding 1 to index to make it 1-based
+  //     room_no: data.roomNumber,
+  //     floor: `${data.floorNumber}st`, // Assuming you want to concatenate "st"
+  //     remarks: "Two Sharing",
+  //     created_by: data.createdBy,
+  //     last_updated_by: "13-03-2015",
+  //     edit: {
+  //       icon: false,
+  //       variant: { color: '#ff8a00', radius: '10px' },
+  //       text: 'Edit'
+  //     }
+  //   };
+  // });
   
   // console.log(rows);
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [initialRows, setInitialRows] = useState([]);
+
   const onChangeInput = (e)=>{
-    setSearchQuery(e.target.value)
+    setSearchTerm(e.target.value)
   }
-  const filteredRows = rows.filter(row => {
+  const filteredRows = initialRows.filter(row => {
     return Object.values(row).some(value =>
-      value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
+
+  const handleEdit = (rowData) => {
+    const {id, last_updated_by, ...otherData} = rowData;
+    const lastUpdatedDate = new Date(last_updated_by).toISOString().split('T')[0];
+    setEditedData({id, last_updated_by: lastUpdatedDate, ...otherData});
+    setShowEditPopup(true);
+  };
+
+  const onClickClosePopup = () => {
+    setShowEditPopup(false)
+  }
 
   
   return (
@@ -157,7 +202,7 @@ const RoomsGirls = () => {
           <h1 className='fs-5'>Rooms Management</h1>
         </div>
         <div className="col-6 col-md-4 search-wrapper">
-          <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={onChangeInput} />
+          <input type="text" placeholder='Search' className='search-input' value={searchTerm} onChange={onChangeInput} />
           <img src={SearchIcon} alt="search-icon" className='search-icon'/>
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
@@ -167,7 +212,9 @@ const RoomsGirls = () => {
         </div>
       </div>
 
-      <Table columns={columns} rows={filteredRows}/>
+      <div>
+        <Table columns={columns} rows={filteredRows} onEdit={handleEdit} />
+      </div>
 
       <div className="modal fade" id="exampleModalGirls" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog">
@@ -217,6 +264,36 @@ const RoomsGirls = () => {
           </div>
         </div>
       </div>
+
+      {showEditPopup && (
+        <div className="popup-overlay" id="editPopup">
+          <div className='popup'>
+            <h2>Edit Room</h2>
+            <div className='form-group'>
+              <label htmlFor="FloorNumber">Floor Number:</label>
+              <input type="text" id="FloorNumber" value={editedData.floor} onChange={(e) => setEditedData({...editedData, floor: e.target.value})}/>
+            </div>
+            <div className='form-group'>
+              <label htmlFor="roomNumber">Room Number:</label>
+              <input type="text" id="roomNumber" value={editedData.room_no} onChange={(e) => setEditedData({...editedData, room_no: e.target.value})}/>
+            </div>
+            <div className='form-group'>
+              <label htmlFor="rentPopup">Rent:</label>
+              <input type="text" id="rentPopup" value={editedData.rent} onChange={(e) => setEditedData({...editedData, rent: e.target.value})}/>
+            </div>
+            <div className='form-group'>
+              <label htmlFor="updatedDate">last Updated By:</label>
+              <input type="date" id="updatedDate" value={editedData.last_updated_by} onChange={(e) => setEditedData({...editedData, last_updated_by: e.target.value})}/>
+            </div>
+
+            <div className='form-group'>
+              <button className='popupUpdateBtn'>Update</button>
+              <button onClick={onClickClosePopup} type="button" id="closePopup">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+      
     </div>
   );
 }

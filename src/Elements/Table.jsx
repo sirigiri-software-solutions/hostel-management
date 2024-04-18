@@ -2,7 +2,7 @@ import React from 'react'
 import Button from './Button'
 import './Table.css'
  
-const Table = ({columns, rows}) => {
+const Table = ({columns, rows, onEdit}) => {
   return (
     <div className='table-container'>
         <table className="table text-center">
@@ -19,16 +19,16 @@ const Table = ({columns, rows}) => {
                 {item.s_no && <td data-label="s_no" style={{padding:"7px"}}>{item.s_no}</td>}
                 {item.image && <td data-label="image"><img className='personImage' src={item.image} alt='img'/></td>}
                 {item.name && <td data-label="name">{item.name}</td>}
-                {item.id && <td data-label="id">{item.id}</td>}
+                {item.proofid && <td data-label="id">{item.proofid}</td>}
                 {item.mobile_no && <td data-label="mobile_no">{item.mobile_no}</td>}
                 {item.room_bed_no && <td data-label="room_bed_no">{item.room_bed_no}</td>}
-                {item.bed_number && <td data-label="bed_number">{item.bed_number}</td>} 
+                {item.bed_number && <td data-label="bed_number">{item.bed_number}</td>}
                 {item.room_no && <td data-label="room_no">{item.room_no}</td>}
+                {item.no_of_beds && <td data-label="no_of_beds">{item.no_of_beds}</td>}
                 {item.person_name && <td data-label="person_name">{item.person_name}</td>}
                 {item.person_mobile && <td data-label="person_mobile">{item.person_mobile}</td>}
                 {item.bed_no && <td data-label="bed_no">{item.bed_no}</td>}
                 {item.floor && <td data-label="floor">{item.floor}</td>}
-                {item.remarks && <td data-label="remarks">{item.remarks}</td>}
                 {item.month_year && <td data-label="month_year">{item.month_year}</td>}
                 {item.rent && <td data-label="rent">{item.rent}</td>}
                 {item.due_date && <td data-label="due_date">{item.due_date}</td>}
@@ -38,7 +38,7 @@ const Table = ({columns, rows}) => {
                 {item.last_updated_by && <td data-label="last_updated_by">{item.last_updated_by}</td>}
                 {item.joining_date && <td data-label="joining_date">{item.joining_date}</td>}
                 {item.payment_date && <td data-label="payment_date">{item.payment_date}</td>}
-                {item.edit && <td data-label="edit"><Button icon={item.edit.icon} variant={item.edit.variant} text={item.edit.text}/></td>}
+                {item.edit && <td data-label="edit"><Button icon={item.edit.icon} onClick={() => onEdit(item)} variant={item.edit.variant} text={item.edit.text}/></td>}
               </tr>)
             }
           </tbody>

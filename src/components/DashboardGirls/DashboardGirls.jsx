@@ -265,12 +265,12 @@ const DashboardGirls = () => {
            { menu.map((item, index) => (
                   <>
                       <SmallCard key={index} index={index} item={item} />
-                      <button id="mbladdButton" key={index} onClick={() => handleClick(item.btntext)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' />{item.btntext}</button>
+                      <button id="mbladdButton" key={index} onClick={() => handleClick(item.btntext)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalGirlsDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' />{item.btntext}</button>
                       </>
                 ))}
                 <div className='button-container'>
                     {Buttons?.map((item, index) => (
-                        <button id="deskaddButton" key={index} onClick={() => handleClick(item)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item}</button>
+                        <button id="deskaddButton" key={index} onClick={() => handleClick(item)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalGirlsDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item}</button>
                     ))}
                 </div>
  
@@ -279,7 +279,7 @@ const DashboardGirls = () => {
       </div>
  
       {/* popup model */}
-      <div class="modal fade" id="exampleModalBoysDashboard" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal fade" id="exampleModalGirlsDashboard" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">

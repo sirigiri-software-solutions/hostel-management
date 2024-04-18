@@ -13,7 +13,7 @@ function Rooms() {
     };
 
     return (
-        <div className='container-fluid'>
+        <div className='container'>
             <div className='top-div desktop-layout'>
                 <img src={Admin} alt="admin" className='dashboard-icon' />
                 <h1 className='dashboard-heading'>{name}</h1>

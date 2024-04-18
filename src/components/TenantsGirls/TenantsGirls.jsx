@@ -40,8 +40,8 @@ const TenantsGirls = () => {
           const apiData = await FetchData();
           const boysTenantsData = Object.values(apiData.girls.tenants);
           setGirlsTenants(boysTenantsData);
-          
         }
+        
       } catch (error) {
         console.error('Error fetching tenants data:', error);
       }
@@ -133,7 +133,7 @@ const TenantsGirls = () => {
       s_no: index + 1,
       image: tenant.tenantImageUrl,
       name: tenant.name, // Assuming 'name' property exists in the fetched data
-      id: tenant.idNumber, // Assuming 'id' property exists in the fetched data
+      proofid: tenant.idNumber, // Assuming 'id' property exists in the fetched data
       mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
       room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
       joining_date: tenant.dateOfJoin, // Assuming 'payment_date' property exists in the fetched data
@@ -233,7 +233,7 @@ return(
         <div className='roomlogo-container'>
           <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo'/>
         </div>
-        <h1 className='fs-5'>Rooms Management</h1>
+        <h1 className='fs-5'>Tenants Management</h1>
       </div>
       <div className="col-6 col-md-4 search-wrapper">
         <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={onChangeInput}/>

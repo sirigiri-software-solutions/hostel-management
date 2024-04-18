@@ -154,7 +154,7 @@ const TenantsBoys = () => {
       s_no: index + 1,
       image: tenant.tenantImageUrl,
       name: tenant.name, // Assuming 'name' property exists in the fetched data
-      id: tenant.idNumber, // Assuming 'id' property exists in the fetched data
+      proofid: tenant.idNumber, // Assuming 'id' property exists in the fetched data
       mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
       room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
       joining_date: tenant.dateOfJoin, // Assuming 'payment_date' property exists in the fetched data
@@ -176,6 +176,7 @@ const TenantsBoys = () => {
  
   return (
     <>
+    <div className='row'>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
         <div className="col-12 col-md-4 d-flex align-items-center mr-5">
           <div className='roomlogo-container'>
@@ -252,6 +253,7 @@ const TenantsBoys = () => {
             </div>
           </div>
         </div>
+      </div>
       </div>
         </>
   )

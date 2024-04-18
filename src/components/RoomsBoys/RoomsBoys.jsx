@@ -21,6 +21,29 @@ const RoomsBoys = () => {
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
 
+  const handleRoomsIntegerChange = (event) => {
+    const value = event.target.value;
+    const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
+
+    if (value === '' || re.test(value)) {
+        switch(event.target.name) {
+            case 'floorNumber':
+                setFloorNumber(value);
+                break;
+            case 'roomNumber':
+                setRoomNumber(value);
+                break;
+            case 'numberOfBeds':
+                setNumberOfBeds(value);
+                break;
+            case 'bedRent':
+                setBedRent(value);
+                break;
+            default:
+                break;
+        }
+    }
+};
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -283,7 +306,6 @@ const resetForm = () => {
       value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
-
   return (
     <div className='row'>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
@@ -324,11 +346,9 @@ const resetForm = () => {
           </div>
         </div>
       </div>
-
       <div>
         <Table columns={columns} rows={filteredRows} />
       </div>
-
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalRoomsBoys" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
         <div className="modal-dialog">
           <div className="modal-content">
@@ -341,25 +361,25 @@ const resetForm = () => {
                 <form className="row g-3" onSubmit={handleSubmit}>
                   <div className="col-md-6">
                     <label htmlFor="inputNumber" className="form-label">Floor Number</label>
-                    <input type="number" className="form-control" id="inputNumber" name="number" value={floorNumber} onChange={(e) => setFloorNumber(e.target.value)} />
+                    <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange} />
                     {/* {formErrors.number && <div className="text-danger">{formErrors.number}</div>} */}
                     {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
                   </div>
                   <div className="col-md-6">
                     <label htmlFor="inputRent" className="form-label">Room Number</label>
-                    <input type="number" className="form-control" id="inputRent" name="rent" value={roomNumber} onChange={(e) => setRoomNumber(e.target.value)} />
+                    <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} />
                     {/* {formErrors.rent && <div className="text-danger">{formErrors.rent}</div>} */}
                     {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
                   </div>
                   <div className="col-md-6">
                     <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
-                    <input type="number" className="form-control" id="inputRooms" name="rooms" value={numberOfBeds} onChange={(e) => setNumberOfBeds(e.target.value)} />
+                    <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} />
                     {/* {formErrors.rooms && <div className="text-danger">{formErrors.rooms}</div>} */}
                     {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
                   </div>
                   <div className="col-md-6">
                     <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
-                    <input type="text" className="form-control" id="inputStatus" name="status" value={bedRent} onChange={(e) => setBedRent(e.target.value)} />
+                    <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} />
                     {/* {formErrors.status && <div className="text-danger">{formErrors.status}</div>} */}
                     {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
                   </div>

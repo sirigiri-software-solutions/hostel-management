@@ -12,7 +12,6 @@ const RentPageBoys = () => {
   const { data } = useContext(DataContext);
   const [searchQuery, setSearchQuery] = useState('');
 
-  
   const [tenants, setTenants] = useState([]);
   const [rooms, setRooms] = useState({});
   const [selectedTenant, setSelectedTenant] = useState('');
@@ -49,7 +48,6 @@ const RentPageBoys = () => {
       setRooms(data);
     });
   }, []);
-
 
   useEffect(() => {
     const updateTotalFeeFromRoom = () => {
@@ -225,6 +223,15 @@ const RentPageBoys = () => {
     }
 
     resetForm();
+  };
+//===> For Clear Form for Add Rents
+  const handleAddNew = () => {
+    // Reset any previous data
+    resetForm();
+    // Set modal for a new entry
+    setIsEditing(false);
+    // Open the modal
+    // setShowModal(true);
   };
   const resetForm = () => {
     setSelectedTenant('');
@@ -438,16 +445,14 @@ const rows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map(rent =
             <img src={SearchIcon} alt="search-icon" className='search-icon' />
           </div>
           <div className="col-6 col-md-4 d-flex justify-content-end">
-            <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalRentsBoys">
+            <button type="button" class="add-button" data-bs-toggle="modal" onClick={handleAddNew} data-bs-target="#exampleModalRentsBoys">
               Add Rents
             </button>
           </div>
         </div>
-
         <div>
            <Table columns={columns} rows={filteredRows} /> 
         </div>
-
         <div class="modal fade" id="exampleModalRentsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -501,17 +506,14 @@ const rows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map(rent =
                     <br /><br />
                     <label>Bed Number:</label>
                     <input type="text" value={bedNumber} readOnly /><br /><br />
-
                     <label>Total Fee:</label>
                     <input type="number" value={totalFee} readOnly /><br /><br />
-
                     <div>
                       <label>Paid Amount:</label>
                       <input type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                       {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                       <br /><br />
                     </div>
-
                     <label>Due:</label>
                     <input type="number" value={due} readOnly /><br /><br />
                     <div>

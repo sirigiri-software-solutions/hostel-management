@@ -1,178 +1,188 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import bedIcon from '../../images/Icons (3).png'
 import Table from '../../Elements/Table'
 import SearchIcon from '../../images/Icons (9).png'
 import { database, push, ref } from "../../firebase"; 
+import { onValue } from 'firebase/database';
 
 const BedsPageBoys = () => {
-  const [formData, setFormData] = useState({
-    number: '',
-    rent: '',
-    rooms: '',
-    status: ''
-  });
-  
-  const [formErrors, setFormErrors] = useState({
-    number: '',
-    rent: '',
-    rooms: '',
-    status: ''
-  });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
+  const [boysRooms, setBoysRooms]= useState([])
+  const [bedsData, setBedsData] = useState([]);
+  const [tenants, setTenants] = useState([]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    let errors = {};
-    let formIsValid = true;
+  const [searchValue,setSearchValue] = useState("");
 
-    // Basic validation for required fields
-    if (!formData.number) {
-      errors.number = 'Number is required';
-      formIsValid = false;
-    }
-
-    if (!formData.rent) {
-      errors.rent = 'Rent is required';
-      formIsValid = false;
-    }
-
-    if (!formData.rooms) {
-      errors.rooms = 'Rooms is required';
-      formIsValid = false;
-    }
-
-    if (!formData.status) {
-      errors.status = 'Status is required';
-      formIsValid = false;
-    }
-
-    // If form is valid, proceed with submission
-    if (formIsValid) {
-      // console.log('Form submitted successfully:', formData);
-      const newData = {
-        number: formData.number,
-        rent: formData.rent,
-        rooms: formData.rooms,
-        status: formData.status
-      };
-
-      // Push the new data to the 'beds' node
-      push(ref(database, 'beds'), newData)
-        .then(() => {
-          // Data successfully stored in Firebase
-          // console.log('Data successfully stored in Firebase');
-          // Clear the form after submission if needed
-          setFormData({
-            number: '',
-            rent: '',
-            rooms: '',
-            status: ''
-          });
-        })
-        .catch((error) => {
-          // Handle errors
-          // console.error('Error storing data in Firebase: ', error.message);
+  useEffect(() => {
+    const roomsRef = ref(database, 'Hostel/boys/rooms');
+    onValue(roomsRef, (snapshot) => {
+      const data = snapshot.val();
+      const loadedRooms = [];
+      for (const key in data) {
+        loadedRooms.push({
+          id: key,
+          ...data[key]
         });
-    } else {
-      // Set errors for form validation
-      setFormErrors(errors);
+      }
+      setBoysRooms(loadedRooms);
+    })
+  }, []);
+  // Fetch tenants data
+  useEffect(() => {
+    const tenantsRef = ref(database, 'Hostel/boys/tenants');
+    onValue(tenantsRef, (snapshot) => {
+      const data = snapshot.val();
+      const loadedTenants = [];
+      for (const key in data) {
+        loadedTenants.push({
+          id: key,
+          ...data[key]
+        });
+      }
+      setTenants(loadedTenants);
+    });
+  }, []);
+
+  // Construct beds data based on rooms and tenants
+  useEffect(() => {
+    if (!boysRooms || boysRooms.length === 0) {
+      // If rooms are not defined or the array is empty, clear bedsData and exit early
+      setBedsData([]);
+      return;
     }
-  };
+
+    const allBeds = boysRooms.flatMap(room => {
+      return Array.from({ length: room.numberOfBeds }, (_, i) => {
+        const bedNumber = i + 1;
+        // Find if there's a tenant for the current bed
+        const tenant = tenants.find(tenant => tenant.roomNo === room.roomNumber && tenant.bedNo === String(bedNumber));
+        return {
+          floorNumber: room.floorNumber,
+          roomNumber: room.roomNumber,
+          bedNumber: bedNumber,
+          rent: room.bedRent || "N/A", // Assuming rent is provided by the tenant data
+          status: tenant ? "Occupied" : "Unoccupied"
+        };
+      });
+    });
+    setBedsData(allBeds);
+  }, [boysRooms, tenants]); // Depend on rooms and tenants data
+
+  // const [formData, setFormData] = useState({
+  //   number: '',
+  //   rent: '',
+  //   rooms: '',
+  //   status: ''
+  // });
+  
+  // const [formErrors, setFormErrors] = useState({
+  //   number: '',
+  //   rent: '',
+  //   rooms: '',
+  //   status: ''
+  // });
+
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData({
+  //     ...formData,
+  //     [name]: value
+  //   });
+  // };
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   let errors = {};
+  //   let formIsValid = true;
+
+  //   // Basic validation for required fields
+  //   if (!formData.number) {
+  //     errors.number = 'Number is required';
+  //     formIsValid = false;
+  //   }
+
+  //   if (!formData.rent) {
+  //     errors.rent = 'Rent is required';
+  //     formIsValid = false;
+  //   }
+
+  //   if (!formData.rooms) {
+  //     errors.rooms = 'Rooms is required';
+  //     formIsValid = false;
+  //   }
+
+  //   if (!formData.status) {
+  //     errors.status = 'Status is required';
+  //     formIsValid = false;
+  //   }
+
+  //   // If form is valid, proceed with submission
+  //   if (formIsValid) {
+  //     // console.log('Form submitted successfully:', formData);
+  //     const newData = {
+  //       number: formData.number,
+  //       rent: formData.rent,
+  //       rooms: formData.rooms,
+  //       status: formData.status
+  //     };
+
+  //     // Push the new data to the 'beds' node
+  //     push(ref(database, 'beds'), newData)
+  //       .then(() => {
+  //         // Data successfully stored in Firebase
+  //         // console.log('Data successfully stored in Firebase');
+  //         // Clear the form after submission if needed
+  //         setFormData({
+  //           number: '',
+  //           rent: '',
+  //           rooms: '',
+  //           status: ''
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         // Handle errors
+  //         // console.error('Error storing data in Firebase: ', error.message);
+  //       });
+  //   } else {
+  //     // Set errors for form validation
+  //     setFormErrors(errors);
+  //   }
+  // };
 
   const columns = [
     'S. No',
     'Bed Number',
-    'Room. No',
+    'Room No',
     'Floor',
     'Rent',
-    'Last Updated date',
     'Status'
-  ]
+  ];
 
-  const rows = [
-    {
-      s_no : 1,
-      bed_number : 2,
-      room_no : 125,
-      floor: "1st",
-      rent: "Rs. 5000",
-      last_updated_by: "21 Aug 2021",
-      edit: {
-        icon: false,
-        variant: {color:'#166919', radius:'10px'},
-        text: 'Occupied'
-      }
-    },
-    {
-      s_no : 1,
-      bed_number : 2,
-      room_no : 125,
-      floor: "1st",
-      rent: "Rs. 5000",
-      last_updated_by: "21 Aug 2021",
-      edit: {
-        icon: false,
-        variant: {color:'#166919', radius:'10px'},
-        text: 'Occupied'
-      }
-    },
-    {
-      s_no : 1,
-      bed_number : 2,
-      room_no : 125,
-      floor: "1st",
-      rent: "Rs. 5000",
-      last_updated_by: "21 Aug 2021",
-      edit: {
-        icon: false,
-        variant: {color:'#166919', radius:'10px'},
-        text: 'Occupied'
-      }
-    },
-    {
-      s_no : 1,
-      bed_number : 2,
-      room_no : 125,
-      floor: "1st",
-      rent: "Rs. 5000",
-      last_updated_by: "21 Aug 2021",
-      edit: {
-        icon: false,
-        variant: {color:'#166919', radius:'10px'},
-        text: 'Occupied'
-      }
-    },
-    {
-      s_no : 1,
-      bed_number : 2,
-      room_no : 125,
-      floor: "1st",
-      rent: "Rs. 5000",
-      last_updated_by: "21 Aug 2021",
-      edit: {
-        icon: false,
-        variant: {color:'grey', radius:'10px'},
-        text: 'Unoccupied'
-      }
-    },
-  ]
+  const rows = bedsData.map((beds, index) => ({
+    s_no: index + 1,
+    bed_number:beds.bedNumber,
+    room_no:beds.roomNumber,
+   floor:beds.floorNumber,
+   rent:beds.rent,
+   status:beds.status
+  }));
 
-  // const [showCreateBedsBoys, setShowCreateBedsBoys] = useState(false);
+  const onChangeSearch = (e) => {
+    setSearchValue(e.target.value);
+  }
 
-  // const toggleCreateBedsBoys = () => {
-  //   setShowCreateBedsBoys(!showCreateBedsBoys)
-  // }
 
+const filteredRows = rows.filter(row => {
+    return Object.values(row).some(value =>
+      value.toString().toLowerCase().includes(searchValue.toLowerCase())
+    );
+  });
+
+ 
+
+ 
   return (
-    <div className='h-100'>
-      
+    <div className='h-100'> 
     <>
     <div className="row d-flex align-items-center justify-content-between">
       <div className="col-12 col-md-4 d-flex align-items-center mr-5">
@@ -182,18 +192,18 @@ const BedsPageBoys = () => {
         <h1 className='fs-5'>Beds Management</h1>
       </div>
       <div className="col-6 col-md-4 search-wrapper">
-        <input type="text" placeholder='Search' className='search-input'/>
+        <input value={searchValue} onChange={onChangeSearch} type="text" placeholder='Search' className='search-input'/>
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
       </div>
       <div className="col-6 col-md-4 d-flex justify-content-end">
-        <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalBedsBoys">
+        {/* <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalBedsBoys">
           Add Beds
-        </button>
+        </button> */}
       </div>
     </div>
 
     <div>   
-        <Table columns={columns} rows={rows}/>
+        <Table columns={columns} rows={filteredRows}/>
     </div>
 
     <div class="modal fade" id="exampleModalBedsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -208,7 +218,7 @@ const BedsPageBoys = () => {
               <h1 className='text-center mb-2 fs-5'>
                 Create Beds
               </h1>
-              <form className="row g-3" onSubmit={handleSubmit}>
+              {/* <form className="row g-3" onSubmit={handleSubmit}>
                 <div className="col-md-6">
                   <label htmlFor="inputNumber" className="form-label">Number</label>
                   <input type="number" className="form-control" id="inputNumber" name="number" value={formData.number} onChange={handleInputChange} />
@@ -232,7 +242,7 @@ const BedsPageBoys = () => {
                 <div className="col-12 text-center">
                   <button type="submit" className="btn btn-warning">Create</button>
                 </div>
-              </form>
+              </form> */}
             </div>
           </div>
           <div className="modal-footer">
@@ -248,4 +258,4 @@ const BedsPageBoys = () => {
   )
 }
 
-export default BedsPageBoys
+export default BedsPageBoys;

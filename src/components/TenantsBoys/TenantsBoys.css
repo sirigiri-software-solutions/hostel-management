@@ -10,3 +10,84 @@
     margin-right: 10px;
     /* margin-bottom: -40px; */
 }
+
+.userDetailsPopupHeading{
+    text-align:center;
+}
+
+.tableRow-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .tableRow-popup {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    width:450px;
+  }
+
+@media screen and (max-width:768px){
+    .tableRow-popup-overlay{
+        top:30px;
+    }
+    .tableRow-popup{
+        width:300px;
+    }
+}
+  
+.tableRowCloseBtnContainer{
+    text-align:center;
+}
+.tableRowCloseBtn{
+    width:100px;
+    height:30px;
+    background-color:#007bff;
+    color:white;
+    border:none;
+    font-size:15px;
+    font-weight:bold;
+}
+  
+
+
+  .tableRowCloseBtn:hover {
+    background-color: red;
+  }
+  .tablePopupProfile{
+    height:150px;
+    width:150px;
+    border-radius:50%;
+    background-size:cover;
+  }
+  .userDetailsPopupInfo{
+    display:flex;
+    justify-content:center;
+    padding-top:10px;
+  }
+  @media screen and (max-width:768px){
+    .userDetailsPopupInfo{
+        flex-direction:column;
+        align-items:center;
+    }
+  }
+  .tableRowpopupProfileContainer{
+    display:flex;
+    align-items:center;
+  }
+  .tableRowPopupInfotext{
+    padding-left:20px;
+  }
+  @media screen and (max-width:768px) {
+    .tableRowPopupInfotext{
+        padding-top:13px;
+    }
+  }

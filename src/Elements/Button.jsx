@@ -1,13 +1,8 @@
 import React from "react";
 import PlusIcon from "../images/Icons (8).png";
 
-const Button = ({ onClick, icon, variant, text }) => {
+const Button = ({ icon, variant, text }) => {
 
-  const handleClick = () => {
-    if(onClick) {
-      onClick()
-    }
-  }
   
   return (
     <>
@@ -21,7 +16,6 @@ const Button = ({ onClick, icon, variant, text }) => {
         padding: `${variant.padding}`,
         margin: `${variant.margin}`,
       }}
-        onClick={handleClick}
       >
       {icon && <img src={PlusIcon} alt="Plus-Icon" style={{ width: "20px" }} />}
       {text}

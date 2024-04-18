@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 export const loginContext = createContext();
-
 const Login = () => {
   const navigate = useNavigate();
   const initialState = { Id: "", email: "", password: "" };
@@ -29,26 +28,27 @@ const Login = () => {
     const rememberedUsername=localStorage.getItem('rememberedUsername');
     const rememberedPassword=localStorage.getItem('rememberedPassword');
     if (rememberedUsername && rememberedPassword) {
-      setLoginData({...loginData,[loginData.email]:rememberedUsername});
-      setLoginData({...loginData,[loginData.password]:rememberedPassword});
+         setLoginData({...loginData, [loginData.email]: rememberedUsername, [loginData.password]: rememberedPassword});
+      // setLoginData({...loginData,[loginData.email]:rememberedUsername});
+      // setLoginData({...loginData,[loginData.password]:rememberedPassword});
       setRememberMe(true);
     }
-
   },[])
+
   const handleRememberme=(e)=>{
     // console.log(e);
     // setRememberMe(e.target.checked)
     setRememberMe(!rememberMe);
-
   }
 
   useEffect(() => {
     axios
-      .get("https://signuppage-2f4c8-default-rtdb.firebaseio.com/register.json")
+         .get("https://kiranreddy-58a8c-default-rtdb.firebaseio.com/register.json")
+      // .get("https://signuppage-2f4c8-default-rtdb.firebaseio.com/register.json")
       .then((response) => {
         let data = Object.values(response.data);
         setData(data);
-        // console.log(data, "data response from firebase");
+        console.log(data, "data response from firebase");
       });
   }, []);
 
@@ -65,7 +65,6 @@ const Login = () => {
       const itemExist = data.findIndex(
         (item) => item.email === loginData.email
       );
-      
       const singleLoginuser = data.find((item)=>item.email === loginData.email);
       // console.log(singleLoginuser);
       if (itemExist > -1) {
@@ -156,7 +155,6 @@ const Login = () => {
     return isValid;
   };
 
-  
   return (
     <>
   <div className="main-div">
@@ -235,8 +233,3 @@ const Login = () => {
 };
 
 export default Login;
-
-
-
-
-

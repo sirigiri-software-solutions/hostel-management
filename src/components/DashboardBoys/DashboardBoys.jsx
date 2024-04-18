@@ -106,6 +106,132 @@ const DashboardBoys = () => {
   const [modelText, setModelText] = useState('');
   const [formLayout, setFormLayout] = useState('');
  
+  useEffect(() => {
+    if (selectedRoom) {
+      const room = boysRoomsData.find(room => room.roomNumber === selectedRoom);
+      if (room) {
+        const options = Array.from({ length: room.numberOfBeds }, (_, i) => i + 1);
+        setBedOptions(options);
+      }
+    } else {
+      setBedOptions([]);
+    }
+  }, [selectedRoom, boysRoomsData]);
+
+  const validate = () => {
+    let tempErrors = {};
+    tempErrors.selectedRoom = selectedRoom ? "" : "Room number is required.";
+    tempErrors.selectedBed = selectedBed ? "" : "Bed number is required.";
+    tempErrors.dateOfJoin = dateOfJoin ? "" : "Date of join is required.";
+    tempErrors.name = name ? "" : "Name is required.";
+    tempErrors.mobileNo = mobileNo ? "" : "Mobile number is required.";
+    tempErrors.idNumber = idNumber ? "" : "ID number is required.";
+    tempErrors.emergencyContact = emergencyContact ? "" : "Emergency contact is required.";
+
+    // Check if the selected bed is already occupied
+    const isBedOccupied = tenants.some(tenant => {
+      return tenant.roomNo === selectedRoom && tenant.bedNo === selectedBed && tenant.status === "occupied" && tenant.id !== currentTenantId;
+    });
+
+    if (isBedOccupied) {
+      tempErrors.selectedBed = "This bed is already occupied.";
+    }
+    setTenantErrors(tempErrors);
+    return Object.keys(tempErrors).every((key) => tempErrors[key] === "");
+  };
+
+  const handleTenantImageChange = (e) => {
+    if (e.target.files[0]) {
+      setTenantImage(e.target.files[0]);
+    }
+  };
+  const handleTenantIdChange = (e) => {
+    if (e.target.files[0]) {
+      setTenantId(e.target.files[0]);
+    }
+  };
+
+  const handleTenantSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validate()) return;
+
+    let imageUrlToUpdate = tenantImageUrl;
+
+    if (tenantImage) {
+      const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantImage/${tenantImage.name}`);
+      try {
+        const snapshot = await uploadBytes(imageRef, tenantImage);
+        imageUrlToUpdate = await getDownloadURL(snapshot.ref);
+      } catch (error) {
+        console.error("Error uploading tenant image:", error);
+
+      }
+    }
+
+    let idUrlToUpdate = tenantIdUrl;
+    if (tenantId) {
+      const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantId/${tenantId.name}`);
+      try {
+        const snapshot = await uploadBytes(imageRef, tenantId);
+        idUrlToUpdate = await getDownloadURL(snapshot.ref);
+      } catch (error) {
+        console.error("Error uploading tenant image:", error);
+      }
+    }
+
+    const tenantData = {
+      roomNo: selectedRoom,
+      bedNo: selectedBed,
+      dateOfJoin,
+      name,
+      mobileNo,
+      idNumber,
+      emergencyContact,
+      status,
+      tenantImageUrl: imageUrlToUpdate,
+      tenantIdUrl: idUrlToUpdate,
+      // tenantIdUrl,
+    };
+
+    if (isEditing) {
+      await update(ref(database, `Hostel/boys/tenants/${currentTenantId}`), tenantData);
+    } else {
+      await push(ref(database, 'Hostel/boys/tenants'), tenantData);
+    }
+    // setShowModal(false);
+
+    resetForm();
+    imageInputRef.current.value = "";
+    idInputRef.current.value = "";
+  };
+
+  const resetForm = () => {
+    setSelectedRoom('');
+    setSelectedBed('');
+    setDateOfJoin('');
+    setName('');
+    setMobileNo('');
+    setIdNumber('');
+    setEmergencyContact('');
+    setStatus('unoccupied');
+    setIsEditing(false);
+    setCurrentId('');
+    setErrors({});
+    setTenantImage(null);
+    setTenantId(null);
+    setTenantImageUrl('');
+    setTenantIdUrl('');
+    setFloorNumber('');
+    setRoomNumber('');
+    setNumberOfBeds('');
+    setBedRent('');
+    setCreatedBy('admin')
+  };
+
+
+  
+
   const menu = [
     {
       image: Rooms,
@@ -142,6 +268,7 @@ const DashboardBoys = () => {
   const handleCloseModal = () => {
     setModelText('');
     setFormLayout('');
+    resetForm();
   };
  
   // useEffect(() => {
@@ -228,18 +355,162 @@ const DashboardBoys = () => {
         )
       case 'Add Tenants':
         return (
-          <form class="row lg-10">
+          // <form class="row lg-10">
+          //   <div class="col-md-6">
+          //     <label for="inputslno" class="form-label">S.No</label>
+          //     <input type="number" class="form-control" id="inputslno" />
+          //   </div>
+          //   <div class="col-md-6">
+          //     <label for="inputImage" class="form-label">Image</label>
+          //     <input type="file" class="form-control" id="inputImage" />
+          //   </div>
+          //   <div class="col-md-6">
+          //     <label for="inputName" class="form-label">Name</label>
+          //     <input type="text" class="form-control" id="inputName" />
+          //   </div>
+          //   <div class="col-md-6">
+          //     <label for="inputDocumentType" class="form-label">ID</label>
+          //     <select class="form-select" id="inputDocumentType">
+          //       <option value="">Select Document Type</option>
+          //       <option value="aadhar">Aadhar Card</option>
+          //       <option value="pan">PAN</option>
+          //     </select>
+          //   </div>
+          //   <div class="col-md-6">
+          //     <label for="inputMbNo" class="form-label">Mobile No</label>
+          //     <input type="tel" pattern="[0-9]" class="form-control" id="inputMbNo" />
+          //   </div>
+          //   <div class="col-md-6">
+          //     <label for="inputRoomNo" class="form-label">Room No</label>
+          //     <input type="number" class="form-control" id="inputRoomNo" />
+          //   </div>
+          // </form>
+          <form class="row lg-10" onSubmit={handleTenantSubmit}>
           <div class="col-md-6">
-            <label for="inputslno" class="form-label">S.No</label>
-            <input type="number" class="form-control" id="inputslno"/>
+            <label htmlFor='roomNo' class="form-label">Room No:</label>
+              <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
+                <option value="">Select a Room</option>
+                {boysRoomsData.map((room) => (
+                  <option key={room.roomNumber} value={room.roomNumber}>
+                    {room.roomNumber}
+                  </option>
+                ))}
+              </select>
+            
+          {tenatErrors.selectedRoom && <p style={{ color: 'red' }}>{tenatErrors.selectedRoom}</p>}
+          </div>
+
+          <div class="col-md-6">
+            <label htmlFor='bedNo' class="form-label">
+              Bed No:
+              </label>
+              <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
+                <option value="">Select a Bed</option>
+                {bedOptions.map(bedNumber => (
+                  <option key={bedNumber} value={bedNumber}>
+                    {bedNumber}
+                  </option>
+                ))}
+              </select>
+            
+            {tenatErrors.selectedBed && <p style={{ color: 'red' }}>{tenatErrors.selectedBed}</p>}
           </div>
           <div class="col-md-6">
-            <label for="inputImage" class="form-label">Image</label>
-            <input type="file" class="form-control" id="inputImage"/>
+            <label htmlFor='dataofJoin' class="form-label">
+              Date of Join:
+              </label>
+              <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
+            
+            {tenatErrors.dateOfJoin && <p style={{ color: 'red' }}>{tenatErrors.dateOfJoin}</p>}
           </div>
           <div class="col-md-6">
-            <label for="inputName" class="form-label">Name</label>
-            <input type="text" class="form-control" id="inputName"/>
+            <label htmlFor='tenantName' class="form-label">
+              Name:
+              </label>
+              <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            
+            {tenatErrors.name && <p style={{ color: 'red' }}>{tenatErrors.name}</p>}
+          </div>
+          <div class="col-md-6">
+            <label htmlFor='tenantMobileNo' class="form-label">
+              Mobile No:
+              </label>
+              <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
+            
+            {tenatErrors.mobileNo && <p style={{ color: 'red' }}>{tenatErrors.mobileNo}</p>}
+          </div>
+          <div class="col-md-6">
+            <label htmlFor='tenantIdNum' class="form-label">
+              ID Number:
+              </label>
+              <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
+            
+            {tenatErrors.idNumber && <p style={{ color: 'red' }}>{tenatErrors.idNumber}</p>}
+          </div>
+          <div class="col-md-6">
+            <label htmlFor='tenantEmergency' class="form-label">
+              Emergency Contact:
+              </label>
+              <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
+            
+            {tenatErrors.emergencyContact && <p style={{ color: 'red' }}>{tenatErrors.emergencyContact}</p>}
+          </div>
+          <div class="col-md-6">
+            <label htmlFor='tenantStatus' class="form-label">
+              Status:
+              </label>
+              <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
+                <option value="occupied">Occupied</option>
+                <option value="unoccupied">Unoccupied</option>
+              </select>
+            
+          </div>
+          <div class="col-md-6">
+            <label htmlFor='tenantUpload' class="form-label">
+              Upload Image:
+              </label>
+              {isEditing && tenantImageUrl && (
+                <div>
+                  <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
+                  <p>Current Image</p>
+                </div>
+              )}
+              <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} />
+            
+          </div>
+          <div class="col-md-6">
+            <label htmlFor='tenantUploadId' class="form-label">
+              Upload Id:
+              </label>
+              {isEditing && tenantIdUrl && (
+                <object
+                  data={tenantIdUrl}
+                  type="application/pdf"
+                  width="50%"
+                  height="200px"
+                >
+                  <a href={tenantIdUrl}>Download PDF</a>
+                </object>
+              )}
+              <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
+           
+          </div>
+          {/* ===== */}
+          <div class="col-md-6">
+            <label htmlFor='tenantIdInput'  for="file-upload" class="custom-file-upload form-label">
+              {/* <i class="fa fa-cloud-upload"></i> */}
+              {/* <MdUploadFile /> */}
+            </label>
+            <input  class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
+          </div>
+
+          {/* =============== */}
+          <div className='col-12 text-center'>
+            {isEditing ? (
+              <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>Update Tenant</button>
+            ) : (
+              <button className='btn btn-warning' type="submit">Add Tenant</button>
+            )}
           </div>
           <div class="col-md-6">
               <label for="inputDocumentType" class="form-label">ID</label>
@@ -349,23 +620,19 @@ const DashboardBoys = () => {
                     ))}
                 </div>
               </React.Fragment>
- 
           )}   */}
- 
-           { menu.map((item, index) => (
-                  <>
-                      <SmallCard key={index} index={index} item={item} />
-                      <button id="mbladdButton" key={index} onClick={() => handleClick(item.btntext)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' />{item.btntext}</button>
-                      </>
-                ))}
-                <div className='button-container'>
-                    {Buttons?.map((item, index) => (
-                        <button id="deskaddButton" key={index} onClick={() => handleClick(item)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item}</button>
-                    ))}
-                </div>
- 
- 
 
+        {menu.map((item, index) => (
+          <>
+            <SmallCard key={index} index={index} item={item} />
+            <button id="mbladdButton" key={index} onClick={() => handleClick(item.btntext)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' />{item.btntext}</button>
+          </>
+        ))}
+        <div className='button-container'>
+          {Buttons?.map((item, index) => (
+            <button id="deskaddButton" key={index} onClick={() => handleClick(item)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item}</button>
+          ))}
+        </div>
       </div>
  
       {/* popup model */}
@@ -374,15 +641,15 @@ const DashboardBoys = () => {
           <div class="modal-content">
             <div class="modal-header">
               <h1 class="modal-title fs-5" id="exampleModalLabel">{modelText}</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button onClick={handleCloseModal} type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                {renderFormLayout()} 
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            {/* <div class="modal-footer">
+              <button onClick={handleCloseModal} type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
+            </div>  */}
           </div>
         </div>
       </div>

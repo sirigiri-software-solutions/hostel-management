@@ -6,7 +6,7 @@ const SmallCard = (props) => {
 
     useEffect(()=>{
         const handleResize = () => {
-             if(window.innerWidth < 576){
+             if(window.innerWidth < 650){
               setCard(true);
              }else{
               setCard(false);

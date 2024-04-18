@@ -9,13 +9,12 @@
   margin-top: 20px;
   overflow: auto;
   /* border: 1px solid ; */
-  border-radius: 10px;
+  border-radius:12px;
 }
-
 .table{
   width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 0px !important;
+  border-collapse: collapse ; 
+  margin-bottom:0px !important;
 }
 
 .table thead{
@@ -100,3 +99,4 @@
   width:40px;
   height:40px;
 }
+

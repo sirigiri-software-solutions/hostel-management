@@ -115,6 +115,7 @@ const TenantsBoys = () => {
     tempErrors.dateOfJoin = dateOfJoin ? "" : "Date of join is required.";
     tempErrors.name = name ? "" : "Name is required.";
     tempErrors.mobileNo = mobileNo ? "" : "Mobile number is required.";
+    tempErrors.tenantImageUrl = tenantImageUrl ? "" : "Image is required";
     tempErrors.idNumber = idNumber ? "" : "ID number is required.";
     tempErrors.emergencyContact = emergencyContact ? "" : "Emergency contact is required.";
 
@@ -430,7 +431,9 @@ const TenantsBoys = () => {
             </div>
             <div class="modal-body">
               <div className="container-fluid">
-                
+                <h1 className='text-center mb-2 fs-5'>
+                  Create Tenants
+                </h1>
                 {/* <form className="row g-3" onSubmit={handleSubmit}>
                   <div className="col-md-6">
                     <label htmlFor="inputNumber" className="form-label">Number</label>

@@ -364,7 +364,6 @@ const TenantsGirls = () => {
       Edit
     </button>,
   }));
-
  
 
   const onChangeInput = (e) => {

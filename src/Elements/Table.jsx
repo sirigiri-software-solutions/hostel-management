@@ -31,12 +31,12 @@ const Table = ({columns, rows}) => {
                 {item.noofBeds && <td data-label="No.of Beds">{item.noofBeds}</td>}
                 {item.month_year && <td data-label="month_year">{item.month_year}</td>}
                 {item.rent && <td data-label="rent">{item.rent}</td>}
+                {item.joining_date && <td data-label="joining_date">{item.joining_date}</td>}
                 {item.due_date && <td data-label="due_date">{item.due_date}</td>}
                 {item.last_fee && <td data-label="last_fee">{item.last_fee}</td>}
                 {item.created_on && <td data-label="created_on">{item.created_on}</td>}
-                {item.created_by && <td data-label="Created By">{item.created_by}</td>}
+                {item.created_by && <td data-label="created_by">{item.created_by}</td>}
                 {item.last_updated_by && <td data-label="Last Updated date">{item.last_updated_by}</td>}
-                {item.joining_date && <td data-label="joining_date">{item.joining_date}</td>}
                 {item.payment_date && <td data-label="payment_date">{item.payment_date}</td>}
                 {item.status && <td data-label="status">{item.status}</td>}
                 {item.edit_room && <td data-label="Edit">{item.edit_room}</td>}

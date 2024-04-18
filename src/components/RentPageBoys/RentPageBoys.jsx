@@ -370,6 +370,7 @@ const RentPageBoys = () => {
     'Person Mobile',
     'Bed No',
     'Rent',
+    'Joining Date',
     'Due Date',
     'Last Fee',
     'Status',
@@ -377,26 +378,43 @@ const RentPageBoys = () => {
   ];
   
   // console.log("rents====>",tenantsWithRents)
-
-const rows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map(rent => ({
-  s_no: index + 1,
+  const rentsRows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map((rent) => ({
+  roomNumber: rent.roomNumber,
+  name: tenant.name,
+  mobileNo: tenant.mobileNo,
+  bedNumber: rent.bedNumber,
+  totalFee: "Rs. " + rent.totalFee,
+  dateOfJoin: tenant.dateOfJoin,
+  dueDate: rent.dueDate,
+  paidDate: rent.paidDate,
+  status:rent.status==='Unpaid' ? 'Unpaid' : 'Paid',
+  tenantId: tenant.id,
+  rentId: rent.id,
+  })))
+  // console.log(rentsRows,'rent')
+// const count = 0;
+const rows = rentsRows.map((rent, index) => ({
+  s_no: index+1,
   room_no: rent.roomNumber,
-  person_name: tenant.name,
-  person_mobile: tenant.mobileNo,
+  person_name: rent.name,
+  person_mobile: rent.mobileNo,
   bed_no: rent.bedNumber,
   rent: "Rs. " + rent.totalFee,
+  joining_date: rent.dateOfJoin,
   due_date: rent.dueDate,
   last_fee: rent.paidDate,
   status:rent.status==='Unpaid' ? 'Unpaid' : 'Paid',
   actions: <button
       style={{ backgroundColor: '#ff8a00', padding:'4px', borderRadius: '5px', color: 'white', border: 'none', }}
-      onClick={() => loadRentForEditing(tenant.id, rent.id)}
+      onClick={() => loadRentForEditing(rent.tenantId, rent.rentId)}
       data-bs-toggle="modal"
       data-bs-target="#exampleModalRentsBoys"
     >
       update
     </button>,
-})));
+}));
+
+// console.log(rows, 'rr')
 
   // const flatRentsData = tenantsWithRents.flat();
   // const rows = flatRentsData.map((rentData, index) => {
@@ -461,7 +479,7 @@ const rows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map(rent =
               <div class="modal-body">
                 <div className="container-fluid">
                   <h1 className='text-center mb-2 fs-5'>
-                    Create Beds
+                    Create Rents
                   </h1>
                   {/* <form className="row g-3" onSubmit={handleSubmit}>
                 <div className="col-md-6">

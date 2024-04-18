@@ -11,6 +11,8 @@ const BedsPageBoys = () => {
   const [bedsData, setBedsData] = useState([]);
   const [tenants, setTenants] = useState([]);
 
+  const [searchValue,setSearchValue] = useState("");
+
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
     onValue(roomsRef, (snapshot) => {
@@ -165,7 +167,19 @@ const BedsPageBoys = () => {
    status:beds.status
   }));
 
+  const onChangeSearch = (e) => {
+    setSearchValue(e.target.value);
+  }
+
+
+const filteredRows = rows.filter(row => {
+    return Object.values(row).some(value =>
+      value.toString().toLowerCase().includes(searchValue.toLowerCase())
+    );
+  });
+
  
+
  
   return (
     <div className='h-100'> 
@@ -178,7 +192,7 @@ const BedsPageBoys = () => {
         <h1 className='fs-5'>Beds Management</h1>
       </div>
       <div className="col-6 col-md-4 search-wrapper">
-        <input type="text" placeholder='Search' className='search-input'/>
+        <input value={searchValue} onChange={onChangeSearch} type="text" placeholder='Search' className='search-input'/>
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
       </div>
       <div className="col-6 col-md-4 d-flex justify-content-end">
@@ -189,7 +203,7 @@ const BedsPageBoys = () => {
     </div>
 
     <div>   
-        <Table columns={columns} rows={rows}/>
+        <Table columns={columns} rows={filteredRows}/>
     </div>
 
     <div class="modal fade" id="exampleModalBedsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

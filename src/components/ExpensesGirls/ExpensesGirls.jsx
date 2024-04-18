@@ -4,6 +4,7 @@ import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
 //import ImageIcon from '../../images/Icons (10).png'
 import { database, push, ref } from "../../firebase"; 
+import "../RoomsBoys/RoomsBoys.css"
 
 const ExpensesGirls = () => {
 
@@ -178,18 +179,18 @@ const ExpensesGirls = () => {
    
     <>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
-        <div className="col-12 col-md-4 d-flex align-items-center mr-5">
+        <div className="col-12 col-md-5 d-flex align-items-center mr-5 mb-2">
           <div className='roomlogo-container'>
             <img src={ExpenseIcon} alt="RoomsIcon" className='roomlogo'/>
           </div>
           <h1 className='fs-5'>Expenses Management</h1>
         </div>
-        <div className="col-6 col-md-4 search-wrapper">
+        <div className="col-8 col-md-4 search-wrapper">
           <input type="text" placeholder='Search' className='search-input'/>
           <img src={SearchIcon} alt="search-icon" className='search-icon'/>
         </div>
-        <div className="col-6 col-md-4 d-flex justify-content-end">
-          <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalEGirls">
+        <div className="col-4 col-md-3 d-flex justify-content-end">
+          <button id="mbladdButtonProp" type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalEGirls">
             Add Expenses
           </button>
         </div>

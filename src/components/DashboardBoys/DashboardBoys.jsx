@@ -136,7 +136,6 @@ const DashboardBoys = () => {
 
   //==============================================================
 
-
   useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/boys/tenants');
     onValue(tenantsRef, snapshot => {
@@ -183,9 +182,10 @@ const DashboardBoys = () => {
         console.error('Error fetching tenants data:', error);
       }
     };
-    fetchDataFromAPI();
-  }, [boysRoomsData]);
 
+    fetchDataFromAPI();
+  }, [data]);
+ 
   useEffect(() => {
     if (selectedRoom) {
       const room = boysRoomsData.find(room => room.roomNumber === selectedRoom);
@@ -311,7 +311,15 @@ const DashboardBoys = () => {
     setTenantId(null);
     setTenantImageUrl('');
     setTenantIdUrl('');
+    setFloorNumber('');
+    setRoomNumber('');
+    setNumberOfBeds('');
+    setBedRent('');
+    setCreatedBy('admin')
   };
+
+
+  
 
   const menu = [
     {
@@ -350,6 +358,7 @@ const DashboardBoys = () => {
   const handleCloseModal = () => {
     setModelText('');
     setFormLayout('');
+    resetForm();
   };
 
   // useEffect(() => {
@@ -494,125 +503,134 @@ const DashboardBoys = () => {
           //     <input type="number" class="form-control" id="inputRoomNo" />
           //   </div>
           // </form>
-          <form onSubmit={handleTenantSubmit}>
-            <div>
-              <label>
-                Room No:
-                <select value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
-                  <option value="">Select a Room</option>
-                  {boysRoomsData.map((room) => (
-                    <option key={room.roomNumber} value={room.roomNumber}>
-                      {room.roomNumber}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              {tenatErrors.selectedRoom && <p style={{ color: 'red' }}>{tenatErrors.selectedRoom}</p>}
-            </div><br />
-            <div>
-              <label>
-                Bed No:
-                <select value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
-                  <option value="">Select a Bed</option>
-                  {bedOptions.map(bedNumber => (
-                    <option key={bedNumber} value={bedNumber}>
-                      {bedNumber}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              {tenatErrors.selectedBed && <p style={{ color: 'red' }}>{tenatErrors.selectedBed}</p>}
-            </div><br />
-            <div>
-              <label>
-                Date of Join:
-                <input type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
-              </label>
-              {tenatErrors.dateOfJoin && <p style={{ color: 'red' }}>{tenatErrors.dateOfJoin}</p>}
-            </div><br />
-            <div>
-              <label>
-                Name:
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-              </label>
-              {tenatErrors.name && <p style={{ color: 'red' }}>{tenatErrors.name}</p>}
-            </div><br />
-            <div>
-              <label>
-                Mobile No:
-                <input type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
-              </label>
-              {tenatErrors.mobileNo && <p style={{ color: 'red' }}>{tenatErrors.mobileNo}</p>}
-            </div><br />
-            <div>
-              <label>
-                ID Number:
-                <input type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
-              </label>
-              {tenatErrors.idNumber && <p style={{ color: 'red' }}>{tenatErrors.idNumber}</p>}
-            </div><br />
-            <div>
-              <label>
-                Emergency Contact:
-                <input type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
-              </label>
-              {tenatErrors.emergencyContact && <p style={{ color: 'red' }}>{tenatErrors.emergencyContact}</p>}
-            </div><br />
-            <div>
-              <label>
-                Status:
-                <select value={status} onChange={(e) => setStatus(e.target.value)}>
-                  <option value="occupied">Occupied</option>
-                  <option value="unoccupied">Unoccupied</option>
-                </select>
-              </label>
-            </div><br />
-            <div>
-              <label>
-                Upload Image:
-                {isEditing && tenantImageUrl && (
-                  <div>
-                    <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
-                    <p>Current Image</p>
-                  </div>
-                )}
-                <input type="file" onChange={handleTenantImageChange} ref={imageInputRef} />
-              </label>
-            </div><br />
-            <div>
-              <label>
-                Upload Id:
-                {isEditing && tenantIdUrl && (
-                  <object
-                    data={tenantIdUrl}
-                    type="application/pdf"
-                    width="50%"
-                    height="200px"
-                  >
-                    <a href={tenantIdUrl}>Download PDF</a>
-                  </object>
-                )}
-                <input type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
-              </label>
-            </div>
-            {/* ===== */}
-            <div>
-              <label for="file-upload" class="custom-file-upload">
-                {/* <i class="fa fa-cloud-upload"></i> */}
-                {/* <MdUploadFile /> */}
-              </label>
-              <input id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
-            </div>
+          <form class="row lg-10" onSubmit={handleTenantSubmit}>
+          <div class="col-md-6">
+            <label htmlFor='roomNo' class="form-label">Room No:</label>
+              <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
+                <option value="">Select a Room</option>
+                {boysRoomsData.map((room) => (
+                  <option key={room.roomNumber} value={room.roomNumber}>
+                    {room.roomNumber}
+                  </option>
+                ))}
+              </select>
+            
+          {tenatErrors.selectedRoom && <p style={{ color: 'red' }}>{tenatErrors.selectedRoom}</p>}
+          </div>
 
-            {/* =============== */}
-            <div>
-              {isEditing ? (
-                <button type="button" onClick={handleTenantSubmit}>Update Tenant</button>
-              ) : (
-                <button type="submit">Add Tenant</button>
+          <div class="col-md-6">
+            <label htmlFor='bedNo' class="form-label">
+              Bed No:
+              </label>
+              <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
+                <option value="">Select a Bed</option>
+                {bedOptions.map(bedNumber => (
+                  <option key={bedNumber} value={bedNumber}>
+                    {bedNumber}
+                  </option>
+                ))}
+              </select>
+            
+            {tenatErrors.selectedBed && <p style={{ color: 'red' }}>{tenatErrors.selectedBed}</p>}
+          </div>
+          <div class="col-md-6">
+            <label htmlFor='dataofJoin' class="form-label">
+              Date of Join:
+              </label>
+              <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
+            
+            {tenatErrors.dateOfJoin && <p style={{ color: 'red' }}>{tenatErrors.dateOfJoin}</p>}
+          </div>
+          <div class="col-md-6">
+            <label htmlFor='tenantName' class="form-label">
+              Name:
+              </label>
+              <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            
+            {tenatErrors.name && <p style={{ color: 'red' }}>{tenatErrors.name}</p>}
+          </div>
+          <div class="col-md-6">
+            <label htmlFor='tenantMobileNo' class="form-label">
+              Mobile No:
+              </label>
+              <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
+            
+            {tenatErrors.mobileNo && <p style={{ color: 'red' }}>{tenatErrors.mobileNo}</p>}
+          </div>
+          <div class="col-md-6">
+            <label htmlFor='tenantIdNum' class="form-label">
+              ID Number:
+              </label>
+              <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
+            
+            {tenatErrors.idNumber && <p style={{ color: 'red' }}>{tenatErrors.idNumber}</p>}
+          </div>
+          <div class="col-md-6">
+            <label htmlFor='tenantEmergency' class="form-label">
+              Emergency Contact:
+              </label>
+              <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
+            
+            {tenatErrors.emergencyContact && <p style={{ color: 'red' }}>{tenatErrors.emergencyContact}</p>}
+          </div>
+          <div class="col-md-6">
+            <label htmlFor='tenantStatus' class="form-label">
+              Status:
+              </label>
+              <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
+                <option value="occupied">Occupied</option>
+                <option value="unoccupied">Unoccupied</option>
+              </select>
+            
+          </div>
+          <div class="col-md-6">
+            <label htmlFor='tenantUpload' class="form-label">
+              Upload Image:
+              </label>
+              {isEditing && tenantImageUrl && (
+                <div>
+                  <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
+                  <p>Current Image</p>
+                </div>
               )}
-            </div>
-          </form>
+              <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} />
+            
+          </div>
+          <div class="col-md-6">
+            <label htmlFor='tenantUploadId' class="form-label">
+              Upload Id:
+              </label>
+              {isEditing && tenantIdUrl && (
+                <object
+                  data={tenantIdUrl}
+                  type="application/pdf"
+                  width="50%"
+                  height="200px"
+                >
+                  <a href={tenantIdUrl}>Download PDF</a>
+                </object>
+              )}
+              <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
+           
+          </div>
+          {/* ===== */}
+          <div class="col-md-6">
+            <label htmlFor='tenantIdInput'  for="file-upload" class="custom-file-upload form-label">
+              {/* <i class="fa fa-cloud-upload"></i> */}
+              {/* <MdUploadFile /> */}
+            </label>
+            <input  class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
+          </div>
+
+          {/* =============== */}
+          <div className='col-12 text-center'>
+            {isEditing ? (
+              <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>Update Tenant</button>
+            ) : (
+              <button className='btn btn-warning' type="submit">Add Tenant</button>
+            )}
+          </div>
+        </form>
         )
 
       case "Add Expenses":

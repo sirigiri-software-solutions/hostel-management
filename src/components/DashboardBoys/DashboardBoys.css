@@ -1,3 +1,4 @@
+
 .menu-item{
     display: flex;
     background-color: white;
@@ -6,25 +7,25 @@
     min-width: 220px;
     margin-bottom: 10px;
 }
-
+ 
 .menu{
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
 }
-
+ 
 .dashboardboys{
     width: 100%;
     display: flex;
     flex-direction: column;
     gap:30px;
 }
-
+ 
 .image{
     width: 50px;
     height: 50px;
 }
-
+ 
 .heading{
     font-size: 24px;
     background-color: rgba(255,141,7, 0.41);
@@ -34,7 +35,7 @@
     border-radius: 10px;
     margin-bottom: 0px;
 }
-
+ 
 /* .image-container{
     background-color: rgb(215, 194, 153);
     padding: 30px 20px;
@@ -43,32 +44,100 @@
     align-items: center;
     border-radius: 10px 10px 10px 10px;
 } */
-
+ 
 .text-container{
     padding: 10px;
 }
-
+ 
 .text-heading{
     margin: 0px;
     font-size: 20px;
 }
-
+ 
 .text-number{
     font-weight: bold;
     margin: 0px;
     font-size: 25px;
 }
-
+ 
 .button-container{
-    display: flex;
-    justify-content: space-between;
+    display: flex ;
+    /* justify-content: space-between ; */
+    flex-direction: row;
+    justify-content:space-between;
+    margin-top: 20px;
+    width:97%;
+ 
     /* margin-bottom: 20px; */
 }
-
-.button-container h1{
-    background-color: orange;
-    color: white;
-    font-size: 16px;
-    padding: 5px 13px;
-    border-radius: 20px;
+@media screen and (max-width:768px){
+    .button-container{
+        flex-wrap: wrap;
+    }
 }
+
+@media screen and (min-width:1600px){
+    .button-container{
+        width:92%;
+    }
+}
+/* #boysButtonContainer{
+    display: flex ;
+    justify-content: space-between ;
+} */
+ 
+@media screen and (max-width: 768px) {
+    .modal-dialog {
+      width: 90vw; /* 90% of the viewport width */
+      max-width: none; /* Remove the maximum width */
+      margin: auto; /* Center the modal horizontally */
+    }
+  }
+.modal-footer {
+  border: none !important; /* Remove border */
+}
+#saveChangeButton{
+    background-color:#ff8a00 ;
+    color:#fff;
+}
+#addButton{
+    background-color:#ff8a00;
+    outline:none;
+    border:none;
+    padding:8px 20px;
+    border-radius:24px;
+    color:#fff;
+}
+.plusIconProperties{
+    width:20px;
+}
+#mbladdButton{
+    background-color:#ff8a00;
+    outline:none;
+    border:none;
+    padding:8px 20px;
+    border-radius:24px;
+    color:#fff;
+}
+#deskaddButton{
+    background-color:#ff8a00;
+    outline:none;
+    border:none;
+    padding:8px 20px;
+    border-radius:24px;
+    color:#fff;
+}
+@media screen and (min-width:646px){
+    #mbladdButton{
+        display:none;
+     
+    }
+}
+@media screen and (max-width:645px){
+    #deskaddButton{
+        display:none;
+       
+    }
+}
+ 
+ 

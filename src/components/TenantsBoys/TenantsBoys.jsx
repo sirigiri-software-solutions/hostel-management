@@ -33,14 +33,14 @@ const TenantsBoys = () => {
   const idInputRef = useRef(null);
   const [boysRoomsData, setBoysRoomsData] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  
+
 
   const { data } = useContext(DataContext);
   const [boysTenants, setBoysTenants] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   // let boysTenants = null;
   if (data != null && data) {
-    
+
     // console.log(data && data, "fetchApidata")
   }
 
@@ -94,8 +94,6 @@ const TenantsBoys = () => {
     fetchDataFromAPI();
   }, [data]);
 
-
-
   useEffect(() => {
     if (selectedRoom) {
       const room = boysRoomsData.find(room => room.roomNumber === selectedRoom);
@@ -114,10 +112,19 @@ const TenantsBoys = () => {
     tempErrors.selectedBed = selectedBed ? "" : "Bed number is required.";
     tempErrors.dateOfJoin = dateOfJoin ? "" : "Date of join is required.";
     tempErrors.name = name ? "" : "Name is required.";
-    tempErrors.mobileNo = mobileNo ? "" : "Mobile number is required.";
-    tempErrors.tenantImageUrl = tenantImageUrl ? "" : "Image is required";
+    // Validate mobile number
+    if (!mobileNo) {
+      tempErrors.mobileNo = "Mobile number is required.";
+    } else if (!/^\d{10,15}$/.test(mobileNo)) {
+      tempErrors.mobileNo = "Invalid mobile number";
+    }
     tempErrors.idNumber = idNumber ? "" : "ID number is required.";
-    tempErrors.emergencyContact = emergencyContact ? "" : "Emergency contact is required.";
+    // Validate emergency contact
+    if (!emergencyContact) {
+      tempErrors.emergencyContact = "Emergency contact is required.";
+    } else if (!/^\d{10,15}$/.test(emergencyContact)) {
+      tempErrors.emergencyContact = "Invalid emergency contact";
+    }
 
     // Check if the selected bed is already occupied
     const isBedOccupied = tenants.some(tenant => {
@@ -367,9 +374,9 @@ const TenantsBoys = () => {
     mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
     joining_date: tenant.dateOfJoin,
-    status:tenant.status,
+    status: tenant.status,
     actions: <button
-      style={{ backgroundColor: '#ff8a00',padding:'4px', borderRadius: '5px', color: 'white', border: 'none', }}
+      style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
       onClick={() => handleEdit(tenant)}
       // data-bs-toggle="modal"
       // data-bs-target="#exampleModalTenantsBoys"

@@ -52,6 +52,30 @@ const DashboardBoys = () => {
   const [boysRoomsData, setBoysRoomsData] = useState([]);
   const { data } = useContext(DataContext);
 
+  const handleRoomsIntegerChange = (event) => {
+    const value = event.target.value;
+    const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
+
+    if (value === '' || re.test(value)) {
+      switch (event.target.name) {
+        case 'floorNumber':
+          setFloorNumber(value);
+          break;
+        case 'roomNumber':
+          setRoomNumber(value);
+          break;
+        case 'numberOfBeds':
+          setNumberOfBeds(value);
+          break;
+        case 'bedRent':
+          setBedRent(value);
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
   const handleBoysRoomsSubmit = (e) => {
     e.preventDefault();
     const now = new Date().toISOString();  // Get current date-time in ISO format
@@ -71,16 +95,16 @@ const DashboardBoys = () => {
       setErrors(newErrors);
       return; // Prevent form submission if there are errors
     }
-   
-      const roomsRef = ref(database, 'Hostel/boys/rooms');
-      push(roomsRef, {
-        floorNumber,
-        roomNumber,
-        numberOfBeds,
-        bedRent,
-        createdBy,
-        updateDate: now
-      });
+
+    const roomsRef = ref(database, 'Hostel/boys/rooms');
+    push(roomsRef, {
+      floorNumber,
+      roomNumber,
+      numberOfBeds,
+      bedRent,
+      createdBy,
+      updateDate: now
+    });
     // }
 
     // Reset form
@@ -112,7 +136,6 @@ const DashboardBoys = () => {
 
   //==============================================================
 
-  
   useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/boys/tenants');
     onValue(tenantsRef, snapshot => {
@@ -181,10 +204,19 @@ const DashboardBoys = () => {
     tempErrors.selectedBed = selectedBed ? "" : "Bed number is required.";
     tempErrors.dateOfJoin = dateOfJoin ? "" : "Date of join is required.";
     tempErrors.name = name ? "" : "Name is required.";
-    tempErrors.mobileNo = mobileNo ? "" : "Mobile number is required.";
+    // Validate mobile number
+    if (!mobileNo) {
+      tempErrors.mobileNo = "Mobile number is required.";
+    } else if (!/^\d{10,15}$/.test(mobileNo)) {
+      tempErrors.mobileNo = "Invalid mobile number";
+    }
     tempErrors.idNumber = idNumber ? "" : "ID number is required.";
-    tempErrors.emergencyContact = emergencyContact ? "" : "Emergency contact is required.";
-
+    // Validate emergency contact
+    if (!emergencyContact) {
+      tempErrors.emergencyContact = "Emergency contact is required.";
+    } else if (!/^\d{10,15}$/.test(emergencyContact)) {
+      tempErrors.emergencyContact = "Invalid emergency contact";
+    }
     // Check if the selected bed is already occupied
     const isBedOccupied = tenants.some(tenant => {
       return tenant.roomNo === selectedRoom && tenant.bedNo === selectedBed && tenant.status === "occupied" && tenant.id !== currentTenantId;
@@ -293,7 +325,7 @@ const DashboardBoys = () => {
     {
       image: Rooms,
       heading: 'Total Rooms',
-      number:`${rooms.length}` ,
+      number: `${rooms.length}`,
       btntext: 'Add Rooms',
     },
     {
@@ -377,38 +409,38 @@ const DashboardBoys = () => {
           //   </div>
           // </form>
           <form className="row g-3" onSubmit={handleBoysRoomsSubmit}>
-          <div className="col-md-6">
-            <label htmlFor="inputNumber" className="form-label">Floor Number</label>
-            <input type="number" className="form-control" id="inputNumber" name="number" value={floorNumber} onChange={(e) => setFloorNumber(e.target.value)} />
-            {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
-          </div>
-          <div className="col-md-6">
-            <label htmlFor="inputRent" className="form-label">Room Number</label>
-            <input type="number" className="form-control" id="inputRent" name="rent" value={roomNumber} onChange={(e) => setRoomNumber(e.target.value)} />
-            {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
-          </div>
-          <div className="col-md-6">
-            <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
-            <input type="number" className="form-control" id="inputRooms" name="rooms" value={numberOfBeds} onChange={(e) => setNumberOfBeds(e.target.value)} />
-            {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
-          </div>
-          <div className="col-md-6">
-            <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
-            <input type="text" className="form-control" id="inputStatus" name="status" value={bedRent} onChange={(e) => setBedRent(e.target.value)} />
-            {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
-          </div>
-          <div className="col-md-6">
-            <label htmlFor="inputRole" className="form-label">Created By</label>
-            <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
+            <div className="col-md-6">
+              <label htmlFor="inputNumber" className="form-label">Floor Number</label>
+              <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange} />
+              {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="inputRent" className="form-label">Room Number</label>
+              <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} />
+              {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
+              <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} />
+              {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
+              <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} />
+              {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="inputRole" className="form-label">Created By</label>
+              <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
 
-              <option value="admin">Admin</option>
-              <option value="sub-admin">Sub-admin</option>
-            </select>
-          </div>
-          <div className="col-12 text-center">    
+                <option value="admin">Admin</option>
+                <option value="sub-admin">Sub-admin</option>
+              </select>
+            </div>
+            <div className="col-12 text-center">
               <button type="submit" className="btn btn-warning" onClick={handleBoysRoomsSubmit}>Create Room</button>
-          </div>
-        </form>
+            </div>
+          </form>
         )
       case 'Add Beds':
         return (

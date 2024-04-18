@@ -69,9 +69,19 @@ const TenantsGirls = () => {
     tempErrors.selectedBed = selectedBed ? "" : "Bed number is required.";
     tempErrors.dateOfJoin = dateOfJoin ? "" : "Date of join is required.";
     tempErrors.name = name ? "" : "Name is required.";
-    tempErrors.mobileNo = mobileNo ? "" : "Mobile number is required.";
+    // Validate mobile number
+    if (!mobileNo) {
+      tempErrors.mobileNo = "Mobile number is required.";
+    } else if (!/^\d{10,15}$/.test(mobileNo)) {
+      tempErrors.mobileNo = "Invalid mobile number";
+    }
     tempErrors.idNumber = idNumber ? "" : "ID number is required.";
-    tempErrors.emergencyContact = emergencyContact ? "" : "Emergency contact is required.";
+     // Validate emergency contact
+     if (!emergencyContact) {
+      tempErrors.emergencyContact = "Emergency contact is required.";
+    } else if (!/^\d{10,15}$/.test(emergencyContact)) {
+      tempErrors.emergencyContact = "Invalid emergency contact";
+    }
 
     // Check if the selected bed is already occupied
     const isBedOccupied = tenants.some(tenant => {

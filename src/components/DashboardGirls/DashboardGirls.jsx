@@ -11,12 +11,11 @@ import { onValue, update } from 'firebase/database';
 import { DataContext } from '../../ApiData/ContextProvider';
 import { FetchData } from '../../ApiData/FetchData';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
-
-
+ 
+ 
 const DashboardGirls = () => {
   const [modelText, setModelText] = useState('');
   const [formLayout, setFormLayout] = useState('');
-
   const [floorNumber, setFloorNumber] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
   const [numberOfBeds, setNumberOfBeds] = useState('');
@@ -26,8 +25,8 @@ const DashboardGirls = () => {
   const [createdBy, setCreatedBy] = useState('admin'); // Default to 'admin'
   const [updateDate, setUpdateDate] = useState('');
   const [errors, setErrors] = useState({});
-
-  //==================================
+ 
+  //=====================================================
   const [selectedRoom, setSelectedRoom] = useState('');
   const [bedOptions, setBedOptions] = useState([]);
   const [selectedBed, setSelectedBed] = useState('');
@@ -49,7 +48,31 @@ const DashboardGirls = () => {
   const idInputRef = useRef(null);
   const [girlsRoomsData, setGirlsRoomsData] = useState([]);
   const { data } = useContext(DataContext);
+ 
 
+  const handleRoomsIntegerChange = (event) => {
+    const value = event.target.value;
+    const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
+
+    if (value === '' || re.test(value)) {
+      switch (event.target.name) {
+        case 'floorNumber':
+          setFloorNumber(value);
+          break;
+        case 'roomNumber':
+          setRoomNumber(value);
+          break;
+        case 'numberOfBeds':
+          setNumberOfBeds(value);
+          break;
+        case 'bedRent':
+          setBedRent(value);
+          break;
+        default:
+          break;
+      }
+    }
+  };
   const handleGirlsRoomsSubmit = (e) => {
     e.preventDefault();
     const now = new Date().toISOString();  // Get current date-time in ISO format
@@ -63,13 +86,13 @@ const DashboardGirls = () => {
     }
     if (!numberOfBeds) newErrors.numberOfBeds = 'Number of beds is required';
     if (!bedRent) newErrors.bedRent = 'Bed rent is required';
-
+ 
     // Check if there are any errors
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return; // Prevent form submission if there are errors
     }
-
+ 
     const roomsRef = ref(database, 'Hostel/girls/rooms');
     push(roomsRef, {
       floorNumber,
@@ -80,7 +103,7 @@ const DashboardGirls = () => {
       updateDate: now
     });
     // }
-
+ 
     // Reset form
     setFloorNumber('');
     setRoomNumber('');
@@ -90,7 +113,7 @@ const DashboardGirls = () => {
     setUpdateDate(now); // Update state with current date-time
     setErrors({}); // Clear errors
   };
-
+ 
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/girls/rooms');
     onValue(roomsRef, (snapshot) => {
@@ -107,10 +130,10 @@ const DashboardGirls = () => {
   }, []);
     // Calculate the total number of beds
     const totalBeds = rooms.reduce((acc, room) => acc + Number(room.numberOfBeds), 0);
-
-
+ 
+ 
   //-======================================
-
+ 
   useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/girls/tenants');
     onValue(tenantsRef, snapshot => {
@@ -122,7 +145,7 @@ const DashboardGirls = () => {
       setTenants(loadedTenants);
     });
   }, []);
-
+ 
   useEffect(() => {
     const fetchDataFromAPI = async () => {
       try {
@@ -138,10 +161,10 @@ const DashboardGirls = () => {
         console.error('Error fetching tenants data:', error);
       }
     };
-
     fetchDataFromAPI();
   }, [data]);
  
+
   useEffect(() => {
     if (selectedRoom) {
       const room = girlsRoomsData.find(room => room.roomNumber === selectedRoom);
@@ -153,29 +176,38 @@ const DashboardGirls = () => {
       setBedOptions([]);
     }
   }, [selectedRoom, girlsRoomsData]);
-
+ 
   const validate = () => {
     let tempErrors = {};
     tempErrors.selectedRoom = selectedRoom ? "" : "Room number is required.";
     tempErrors.selectedBed = selectedBed ? "" : "Bed number is required.";
     tempErrors.dateOfJoin = dateOfJoin ? "" : "Date of join is required.";
     tempErrors.name = name ? "" : "Name is required.";
-    tempErrors.mobileNo = mobileNo ? "" : "Mobile number is required.";
+    // Validate mobile number
+    if (!mobileNo) {
+      tempErrors.mobileNo = "Mobile number is required.";
+    } else if (!/^\d{10,15}$/.test(mobileNo)) {
+      tempErrors.mobileNo = "Invalid mobile number";
+    }
     tempErrors.idNumber = idNumber ? "" : "ID number is required.";
-    tempErrors.emergencyContact = emergencyContact ? "" : "Emergency contact is required.";
-
+    // Validate emergency contact
+    if (!emergencyContact) {
+      tempErrors.emergencyContact = "Emergency contact is required.";
+    } else if (!/^\d{10,15}$/.test(emergencyContact)) {
+      tempErrors.emergencyContact = "Invalid emergency contact";
+    }
     // Check if the selected bed is already occupied
     const isBedOccupied = tenants.some(tenant => {
       return tenant.roomNo === selectedRoom && tenant.bedNo === selectedBed && tenant.status === "occupied" && tenant.id !== currentTenantId;
     });
-
+ 
     if (isBedOccupied) {
       tempErrors.selectedBed = "This bed is already occupied.";
     }
     setTenantErrors(tempErrors);
     return Object.keys(tempErrors).every((key) => tempErrors[key] === "");
   };
-
+ 
   const handleTenantImageChange = (e) => {
     if (e.target.files[0]) {
       setTenantImage(e.target.files[0]);
@@ -186,14 +218,13 @@ const DashboardGirls = () => {
       setTenantId(e.target.files[0]);
     }
   };
-
   const handleTenantSubmit = async (e) => {
     e.preventDefault();
-
+ 
     if (!validate()) return;
-
+ 
     let imageUrlToUpdate = tenantImageUrl;
-
+ 
     if (tenantImage) {
       const imageRef = storageRef(storage, `Hostel/girls/tenants/images/tenantImage/${tenantImage.name}`);
       try {
@@ -201,10 +232,10 @@ const DashboardGirls = () => {
         imageUrlToUpdate = await getDownloadURL(snapshot.ref);
       } catch (error) {
         console.error("Error uploading tenant image:", error);
-
+ 
       }
     }
-
+ 
     let idUrlToUpdate = tenantIdUrl;
     if (tenantId) {
       const imageRef = storageRef(storage, `Hostel/girls/tenants/images/tenantId/${tenantId.name}`);
@@ -215,7 +246,7 @@ const DashboardGirls = () => {
         console.error("Error uploading tenant image:", error);
       }
     }
-
+ 
     const tenantData = {
       roomNo: selectedRoom,
       bedNo: selectedBed,
@@ -229,19 +260,19 @@ const DashboardGirls = () => {
       tenantIdUrl: idUrlToUpdate,
       // tenantIdUrl,
     };
-
+ 
     if (isEditing) {
       await update(ref(database, `Hostel/girls/tenants/${currentTenantId}`), tenantData);
     } else {
       await push(ref(database, 'Hostel/girls/tenants'), tenantData);
     }
     // setShowModal(false);
-
+ 
     resetForm();
     imageInputRef.current.value = "";
     idInputRef.current.value = "";
   };
-
+ 
   const resetForm = () => {
     setSelectedRoom('');
     setSelectedBed('');
@@ -264,8 +295,8 @@ const DashboardGirls = () => {
     setBedRent('');
     setCreatedBy('admin')
   };
-
-
+ 
+ 
   const menu = [
     {
       image: Rooms,
@@ -293,20 +324,20 @@ const DashboardGirls = () => {
     },
   ];
   const Buttons = ['Add Rooms', 'Add Beds', 'Add Tenants', 'Add Expenses'];
-
+ 
   const handleClick = (text) => {
     setModelText(text);
     setFormLayout(text);
   };
-
+ 
   const handleCloseModal = () => {
     setModelText('');
     setFormLayout('');
     resetForm();
   };
-
+ 
   // useEffect(() => {
-
+ 
   //   const handleResize = () => {
   //     if (window.innerWidth < 650) {
   //       setBtn(true);
@@ -321,8 +352,8 @@ const DashboardGirls = () => {
   //     window.removeEventListener('resize', handleResize);
   //   };
   // }, []);
-
-
+ 
+ 
   const renderFormLayout = () => {
     switch (formLayout) {
       case 'Add Rooms':
@@ -331,7 +362,7 @@ const DashboardGirls = () => {
           //       <div class="col-md-6">
           //         <label for="inputslno" class="form-label">S.No</label>
           //         <input type="number" class="form-control" id="inputslno"/>
-
+ 
           //       </div>
           //       <div class="col-md-6">
           //         <label for="inputRoomNo" class="form-label">Room No</label>
@@ -353,34 +384,34 @@ const DashboardGirls = () => {
           //       <label for="inputupdatedDate" class="form-label">Date</label>
           //         <input type="date" class="form-control" id="inputupdatedDate"/>
           //       </div>
-
-
+ 
+ 
           // </form>
           <form className="row g-3" onSubmit={handleGirlsRoomsSubmit}>
             <div className="col-md-6">
               <label htmlFor="inputNumber" className="form-label">Floor Number</label>
-              <input type="number" className="form-control" id="inputNumber" name="number" value={floorNumber} onChange={(e) => setFloorNumber(e.target.value)} />
+              <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange} />
               {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="inputRent" className="form-label">Room Number</label>
-              <input type="number" className="form-control" id="inputRent" name="rent" value={roomNumber} onChange={(e) => setRoomNumber(e.target.value)} />
+              <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} />
               {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
-              <input type="number" className="form-control" id="inputRooms" name="rooms" value={numberOfBeds} onChange={(e) => setNumberOfBeds(e.target.value)} />
+              <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} />
               {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
-              <input type="text" className="form-control" id="inputStatus" name="status" value={bedRent} onChange={(e) => setBedRent(e.target.value)} />
+              <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} />
               {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="inputRole" className="form-label">Created By</label>
               <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
-
+ 
                 <option value="admin">Admin</option>
                 <option value="sub-admin">Sub-admin</option>
               </select>
@@ -450,9 +481,9 @@ const DashboardGirls = () => {
           //     <label for="inputRoomNo" class="form-label">Room No</label>
           //     <input type="number" class="form-control" id="inputRoomNo" />
           //   </div>
-
-
-
+ 
+ 
+ 
           // </form>
           <form class="row lg-10" onSubmit={handleTenantSubmit}>
           <div class="col-md-6">
@@ -572,7 +603,7 @@ const DashboardGirls = () => {
             </label>
             <input  class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
           </div>
-
+ 
           {/* =============== */}
           <div className='col-12 text-center'>
             {isEditing ? (
@@ -582,9 +613,9 @@ const DashboardGirls = () => {
             )}
           </div>
         </form>
-
+ 
         )
-
+ 
       case "Add Expenses":
         return (
           <form class="row lg-10">
@@ -592,7 +623,7 @@ const DashboardGirls = () => {
               <label for="inputName" class="form-label">Name</label>
               <input type="text" class="form-control" id="inputName" />
             </div>
-
+ 
             <div class="col-md-6">
               <label for="inputName" class="form-label">Month</label>
               <select class="form-select" id="inputName">
@@ -611,27 +642,27 @@ const DashboardGirls = () => {
                 <option value="12">12</option>
               </select>
             </div>
-
+ 
             <div class="col-md-6">
               <label for="inputYear" class="form-label">Year</label>
               <input type="number" pattern="[0-9]" class="form-control" id="inputYear" />
             </div>
-
+ 
             <div class="col-md-6">
               <label for="inputRoomNo" class="form-label">Due Date</label>
               <input type="date" class="form-control" id="inputRoomNo" />
             </div>
-
+ 
             <div class="col-md-6">
               <label for="inputAmount" class="form-label">Amount</label>
               <input type="number" class="form-control" id="inputAmount" />
             </div>
-
+ 
             <div class="col-md-6">
               <label for="inputNum" class="form-label">Number</label>
               <input type="tel" class="form-control" id="inputNum" />
             </div>
-
+ 
             <div class="col-md-6">
               <label for="inputCreatedON" class="form-label">Created on</label>
               <input type="dal" class="form-control" id="inputCreatedON" />
@@ -642,7 +673,7 @@ const DashboardGirls = () => {
         return null
     }
   }
-
+ 
   return (
     <div className="dashboardgirls">
       <h1 className="heading">Women's</h1>
@@ -671,7 +702,7 @@ const DashboardGirls = () => {
               </React.Fragment>
  
           )}   */}
-
+ 
         {menu.map((item, index) => (
           <>
             <SmallCard key={index} index={index} item={item} />
@@ -683,11 +714,11 @@ const DashboardGirls = () => {
             <button id="deskaddButton" key={index} onClick={() => handleClick(item)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalGirlsDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item}</button>
           ))}
         </div>
-
-
-
+ 
+ 
+ 
       </div>
-
+ 
       {/* popup model */}
       <div class="modal fade" id="exampleModalGirlsDashboard" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -706,9 +737,9 @@ const DashboardGirls = () => {
           </div>
         </div>
       </div>
-
+ 
     </div>
   );
-
+ 
 };
 export default DashboardGirls

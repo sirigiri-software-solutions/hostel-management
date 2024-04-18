@@ -14,7 +14,6 @@ const RentPageBoys = () => {
   const [searchQuery, setSearchQuery] = useState('');
   
 
-  
   const [tenants, setTenants] = useState([]);
   const [rooms, setRooms] = useState({});
   const [selectedTenant, setSelectedTenant] = useState('');
@@ -51,7 +50,6 @@ const RentPageBoys = () => {
       setRooms(data);
     });
   }, []);
-
 
   useEffect(() => {
     const updateTotalFeeFromRoom = () => {
@@ -228,6 +226,15 @@ const RentPageBoys = () => {
 
     resetForm();
    
+  };
+//===> For Clear Form for Add Rents
+  const handleAddNew = () => {
+    // Reset any previous data
+    resetForm();
+    // Set modal for a new entry
+    setIsEditing(false);
+    // Open the modal
+    // setShowModal(true);
   };
   const resetForm = () => {
     setSelectedTenant('');
@@ -445,11 +452,23 @@ const rows = rentsRows.map((rent, index) => ({
 
   return (
     <div className='h-100'>
-        <>
-      <div className="row d-flex align-items-center justify-content-between">
-        <div className="col-12 col-md-5 d-flex align-items-center mr-5 mb-2">
-          <div className='roomlogo-container'>
-            <img src={RentIcon} alt="RoomsIcon" className='roomlogo'/>
+      <>
+        <div className="row d-flex align-items-center justify-content-between">
+          <div className="col-12 col-md-5 d-flex align-items-center mr-5 mb-2">
+            <div className='roomlogo-container'>
+              <img src={RentIcon} alt="RoomsIcon" className='roomlogo' />
+            </div>
+            <h1 className='fs-5'>Rents Management</h1>
+          </div>
+          <div className="col-6 col-md-4 search-wrapper">
+            <input type="text" placeholder='Search' className='search-input' value={searchQuery}
+              onChange={handleSearch} />
+            <img src={SearchIcon} alt="search-icon" className='search-icon' />
+          </div>
+          <div className="col-6 col-md-4 d-flex justify-content-end">
+            <button type="button" class="add-button" data-bs-toggle="modal" onClick={handleAddNew} data-bs-target="#exampleModalRentsBoys">
+              Add Rents
+            </button>
           </div>
           <h1 className='fs-5'>Rents Management</h1>
         </div>
@@ -463,7 +482,7 @@ const rows = rentsRows.map((rent, index) => ({
             Add Rents
           </button>
         </div>
-      </div>
+
 
         <div>
            <Table columns={columns} rows={filteredRows} /> 
@@ -522,17 +541,14 @@ const rows = rentsRows.map((rent, index) => ({
                     <br /><br />
                     <label>Bed Number:</label>
                     <input type="text" value={bedNumber} readOnly /><br /><br />
-
                     <label>Total Fee:</label>
                     <input type="number" value={totalFee} readOnly /><br /><br />
-
                     <div>
                       <label>Paid Amount:</label>
                       <input type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                       {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                       <br /><br />
                     </div>
-
                     <label>Due:</label>
                     <input type="number" value={due} readOnly /><br /><br />
                     <div>

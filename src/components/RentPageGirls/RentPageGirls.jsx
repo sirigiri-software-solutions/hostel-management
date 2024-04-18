@@ -227,6 +227,16 @@ const RentPageGirls = () => {
 
     resetForm();
   };
+
+  //===> For Clear Form for Add Rents
+  const handleAddNew = () => {
+    // Reset any previous data
+    resetForm();
+    // Set modal for a new entry
+    setIsEditing(false);
+    // Open the modal
+    // setShowModal(true);
+  };
   const resetForm = () => {
     setSelectedTenant('');
     setRoomNumber('');
@@ -444,7 +454,7 @@ const RentPageGirls = () => {
             <img src={SearchIcon} alt="search-icon" className='search-icon' />
           </div>
           <div className="col-6 col-md-4 d-flex justify-content-end">
-            <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalRGirls">
+            <button type="button" class="add-button" data-bs-toggle="modal" onClick={handleAddNew} data-bs-target="#exampleModalRGirls">
               Add Rents
             </button>
           </div>

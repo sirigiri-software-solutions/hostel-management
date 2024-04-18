@@ -190,29 +190,28 @@ const MainPage = () => {
   };
   return (
     <div className='bg-container' style={mainBackgroundContainerStyle}>
-      <div className='sidebar' style={sidebarStyle}>
-        <div className='top-section'>
-          <img src={logo} alt="logo" className='logo' />
-        </div>
-        <div className='nav-div'  onClick={toggleModal}>
-          <img src={Admin} alt="admin" className='dashboard-icon' />
-          <h1 className='dashboard-heading'>{name}</h1>
-        </div>
-        <div style={sidebarItems}>
-          {
-            menuItems.map((item, index) => (
-              <div key={index} className="link" style={flag === item.id ? { backgroundColor: 'hsla(30, 100%, 50%, 0.41)', borderRadius: '10px' } : { borderRadius: '10px' }} onClick={() => handlesideBar(item.id)}>
-                <img src={item.icon} alt={item.name} className='icon' />
-                <label className='link-text'>{item.name}</label>
-              </div>
-            ))
-          }
-        </div>
-
-
-        {/* Hamberger icon */}
-        {/* <GiHamburgerMenu style={hamburgerMenu} onClick={handleHamburgerMenu} /> */}
-        {/* {
+        <div className='sidebar' style={sidebarStyle}>
+            <div className='top-section'>
+              <img src={logo} alt="logo" className='logo' />
+            </div>
+            <div className='nav-div'>
+                <img src={Admin} alt="admin" className='mbl-dashboard-icon' />
+                <h1 className='mb-dashboard-name'>{name}</h1>
+            </div>
+            <div style={sidebarItems}>
+                {
+                menuItems.map((item, index) =>(
+                    <div key={index} className="link" style={flag === item.id ? {backgroundColor: 'hsla(30, 100%, 50%, 0.41)',  borderRadius: '10px'} : {borderRadius:'10px'} } onClick={() =>handlesideBar(item.id)}>
+                    <img src={item.icon} alt={item.name}  className='icon'/>
+                    <label className='link-text'>{item.name}</label>
+                    </div>
+                ))
+                }
+            </div>
+ 
+            {/* Hamberger icon */}
+            {/* <GiHamburgerMenu style={hamburgerMenu} onClick={handleHamburgerMenu} /> */}
+            {/* {
               hamburgerMenuItems && menuItems.map((item, index) => (
                 <label key={index}>{item.name}</label>
               ))

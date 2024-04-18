@@ -165,6 +165,18 @@ const BedsPageGirls = () => {
    rent:beds.rent,
    status:beds.status
   }));
+
+  const [searchValue,setSearchValue] = useState("");
+
+  const onChangeSearch = (e) => {
+    setSearchValue(e.target.value);
+  }
+
+  const filteredRows = rows.filter(row => {
+    return Object.values(row).some(value =>
+      value.toString().toLowerCase().includes(searchValue.toLowerCase())
+    );
+  });
  
 
   return (
@@ -179,7 +191,7 @@ const BedsPageGirls = () => {
         <h1 className='fs-5'>Beds Management</h1>
       </div>
       <div className="col-6 col-md-4 search-wrapper">
-        <input type="text" placeholder='Search' className='search-input'/>
+        <input onChange={onChangeSearch} value={searchValue} type="text" placeholder='Search' className='search-input'/>
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
       </div>
       <div className="col-6 col-md-4 d-flex justify-content-end">
@@ -190,7 +202,7 @@ const BedsPageGirls = () => {
     </div>
 
     <div>   
-        <Table columns={columns} rows={rows}/>
+        <Table columns={columns} rows={filteredRows}/>
     </div>
 
     <div class="modal fade" id="exampleModalBedsGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

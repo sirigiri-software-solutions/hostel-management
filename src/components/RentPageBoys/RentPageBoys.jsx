@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect,useRef } from 'react'
 import Table from '../../Elements/Table'
 import RentIcon from '../../images/Icons (6).png'
 import SearchIcon from '../../images/Icons (9).png'
@@ -6,11 +6,13 @@ import { database, push, ref } from "../../firebase";
 import { useState } from 'react'
 import { DataContext } from '../../ApiData/ContextProvider';
 import { onValue, update } from 'firebase/database';
+import "../RoomsBoys/RoomsBoys.css"
 
 const RentPageBoys = () => {
 
   const { data } = useContext(DataContext);
   const [searchQuery, setSearchQuery] = useState('');
+  
 
   
   const [tenants, setTenants] = useState([]);
@@ -225,6 +227,7 @@ const RentPageBoys = () => {
     }
 
     resetForm();
+   
   };
   const resetForm = () => {
     setSelectedTenant('');
@@ -442,31 +445,31 @@ const rows = rentsRows.map((rent, index) => ({
 
   return (
     <div className='h-100'>
-      <>
-        <div className="row d-flex align-items-center justify-content-between">
-          <div className="col-12 col-md-4 d-flex align-items-center mr-5">
-            <div className='roomlogo-container'>
-              <img src={RentIcon} alt="RoomsIcon" className='roomlogo' />
-            </div>
-            <h1 className='fs-5'>Rents Management</h1>
+        <>
+      <div className="row d-flex align-items-center justify-content-between">
+        <div className="col-12 col-md-5 d-flex align-items-center mr-5 mb-2">
+          <div className='roomlogo-container'>
+            <img src={RentIcon} alt="RoomsIcon" className='roomlogo'/>
           </div>
-          <div className="col-6 col-md-4 search-wrapper">
-            <input type="text" placeholder='Search' className='search-input' value={searchQuery}
-              onChange={handleSearch} />
-            <img src={SearchIcon} alt="search-icon" className='search-icon' />
-          </div>
-          <div className="col-6 col-md-4 d-flex justify-content-end">
-            <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalRentsBoys">
-              Add Rents
-            </button>
-          </div>
+          <h1 className='fs-5'>Rents Management</h1>
         </div>
+        <div className="col-8 col-md-4 search-wrapper">
+          <input type="text" placeholder='Search' className='search-input' value={searchQuery}
+              onChange={handleSearch}/>
+          <img src={SearchIcon} alt="search-icon" className='search-icon'/>
+        </div>
+        <div className="col-4 col-md-3 d-flex justify-content-end">
+          <button id="mbladdButtonProp" type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalRentsBoys">
+            Add Rents
+          </button>
+        </div>
+      </div>
 
         <div>
            <Table columns={columns} rows={filteredRows} /> 
         </div>
 
-        <div class="modal fade" id="exampleModalRentsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="exampleModalRentsBoys"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">

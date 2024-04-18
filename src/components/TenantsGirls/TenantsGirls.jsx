@@ -151,6 +151,7 @@ const TenantsGirls = () => {
     resetForm();
     imageInputRef.current.value = "";
     idInputRef.current.value = "";
+    setErrors({});
   };
 
   const handleEdit = (tenant) => {
@@ -357,8 +358,8 @@ const TenantsGirls = () => {
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding:'4px', borderRadius: '5px', color: 'white', border: 'none', }}
       onClick={() => handleEdit(tenant)}
-      data-bs-toggle="modal"
-      data-bs-target="#exampleModalTenantsGirls"
+      // data-bs-toggle="modal"
+      // data-bs-target="#exampleModalTenantsGirls"
     >
       Edit
     </button>,
@@ -374,6 +375,10 @@ const TenantsGirls = () => {
       value.toString().toLowerCase().includes(searchQuery.toLowerCase())
     );
   });
+
+  const handleClosePopUp = () => {
+    setShowModal(false);
+  }
 
 
 
@@ -391,7 +396,7 @@ const TenantsGirls = () => {
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
-          <button type="button" class="add-button" data-bs-toggle="modal" onClick={handleAddNew} data-bs-target="#exampleModalTenantsGirls">
+          <button type="button" class="add-button"  onClick={handleAddNew} >
             Add Tenants
           </button>
         </div>
@@ -405,8 +410,8 @@ const TenantsGirls = () => {
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">Create Tenants</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Add Tenants</h1>
+              <button onClick={handleClosePopUp} type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
               <div className="container-fluid">
@@ -435,11 +440,12 @@ const TenantsGirls = () => {
                   <button type="submit" className="btn btn-warning">Create</button>
                 </div>
               </form> */}
-                <form onSubmit={handleSubmit}>
-                  <div>
-                    <label>
+               <form class="row lg-10" onSubmit={handleSubmit}>
+                  <div class="col-md-6">
+                    <label htmlFor='roomNo' class="form-label">
                       Room No:
-                      <select value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
+                      </label>
+                      <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
                         <option value="">Select a Room</option>
                         {girlsRoomsData.map((room) => (
                           <option key={room.roomNumber} value={room.roomNumber}>
@@ -447,13 +453,15 @@ const TenantsGirls = () => {
                           </option>
                         ))}
                       </select>
-                    </label>
+                    
                     {errors.selectedRoom && <p style={{ color: 'red' }}>{errors.selectedRoom}</p>}
-                  </div><br />
-                  <div>
-                    <label>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label htmlFor='bedNo' class="form-label">
                       Bed No:
-                      <select value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
+                      </label>
+                      <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
                         <option value="">Select a Bed</option>
                         {bedOptions.map(bedNumber => (
                           <option key={bedNumber} value={bedNumber}>
@@ -461,82 +469,106 @@ const TenantsGirls = () => {
                           </option>
                         ))}
                       </select>
-                    </label>
+                    
                     {errors.selectedBed && <p style={{ color: 'red' }}>{errors.selectedBed}</p>}
-                  </div><br />
-                  <div>
-                    <label>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label htmlFor='dataofJoin' class="form-label">
                       Date of Join:
-                      <input type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
-                    </label>
+                      </label>
+                      <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
+                    
                     {errors.dateOfJoin && <p style={{ color: 'red' }}>{errors.dateOfJoin}</p>}
-                  </div><br />
-                  <div>
-                    <label>
+                  </div> 
+                  <div class="col-md-6">
+                    <label htmlFor='tenantName' class="form-label">
                       Name:
-                      <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-                    </label>
+                      </label>
+                      <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} />
+                    
                     {errors.name && <p style={{ color: 'red' }}>{errors.name}</p>}
-                  </div><br />
-                  <div>
-                    <label>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label htmlFor='tenantMobileNo' class="form-label">
                       Mobile No:
-                      <input type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
-                    </label>
+                      </label>
+                      <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
+                    
                     {errors.mobileNo && <p style={{ color: 'red' }}>{errors.mobileNo}</p>}
-                  </div><br />
-                  <div>
-                    <label>
+                  </div>
+                  <div class="col-md-6">
+                    <label htmlFor='tenantIdNum' class="form-label">
                       ID Number:
-                      <input type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
-                    </label>
+                      </label>
+                      <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
+                    
                     {errors.idNumber && <p style={{ color: 'red' }}>{errors.idNumber}</p>}
-                  </div><br />
-                  <div>
-                    <label>
+                  </div>
+                  <div class="col-md-6">
+                    <label htmlFor='tenantEmergency' class="form-label">
                       Emergency Contact:
-                      <input type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
-                    </label>
+                      </label>
+                      <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
+                    
                     {errors.emergencyContact && <p style={{ color: 'red' }}>{errors.emergencyContact}</p>}
-                  </div><br />
-                  <div>
-                    <label>
+                  </div>
+                  <div class="col-md-6">
+                    <label htmlFor='tenantStatus' class="form-label">
                       Status:
-                      <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                      </label>
+                      <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
                         <option value="occupied">Occupied</option>
                         <option value="unoccupied">Unoccupied</option>
                       </select>
-                    </label>
-                  </div><br />
-                  <div>
-                    <label>
+                    
+                  </div>
+                  <div class="col-md-6">
+                    <label htmlFor='tenantUpload' class="form-label">
                       Upload Image:
+                      </label>
                       {isEditing && tenantImageUrl && (
                         <div>
                           <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
                           <p>Current Image</p>
                         </div>
                       )}
-                      <input type="file" onChange={handleTenantImageChange} ref={imageInputRef} />
-                    </label>
-                  </div><br />
-                  <div>
-                    <label>
-                      Upload Id:
-                      {isEditing && tenantIdUrl && (
-                        <div>
-                          <img src={tenantIdUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
-                          <p>Current Id</p>
-                        </div>
-                      )}
-                      <input type="file" onChange={handleTenantIdChange} ref={idInputRef} />
-                    </label>
+                      <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} />
+                    
                   </div>
-                  <div>
+                  <div class="col-md-6">
+                    <label htmlFor='tenantUploadId' class="form-label">
+                      Upload Id:
+                      </label>
+                      {isEditing && tenantIdUrl && (
+                        <object
+                          data={tenantIdUrl}
+                          type="application/pdf"
+                          width="50%"
+                          height="200px"
+                        >
+                          <a href={tenantIdUrl}>Download PDF</a>
+                        </object>
+                      )}
+                      <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
+                   
+                  </div>
+                  {/* ===== */}
+                  <div class="col-md-6">
+                    <label  for="file-upload" class="custom-file-upload">
+                      {/* <i class="fa fa-cloud-upload"></i> */}
+                      {/* <MdUploadFile /> */}
+                    </label>
+                    <input id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
+                  </div>
+
+                  {/* =============== */}
+                  <div className='col-12 text-center'>
                     {isEditing ? (
                       <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Tenant</button>
                     ) : (
-                      <button type="submit" className="btn btn-warning">Add Tenant</button>
+                      <button className="btn btn-warning" type="submit">Add Tenant</button>
                     )}
                   </div>
                 </form>

@@ -22,6 +22,7 @@ const Table = ({columns, rows}) => {
                 {item.id && <td data-label="id">{item.id}</td>}
                 {item.mobile_no && <td data-label="mobile_no">{item.mobile_no}</td>}
                 {item.room_bed_no && <td data-label="room_bed_no">{item.room_bed_no}</td>}
+                {item.joining_date && <td data-label="joining_date">{item.joining_date}</td>}
                 {item.bed_number && <td data-label="bed_number">{item.bed_number}</td>} 
                 {item.room_no && <td data-label="room_no">{item.room_no}</td>}
                 {item.person_name && <td data-label="person_name">{item.person_name}</td>}
@@ -36,7 +37,7 @@ const Table = ({columns, rows}) => {
                 {item.created_on && <td data-label="created_on">{item.created_on}</td>}
                 {item.created_by && <td data-label="created_by">{item.created_by}</td>}
                 {item.last_updated_by && <td data-label="last_updated_by">{item.last_updated_by}</td>}
-                {item.joining_date && <td data-label="joining_date">{item.joining_date}</td>}
+                {/* {item.joining_date && <td data-label="joining_date">{item.joining_date}</td>} */}
                 {item.payment_date && <td data-label="payment_date">{item.payment_date}</td>}
                 {item.edit && <td data-label="edit"><Button icon={item.edit.icon} variant={item.edit.variant} text={item.edit.text}/></td>}
               </tr>)

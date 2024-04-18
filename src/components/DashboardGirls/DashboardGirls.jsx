@@ -265,12 +265,12 @@ const DashboardGirls = () => {
            { menu.map((item, index) => (
                   <>
                       <SmallCard key={index} index={index} item={item} />
-                      <button id="mbladdButton" key={index} onClick={() => handleClick(item.btntext)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' />{item.btntext}</button>
+                      <button id="mbladdButton" key={index} onClick={() => handleClick(item.btntext)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalgirlsDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' />{item.btntext}</button>
                       </>
                 ))}
                 <div className='button-container'>
                     {Buttons?.map((item, index) => (
-                        <button id="deskaddButton" key={index} onClick={() => handleClick(item)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item}</button>
+                        <button id="deskaddButton" key={index} onClick={() => handleClick(item)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalgirlsDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item}</button>
                     ))}
                 </div>
  
@@ -279,18 +279,18 @@ const DashboardGirls = () => {
       </div>
  
       {/* popup model */}
-      <div class="modal fade" id="exampleModalBoysDashboard" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal fade" id="exampleModalgirlsDashboard" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
               <h1 class="modal-title fs-5" id="exampleModalLabel">{modelText}</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button onClick={handleCloseModal} type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                {renderFormLayout()} 
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button onClick={handleCloseModal} type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               <button type="button" class="btn btn-primary">Save changes</button>
             </div>
           </div>

@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react'
 import TenantsIcon from '../../images/Icons (4).png'
 import SearchIcon from '../../images/Icons (9).png'
@@ -8,14 +9,15 @@ import { database, push, ref } from "../../firebase";
 import './TenantsBoys.css';
 import { DataContext } from '../../ApiData/ContextProvider'
 import { FetchData } from '../../ApiData/FetchData'
+import "../RoomsBoys/RoomsBoys.css"
  
 const TenantsBoys = () => {
  
   const { data } = useContext(DataContext);
-
-
+ 
+ 
   const [boysTenants, setBoysTenants] = useState([]);
-  
+ 
   const [searchQuery, setSearchQuery] = useState('');
  
  
@@ -48,12 +50,12 @@ const TenantsBoys = () => {
         if (data) {
           const boysTenantsData = Object.values(data.boys.tenants);
           setBoysTenants(boysTenantsData);
-          
+         
         } else {
           const apiData = await FetchData();
           const boysTenantsData = Object.values(apiData.boys.tenants);
           setBoysTenants(boysTenantsData);
-          
+         
         }
       } catch (error) {
         console.error('Error fetching tenants data:', error);
@@ -154,7 +156,7 @@ const TenantsBoys = () => {
       s_no: index + 1,
       image: tenant.tenantImageUrl,
       name: tenant.name, // Assuming 'name' property exists in the fetched data
-      id: tenant.idNumber, // Assuming 'id' property exists in the fetched data
+      proofid: tenant.idNumber, // Assuming 'id' property exists in the fetched data
       mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
       room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
       joining_date: tenant.dateOfJoin, // Assuming 'payment_date' property exists in the fetched data
@@ -164,26 +166,26 @@ const TenantsBoys = () => {
         text: 'More'
       }
     }));
-
-
+ 
+ 
     const filteredRows = rows.filter(row => {
       return Object.values(row).some(value =>
         value.toString().toLowerCase().includes(searchQuery.toLowerCase())
       );
     });
-  
+ 
  
  
   return (
     <>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
-        <div className="col-12 col-md-4 d-flex align-items-center mr-5">
+        <div className="col-12 col-md-5 d-flex align-items-center mr-5 mb-2">
           <div className='roomlogo-container'>
             <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo'/>
           </div>
           <h1 className='fs-5'>Tenants Management</h1>
         </div>
-        <div className="col-6 col-md-4 search-wrapper">
+        <div className="col-8 col-md-4 search-wrapper">
           <input
             type="text"
             placeholder='Search'
@@ -198,8 +200,8 @@ const TenantsBoys = () => {
              
             />      
         </div>
-        <div className="col-6 col-md-4 d-flex justify-content-end">
-          <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalTenantsBoys">
+        <div className="col-4 col-md-3 d-flex justify-content-end">
+          <button id="mbladdButtonProp" type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalTenantsBoys">
             Add Tenants
           </button>
         </div>

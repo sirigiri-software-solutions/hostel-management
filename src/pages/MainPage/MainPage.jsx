@@ -25,11 +25,6 @@ const MainPage = () => {
   const name=localStorage.getItem("username");
   // Refer here for fetched Api Data use like this in all pages don't fetch api url
   const { data } = useContext(DataContext);
-  console.log("start")
-  if(data != null) {
-    console.log(data && data);
-  }
-  console.log("end");
   const menuItems = [
     {
       id:1,

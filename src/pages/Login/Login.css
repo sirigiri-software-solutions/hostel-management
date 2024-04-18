@@ -54,7 +54,7 @@
     margin-left: 50px;
 }
 
-#btn{
+.botn{
     background-color: #FF8A00;
     color: white;
     border: none;
@@ -164,6 +164,7 @@
     .frm{
         margin-right: 50px;
         margin-top: -10px;
+        
     }
     .p{
         text-align: center;
@@ -224,4 +225,53 @@
         text-align: center;
      }
 }
+
+/* forgot password form */
+
+.frm .ipfield{
+    min-width: 200px;
+    height: 40px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    border: 1px solid #AEADAD;
+    border-radius: 50px;
+    padding: 10px 25px;
+    color: #8F8E8E;
+
+    &:focus-visible {
+        outline-color: #aaa;
+    }
+    
+}
+.main{
+    z-index:1;
+}
+.main select{
+    margin-bottom: 10px;
+    min-width: 200px;
+    height: 40px;
+    border-radius:50px ;
+}
+.main .area{
+    
+    min-width: 230px;
+    height: 40px;
+    border-radius: 50px;
+}
+.passfield{
+    min-width: 200px;
+    height: 40px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    border: 1px solid #AEADAD;
+    border-radius: 50px;
+    padding: 10px 25px;
+    color: #8F8E8E;
+
+    &:focus-visible {
+        outline-color: #aaa;
+    }
+}
+
+
 

@@ -363,7 +363,6 @@ const TenantsGirls = () => {
       Edit
     </button>,
   }));
-
  
 
   const onChangeInput = (e) => {
@@ -385,7 +384,7 @@ const TenantsGirls = () => {
           <div className='roomlogo-container'>
             <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo' />
           </div>
-          <h1 className='fs-5'>Rooms Management</h1>
+          <h1 className='fs-5'>Tenants Management</h1>
         </div>
         <div className="col-6 col-md-4 search-wrapper">
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={onChangeInput} />
@@ -393,7 +392,7 @@ const TenantsGirls = () => {
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
           <button type="button" class="add-button" data-bs-toggle="modal" onClick={handleAddNew} data-bs-target="#exampleModalTenantsGirls">
-            Add Rooms
+            Add Tenants
           </button>
         </div>
       </div>

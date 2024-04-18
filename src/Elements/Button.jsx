@@ -2,6 +2,7 @@ import React from "react";
 import PlusIcon from "../images/Icons (8).png";
 
 const Button = ({ icon, variant, text }) => {
+
   
   return (
     <>

@@ -183,8 +183,8 @@ const MainPage = () => {
               <img src={logo} alt="logo" className='logo' />
             </div>
             <div className='nav-div'>
-                <img src={Admin} alt="admin" className='dashboard-icon' />
-                <h1 className='dashboard-heading'>{name}</h1>
+                <img src={Admin} alt="admin" className='mbl-dashboard-icon' />
+                <h1 className='mb-dashboard-name'>{name}</h1>
             </div>
             <div style={sidebarItems}>
                 {

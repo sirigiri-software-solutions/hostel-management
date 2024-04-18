@@ -26,7 +26,18 @@
 
     @media only screen and (max-width: 768px) {
         display: block;
+        display:flex;
+        align-items:center;
     }
+}
+.mbl-dashboard-icon{
+    width:20px;
+    height:20px;
+    margin-right:5px;
+}
+.mb-dashboard-name{
+    font-size:25px;
+    padding-top:11px;
 }
  
 .link{

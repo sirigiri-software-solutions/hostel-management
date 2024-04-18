@@ -70,12 +70,7 @@ const RoomsBoys = () => {
     // Close the modal
     setShowModal(false);
 
-    // Reset form
-    setFloorNumber('');
-    setRoomNumber('');
-    setNumberOfBeds('');
-    setBedRent('');
-    setCurrentId('');
+    resetForm();
     setUpdateDate(now); // Update state with current date-time
     setErrors({}); // Clear errors
   };
@@ -104,6 +99,10 @@ const RoomsBoys = () => {
     // Open the modal
     setShowModal(true);
   };
+
+  const  closePopupModal = () => {
+    setShowModal(false);
+  }
   
 const resetForm = () => {
   setFloorNumber('');
@@ -224,7 +223,7 @@ const resetForm = () => {
     'S. No',
     'Room.No',
     'Floor',
-    'Remarks',
+    'No.of Beds',
     'Created By',
     'Last Updated date',
     'Edit'
@@ -255,14 +254,14 @@ const resetForm = () => {
       s_no: index + 1,
       room_no: room.roomNumber,
       floor: `${room.floorNumber}`,
-      remarks: room.numberOfBeds,
+      noofBeds: room.numberOfBeds,
       created_by: room.createdBy,
       last_updated_by: room.updateDate,
       edit_room: <button
         style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
         onClick={() => handleEdit(room)}
-        data-bs-toggle="modal"
-        data-bs-target="#exampleModalRoomsBoys"
+        // data-bs-toggle="modal"
+        // data-bs-target="#exampleModalRoomsBoys"
       >
         Edit
       </button>
@@ -298,7 +297,7 @@ const resetForm = () => {
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
         <div className="col-6 col-md-3 desktop-layout justify-content-end">
-          <button type="button" class="add-button" data-bs-toggle="modal" onClick={handleAddNew} data-bs-target="#exampleModalRoomsBoys">
+        <button type="button" className="add-button" onClick={handleAddNew}>
             Add Rooms
           </button>
         </div>
@@ -316,9 +315,9 @@ const resetForm = () => {
                 <img src={SearchIcon} alt="search-icon" className='search-icon' />
               </div>
               <div className="d-flex justify-content-end">
-                <button type="button" class="add-button" data-bs-toggle="modal" onClick={handleAddNew} data-bs-target="#exampleModal">
-                  Add Rooms
-                </button>
+              <button type="button" className="add-button" onClick={handleAddNew}>
+            Add Rooms
+          </button>
               </div>
             </div>
           </div>
@@ -334,7 +333,7 @@ const resetForm = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h1 className="modal-title fs-5" id="exampleModalLabel">Create Rooms</h1>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button onClick={closePopupModal} className="btn-close" aria-label="Close"></button>
             </div>
             <div className="modal-body">
               <div className="container-fluid">
@@ -377,7 +376,7 @@ const resetForm = () => {
                     {isEditing ? (
                       <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Room</button>
                     ) : (
-                      <button type="submit" className="btn btn-warning" onClick={handleSubmit}>Create Room</button>
+                      <button type="submit" className="btn btn-warning" >Create Room</button>
                     )}
                     {/* <button type="submit" className="btn btn-warning">Create Room</button> */}
                   </div>

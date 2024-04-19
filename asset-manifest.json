@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/hostel-management/static/css/main.c56a647c.css",
-    "main.js": "/hostel-management/static/js/main.863c038b.js",
+    "main.css": "/hostel-management/static/css/main.c0412e10.css",
+    "main.js": "/hostel-management/static/js/main.c463e32f.js",
     "static/js/592.e8d05619.chunk.js": "/hostel-management/static/js/592.e8d05619.chunk.js",
     "static/media/Kiran Reddy Boys Hostel 1.png": "/hostel-management/static/media/Kiran Reddy Boys Hostel 1.c42cf954b8695e924592.png",
     "index.html": "/hostel-management/index.html",
-    "main.c56a647c.css.map": "/hostel-management/static/css/main.c56a647c.css.map",
-    "main.863c038b.js.map": "/hostel-management/static/js/main.863c038b.js.map",
+    "main.c0412e10.css.map": "/hostel-management/static/css/main.c0412e10.css.map",
+    "main.c463e32f.js.map": "/hostel-management/static/js/main.c463e32f.js.map",
     "592.e8d05619.chunk.js.map": "/hostel-management/static/js/592.e8d05619.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.c56a647c.css",
-    "static/js/main.863c038b.js"
+    "static/css/main.c0412e10.css",
+    "static/js/main.c463e32f.js"
   ]
 }

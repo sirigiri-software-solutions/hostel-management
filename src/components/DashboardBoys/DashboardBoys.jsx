@@ -50,7 +50,7 @@ const DashboardBoys = () => {
   const imageInputRef = useRef(null);
   const idInputRef = useRef(null);
   const [boysRoomsData, setBoysRoomsData] = useState([]);
-  const { data } = useContext(DataContext);
+  // const { data } = useContext(DataContext);
 
   const handleRoomsIntegerChange = (event) => {
     const value = event.target.value;
@@ -148,6 +148,36 @@ const DashboardBoys = () => {
     });
   }, []);
 
+  const [boysRooms, setBoysRooms] = useState([]);
+  useEffect(() => {
+    const roomsRef = ref(database, 'Hostel/boys/rooms');
+    onValue(roomsRef, (snapshot) => {
+      const data = snapshot.val();
+      const loadedRooms = [];
+      for (const key in data) {
+        loadedRooms.push({
+          id: key,
+          ...data[key]
+        });
+      }
+      setBoysRooms(loadedRooms);
+    });
+    // Fetch tenants
+  }, []);
+
+  useEffect(() => {
+    if (selectedRoom) {
+      const room = boysRooms.find(room => room.roomNumber === selectedRoom);
+      if (room) {
+        const options = Array.from({ length: room.numberOfBeds }, (_, i) => i + 1);
+        setBedOptions(options);
+      }
+    } else {
+      setBedOptions([]);
+    }
+  }, [selectedRoom, boysRooms]);
+
+
   // useEffect(() => {
   //   const fetchDataFromAPI = async () => {
   //     try {
@@ -167,54 +197,61 @@ const DashboardBoys = () => {
   //   fetchDataFromAPI();
   // }, [data]);
 
-  useEffect(() => {
-    const fetchDataFromAPI = async () => {
-      try {
-        if (data) {
-          const boysRoomsData = Object.values(data.boys.rooms);
-          setBoysRoomsData(boysRoomsData);
-        } else {
-          const apiData = await FetchData();
-          const boysRoomsData = Object.values(apiData.boys.rooms);
-          setBoysRoomsData(boysRoomsData);
-        }
-      } catch (error) {
-        console.error('Error fetching tenants data:', error);
-      }
-    };
 
-    fetchDataFromAPI();
-  }, [data]);
+  //------------------------------------
+  
+  // useEffect(() => {
+  //   const fetchDataFromAPI = async () => {
+  //     try {
+  //       if (data) {
+  //         const boysRoomsData = Object.values(data.boys.rooms);
+  //         setBoysRoomsData(boysRoomsData);
+  //       } else {
+  //         const apiData = await FetchData();
+  //         const boysRoomsData = Object.values(apiData.boys.rooms);
+  //         setBoysRoomsData(boysRoomsData);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching tenants data:', error);
+  //     }
+  //   };
+
+  //   fetchDataFromAPI();
+  // }, [data]);
  
-  useEffect(() => {
-    if (selectedRoom) {
-      const room = boysRoomsData.find(room => room.roomNumber === selectedRoom);
-      if (room) {
-        const options = Array.from({ length: room.numberOfBeds }, (_, i) => i + 1);
-        setBedOptions(options);
-      }
-    } else {
-      setBedOptions([]);
-    }
-  }, [selectedRoom, boysRoomsData]);
-
+  // useEffect(() => {
+  //   if (selectedRoom) {
+  //     const room = boysRoomsData.find(room => room.roomNumber === selectedRoom);
+  //     if (room) {
+  //       const options = Array.from({ length: room.numberOfBeds }, (_, i) => i + 1);
+  //       setBedOptions(options);
+  //     }
+  //   } else {
+  //     setBedOptions([]);
+  //   }
+  // }, [selectedRoom, boysRoomsData]);
+//--------------------------------------
   const validate = () => {
     let tempErrors = {};
     tempErrors.selectedRoom = selectedRoom ? "" : "Room number is required.";
     tempErrors.selectedBed = selectedBed ? "" : "Bed number is required.";
     tempErrors.dateOfJoin = dateOfJoin ? "" : "Date of join is required.";
-    tempErrors.name = name ? "" : "Name is required.";
+    if (!name) {
+      tempErrors.name = "Name is required.";
+    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+      tempErrors.name = "Name must contain only letters and spaces.";
+    }
     // Validate mobile number
     if (!mobileNo) {
       tempErrors.mobileNo = "Mobile number is required.";
-    } else if (!/^\d{10,15}$/.test(mobileNo)) {
+    } else if (!/^\d{10,13}$/.test(mobileNo)) {
       tempErrors.mobileNo = "Invalid mobile number";
     }
     tempErrors.idNumber = idNumber ? "" : "ID number is required.";
     // Validate emergency contact
     if (!emergencyContact) {
       tempErrors.emergencyContact = "Emergency contact is required.";
-    } else if (!/^\d{10,15}$/.test(emergencyContact)) {
+    } else if (!/^\d{10,13}$/.test(emergencyContact)) {
       tempErrors.emergencyContact = "Invalid emergency contact";
     }
     // Check if the selected bed is already occupied
@@ -224,6 +261,9 @@ const DashboardBoys = () => {
 
     if (isBedOccupied) {
       tempErrors.selectedBed = "This bed is already occupied.";
+    }
+    if (!tenantImage && !tenantImageUrl) {
+      tempErrors.tenantImage = "Tenant image is required.";
     }
     setTenantErrors(tempErrors);
     return Object.keys(tempErrors).every((key) => tempErrors[key] === "");
@@ -508,7 +548,7 @@ const DashboardBoys = () => {
             <label htmlFor='roomNo' class="form-label">Room No:</label>
               <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
                 <option value="">Select a Room</option>
-                {boysRoomsData.map((room) => (
+                {boysRooms.map((room) => (
                   <option key={room.roomNumber} value={room.roomNumber}>
                     {room.roomNumber}
                   </option>
@@ -593,8 +633,8 @@ const DashboardBoys = () => {
                   <p>Current Image</p>
                 </div>
               )}
-              <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} />
-            
+              <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required/>
+              {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
           </div>
           <div class="col-md-6">
             <label htmlFor='tenantUploadId' class="form-label">

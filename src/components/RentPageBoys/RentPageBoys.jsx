@@ -29,7 +29,8 @@ const RentPageBoys = () => {
   const [editingRentId, setEditingRentId] = useState(null);
   const [errors, setErrors] = useState({});
   const [availableTenants, setAvailableTenants] = useState([]);
-  const [dateOfJoin, setDateOfJoin] = useState()
+  const [dateOfJoin, setDateOfJoin] = useState();
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     // Fetch tenants data once when component mounts
@@ -223,6 +224,7 @@ const RentPageBoys = () => {
       const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents`);
       await push(rentRef, rentData);
     }
+    setShowModal(false);
 
     resetForm();
    
@@ -234,8 +236,9 @@ const RentPageBoys = () => {
     // Set modal for a new entry
     setIsEditing(false);
     // Open the modal
-    // setShowModal(true);
+    setShowModal(true);
   };
+
   const resetForm = () => {
     setSelectedTenant('');
     setRoomNumber('');
@@ -449,6 +452,9 @@ const rows = rentsRows.map((rent, index) => ({
     );
   });
 
+  const handleClosePopUp = () => {
+    setShowModal(false);
+  }
 
   return (
     <div className='h-100'>
@@ -488,99 +494,77 @@ const rows = rentsRows.map((rent, index) => ({
            <Table columns={columns} rows={filteredRows} /> 
         </div>
 
-        <div class="modal fade" id="exampleModalRentsBoys"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class={`modal fade ${showModal ? 'show' : ''}`} style={{display : showModal ? 'block' : 'none'}} id="exampleModalRentsBoys"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Rents</h1>
+                <button type="button" onClick={handleClosePopUp} className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <div className="container-fluid">
-                  <h1 className='text-center mb-2 fs-5'>
-                    Create Rents
-                  </h1>
-                  {/* <form className="row g-3" onSubmit={handleSubmit}>
-                <div className="col-md-6">
-                  <label htmlFor="inputNumber" className="form-label">Number</label>
-                  <input type="number" className="form-control" id="inputNumber" name="number" value={formData.number} onChange={handleInputChange} />
-                  {formErrors.number && <div className="text-danger">{formErrors.number}</div>}
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="inputRent" className="form-label">Rent</label>
-                  <input type="number" className="form-control" id="inputRent" name="rent" value={formData.rent} onChange={handleInputChange} />
-                  {formErrors.rent && <div className="text-danger">{formErrors.rent}</div>}
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="inputRooms" className="form-label">Select Rooms</label>
-                  <input type="number" className="form-control" id="inputRooms" name="rooms" value={formData.rooms} onChange={handleInputChange} />
-                  {formErrors.rooms && <div className="text-danger">{formErrors.rooms}</div>}
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="inputStatus" className="form-label">Select Status</label>
-                  <input type="text" className="form-control" id="inputStatus" name="status" value={formData.status} onChange={handleInputChange} />
-                  {formErrors.status && <div className="text-danger">{formErrors.status}</div>}
-                </div>
-                <div className="col-12 text-center">
-                  <button type="submit" className="btn btn-warning">Create</button>
-                </div>
-              </form> */}
-                  <form onSubmit={handleSubmit}>
-                    <div>
-                      <select value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)}>
-                        <option value="">Select a Tenant</option>
+                  <h1 className='text-center mb-2 fs-5'>Create Rents</h1>
+                  <form class="row lg-10" onSubmit={handleSubmit}>
+                    <div class='col-12 mb-3'>
+                      <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)}>
+                        <option value="">Select a Tenant *</option>
                         {availableTenants.map(tenant => (
                           <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
                         ))}
                       </select>
                       {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                     </div>
-                    <br /><br />
-                    <label>Room Number:</label>
-                    <input type="text" value={roomNumber} readOnly />
-                    <br /><br />
-                    <label>Bed Number:</label>
-                    <input type="text" value={bedNumber} readOnly /><br /><br />
-                    <label>Total Fee:</label>
-                    <input type="number" value={totalFee} readOnly /><br /><br />
-                    <div>
-                      <label>Paid Amount:</label>
-                      <input type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
+                    <div class="col-md-6 mb-3">
+                      <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                      <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly/>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                      <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                      <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                      <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)}/>
                       {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
-                      <br /><br />
                     </div>
-                    <label>Due:</label>
-                    <input type="number" value={due} readOnly /><br /><br />
-                    <div>
-                      <label>Date of Join:</label>
-                      <input
-                        type="date"
-                        value={dateOfJoin}
-                        readOnly // Make this field read-only since it's auto-populated
+                    <div class="col-md-6 mb-3">
+                      <label htmlFor="Due" class="form-label">Due:</label>
+                      <input id="Due" class="form-control" type="number" value={due} readOnly />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                      <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
                       />
-                      <br /><br />
                     </div>
-                    <div>
-                      <label>Paid Date:</label>
+                    <div class="col-md-6 mb-3">
+                      <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
                       <input
+                        id="PaidDate"
+                        class="form-control"
                         type="date"
                         value={paidDate}
                         onChange={e => setPaidDate(e.target.value)}
                       />
                       {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
-                      <br /><br />
                     </div>
-                    <div>
-                      <label>Due Date:</label>
+                    <div class="col-md-6 mb-3">
+                      <label htmlFor="DueDate" class="form-label">Due Date:</label>
                       <input
+                        id="DueDate"
+                        class="form-control"
                         type="date"
                         value={dueDate}
                         onChange={e => setDueDate(e.target.value)}
                       />
                       {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
-                      <br /><br />
                     </div>
-                    <button type="submit">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                    <div class="col-12 text-center mt-2">
+                      <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                    </div>
                   </form>
                 </div>
               </div>

@@ -10,6 +10,7 @@
   overflow: auto;
   /* border: 1px solid ; */
   border-radius:12px;
+  height: 400px;
 }
 .table{
   width: 100%;

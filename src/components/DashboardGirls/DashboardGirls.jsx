@@ -25,6 +25,7 @@ const DashboardGirls = () => {
   const [createdBy, setCreatedBy] = useState('admin'); // Default to 'admin'
   const [updateDate, setUpdateDate] = useState('');
   const [errors, setErrors] = useState({});
+  const [showModal, setShowModal] = useState(false);
  
   //=====================================================
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -112,6 +113,7 @@ const DashboardGirls = () => {
     setCurrentId('');
     setUpdateDate(now); // Update state with current date-time
     setErrors({}); // Clear errors
+    setShowModal(false);
   };
  
   useEffect(() => {
@@ -267,7 +269,7 @@ const DashboardGirls = () => {
       await push(ref(database, 'Hostel/girls/tenants'), tenantData);
     }
     // setShowModal(false);
- 
+    setShowModal(false);
     resetForm();
     imageInputRef.current.value = "";
     idInputRef.current.value = "";
@@ -328,12 +330,14 @@ const DashboardGirls = () => {
   const handleClick = (text) => {
     setModelText(text);
     setFormLayout(text);
+    setShowModal(true);
   };
  
   const handleCloseModal = () => {
     setModelText('');
     setFormLayout('');
     resetForm();
+    setShowModal(false);
   };
  
   // useEffect(() => {
@@ -706,12 +710,12 @@ const DashboardGirls = () => {
         {menu.map((item, index) => (
           <>
             <SmallCard key={index} index={index} item={item} />
-            <button id="mbladdButton" key={index} onClick={() => handleClick(item.btntext)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalGirlsDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' />{item.btntext}</button>
+            <button id="mbladdButton" type="button"  onClick={() => handleClick(item.btntext)}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
           </>
         ))}
         <div className='button-container'>
           {Buttons?.map((item, index) => (
-            <button id="deskaddButton" key={index} onClick={() => handleClick(item)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalGirlsDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item}</button>
+            <button id="deskaddButton" type="button"  onClick={() => handleClick(item)}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item} </button>
           ))}
         </div>
  
@@ -720,20 +724,18 @@ const DashboardGirls = () => {
       </div>
  
       {/* popup model */}
-      <div class="modal fade" id="exampleModalGirlsDashboard" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">{modelText}</h1>
-              <button onClick={handleCloseModal} type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalRoomsBoys" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal} >
+        <div className="modal-dialog ">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="exampleModalLabel">{modelText}</h1>
+              <button onClick={handleCloseModal} className="btn-close" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-              {renderFormLayout()}
+            <div className="modal-body">
+              <div className="container-fluid">
+               {renderFormLayout()}
+              </div>
             </div>
-            {/* <div class="modal-footer">
-              <button onClick={handleCloseModal} type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
-            </div>  */}
           </div>
         </div>
       </div>

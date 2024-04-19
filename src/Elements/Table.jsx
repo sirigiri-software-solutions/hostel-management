@@ -2,7 +2,7 @@ import React from 'react'
 import Button from './Button'
 import './Table.css'
  
-const Table = ({columns, rows}) => {
+const Table = ({columns, rows,onTenantRowClick}) => {
   return (
     <div className='table-container'>
         <table className="table text-center">
@@ -41,7 +41,7 @@ const Table = ({columns, rows}) => {
                 {item.status && <td data-label="status">{item.status}</td>}
                 {item.edit_room && <td data-label="Edit">{item.edit_room}</td>}
                 {item.actions && <td data-label="status">{item.actions}</td>}
-                {item.edit && <td data-label="edit"><Button icon={item.edit.icon} variant={item.edit.variant} text={item.edit.text}/></td>}
+                {item.edit && <td data-label="edit"><Button icon={item.edit.icon} onClick={onTenantRowClick ?() => onTenantRowClick(item) : null} variant={item.edit.variant} text={item.edit.text}/></td>}
               </tr>)
             }
           </tbody>

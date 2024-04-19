@@ -397,10 +397,15 @@ const TenantsBoys = () => {
     setShowModal(false);
   }
 
+  const handleTenantRowClick = (tenant) => {
+    // Handle the action when a tenant row is clicked, such as showing a popup
+    console.log("Tenant row clicked:", tenant);
+  };
+
   return (
     <>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
-        <div className="col-12 col-md-4 d-flex align-items-center mr-5">
+        <div className="col-12 col-md-4 d-flex align-items-center mr-5 mb-2">
           <div className='roomlogo-container'>
             <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo' />
           </div>
@@ -427,7 +432,7 @@ const TenantsBoys = () => {
         </div>
       </div>
       <div>
-        <Table columns={columns} rows={filteredRows} />
+        <Table columns={columns} rows={filteredRows} onTenantRowClick={handleTenantRowClick} />
       </div>
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
         <div class="modal-dialog">

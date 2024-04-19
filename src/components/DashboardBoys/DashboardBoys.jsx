@@ -28,6 +28,7 @@ const DashboardBoys = () => {
   const [createdBy, setCreatedBy] = useState('admin'); // Default to 'admin'
   const [updateDate, setUpdateDate] = useState('');
   const [errors, setErrors] = useState({});
+  const [showModal, setShowModal] = useState(false);
 
   //===============================
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -52,30 +53,6 @@ const DashboardBoys = () => {
   const [boysRoomsData, setBoysRoomsData] = useState([]);
   const { data } = useContext(DataContext);
 
-  const handleRoomsIntegerChange = (event) => {
-    const value = event.target.value;
-    const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
-
-    if (value === '' || re.test(value)) {
-      switch (event.target.name) {
-        case 'floorNumber':
-          setFloorNumber(value);
-          break;
-        case 'roomNumber':
-          setRoomNumber(value);
-          break;
-        case 'numberOfBeds':
-          setNumberOfBeds(value);
-          break;
-        case 'bedRent':
-          setBedRent(value);
-          break;
-        default:
-          break;
-      }
-    }
-  };
-
   const handleBoysRoomsSubmit = (e) => {
     e.preventDefault();
     const now = new Date().toISOString();  // Get current date-time in ISO format
@@ -95,17 +72,17 @@ const DashboardBoys = () => {
       setErrors(newErrors);
       return; // Prevent form submission if there are errors
     }
-
-    const roomsRef = ref(database, 'Hostel/boys/rooms');
-    push(roomsRef, {
-      floorNumber,
-      roomNumber,
-      numberOfBeds,
-      bedRent,
-      createdBy,
-      updateDate: now
-    });
-    // }
+   
+      const roomsRef = ref(database, 'Hostel/boys/rooms');
+      push(roomsRef, {
+        floorNumber,
+        roomNumber,
+        numberOfBeds,
+        bedRent,
+        createdBy,
+        updateDate: now
+      });
+    // }(
 
     // Reset form
     setFloorNumber('');
@@ -115,6 +92,7 @@ const DashboardBoys = () => {
     setCurrentId('');
     setUpdateDate(now); // Update state with current date-time
     setErrors({}); // Clear errors
+    setShowModal(false);
   };
 
   useEffect(() => {
@@ -136,6 +114,7 @@ const DashboardBoys = () => {
 
   //==============================================================
 
+  
   useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/boys/tenants');
     onValue(tenantsRef, snapshot => {
@@ -204,19 +183,10 @@ const DashboardBoys = () => {
     tempErrors.selectedBed = selectedBed ? "" : "Bed number is required.";
     tempErrors.dateOfJoin = dateOfJoin ? "" : "Date of join is required.";
     tempErrors.name = name ? "" : "Name is required.";
-    // Validate mobile number
-    if (!mobileNo) {
-      tempErrors.mobileNo = "Mobile number is required.";
-    } else if (!/^\d{10,15}$/.test(mobileNo)) {
-      tempErrors.mobileNo = "Invalid mobile number";
-    }
+    tempErrors.mobileNo = mobileNo ? "" : "Mobile number is required.";
     tempErrors.idNumber = idNumber ? "" : "ID number is required.";
-    // Validate emergency contact
-    if (!emergencyContact) {
-      tempErrors.emergencyContact = "Emergency contact is required.";
-    } else if (!/^\d{10,15}$/.test(emergencyContact)) {
-      tempErrors.emergencyContact = "Invalid emergency contact";
-    }
+    tempErrors.emergencyContact = emergencyContact ? "" : "Emergency contact is required.";
+
     // Check if the selected bed is already occupied
     const isBedOccupied = tenants.some(tenant => {
       return tenant.roomNo === selectedRoom && tenant.bedNo === selectedBed && tenant.status === "occupied" && tenant.id !== currentTenantId;
@@ -243,6 +213,8 @@ const DashboardBoys = () => {
   const handleTenantSubmit = async (e) => {
     e.preventDefault();
 
+    
+
     if (!validate()) return;
 
     let imageUrlToUpdate = tenantImageUrl;
@@ -267,6 +239,8 @@ const DashboardBoys = () => {
       } catch (error) {
         console.error("Error uploading tenant image:", error);
       }
+    
+      
     }
 
     const tenantData = {
@@ -289,10 +263,11 @@ const DashboardBoys = () => {
       await push(ref(database, 'Hostel/boys/tenants'), tenantData);
     }
     // setShowModal(false);
-
+    setShowModal(false);
     resetForm();
     imageInputRef.current.value = "";
     idInputRef.current.value = "";
+    
   };
 
   const resetForm = () => {
@@ -325,7 +300,7 @@ const DashboardBoys = () => {
     {
       image: Rooms,
       heading: 'Total Rooms',
-      number: `${rooms.length}`,
+      number:`${rooms.length}` ,
       btntext: 'Add Rooms',
     },
     {
@@ -353,12 +328,15 @@ const DashboardBoys = () => {
   const handleClick = (text) => {
     setModelText(text);
     setFormLayout(text);
+    setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setModelText('');
     setFormLayout('');
     resetForm();
+    setShowModal(false);
+    
   };
 
   // useEffect(() => {
@@ -382,65 +360,39 @@ const DashboardBoys = () => {
     switch (formLayout) {
       case 'Add Rooms':
         return (
-          // <form class="row g-3">
-          //   <div class="col-md-6">
-          //     <label for="inputslno" class="form-label">S.No</label>
-          //     <input type="number" class="form-control" id="inputslno" />
-          //   </div>
-          //   <div class="col-md-6">
-          //     <label for="inputRoomNo" class="form-label">Room No</label>
-          //     <input type="number" class="form-control" id="inputRoomNo" />
-          //   </div>
-          //   <div class="col-md-6">
-          //     <label for="inputfloor" class="form-label">Floor</label>
-          //     <input type="number" class="form-control" id="inputfloor" />
-          //   </div>
-          //   <div class="col-md-6">
-          //     <label for="inputRemarks" class="form-label">Remarks</label>
-          //     <input type="text" class="form-control" id="inputRemarks" />
-          //   </div>
-          //   <div class="col-md-6">
-          //     <label for="inputcreatedby" class="form-label">Created By</label>
-          //     <input type="text" class="form-control" id="inputcreatedby" />
-          //   </div>
-          //   <div class="col-md-6">
-          //     <label for="inputupdatedDate" class="form-label">Date</label>
-          //     <input type="date" class="form-control" id="inputupdatedDate" />
-          //   </div>
-          // </form>
           <form className="row g-3" onSubmit={handleBoysRoomsSubmit}>
-            <div className="col-md-6">
-              <label htmlFor="inputNumber" className="form-label">Floor Number</label>
-              <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange} />
-              {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="inputRent" className="form-label">Room Number</label>
-              <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} />
-              {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
-              <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} />
-              {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
-              <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} />
-              {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="inputRole" className="form-label">Created By</label>
-              <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
+          <div className="col-md-6">
+            <label htmlFor="inputNumber" className="form-label">Floor Number</label>
+            <input type="number" className="form-control" id="inputNumber" name="number" value={floorNumber} onChange={(e) => setFloorNumber(e.target.value)} />
+            {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
+          </div>
+          <div className="col-md-6">
+            <label htmlFor="inputRent" className="form-label">Room Number</label>
+            <input type="number" className="form-control" id="inputRent" name="rent" value={roomNumber} onChange={(e) => setRoomNumber(e.target.value)} />
+            {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
+          </div>
+          <div className="col-md-6">
+            <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
+            <input type="number" className="form-control" id="inputRooms" name="rooms" value={numberOfBeds} onChange={(e) => setNumberOfBeds(e.target.value)} />
+            {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
+          </div>
+          <div className="col-md-6">
+            <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
+            <input type="text" className="form-control" id="inputStatus" name="status" value={bedRent} onChange={(e) => setBedRent(e.target.value)} />
+            {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
+          </div>
+          <div className="col-md-6">
+            <label htmlFor="inputRole" className="form-label">Created By</label>
+            <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
 
-                <option value="admin">Admin</option>
-                <option value="sub-admin">Sub-admin</option>
-              </select>
-            </div>
-            <div className="col-12 text-center">
+              <option value="admin">Admin</option>
+              <option value="sub-admin">Sub-admin</option>
+            </select>
+          </div>
+          <div className="col-12 text-center">    
               <button type="submit" className="btn btn-warning" onClick={handleBoysRoomsSubmit}>Create Room</button>
-            </div>
-          </form>
+          </div>
+        </form>
         )
       case 'Add Beds':
         return (
@@ -473,36 +425,6 @@ const DashboardBoys = () => {
         )
       case 'Add Tenants':
         return (
-          // <form class="row lg-10">
-          //   <div class="col-md-6">
-          //     <label for="inputslno" class="form-label">S.No</label>
-          //     <input type="number" class="form-control" id="inputslno" />
-          //   </div>
-          //   <div class="col-md-6">
-          //     <label for="inputImage" class="form-label">Image</label>
-          //     <input type="file" class="form-control" id="inputImage" />
-          //   </div>
-          //   <div class="col-md-6">
-          //     <label for="inputName" class="form-label">Name</label>
-          //     <input type="text" class="form-control" id="inputName" />
-          //   </div>
-          //   <div class="col-md-6">
-          //     <label for="inputDocumentType" class="form-label">ID</label>
-          //     <select class="form-select" id="inputDocumentType">
-          //       <option value="">Select Document Type</option>
-          //       <option value="aadhar">Aadhar Card</option>
-          //       <option value="pan">PAN</option>
-          //     </select>
-          //   </div>
-          //   <div class="col-md-6">
-          //     <label for="inputMbNo" class="form-label">Mobile No</label>
-          //     <input type="tel" pattern="[0-9]" class="form-control" id="inputMbNo" />
-          //   </div>
-          //   <div class="col-md-6">
-          //     <label for="inputRoomNo" class="form-label">Room No</label>
-          //     <input type="number" class="form-control" id="inputRoomNo" />
-          //   </div>
-          // </form>
           <form class="row lg-10" onSubmit={handleTenantSubmit}>
           <div class="col-md-6">
             <label htmlFor='roomNo' class="form-label">Room No:</label>
@@ -689,8 +611,6 @@ const DashboardBoys = () => {
 
         )
 
-
-
       default:
         return null
     }
@@ -700,40 +620,16 @@ const DashboardBoys = () => {
     <div className="dashboardboys">
       <h1 className="heading">Men's</h1>
       <div className="menu">
-        {/* {btn ?
-          (
-            menu.map((item, index) => (
-              <React.Fragment key={index}>
-                <SmallCard index={index} item={item} />
-                <button id="addButton" key={index} onClick={() => handleClick(item.btntext)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' />{item.btntext}</button>
-              </React.Fragment>
-            ))
-          )
-          :
-          (
-              <React.Fragment>
-                { menu.map((item, index) => (
-                      <SmallCard key={index} index={index} item={item} />
-                     
-                ))}
-                <div className='button-container'>
-                    {Buttons?.map((item, index) => (
-                        <button id="addButton" key={index} onClick={() => handleClick(item)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item}</button>
-                    ))}
-                </div>
-              </React.Fragment>
- 
-          )}   */}
 
         {menu.map((item, index) => (
           <>
             <SmallCard key={index} index={index} item={item} />
-            <button id="mbladdButton" key={index} onClick={() => handleClick(item.btntext)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' />{item.btntext}</button>
+            <button id="mbladdButton" type="button"  onClick={() => handleClick(item.btntext)}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
           </>
         ))}
         <div className='button-container'>
           {Buttons?.map((item, index) => (
-            <button id="deskaddButton" key={index} onClick={() => handleClick(item)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item}</button>
+            <button id="deskaddButton" type="button"  onClick={() => handleClick(item)}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item} </button>
           ))}
         </div>
 
@@ -741,21 +637,19 @@ const DashboardBoys = () => {
 
       </div>
 
-      {/* popup model */}
-      <div class="modal fade" id="exampleModalBoysDashboard" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">{modelText}</h1>
-              <button onClick={handleCloseModal} type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+      <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalRoomsBoys" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal} >
+        <div className="modal-dialog ">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="exampleModalLabel">{modelText}</h1>
+              <button onClick={handleCloseModal} className="btn-close" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-              {renderFormLayout()}
+            <div className="modal-body">
+              <div className="container-fluid">
+               {renderFormLayout()}
+              </div>
             </div>
-            {/* <div class="modal-footer">
-              <button onClick={handleCloseModal} type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
-            </div>  */}
           </div>
         </div>
       </div>

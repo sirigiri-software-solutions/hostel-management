@@ -51,9 +51,29 @@ const TenantsGirls = () => {
     });
   }, []);
 
+  
+  const [girlsRooms, setGirlsRooms] = useState([]);
+  useEffect(() => {
+    const roomsRef = ref(database, 'Hostel/girls/rooms');
+    onValue(roomsRef, (snapshot) => {
+      const data = snapshot.val();
+      const loadedRooms = [];
+      for (const key in data) {
+        loadedRooms.push({
+          id: key,
+          ...data[key]
+        });
+      }
+      setGirlsRooms(loadedRooms);
+    });
+    // Fetch tenants
+  }, []);
+
+
+
   useEffect(() => {
     if (selectedRoom) {
-      const room = girlsRoomsData.find(room => room.roomNumber === selectedRoom);
+      const room = girlsRooms.find(room => room.roomNumber === selectedRoom);
       if (room) {
         const options = Array.from({ length: room.numberOfBeds }, (_, i) => i + 1);
         setBedOptions(options);
@@ -61,25 +81,42 @@ const TenantsGirls = () => {
     } else {
       setBedOptions([]);
     }
-  }, [selectedRoom, girlsRoomsData]);
+  }, [selectedRoom, girlsRooms]);
+
+//=========================
+  // useEffect(() => {
+  //   if (selectedRoom) {
+  //     const room = girlsRoomsData.find(room => room.roomNumber === selectedRoom);
+  //     if (room) {
+  //       const options = Array.from({ length: room.numberOfBeds }, (_, i) => i + 1);
+  //       setBedOptions(options);
+  //     }
+  //   } else {
+  //     setBedOptions([]);
+  //   }
+  // }, [selectedRoom, girlsRoomsData]);
 
   const validate = () => {
     let tempErrors = {};
     tempErrors.selectedRoom = selectedRoom ? "" : "Room number is required.";
     tempErrors.selectedBed = selectedBed ? "" : "Bed number is required.";
     tempErrors.dateOfJoin = dateOfJoin ? "" : "Date of join is required.";
-    tempErrors.name = name ? "" : "Name is required.";
+    if (!name) {
+      tempErrors.name = "Name is required.";
+    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+      tempErrors.name = "Name must contain only letters and spaces.";
+    }
     // Validate mobile number
     if (!mobileNo) {
       tempErrors.mobileNo = "Mobile number is required.";
-    } else if (!/^\d{10,15}$/.test(mobileNo)) {
+    } else if (!/^\d{10,13}$/.test(mobileNo)) {
       tempErrors.mobileNo = "Invalid mobile number";
     }
     tempErrors.idNumber = idNumber ? "" : "ID number is required.";
      // Validate emergency contact
      if (!emergencyContact) {
       tempErrors.emergencyContact = "Emergency contact is required.";
-    } else if (!/^\d{10,15}$/.test(emergencyContact)) {
+    } else if (!/^\d{10,13}$/.test(emergencyContact)) {
       tempErrors.emergencyContact = "Invalid emergency contact";
     }
 
@@ -90,6 +127,9 @@ const TenantsGirls = () => {
 
     if (isBedOccupied) {
       tempErrors.selectedBed = "This bed is already occupied.";
+    }
+    if (!tenantImage && !tenantImageUrl) {
+      tempErrors.tenantImage = "Tenant image is required.";
     }
 
     setErrors(tempErrors);
@@ -457,7 +497,7 @@ const TenantsGirls = () => {
                       </label>
                       <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
                         <option value="">Select a Room</option>
-                        {girlsRoomsData.map((room) => (
+                        {girlsRooms.map((room) => (
                           <option key={room.roomNumber} value={room.roomNumber}>
                             {room.roomNumber}
                           </option>
@@ -544,8 +584,8 @@ const TenantsGirls = () => {
                           <p>Current Image</p>
                         </div>
                       )}
-                      <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} />
-                    
+                      <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required/>
+                      {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantUploadId' class="form-label">

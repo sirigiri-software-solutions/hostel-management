@@ -241,9 +241,7 @@ const resetForm = () => {
                 <img src={SearchIcon} alt="search-icon" className='search-icon' />
               </div>
               <div className="d-flex justify-content-end">
-              <button type="button" className="add-button" onClick={handleAddNew}>
-            Add Rooms
-          </button>
+              <button type="button" className="add-button" onClick={handleAddNew}>Add Rooms</button>
               </div>
             </div>
           </div>

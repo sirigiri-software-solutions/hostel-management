@@ -33,6 +33,7 @@ const TenantsBoys = () => {
   const idInputRef = useRef(null);
   // const [boysRoomsData, setBoysRoomsData] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  
 
   const [boysRooms, setBoysRooms] = useState([]);
   useEffect(() => {
@@ -243,6 +244,7 @@ const TenantsBoys = () => {
   };
 
   const handleEdit = (tenant) => {
+    
     setSelectedRoom(tenant.roomNo);
     setSelectedBed(tenant.bedNo);
     setDateOfJoin(tenant.dateOfJoin);
@@ -261,6 +263,9 @@ const TenantsBoys = () => {
     idInputRef.current.value = "";
     // Open the modal
     setShowModal(true);
+
+   
+   
 
 
   };
@@ -324,6 +329,9 @@ const TenantsBoys = () => {
     setSearchQuery(e.target.value)
 
   };
+
+
+
   // const handleInputChange = (e) => {
   //   const { name, value } = e.target;
   //   setFormData({
@@ -434,11 +442,9 @@ const TenantsBoys = () => {
     setShowModal(false);
   }
 
-  const handleTenantRowClick = (tenant) => {
-    // Handle the action when a tenant row is clicked, such as showing a popup
-    console.log("Tenant row clicked:", tenant);
-  };
+  
 
+ 
   return (
     <>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
@@ -469,7 +475,7 @@ const TenantsBoys = () => {
         </div>
       </div>
       <div>
-        <Table columns={columns} rows={filteredRows} onTenantRowClick={handleTenantRowClick} />
+        <Table columns={columns} rows={filteredRows}  />
       </div>
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
         <div class="modal-dialog">
@@ -645,6 +651,10 @@ const TenantsBoys = () => {
           </div>
         </div>
       </div>
+
+      
+       
+     
     </>
   )
 }

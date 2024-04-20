@@ -183,8 +183,8 @@ const BedsPageGirls = () => {
     <div className='h-100'>
       
     <>
-    <div className="row d-flex align-items-center justify-content-between">
-      <div className="col-12 col-md-4 d-flex align-items-center mr-5">
+    <div className="row d-flex flex-wrap align-items-center justify-content-between">
+      <div className="col-12 col-md-4 d-flex align-items-center mr-5 mb-2">
         <div className='roomlogo-container'>
           <img src={bedIcon} alt="RoomsIcon" className='roomlogo'/>
         </div>

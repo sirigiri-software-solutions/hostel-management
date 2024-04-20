@@ -40,7 +40,7 @@ const Table = ({columns, rows}) => {
                 {item.payment_date && <td data-label="payment_date">{item.payment_date}</td>}
                 {item.status && <td data-label="status">{item.status}</td>}
                 {item.edit_room && <td data-label="Edit">{item.edit_room}</td>}
-                {item.actions && <td data-label="status">{item.actions}</td>}
+                {item.actions && <td data-label="actions">{item.actions}</td>}
                 {item.edit && <td data-label="edit"><Button icon={item.edit.icon} variant={item.edit.variant} text={item.edit.text}/></td>}
               </tr>)
             }

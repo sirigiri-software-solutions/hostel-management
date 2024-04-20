@@ -33,6 +33,7 @@ const TenantsBoys = () => {
   const idInputRef = useRef(null);
   // const [boysRoomsData, setBoysRoomsData] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  
 
   const [boysRooms, setBoysRooms] = useState([]);
   useEffect(() => {
@@ -243,6 +244,7 @@ const TenantsBoys = () => {
   };
 
   const handleEdit = (tenant) => {
+    
     setSelectedRoom(tenant.roomNo);
     setSelectedBed(tenant.bedNo);
     setDateOfJoin(tenant.dateOfJoin);
@@ -261,6 +263,9 @@ const TenantsBoys = () => {
     idInputRef.current.value = "";
     // Open the modal
     setShowModal(true);
+
+   
+   
 
 
   };
@@ -324,6 +329,9 @@ const TenantsBoys = () => {
     setSearchQuery(e.target.value)
 
   };
+
+
+
   // const handleInputChange = (e) => {
   //   const { name, value } = e.target;
   //   setFormData({
@@ -434,10 +442,13 @@ const TenantsBoys = () => {
     setShowModal(false);
   }
 
+  
+
+ 
   return (
     <>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
-        <div className="col-12 col-md-4 d-flex align-items-center mr-5">
+        <div className="col-12 col-md-4 d-flex align-items-center mr-5 mb-2">
           <div className='roomlogo-container'>
             <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo' />
           </div>
@@ -464,7 +475,7 @@ const TenantsBoys = () => {
         </div>
       </div>
       <div>
-        <Table columns={columns} rows={filteredRows} />
+        <Table columns={columns} rows={filteredRows}  />
       </div>
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
         <div class="modal-dialog">
@@ -640,6 +651,10 @@ const TenantsBoys = () => {
           </div>
         </div>
       </div>
+
+      
+       
+     
     </>
   )
 }

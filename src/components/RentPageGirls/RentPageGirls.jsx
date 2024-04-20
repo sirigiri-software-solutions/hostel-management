@@ -29,6 +29,8 @@ const RentPageGirls = () => {
   const [availableTenants, setAvailableTenants] = useState([]);
   const [dateOfJoin, setDateOfJoin] = useState()
 
+  const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     // Fetch tenants data once when component mounts
     const tenantsRef = ref(database, 'Hostel/girls/tenants');
@@ -160,6 +162,8 @@ const RentPageGirls = () => {
       setIsEditing(true);
       setEditingRentId(rentId);
     }
+    setShowModal(true);
+    
   };
 
   const validateForm = () => {
@@ -226,6 +230,7 @@ const RentPageGirls = () => {
     }
 
     resetForm();
+    setShowModal(false);
   };
 
   //===> For Clear Form for Add Rents
@@ -235,7 +240,7 @@ const RentPageGirls = () => {
     // Set modal for a new entry
     setIsEditing(false);
     // Open the modal
-    // setShowModal(true);
+    setShowModal(true);
   };
   const resetForm = () => {
     setSelectedTenant('');
@@ -400,8 +405,8 @@ const RentPageGirls = () => {
     actions: <button
     style={{ backgroundColor: '#ff8a00', padding:'4px', borderRadius: '5px', color: 'white', border: 'none', }}
     onClick={() => loadRentForEditing(rent.tenantId, rent.rentId)}
-    data-bs-toggle="modal"
-    data-bs-target="#exampleModalRGirls"
+    // data-bs-toggle="modal"
+    // data-bs-target="#exampleModalRGirls"
   >
     update
   </button>,
@@ -437,6 +442,10 @@ const RentPageGirls = () => {
     );
   });
 
+  const handleClosePopUp = () => {
+    setShowModal(false);
+  }
+
   return (
     <div className='h-100'>
 
@@ -454,7 +463,7 @@ const RentPageGirls = () => {
             <img src={SearchIcon} alt="search-icon" className='search-icon' />
           </div>
           <div className="col-6 col-md-4 d-flex justify-content-end">
-            <button type="button" class="add-button" data-bs-toggle="modal" onClick={handleAddNew} data-bs-target="#exampleModalRGirls">
+            <button type="button" class="add-button"  onClick={handleAddNew} >
               Add Rents
             </button>
           </div>
@@ -464,12 +473,12 @@ const RentPageGirls = () => {
           <Table columns={columns} rows={filteredRows} />
         </div>
 
-        <div class="modal fade" id="exampleModalRGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class={`modal fade ${showModal ? 'show' : ''}`} style={{display : showModal ? 'block' : 'none'}} id="exampleModalRentsGirls"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Create Rents</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button onClick={handleClosePopUp}  type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <div className="container-fluid">

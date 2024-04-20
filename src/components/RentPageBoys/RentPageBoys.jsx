@@ -160,6 +160,7 @@ const RentPageBoys = () => {
       setIsEditing(true);
       setEditingRentId(rentId);
     }
+    setShowModal(true);
   };
 
   const validateForm = () => {
@@ -417,8 +418,8 @@ const rows = rentsRows.map((rent, index) => ({
   actions: <button
       style={{ backgroundColor: '#ff8a00', padding:'4px', borderRadius: '5px', color: 'white', border: 'none', }}
       onClick={() => loadRentForEditing(rent.tenantId, rent.rentId)}
-      data-bs-toggle="modal"
-      data-bs-target="#exampleModalRentsBoys"
+      // data-bs-toggle="modal"
+      // data-bs-target="#exampleModalRentsBoys"
     >
       update
     </button>,
@@ -472,7 +473,7 @@ const rows = rentsRows.map((rent, index) => ({
             <img src={SearchIcon} alt="search-icon" className='search-icon' />
           </div>
           <div className="col-6 col-md-4 d-flex justify-content-end">
-            <button type="button" class="add-button" data-bs-toggle="modal" onClick={handleAddNew} data-bs-target="#exampleModalRentsBoys">
+            <button type="button" class="add-button"  onClick={handleAddNew} >
               Add Rents
             </button>
           </div>

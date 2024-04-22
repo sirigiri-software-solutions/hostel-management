@@ -394,7 +394,7 @@ const RentPageBoys = () => {
   name: tenant.name,
   mobileNo: tenant.mobileNo,
   bedNumber: rent.bedNumber,
-  totalFee: "Rs. " + rent.totalFee,
+  totalFee:  rent.totalFee,
   dateOfJoin: tenant.dateOfJoin,
   dueDate: rent.dueDate,
   paidDate: rent.paidDate,

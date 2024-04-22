@@ -159,6 +159,16 @@ const RoomsGirls = () => {
     'Edit'
   ];
 
+  
+  //for date format
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = ('0' + date.getDate()).slice(-2); // Add leading zero if needed
+    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Add leading zero if needed
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+}
+
   useEffect(() => {
     const rows = rooms.map((room, index) => ({
       s_no: index + 1,
@@ -166,7 +176,7 @@ const RoomsGirls = () => {
       floor: `${room.floorNumber}`,
       noofBeds: room.numberOfBeds,
       created_by: room.createdBy,
-      last_updated_by: room.updateDate,
+      last_updated_by: formatDate(room.updateDate),
       edit_room: <button
         style={{ backgroundColor: '#ff8a00', padding:'4px', borderRadius: '5px', color: 'white', border: 'none' }}
         onClick={() => handleEdit(room)}

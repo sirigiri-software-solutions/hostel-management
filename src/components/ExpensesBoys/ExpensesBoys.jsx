@@ -1,21 +1,27 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import ExpenseIcon from '../../images/Icons (5).png'
 import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
-import { database, push, ref } from "../../firebase"; 
+import { database, push, ref } from "../../firebase";
+import { onValue } from 'firebase/database';
 //import ImageIcon from '../../images/Icons (10).png'
+import { remove, update, set } from 'firebase/database';
 
 const ExpensesBoys = () => {
+
+  // const [createdBy, setCreatedBy] = useState('admin');
   const [searchTerm, setSearchTerm] = useState('');
   const [initialRows, setInitialRows] = useState([]);
+  const [expenses, setExpenses] = useState([]);
+  const [editingExpense, setEditingExpense] = useState(null);
 
   const [formData, setFormData] = useState({
-    number: '',
-    rent: '',
-    rooms: '',
-    status: ''
+    expenseName: '',
+    expenseAmount: '',
+    expenseDate: '',
+    createdBy: 'admin'
   });
-  
+
   const [formErrors, setFormErrors] = useState({
     number: '',
     rent: '',
@@ -33,313 +39,237 @@ const ExpensesBoys = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Validate the necessary fields
     let errors = {};
     let formIsValid = true;
 
-    // Basic validation for required fields
-    if (!formData.number) {
-      errors.number = 'Number is required';
+    if (!formData.expenseName) {
+      errors.expenseName = 'Expense name is required';
       formIsValid = false;
     }
 
-    if (!formData.rent) {
-      errors.rent = 'Rent is required';
+    if (!formData.expenseAmount) {
+      errors.expenseAmount = 'Expense amount is required';
       formIsValid = false;
     }
 
-    if (!formData.rooms) {
-      errors.rooms = 'Rooms is required';
+    if (!formData.expenseDate) {
+      errors.expenseDate = 'Expense date is required';
       formIsValid = false;
     }
 
-    if (!formData.status) {
-      errors.status = 'Status is required';
-      formIsValid = false;
-    }
-
-    // If form is valid, proceed with submission
+    // Only proceed if form is valid
     if (formIsValid) {
-      // console.log('Form submitted successfully:', formData);
-      const newData = {
-        number: formData.number,
-        rent: formData.rent,
-        rooms: formData.rooms,
-        status: formData.status
-      };
-
-      // Push the new data to the 'beds' node
-      push(ref(database, 'beds'), newData)
+      const expensesRef = ref(database, 'Hostel/boys/expenses');
+      push(expensesRef, {
+        ...formData,
+        expenseAmount: parseFloat(formData.expenseAmount),
+        expenseDate: new Date(formData.expenseDate).toISOString() // Proper ISO formatting
+      })
         .then(() => {
-          // Data successfully stored in Firebase
-          // console.log('Data successfully stored in Firebase');
-          // Clear the form after submission if needed
+          // alert('Expense added!');
+          // Reset form or other UI updates here
           setFormData({
-            number: '',
-            rent: '',
-            rooms: '',
-            status: ''
+            expenseName: '',
+            expenseAmount: '',
+            expenseDate: '',
+            createdBy: 'admin'
           });
         })
-        .catch((error) => {
-          // Handle errors
-          // console.error('Error storing data in Firebase: ', error.message);
+        .catch(error => {
+          console.error("Error adding document: ", error);
+          // alert('Error adding expense!');
         });
     } else {
-      // Set errors for form validation
+      // Set errors in state if form is not valid
       setFormErrors(errors);
     }
   };
 
-    const columns = [
-      'S. No',
-      'Name of Expense',
-      'Amount',
-      'Created by',
-      'Edit',
-      'Delete'
-    ]
+  //for date format
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = ('0' + date.getDate()).slice(-2); // Add leading zero if needed
+    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Add leading zero if needed
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
 
-    const rows = [
-      {
-        s_no :1,
-        name_of_expenses:"Building Rent",
-        amount:50000,
-        created_by:"Admin",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'Edit'
-        },
-        delete:{
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'Delete'
-        }
-
-      },{
-        s_no :2,
-        name_of_expenses:"Current Bill",
-        amount:10000,
-        created_by:"Admin",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'Edit'
-        },
-        delete:{
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'Delete'
-        }
-
-      },{
-        s_no :3,
-        name_of_expenses:"Wifi bill",
-        amount:15000,
-        created_by:"Admin",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'Edit'
-        },
-        delete:{
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'Delete'
-        }
-      },{
-        s_no :4,
-        name_of_expenses:"Staff Salaries",
-        amount:20000,
-        created_by:"Admin",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'Edit'
-        },
-        delete:{
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'Delete'
-        }
-      },{
-        s_no :5,
-        name_of_expenses:"Food expenses",
-        amount:20000,
-        created_by:"Admin",
-        edit: {
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'Edit'
-        },
-        delete:{
-          icon: false,
-          variant: {color:'#ff8a00', radius:'10px'},
-          text: 'Delete'
-        }
-
+  useEffect(() => {
+    const expensesRef = ref(database, 'Hostel/boys/expenses');
+    onValue(expensesRef, (snapshot) => {
+      const data = snapshot.val();
+      const loadedExpenses = [];
+      for (const key in data) {
+        loadedExpenses.push({
+          id: key,
+          ...data[key],
+          expenseDate: formatDate(data[key].expenseDate) // Format date as you retrieve it
+        });
       }
-    ]
-  
-    // const rows = [
-    //   {
-    //     s_no : 1,
-    //     room_no :"125/2",
-    //     name : "ABCDE",
-    //     month_year: "Aug/2021",
-    //     rent: "Rs. 5000",
-    //     created_on: "21 Aug 2021",
-    //     created_by: "Admin  ",
-    //     edit: {
-    //       icon: false,
-    //       variant: {color:'#ff8a00', radius:'10px'},
-    //       text: 'Edit'
-    //     }
-    //   },
-    //   {
-    //     s_no : 1,
-    //     room_no :"125/2",
-    //     name : "ABCDE",
-    //     month_year: "Aug/2021",
-    //     rent: "Rs. 5000",
-    //     created_on: "21 Aug 2021",
-    //     created_by: "Admin  ",
-    //     edit: {
-    //       icon: false,
-    //       variant: {color:'#ff8a00', radius:'10px'},
-    //       text: 'Edit'
-    //     }
-    //   },
-    //   {
-    //     s_no : 1,
-    //     room_no :"125/2",
-    //     name : "ABCDE",
-    //     month_year: "Aug/2021",
-    //     rent: "Rs. 5000",
-    //     created_on: "21 Aug 2021",
-    //     created_by: "Admin  ",
-    //     edit: {
-    //       icon: false,
-    //       variant: {color:'#ff8a00', radius:'10px'},
-    //       text: 'Edit'
-    //     }
-    //   },
-    //   {
-    //     s_no : 1,
-    //     room_no :"125/2",
-    //     name : "ABCDE",
-    //     month_year: "Aug/2021",
-    //     rent: "Rs. 5000",
-    //     created_on: "21 Aug 2021",
-    //     created_by: "Admin  ",
-    //     edit: {
-    //       icon: false,
-    //       variant: {color:'#ff8a00', radius:'10px'},
-    //       text: 'Edit'
-    //     }
-    //   },
-    //   {
-    //     s_no : 1,
-    //     room_no :"125/2",
-    //     name : "ZBCDE",
-    //     month_year: "Aug/2021",
-    //     rent: "Rs. 5000",
-    //     created_on: "21 Aug 2020",
-    //     created_by: "Admin  ",
-    //     edit: {
-    //       icon: false,
-    //       variant: {color:'#ff8a00', radius:'10px'},
-    //       text: 'Edit'
-    //     }
-    //   },
-    // ]
-
-    useEffect(() => {
-      setInitialRows(rows)
-    },[])
-
-    const handleChange = (event) => {
-      setSearchTerm(event.target.value)
-    }
-
-    const filteredRows = initialRows.filter(row => {
-      return Object.values(row).some(value =>
-        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      setExpenses(loadedExpenses);
     });
+  }, []);
 
+  const columns = [
+    'S. No',
+    'Expense Name',
+    'Expense Amount',
+    'Created By',
+    'Date',
+    'actions'
+  ];
+
+  useEffect(() => {
+
+    const rows = expenses.map((expense, index) => ({
+      s_no: index + 1,
+      expense_name: expense.expenseName,
+      expense_amount: expense.expenseAmount,
+      created_by: expense.createdBy,
+      last_updated_by: expense.expenseDate,
+      edit_room: <button
+        style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
+        onClick={() => handleEdit(expense)}
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModalExpensesBoys"
+      >
+        Edit
+      </button>
+    }));
+    setInitialRows(rows);
+
+  }, [expenses]);
+
+  const handleEdit = (expense) => {
+    setEditingExpense(expense);
+    setFormData({
+      expenseName: expense.expenseName,
+      expenseAmount: expense.expenseAmount,
+      expenseDate: expense.expenseDate,
+      createdBy: expense.createdBy
+    });
+  };
+
+
+  const handleUpdate = () => {
+    if (!editingExpense) return;
+    const expenseRef = ref(database, `Hostel/boys/expenses/${editingExpense.id}`);
+    set(expenseRef, {
+      ...formData,
+      expenseAmount: parseFloat(formData.expenseAmount),
+      expenseDate: new Date(formData.expenseDate).toISOString()
+    }).then(() => {
+      setEditingExpense(null);
+      alert('Expense updated!');
+    }).catch(error => {
+      console.error("Error updating document: ", error);
+      alert('Error updating expense!');
+    });
+  };
+
+  const handleDelete = () => {
+    if (!editingExpense) return;
+    const expenseRef = ref(database, `Hostel/boys/expenses/${editingExpense.id}`);
+    remove(expenseRef).then(() => {
+      setEditingExpense(null);
+      alert('Expense deleted!');
+    }).catch(error => {
+      console.error("Error deleting document: ", error);
+      alert('Error deleting expense!');
+    });
+  };
+
+  const handleChange = (event) => {
+    setSearchTerm(event.target.value)
+  }
+
+  const filteredRows = initialRows.filter(row => {
+    return Object.values(row).some(value =>
+      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+  console.log("==>expense==>", expenses)
   return (
     <div className='h-100'>
-    
-    <>
-      <div className="row d-flex flex-wrap align-items-center justify-content-between">
-        <div className="col-12 col-md-4 d-flex align-items-center mr-5 mb-2">
-          <div className='roomlogo-container'>
-            <img src={ExpenseIcon} alt="RoomsIcon" className='roomlogo'/>
+
+      <>
+        <div className="row d-flex flex-wrap align-items-center justify-content-between">
+          <div className="col-12 col-md-4 d-flex align-items-center mr-5">
+            <div className='roomlogo-container'>
+              <img src={ExpenseIcon} alt="RoomsIcon" className='roomlogo' />
+            </div>
+            <h1 className='fs-5'>Expenses Management</h1>
           </div>
-          <h1 className='fs-5'>Expenses Management</h1>
+          <div className="col-6 col-md-4 search-wrapper">
+            <input type="text" placeholder='Search' className='search-input' onChange={handleChange} value={searchTerm} />
+            <img src={SearchIcon} alt="search-icon" className='search-icon' />
+          </div>
+          <div className="col-6 col-md-4 d-flex justify-content-end">
+            <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalExpensesBoys">
+              Add Expenses
+            </button>
+          </div>
         </div>
-        <div className="col-6 col-md-4 search-wrapper">
-          <input type="text" placeholder='Search' className='search-input' onChange={handleChange} value={searchTerm}/>
-          <img src={SearchIcon} alt="search-icon" className='search-icon'/>
+        <div>
+          <Table columns={columns} rows={filteredRows} />
         </div>
-        <div className="col-6 col-md-4 d-flex justify-content-end">
-          <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalExpensesBoys">
-            Add Expenses
-          </button>
-        </div>
-      </div>
-      <div>   
-          <Table columns={columns} rows={filteredRows}/>
-      </div>
-      <div class="modal fade" id="exampleModalExpensesBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <div className="container-fluid">
-                <h1 className='text-center mb-2 fs-5'>
-                  Create Beds
-                </h1>
-                <form className="row g-3" onSubmit={handleSubmit}>
-                  <div className="col-md-6">
-                    <label htmlFor="inputNumber" className="form-label">Number</label>
-                    <input type="number" className="form-control" id="inputNumber" name="number" value={formData.number} onChange={handleInputChange} />
-                    {formErrors.number && <div className="text-danger">{formErrors.number}</div>}
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="inputRent" className="form-label">Rent</label>
-                    <input type="number" className="form-control" id="inputRent" name="rent" value={formData.rent} onChange={handleInputChange} />
-                    {formErrors.rent && <div className="text-danger">{formErrors.rent}</div>}
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="inputRooms" className="form-label">Select Rooms</label>
-                    <input type="number" className="form-control" id="inputRooms" name="rooms" value={formData.rooms} onChange={handleInputChange} />
-                    {formErrors.rooms && <div className="text-danger">{formErrors.rooms}</div>}
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="inputStatus" className="form-label">Select Status</label>
-                    <input type="text" className="form-control" id="inputStatus" name="status" value={formData.status} onChange={handleInputChange} />
-                    {formErrors.status && <div className="text-danger">{formErrors.status}</div>}
-                  </div>
-                  <div className="col-12 text-center">
-                    <button type="submit" className="btn btn-warning">Create</button>
-                  </div>
-                </form>
+        <div class="modal fade" id="exampleModalExpensesBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Expenses</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-            </div>
-            <div className="modal-footer">
+              <div class="modal-body">
+                <div className="container-fluid">
+                  <form className="row g-3" onSubmit={handleSubmit}>
+                    <div className="col-md-6">
+                      <label htmlFor="inputExpenseName" className="form-label">Expense Name</label>
+                      <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} />
+                      {/* {formErrors.number && <div className="text-danger">{formErrors.number}</div>} */}
+                    </div>
+                    <div className="col-md-6">
+                      <label htmlFor="inputRent" className="form-label">Expense amount</label>
+                      <input type="number" className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} />
+                      {/* {formErrors.rent && <div className="text-danger">{formErrors.rent}</div>} */}
+                    </div>
+                    <div className="col-md-6">
+                      <label htmlFor="inputRole" className="form-label">Created By</label>
+                      <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
+                        <option value="admin">Admin</option>
+                        <option value="sub-admin">Sub-admin</option>
+                      </select>
+                    </div>
+
+                    <div className="col-md-6">
+                      <label htmlFor="inputDate" className="form-label">Expense Date</label>
+                      <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
+                      {/* {formErrors.status && <div className="text-danger">{formErrors.status}</div>} */}
+                    </div>
+                    <div className="col-12 text-center">
+                      {!editingExpense && (
+                        <button type="submit" className="btn btn-warning">Create</button>
+                      )}
+                      {editingExpense && (
+                        <>
+                          <button type="button" className="btn btn-success" onClick={handleUpdate}>Update Expense</button>
+                          <button type="button" className="btn btn-danger" onClick={handleDelete}>Delete Expense</button>
+                        </>
+                      )}
+                    </div>
+                  </form>
+                </div>
+              </div>
+              {/* <div className="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               <button type="button" class="btn btn-primary">Save changes</button>
+            </div> */}
             </div>
           </div>
         </div>
-      </div>
-        
-    </>
+
+      </>
     </div>
   )
 }

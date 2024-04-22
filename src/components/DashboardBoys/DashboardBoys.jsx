@@ -30,6 +30,9 @@ const DashboardBoys = () => {
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
 
+
+  const [totalExpenses, setTotalExpenses] = useState(0);
+
   //===============================
   const [selectedRoom, setSelectedRoom] = useState('');
   const [bedOptions, setBedOptions] = useState([]);
@@ -113,6 +116,31 @@ const DashboardBoys = () => {
   const totalBeds = rooms.reduce((acc, room) => acc + Number(room.numberOfBeds), 0);
 
   //==============================================================
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = ('0' + date.getDate()).slice(-2);
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
+  };
+
+  useEffect(() => {
+    const expensesRef = ref(database, 'Hostel/boys/expenses');
+    onValue(expensesRef, (snapshot) => {
+      const data = snapshot.val();
+      let total = 0; // Variable to hold the total expenses
+      for (const key in data) {
+        const expense = {
+          id: key,
+          ...data[key],
+          expenseDate: formatDate(data[key].expenseDate)
+        };
+        total += expense.expenseAmount; // Add expense amount to total
+      }
+      setTotalExpenses(total); // Set total expenses state
+    });
+  }, []);
 
   
   useEffect(() => {
@@ -367,7 +395,7 @@ const DashboardBoys = () => {
     {
       image: Expenses,
       heading: 'Total Expenses',
-      number: 28635,
+      number: `${totalExpenses}`,
       btntext: 'Add Expenses',
     },
   ];

@@ -191,10 +191,10 @@ const MainPage = () => {
   return (
     <div className='bg-container' style={mainBackgroundContainerStyle}>
         <div className='sidebar' style={sidebarStyle}>
-            <div className='top-section'>
+            <div className='top-section' >
               <img src={logo} alt="logo" className='logo' />
             </div>
-            <div className='nav-div'>
+            <div className='nav-div' onClick={toggleModal}>
                 <img src={Admin} alt="admin" className='mbl-dashboard-icon' />
                 <h1 className='mb-dashboard-name'>{name}</h1>
             </div>

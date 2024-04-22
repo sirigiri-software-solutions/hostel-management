@@ -39,6 +39,11 @@ const TenantsGirls = () => {
   const [girlsRoomsData, setGirlsRoomsData]=useState([]);
   const [showModal, setShowModal] = useState(false);
 
+  const [userDetailsTenantPopup,setUserDetailsTenantsPopup] = useState(false);
+  const [singleTenantDetails,setSingleTenantDetails] = useState(false);
+
+  const [dueDateOfTenant,setDueDateOfTenant] = useState("");
+
   useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/girls/tenants');
     onValue(tenantsRef, snapshot => {
@@ -231,6 +236,7 @@ const TenantsGirls = () => {
     setIsEditing(false);
     // Open the modal
     setShowModal(true);
+    setUserDetailsTenantsPopup(false);
   };
 
   const handleDelete = async (id) => {
@@ -430,12 +436,38 @@ const TenantsGirls = () => {
     setShowModal(false);
   }
 
+  const handleTentantRow = (tenant) => {
+  
+      setUserDetailsTenantsPopup(true);
+      setShowModal(false);
+      setSingleTenantDetails(tenant);
+  
+      const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
+  
+      if (singleUserDueDate && singleUserDueDate.rents) {
+        const dataWithDueDate = Object.values(singleUserDueDate.rents);
+        const dueDate = dataWithDueDate[0].dueDate;
+        console.log("Due date:", dueDate);
+        setDueDateOfTenant(dueDate);
+      } else {
+        console.log("Tenant with due date not found or due date is missing");
+      }
+    
+  };
+  
+  
+
+  const tenantPopupClose = () => {
+    setUserDetailsTenantsPopup(false);
+    setDueDateOfTenant("")
+  }
+
 
 
   return (
     <>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
-        <div className="col-12 col-md-4 d-flex align-items-center mr-5">
+        <div className="col-12 col-md-4 d-flex align-items-center mr-5 mb-2">
           <div className='roomlogo-container'>
             <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo' />
           </div>
@@ -453,7 +485,7 @@ const TenantsGirls = () => {
       </div>
 
       <div>
-        <Table columns={columns} rows={filteredRows} />
+        <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />
       </div>
 
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
@@ -629,6 +661,32 @@ const TenantsGirls = () => {
           </div>
         </div>
       </div>
+
+
+      {userDetailsTenantPopup && 
+      <div className='userDetailsTenantPopup'>
+        <div className='tenants-dialog-container'>
+          <h1 className="tenants-popup-heading">Tenant Details </h1>
+          <div className='tenants-popup-mainContainer'>
+            <div className='tenants-profile-container'>
+             <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
+             </div>
+             <div className='tenants-popup-detailsContainer'>
+                 <p><strong>Name :</strong> {singleTenantDetails.name}</p>
+                  <p><strong>Mobile No :</strong> {singleTenantDetails.mobile_no}</p>
+                  <p><strong>Proof ID :</strong> {singleTenantDetails.id}</p>
+                  <p><strong>Room/Bed No :</strong> {singleTenantDetails.room_bed_no}</p>
+                  <p><strong>Joining Date :</strong> {singleTenantDetails.joining_date}</p>
+                  <p><strong>Due Date :</strong> {dueDateOfTenant}</p>
+             </div>
+          </div>
+          <div className='popup-tenants-closeBtn'>
+          <button className='btn btn-warning' onClick={tenantPopupClose}>Close</button>
+          </div>
+        </div>
+      </div>
+      
+      }
     </>
   )
 }

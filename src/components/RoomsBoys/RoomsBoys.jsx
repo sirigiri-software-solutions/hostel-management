@@ -162,85 +162,6 @@ const resetForm = () => {
     roomsData = Object.values(RoomsBoysData)
   }
 
-  // const [formData, setFormData] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: ''
-  // });
-
-  // const [formErrors, setFormErrors] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: ''
-  // });
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: value
-  //   });
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   let errors = {};
-  //   let formIsValid = true;
-
-  //   // Basic validation for required fields
-  //   if (!formData.number) {
-  //     errors.number = 'floor number is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rent) {
-  //     errors.rent = 'Rent is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rooms) {
-  //     errors.rooms = 'Rooms is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.status) {
-  //     errors.status = 'Status is required';
-  //     formIsValid = false;
-  //   }
-
-  //   // If form is valid, proceed with submission
-  //   if (formIsValid) {
-  //     // console.log('Form submitted successfully:', formData);
-  //     const newData = {
-  //       number: formData.number,
-  //       rent: formData.rent,
-  //       rooms: formData.rooms,
-  //       status: formData.status
-  //     };
-
-  //     // Push the new data to the 'beds' node
-  //     push(ref(database, 'beds'), newData)
-  //       .then(() => {
-  //         // Data successfully stored in Firebase
-  //         // console.log('Data successfully stored in Firebase');
-  //         // Clear the form after submission if needed
-  //         setFormData({
-  //           number: '',
-  //           rent: '',
-  //           rooms: '',
-  //           status: ''
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         // Handle errors
-  //         // console.error('Error storing data in Firebase: ', error.message);
-  //       });
-  //   } else {
-  //     // Set errors for form validation
-  //     setFormErrors(errors);
-  //   }
-  // };
 
   const columns = [
     'S. No',
@@ -252,24 +173,6 @@ const resetForm = () => {
     'Edit'
   ]
 
-  // const rows = Object.keys(roomsData).map(index => {
-  //   const data = roomsData[index];
-  //   return {
-  //     s_no: parseInt(index) + 1, // Adding 1 to index to make it 1-based
-  //     room_no: data.roomNumber,
-  //     floor: `${data.floorNumber}st`, // Assuming you want to concatenate "st"
-  //     remarks: "Two Sharing",
-  //     created_by: data.createdBy,
-  //     last_updated_by: "13-03-2015",
-  //     edit: {
-  //       icon: false,
-  //       variant: { color: '#ff8a00', radius: '10px' },
-  //       text: 'Edit'
-  //     }
-  //   };
-  // });
-
-  // console.log("==>Rooms==>", rooms);
 
 
   //for date format
@@ -318,30 +221,31 @@ const resetForm = () => {
   });
   console.log("data==>",filteredRows)
   return (
-    <div className='row'>
+    <div className='h-100'>
+      <>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
-        <div className="col-12 col-md-5 desktop-layout align-items-center mr-5">
+        <div className="col-12 col-md-4 d-flex  align-items-center mr-5 mb-2">
           <div className='roomlogo-container'>
             <img src={RoomsIcon} alt="RoomsIcon" className='roomlogo' />
           </div>
           <h1 className='fs-5'>Rooms Management</h1>
         </div>
-        <div className="col-6 col-md-4 desktop-layout search-wrapper">
+        <div className="col-6 col-md-4  search-wrapper">
           <input type="text" placeholder='Search' className='search-input' onChange={handleChange} value={searchTerm} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
-        <div className="col-6 col-md-3 desktop-layout justify-content-end">
+        <div className="col-6 col-md-4 d-flex justify-content-end">
         <button type="button" className="add-button" onClick={handleAddNew}>
             Add Rooms
           </button>
         </div>
-        <div className='mobile-layout !sticky-top'>
+        {/* <div className='mobile-layout !sticky-top'>
           <div className="d-flex align-items-center justify-content-between mr-5">
             <div className='d-flex flex-column gap-2 !align-items-start'>
               <div className='roomlogo-container w-sm-[75px]'>
                 <img src={RoomsIcon} alt="RoomsIcon" className='roomlogo' />
               </div>
-              <h1 className='fs-5'>Rooms Management</h1>
+              <h1 className='fs-1'>Rooms Management</h1>
             </div>
             <div className='d-flex flex-column gap-2 align-items-center'>
               <div className="search-wrapper">
@@ -349,13 +253,11 @@ const resetForm = () => {
                 <img src={SearchIcon} alt="search-icon" className='search-icon' />
               </div>
               <div className="d-flex justify-content-end">
-              <button type="button" className="add-button" onClick={handleAddNew}>
-            Add Rooms
-          </button>
+              <button type="button" className="add-button" onClick={handleAddNew}>Add Rooms</button>
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
       <div>
         <Table columns={columns} rows={filteredRows} />
@@ -418,6 +320,7 @@ const resetForm = () => {
           </div>
         </div>
       </div>
+      </>
     </div>
   )
 }

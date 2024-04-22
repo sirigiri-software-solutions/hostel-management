@@ -10,11 +10,13 @@
   overflow: auto;
   /* border: 1px solid ; */
   border-radius:12px;
+  height: 400px;
 }
 .table{
   width: 100%;
   border-collapse: collapse ; 
   margin-bottom:0px !important;
+  
 }
 
 .table thead tr{

@@ -184,22 +184,18 @@ const filteredRows = rows.filter(row => {
   return (
     <div className='h-100'> 
     <>
-    <div className="row d-flex align-items-center justify-content-between">
-      <div className="col-12 col-md-4 d-flex align-items-center mr-5">
+    <div className="row d-flex flex-wrap align-items-center justify-content-between">
+      <div className="col-12 col-md-4 d-flex align-items-center mr-5 mb-2">
         <div className='roomlogo-container'>
           <img src={bedIcon} alt="RoomsIcon" className='roomlogo'/>
         </div>
         <h1 className='fs-5'>Beds Management</h1>
       </div>
-      <div className="col-6 col-md-4 search-wrapper">
+      <div className="col-12 col-md-4 search-wrapper">
         <input value={searchValue} onChange={onChangeSearch} type="text" placeholder='Search' className='search-input'/>
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
       </div>
-      <div className="col-6 col-md-4 d-flex justify-content-end">
-        {/* <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalBedsBoys">
-          Add Beds
-        </button> */}
-      </div>
+      
     </div>
 
     <div>   

@@ -35,6 +35,8 @@ const Table = ({columns, rows,onClickTentantRow}) => {
                 {item.due_date && <td data-label="due_date">{item.due_date}</td>}
                 {item.last_fee && <td data-label="last_fee">{item.last_fee}</td>}
                 {item.created_on && <td data-label="created_on">{item.created_on}</td>}
+                {item.name_of_expenses && <td data-label="Name of Expense">{item.name_of_expenses}</td>}
+                {item.amount && <td data-label="Amount">{item.amount}</td>}
                 {item.created_by && <td data-label="created_by">{item.created_by}</td>}
                 {item.last_updated_by && <td data-label="Last Updated date">{item.last_updated_by}</td>}
                 {item.payment_date && <td data-label="payment_date">{item.payment_date}</td>}
@@ -42,6 +44,7 @@ const Table = ({columns, rows,onClickTentantRow}) => {
                 {item.edit_room && <td data-label="Edit">{item.edit_room}</td>}
                 {item.actions && <td data-label="actions">{item.actions}</td>}
                 {item.edit && <td data-label="edit"><Button icon={item.edit.icon} variant={item.edit.variant} text={item.edit.text}/></td>}
+                {item.delete && <td data-label="Delete"><Button icon={item.edit.icon} variant={item.edit.variant} text ={item.delete.text}/></td>}
               </tr>)
             }
           </tbody>

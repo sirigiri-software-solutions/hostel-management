@@ -92,87 +92,167 @@ const ExpensesBoys = () => {
 
     const columns = [
       'S. No',
-      'Room',
-      'Name',
-      'Month/Year',
-      'Rent',
-      'Created on',
-      'Created By',
-      'Edit'
+      'Name of Expense',
+      'Amount',
+      'Created by',
+      'Edit',
+      'Delete'
     ]
-  
+
     const rows = [
       {
-        s_no : 1,
-        room_no :"125/2",
-        name : "ABCDE",
-        month_year: "Aug/2021",
-        rent: "Rs. 5000",
-        created_on: "21 Aug 2021",
-        created_by: "Admin  ",
+        s_no :1,
+        name_of_expenses:"Building Rent",
+        amount:50000,
+        created_by:"Admin",
         edit: {
           icon: false,
           variant: {color:'#ff8a00', radius:'10px'},
           text: 'Edit'
+        },
+        delete:{
+          icon: false,
+          variant: {color:'#ff8a00', radius:'10px'},
+          text: 'Delete'
         }
-      },
-      {
-        s_no : 1,
-        room_no :"125/2",
-        name : "ABCDE",
-        month_year: "Aug/2021",
-        rent: "Rs. 5000",
-        created_on: "21 Aug 2021",
-        created_by: "Admin  ",
+
+      },{
+        s_no :2,
+        name_of_expenses:"Current Bill",
+        amount:10000,
+        created_by:"Admin",
         edit: {
           icon: false,
           variant: {color:'#ff8a00', radius:'10px'},
           text: 'Edit'
+        },
+        delete:{
+          icon: false,
+          variant: {color:'#ff8a00', radius:'10px'},
+          text: 'Delete'
         }
-      },
-      {
-        s_no : 1,
-        room_no :"125/2",
-        name : "ABCDE",
-        month_year: "Aug/2021",
-        rent: "Rs. 5000",
-        created_on: "21 Aug 2021",
-        created_by: "Admin  ",
+
+      },{
+        s_no :3,
+        name_of_expenses:"Wifi bill",
+        amount:15000,
+        created_by:"Admin",
         edit: {
           icon: false,
           variant: {color:'#ff8a00', radius:'10px'},
           text: 'Edit'
+        },
+        delete:{
+          icon: false,
+          variant: {color:'#ff8a00', radius:'10px'},
+          text: 'Delete'
         }
-      },
-      {
-        s_no : 1,
-        room_no :"125/2",
-        name : "ABCDE",
-        month_year: "Aug/2021",
-        rent: "Rs. 5000",
-        created_on: "21 Aug 2021",
-        created_by: "Admin  ",
+      },{
+        s_no :4,
+        name_of_expenses:"Staff Salaries",
+        amount:20000,
+        created_by:"Admin",
         edit: {
           icon: false,
           variant: {color:'#ff8a00', radius:'10px'},
           text: 'Edit'
+        },
+        delete:{
+          icon: false,
+          variant: {color:'#ff8a00', radius:'10px'},
+          text: 'Delete'
         }
-      },
-      {
-        s_no : 1,
-        room_no :"125/2",
-        name : "ZBCDE",
-        month_year: "Aug/2021",
-        rent: "Rs. 5000",
-        created_on: "21 Aug 2020",
-        created_by: "Admin  ",
+      },{
+        s_no :5,
+        name_of_expenses:"Food expenses",
+        amount:20000,
+        created_by:"Admin",
         edit: {
           icon: false,
           variant: {color:'#ff8a00', radius:'10px'},
           text: 'Edit'
+        },
+        delete:{
+          icon: false,
+          variant: {color:'#ff8a00', radius:'10px'},
+          text: 'Delete'
         }
-      },
+
+      }
     ]
+  
+    // const rows = [
+    //   {
+    //     s_no : 1,
+    //     room_no :"125/2",
+    //     name : "ABCDE",
+    //     month_year: "Aug/2021",
+    //     rent: "Rs. 5000",
+    //     created_on: "21 Aug 2021",
+    //     created_by: "Admin  ",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'Edit'
+    //     }
+    //   },
+    //   {
+    //     s_no : 1,
+    //     room_no :"125/2",
+    //     name : "ABCDE",
+    //     month_year: "Aug/2021",
+    //     rent: "Rs. 5000",
+    //     created_on: "21 Aug 2021",
+    //     created_by: "Admin  ",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'Edit'
+    //     }
+    //   },
+    //   {
+    //     s_no : 1,
+    //     room_no :"125/2",
+    //     name : "ABCDE",
+    //     month_year: "Aug/2021",
+    //     rent: "Rs. 5000",
+    //     created_on: "21 Aug 2021",
+    //     created_by: "Admin  ",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'Edit'
+    //     }
+    //   },
+    //   {
+    //     s_no : 1,
+    //     room_no :"125/2",
+    //     name : "ABCDE",
+    //     month_year: "Aug/2021",
+    //     rent: "Rs. 5000",
+    //     created_on: "21 Aug 2021",
+    //     created_by: "Admin  ",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'Edit'
+    //     }
+    //   },
+    //   {
+    //     s_no : 1,
+    //     room_no :"125/2",
+    //     name : "ZBCDE",
+    //     month_year: "Aug/2021",
+    //     rent: "Rs. 5000",
+    //     created_on: "21 Aug 2020",
+    //     created_by: "Admin  ",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'Edit'
+    //     }
+    //   },
+    // ]
 
     useEffect(() => {
       setInitialRows(rows)

@@ -7,15 +7,16 @@
 /* Table.css */
 .table-container {
   margin-top: 20px;
-  /* overflow: auto; */
+  overflow: auto;
   /* border: 1px solid ; */
-  border-radius: 10px;
+  border-radius:12px;
+  height: 400px;
 }
-
 .table{
   width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 0px !important;
+  border-collapse: collapse ; 
+  margin-bottom:0px !important;
+  
 }
 
 .table thead tr{
@@ -94,3 +95,4 @@
   width:40px;
   height:40px;
 }
+

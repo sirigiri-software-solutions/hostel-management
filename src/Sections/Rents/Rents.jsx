@@ -30,7 +30,7 @@ const Rents = () => {
 // });
     
     const [activeTab, setActiveTab] = useState('boys');
-    const name=localStorage.getItem("username");
+    // const name=localStorage.getItem("username");
 
     const handleTabSelect = (tab) => {
         setActiveTab(tab);
@@ -38,10 +38,10 @@ const Rents = () => {
 
     return (
         <div className="container">
-            <div className='top-div'>
+            {/* <div className='top-div'>
                 <img src={Adminlogo} alt="admin" className='dashboard-icon' />
                 <h1 className='dashboard-heading'>{name}</h1>
-            </div>
+            </div> */}
             <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
                 <Tab eventKey="boys" title="Men's">
                     <RentPageBoys  />

@@ -1,11 +1,15 @@
-import React, {useState} from 'react'
+import React, {useState,useEffect} from 'react'
 import ExpenseIcon from '../../images/Icons (5).png'
 import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
 //import ImageIcon from '../../images/Icons (10).png'
 import { database, push, ref } from "../../firebase"; 
+import "../RoomsBoys/RoomsBoys.css"
 
 const ExpensesGirls = () => {
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [initialRows, setInitialRows] = useState([]);
 
   const [formData, setFormData] = useState({
     number: '',
@@ -91,111 +95,207 @@ const ExpensesGirls = () => {
 
     const columns = [
       'S. No',
-      'Room',
-      'Name',
-      'Month/Year',
-      'Rent',
-      'Created on',
-      'Created By',
-      'Edit'
+      'Name of Expense',
+      'Amount',
+      'Created by',
+      'Edit',
+      'Delete'
     ]
   
+    // const rows = [
+    //   {
+    //     s_no : 1,
+    //     room_no :"125/2",
+    //     name : "ABCDE",
+    //     month_year: "Aug/2021",
+    //     rent: "Rs. 5000",
+    //     created_on: "21 Aug 2021",
+    //     created_by: "Admin  ",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'Edit'
+    //     }
+    //   },
+    //   {
+    //     s_no : 1,
+    //     room_no :"125/2",
+    //     name : "ABCDE",
+    //     month_year: "Aug/2021",
+    //     rent: "Rs. 5000",
+    //     created_on: "21 Aug 2021",
+    //     created_by: "Admin  ",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'Edit'
+    //     }
+    //   },
+    //   {
+    //     s_no : 1,
+    //     room_no :"125/2",
+    //     name : "ABCDE",
+    //     month_year: "Aug/2021",
+    //     rent: "Rs. 5000",
+    //     created_on: "21 Aug 2021",
+    //     created_by: "Admin  ",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'Edit'
+    //     }
+    //   },
+    //   {
+    //     s_no : 1,
+    //     room_no :"125/2",
+    //     name : "ABCDE",
+    //     month_year: "Aug/2021",
+    //     rent: "Rs. 5000",
+    //     created_on: "21 Aug 2021",
+    //     created_by: "Admin  ",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'Edit'
+    //     }
+    //   },
+    //   {
+    //     s_no : 1,
+    //     room_no :"125/2",
+    //     name : "ABCDE",
+    //     month_year: "Aug/2021",
+    //     rent: "Rs. 5000",
+    //     created_on: "21 Aug 2021",
+    //     created_by: "Admin  ",
+    //     edit: {
+    //       icon: false,
+    //       variant: {color:'#ff8a00', radius:'10px'},
+    //       text: 'Edit'
+    //     }
+    //   },
+    // ]
+
     const rows = [
       {
-        s_no : 1,
-        room_no :"125/2",
-        name : "ABCDE",
-        month_year: "Aug/2021",
-        rent: "Rs. 5000",
-        created_on: "21 Aug 2021",
-        created_by: "Admin  ",
+        s_no :1,
+        name_of_expenses:"Building Rent",
+        amount:50000,
+        created_by:"Admin",
         edit: {
           icon: false,
           variant: {color:'#ff8a00', radius:'10px'},
           text: 'Edit'
+        },
+        delete:{
+          icon: false,
+          variant: {color:'#ff8a00', radius:'10px'},
+          text: 'Delete'
         }
-      },
-      {
-        s_no : 1,
-        room_no :"125/2",
-        name : "ABCDE",
-        month_year: "Aug/2021",
-        rent: "Rs. 5000",
-        created_on: "21 Aug 2021",
-        created_by: "Admin  ",
+
+      },{
+        s_no :2,
+        name_of_expenses:"Current Bill",
+        amount:10000,
+        created_by:"Admin",
         edit: {
           icon: false,
           variant: {color:'#ff8a00', radius:'10px'},
           text: 'Edit'
+        },
+        delete:{
+          icon: false,
+          variant: {color:'#ff8a00', radius:'10px'},
+          text: 'Delete'
         }
-      },
-      {
-        s_no : 1,
-        room_no :"125/2",
-        name : "ABCDE",
-        month_year: "Aug/2021",
-        rent: "Rs. 5000",
-        created_on: "21 Aug 2021",
-        created_by: "Admin  ",
+
+      },{
+        s_no :3,
+        name_of_expenses:"Wifi bill",
+        amount:15000,
+        created_by:"Admin",
         edit: {
           icon: false,
           variant: {color:'#ff8a00', radius:'10px'},
           text: 'Edit'
+        },
+        delete:{
+          icon: false,
+          variant: {color:'#ff8a00', radius:'10px'},
+          text: 'Delete'
         }
-      },
-      {
-        s_no : 1,
-        room_no :"125/2",
-        name : "ABCDE",
-        month_year: "Aug/2021",
-        rent: "Rs. 5000",
-        created_on: "21 Aug 2021",
-        created_by: "Admin  ",
+      },{
+        s_no :4,
+        name_of_expenses:"Staff Salaries",
+        amount:20000,
+        created_by:"Admin",
         edit: {
           icon: false,
           variant: {color:'#ff8a00', radius:'10px'},
           text: 'Edit'
+        },
+        delete:{
+          icon: false,
+          variant: {color:'#ff8a00', radius:'10px'},
+          text: 'Delete'
         }
-      },
-      {
-        s_no : 1,
-        room_no :"125/2",
-        name : "ABCDE",
-        month_year: "Aug/2021",
-        rent: "Rs. 5000",
-        created_on: "21 Aug 2021",
-        created_by: "Admin  ",
+      },{
+        s_no :5,
+        name_of_expenses:"Food expenses",
+        amount:20000,
+        created_by:"Admin",
         edit: {
           icon: false,
           variant: {color:'#ff8a00', radius:'10px'},
           text: 'Edit'
+        },
+        delete:{
+          icon: false,
+          variant: {color:'#ff8a00', radius:'10px'},
+          text: 'Delete'
         }
-      },
+
+      }
     ]
+
+    useEffect(() => {
+      setInitialRows(rows)
+    },[])
+
+    const handleChange = (event) => {
+      setSearchTerm(event.target.value)
+    }
+
+    const filteredRows = initialRows.filter(row => {
+      return Object.values(row).some(value =>
+        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+
+
 
   return (
     <div className='h-100'>
    
     <>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
-        <div className="col-12 col-md-4 d-flex align-items-center mr-5">
+        <div className="col-12 col-md-4 d-flex align-items-center mr-5 mb-2">
           <div className='roomlogo-container'>
             <img src={ExpenseIcon} alt="RoomsIcon" className='roomlogo'/>
           </div>
           <h1 className='fs-5'>Expenses Management</h1>
         </div>
         <div className="col-6 col-md-4 search-wrapper">
-          <input type="text" placeholder='Search' className='search-input'/>
+          <input type="text" placeholder='Search' className='search-input' onChange={handleChange} value={searchTerm}/>
           <img src={SearchIcon} alt="search-icon" className='search-icon'/>
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
-          <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalEGirls">
+          <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalExpensesBoys">
             Add Expenses
           </button>
         </div>
       </div>
       <div>   
-          <Table columns={columns} rows={rows}/>
+          <Table columns={columns} rows={filteredRows}/>
       </div>
       <div class="modal fade" id="exampleModalEGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">

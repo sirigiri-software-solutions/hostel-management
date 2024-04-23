@@ -107,7 +107,8 @@ const SignUp = () => {
  
     // Proceed with form submission if all fields are filled
     axios
-      .post('https://signuppage-2f4c8-default-rtdb.firebaseio.com/register.json', formData)
+      .post('https://kiranreddy-58a8c-default-rtdb.firebaseio.com/register.json', formData)
+      // .post('https://signuppage-2f4c8-default-rtdb.firebaseio.com/register.json', formData)
       .then(() => {
         toast.success("Your details Submitted Successfully.", {
           position: "bottom-right",

@@ -10,3 +10,160 @@
     margin-right: 10px;
     /* margin-bottom: -40px; */
 }
+
+.userDetailsPopupHeading{
+    text-align:center;
+}
+
+.tableRow-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .tableRow-popup {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    width:450px;
+  }
+
+@media screen and (max-width:768px){
+    .tableRow-popup-overlay{
+        top:30px;
+    }
+    .tableRow-popup{
+        width:300px;
+    }
+}
+  
+.tableRowCloseBtnContainer{
+    text-align:center;
+}
+.tableRowCloseBtn{
+    width:100px;
+    height:30px;
+    background-color:#007bff;
+    color:white;
+    border:none;
+    font-size:15px;
+    font-weight:bold;
+}
+  
+
+
+  .tableRowCloseBtn:hover {
+    background-color: red;
+  }
+  .tablePopupProfile{
+    height:150px;
+    width:150px;
+    border-radius:50%;
+    background-size:cover;
+  }
+  .userDetailsPopupInfo{
+    display:flex;
+    justify-content:center;
+    padding-top:10px;
+  }
+  @media screen and (max-width:768px){
+    .userDetailsPopupInfo{
+        flex-direction:column;
+        align-items:center;
+    }
+  }
+  .tableRowpopupProfileContainer{
+    display:flex;
+    align-items:center;
+  }
+  .tableRowPopupInfotext{
+    padding-left:20px;
+  }
+  @media screen and (max-width:768px) {
+    .tableRowPopupInfotext{
+        padding-top:13px;
+    }
+  }
+
+
+  .tenants-userDetails-overlay {
+    display: none ;
+    position: fixed ;
+    top: 0 ;
+    left: 0 ;
+    width: 100% ;
+    height: 100% ;
+    background-color: rgba(0, 0, 0, 0.5) ;
+    z-index: 1000 ;
+  }
+  
+  .tenants-dialog-container {
+    position: absolute ;
+    top: 50% ;
+    left: 50% ;
+    transform: translate(-50%, -50%) ;
+    background-color: #fff ;
+    padding: 20px ;
+    border-radius: 5px ;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3) ;
+    width:500px;
+    height:350px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+  .tenants-popup-heading{
+    font-family:'Roboto';
+    font-size:28px;
+    font-weight:bold;
+    text-align:center;
+  }
+  .tenants-popup-mainContainer{
+    display:flex;
+    justify-content:center;
+    margin-top:10px;
+  }
+  @media screen and (max-width:768px){
+    .tenants-popup-mainContainer{
+      flex-direction:column;
+      align-items:center;
+    }
+    .tenants-dialog-container{
+      width:340px;
+      height:550px;
+      top:58%;
+    }
+  }
+  .tenants-profile-container{
+    display:flex;
+    align-items:center;
+  }
+  .tenants-popup-profile{
+    border-radius:50%;
+    height:180px;
+    width:180px;
+  }
+  .tenants-popup-detailsContainer{
+    padding-left:20px;
+  }
+  @media screen and (max-width:768px){
+    .tenants-popup-detailsContainer{
+      margin-top:20px;
+    }
+  }
+  .tenants-popup-detailsContainer p {
+    padding:3px;
+    margin:0px;
+    font-size:18px;
+  }
+  .popup-tenants-closeBtn{
+    text-align:center;
+    margin-top:15px;
+  }

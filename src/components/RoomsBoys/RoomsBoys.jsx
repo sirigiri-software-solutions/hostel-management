@@ -219,7 +219,6 @@ const resetForm = () => {
       value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
-  console.log("data==>",filteredRows)
   return (
     <div className='h-100'>
       <>

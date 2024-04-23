@@ -8,7 +8,7 @@ import { database, push, ref, storage } from "../../firebase";
 import './TenantsBoys.css';
 import { DataContext } from '../../ApiData/ContextProvider'
 import { FetchData } from '../../ApiData/FetchData'
-import { onValue, remove, update } from 'firebase/database'
+import { onValue, remove, set, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const TenantsBoys = () => {
@@ -33,14 +33,16 @@ const TenantsBoys = () => {
   const idInputRef = useRef(null);
   // const [boysRoomsData, setBoysRoomsData] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  
 
-  const [userDetailsTenantPopup,setUserDetailsTenantsPopup] = useState(false);
-  const [singleTenantDetails,setSingleTenantDetails] = useState(false);
 
-  const [dueDateOfTenant,setDueDateOfTenant] = useState("");
+  const [userDetailsTenantPopup, setUserDetailsTenantsPopup] = useState(false);
+  const [singleTenantDetails, setSingleTenantDetails] = useState(false);
+  const [dueDateOfTenant, setDueDateOfTenant] = useState("");
 
   const [boysRooms, setBoysRooms] = useState([]);
+  const [exTenants, setExTenants] = useState([]);
+  const [showExTenants, setShowExTenants] = useState(false);
+
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
     onValue(roomsRef, (snapshot) => {
@@ -98,13 +100,13 @@ const TenantsBoys = () => {
         if (data) {
           const boysTenantsData = Object.values(data.boys.tenants);
           setBoysTenants(boysTenantsData);
-          
+
 
         } else {
           const apiData = await FetchData();
           const boysTenantsData = Object.values(apiData.boys.tenants);
           setBoysTenants(boysTenantsData);
-          
+
         }
       } catch (error) {
         console.error('Error fetching tenants data:', error);
@@ -252,7 +254,7 @@ const TenantsBoys = () => {
   };
 
   const handleEdit = (tenant) => {
-    
+
     setSelectedRoom(tenant.roomNo);
     setSelectedBed(tenant.bedNo);
     setDateOfJoin(tenant.dateOfJoin);
@@ -270,10 +272,8 @@ const TenantsBoys = () => {
     imageInputRef.current.value = "";
     idInputRef.current.value = "";
     // Open the modal
-    
-    setShowModal(true);
-   
 
+    setShowModal(true);
 
   };
   const handleAddNew = () => {
@@ -287,9 +287,9 @@ const TenantsBoys = () => {
 
   };
 
-  const handleDelete = async (id) => {
-    await remove(ref(database, `Hostel/boys/tenants/${id}`));
-  };
+  // const handleDelete = async (id) => {
+  //   await remove(ref(database, `Hostel/boys/tenants/${id}`));
+  // };
 
   const resetForm = () => {
     setSelectedRoom('');
@@ -314,100 +314,13 @@ const TenantsBoys = () => {
   // ================================================
 
 
-
-
-  // const [formData, setFormData] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: ''
-  // });
-
-  // const [formErrors, setFormErrors] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: ''
-  // });
-
-
-
   // Filter tenants based on search query
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value)
 
   };
-  
-  // console.log(tenants,"Data extracted with dueDate")
 
-
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: value
-  //   });
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   let errors = {};
-  //   let formIsValid = true;
-
-  //   // Basic validation for required fields
-  //   if (!formData.number) {
-  //     errors.number = 'Number is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rent) {
-  //     errors.rent = 'Rent is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rooms) {
-  //     errors.rooms = 'Rooms is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.status) {
-  //     errors.status = 'Status is required';
-  //     formIsValid = false;
-  //   }
-
-  //   // If form is valid, proceed with submission
-  //   if (formIsValid) {
-  //     // console.log('Form submitted successfully:', formData);
-  //     const newData = {
-  //       number: formData.number,
-  //       rent: formData.rent,
-  //       rooms: formData.rooms,
-  //       status: formData.status
-  //     };
-
-  //     // Push the new data to the 'beds' node
-  //     push(ref(database, 'beds'), newData)
-  //       .then(() => {
-  //         // Data successfully stored in Firebase
-  //         // console.log('Data successfully stored in Firebase');
-  //         // Clear the form after submission if needed
-  //         setFormData({
-  //           number: '',
-  //           rent: '',
-  //           rooms: '',
-  //           status: ''
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         // Handle errors
-  //         // console.error('Error storing data in Firebase: ', error.message);
-  //       });
-  //   } else {
-  //     // Set errors for form validation
-  //     setFormErrors(errors);
-  //   }
-  // };
 
   const columns = [
     'S. No',
@@ -438,8 +351,6 @@ const TenantsBoys = () => {
     >
       Edit
     </button>
-
-
   }));
 
   const filteredRows = rows.filter(row => {
@@ -447,19 +358,14 @@ const TenantsBoys = () => {
       value.toString().toLowerCase().includes(searchQuery.toLowerCase())
     );
   });
-
+  
   const handleClosePopUp = () => {
     setShowModal(false);
   }
 
 
-  
-
-
-
-
   const handleTentantRow = (tenant) => {
-  
+
     setUserDetailsTenantsPopup(true);
     setShowModal(false);
     setSingleTenantDetails(tenant);
@@ -474,17 +380,70 @@ const TenantsBoys = () => {
     } else {
       console.log("Tenant with due date not found or due date is missing");
     }
-  
-};
+  };
 
   const tenantPopupClose = () => {
     setUserDetailsTenantsPopup(false);
     setDueDateOfTenant("")
   }
 
-  
+  //=====Vacate tenant ===========
+  const handleVacate = async (id) => {
+    const tenantRef = ref(database, `Hostel/boys/tenants/${currentId}`);
+    const newTenantRef = ref(database, `Hostel/boys/extenants/${currentId}`);
+    // Retrieve the data from the original location
+    onValue(tenantRef, async (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Write the data to the new location
+        await set(newTenantRef, data);
+        // Remove the data from the original location
+        await remove(tenantRef);
+        fetchExTenants()
+      }
+    }, {
+      onlyOnce: true // This ensures the callback is only executed once
+    });
 
- 
+    setShowModal(false);
+    resetForm();
+    setErrors({});
+    imageInputRef.current.value = "";
+    idInputRef.current.value = "";
+  };
+  const fetchExTenants = () => {
+    const exTenantsRef = ref(database, 'Hostel/boys/extenants');
+    onValue(exTenantsRef, (snapshot) => {
+      const data = snapshot.val();
+      const loadedExTenants = data ? Object.entries(data).map(([key, value]) => ({ id: key, ...value })) : [];
+      setExTenants(loadedExTenants);
+    });
+  };
+  useEffect(()=>{fetchExTenants()}, []);
+  const exTenantRows = exTenants.map((tenant, index) => ({
+    s_no: index + 1,
+    image: tenant.tenantImageUrl,
+    name: tenant.name, // Assuming 'name' property exists in the fetched data
+    id: tenant.idNumber, // Assuming 'id' property exists in the fetched data
+    mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
+    room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
+    joining_date: tenant.dateOfJoin,
+    status: 'vaccated',
+    actions: <button
+      style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
+      // onClick={() => handleEdit(tenant)}
+    // data-bs-toggle="modal"
+    // data-bs-target="#exampleModalTenantsBoys"
+    >
+      view
+    </button>
+  }));
+
+  const showExTenantsData = ()=>{
+    setShowExTenants(!showExTenants)
+  }
+  console.log("exTenants", exTenants)
+  
   return (
     <>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
@@ -495,17 +454,25 @@ const TenantsBoys = () => {
           <h1 className='fs-5'>Tenants Management</h1>
         </div>
         <div className="col-6 col-md-4 search-wrapper">
-          <input type="text" placeholder='Search' className='search-input'  value={searchQuery} onChange={handleSearchChange} />
-          <img src={SearchIcon} alt="search-icon"  className='search-icon' />
+          <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={handleSearchChange} />
+          <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
-          <button type="button" class="add-button" onClick={handleAddNew} >
+          {showExTenants?'':<button type="button" class="add-button" onClick={()=>{handleAddNew()}} >
             Add Tenants
-          </button>
+          </button>}
+          
+          {showExTenants ? <button type="button" class="add-button" onClick={showExTenantsData} >
+            Present-Tenants
+          </button>:<button type="button" class="add-button" onClick={showExTenantsData} >
+            Ex-Tenants
+          </button>}
+          
         </div>
       </div>
       <div>
-        <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />
+        {showExTenants? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
+        
       </div>
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
         <div class="modal-dialog">
@@ -516,31 +483,6 @@ const TenantsBoys = () => {
             </div>
             <div class="modal-body">
               <div className="container-fluid">
-                {/* <form className="row g-3" onSubmit={handleSubmit}>
-                  <div className="col-md-6">
-                    <label htmlFor="inputNumber" className="form-label">Number</label>
-                    <input type="number" className="form-control" id="inputNumber" name="number" value={formData.number} onChange={handleInputChange} />
-                    {formErrors.number && <div className="text-danger">{formErrors.number}</div>}
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="inputRent" className="form-label">Rent</label>
-                    <input type="number" className="form-control" id="inputRent" name="rent" value={formData.rent} onChange={handleInputChange} />
-                    {formErrors.rent && <div className="text-danger">{formErrors.rent}</div>}
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="inputRooms" className="form-label">Select Rooms</label>
-                    <input type="number" className="form-control" id="inputRooms" name="rooms" value={formData.rooms} onChange={handleInputChange} />
-                    {formErrors.rooms && <div className="text-danger">{formErrors.rooms}</div>}
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="inputStatus" className="form-label">Select Status</label>
-                    <input type="text" className="form-control" id="inputStatus" name="status" value={formData.status} onChange={handleInputChange} />
-                    {formErrors.status && <div className="text-danger">{formErrors.status}</div>}
-                  </div>
-                  <div className="col-12 text-center">
-                    <button type="submit" className="btn btn-warning">Create</button>
-                  </div>
-                </form> */}
                 <form class="row lg-10" onSubmit={handleSubmit}>
                   <div class="col-md-6">
                     <label htmlFor='roomNo' class="form-label">
@@ -570,7 +512,6 @@ const TenantsBoys = () => {
                         </option>
                       ))}
                     </select>
-
                     {errors.selectedBed && <p style={{ color: 'red' }}>{errors.selectedBed}</p>}
                   </div>
 
@@ -586,7 +527,7 @@ const TenantsBoys = () => {
                     <label htmlFor='tenantName' class="form-label">
                       Name:
                     </label>
-                    <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} />
+                    <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
 
                     {errors.name && <p style={{ color: 'red' }}>{errors.name}</p>}
                   </div>
@@ -604,7 +545,6 @@ const TenantsBoys = () => {
                       ID Number:
                     </label>
                     <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
-
                     {errors.idNumber && <p style={{ color: 'red' }}>{errors.idNumber}</p>}
                   </div>
                   <div class="col-md-6">
@@ -612,7 +552,6 @@ const TenantsBoys = () => {
                       Emergency Contact:
                     </label>
                     <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
-
                     {errors.emergencyContact && <p style={{ color: 'red' }}>{errors.emergencyContact}</p>}
                   </div>
                   <div class="col-md-6">
@@ -667,7 +606,10 @@ const TenantsBoys = () => {
                   {/* =============== */}
                   <div className='col-12 text-center'>
                     {isEditing ? (
-                      <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Tenant</button>
+                      <div>
+                        <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Tenant</button>
+                        <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
+                      </div>
                     ) : (
                       <button className="btn btn-warning" type="submit">Add Tenant</button>
                     )}
@@ -678,36 +620,33 @@ const TenantsBoys = () => {
           </div>
         </div>
       </div>
-
-     
-
-      {userDetailsTenantPopup && 
-      <div className='userDetailsTenantPopup'>
-        <div className='tenants-dialog-container'>
-          <h1 className="tenants-popup-heading">Tenant Details </h1>
-          <div className='tenants-popup-mainContainer'>
-            <div className='tenants-profile-container'>
-             <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
-             </div>
-             <div className='tenants-popup-detailsContainer'>
-                 <p><strong>Name :</strong> {singleTenantDetails.name}</p>
-                  <p><strong>Mobile No :</strong> {singleTenantDetails.mobile_no}</p>
-                  <p><strong>Proof ID :</strong> {singleTenantDetails.id}</p>
-                  <p><strong>Room/Bed No :</strong> {singleTenantDetails.room_bed_no}</p>
-                  <p><strong>Joining Date :</strong> {singleTenantDetails.joining_date}</p>
-                  <p><strong>Due Date :</strong> {dueDateOfTenant}</p>
-             </div>
-          </div>
-          <div className='popup-tenants-closeBtn'>
-          <button className='btn btn-warning' onClick={tenantPopupClose}>Close</button>
+      {userDetailsTenantPopup &&
+        <div className='userDetailsTenantPopup'>
+          <div className='tenants-dialog-container'>
+            <h1 className="tenants-popup-heading">Tenant Details </h1>
+            <div className='tenants-popup-mainContainer'>
+              <div className='tenants-profile-container'>
+                <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
+              </div>
+              <div className='tenants-popup-detailsContainer'>
+                <p><strong>Name :</strong> {singleTenantDetails.name}</p>
+                <p><strong>Mobile No :</strong> {singleTenantDetails.mobile_no}</p>
+                <p><strong>Proof ID :</strong> {singleTenantDetails.id}</p>
+                <p><strong>Room/Bed No :</strong> {singleTenantDetails.room_bed_no}</p>
+                <p><strong>Joining Date :</strong> {singleTenantDetails.joining_date}</p>
+                <p><strong>Due Date :</strong> {dueDateOfTenant}</p>
+              </div>
+            </div>
+            <div className='popup-tenants-closeBtn'>
+              <button className='btn btn-warning' onClick={tenantPopupClose}>Close</button>
+            </div>
           </div>
         </div>
-      </div>
-      
+
       }
-      
-       
-     
+
+
+
     </>
   )
 }

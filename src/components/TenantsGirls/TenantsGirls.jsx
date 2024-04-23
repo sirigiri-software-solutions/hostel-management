@@ -497,31 +497,7 @@ const TenantsGirls = () => {
             </div>
             <div class="modal-body">
               <div className="container-fluid">
-                {/* <form className="row g-3" onSubmit={handleSubmit}>
-                <div className="col-md-6">
-                  <label htmlFor="inputNumber" className="form-label">Number</label>
-                  <input type="number" className="form-control" id="inputNumber" name="number" value={formData.number} onChange={handleInputChange} />
-                  {formErrors.number && <div className="text-danger">{formErrors.number}</div>}
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="inputRent" className="form-label">Rent</label>
-                  <input type="number" className="form-control" id="inputRent" name="rent" value={formData.rent} onChange={handleInputChange} />
-                  {formErrors.rent && <div className="text-danger">{formErrors.rent}</div>}
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="inputRooms" className="form-label">Select Rooms</label>
-                  <input type="number" className="form-control" id="inputRooms" name="rooms" value={formData.rooms} onChange={handleInputChange} />
-                  {formErrors.rooms && <div className="text-danger">{formErrors.rooms}</div>}
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="inputStatus" className="form-label">Select Status</label>
-                  <input type="text" className="form-control" id="inputStatus" name="status" value={formData.status} onChange={handleInputChange} />
-                  {formErrors.status && <div className="text-danger">{formErrors.status}</div>}
-                </div>
-                <div className="col-12 text-center">
-                  <button type="submit" className="btn btn-warning">Create</button>
-                </div>
-              </form> */}
+               
                <form class="row lg-10" onSubmit={handleSubmit}>
                   <div class="col-md-6">
                     <label htmlFor='roomNo' class="form-label">
@@ -567,7 +543,7 @@ const TenantsGirls = () => {
                     <label htmlFor='tenantName' class="form-label">
                       Name:
                       </label>
-                      <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} />
+                      <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')}/>
                     
                     {errors.name && <p style={{ color: 'red' }}>{errors.name}</p>}
                   </div>

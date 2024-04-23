@@ -494,19 +494,9 @@ const TenantsBoys = () => {
           </div>
           <h1 className='fs-5'>Tenants Management</h1>
         </div>
-        <div className="col-8 col-md-4 search-wrapper">
-          <input
-            type="text"
-            placeholder='Search'
-            className='search-input'
-            value={searchQuery}
-            onChange={handleSearchChange} // Handle search input change
-          />
-          <img
-            src={SearchIcon}
-            alt="search-icon"
-            className='search-icon'
-          />
+        <div className="col-6 col-md-4 search-wrapper">
+          <input type="text" placeholder='Search' className='search-input'  value={searchQuery} onChange={handleSearchChange} />
+          <img src={SearchIcon} alt="search-icon"  className='search-icon' />
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
           <button type="button" class="add-button" onClick={handleAddNew} >

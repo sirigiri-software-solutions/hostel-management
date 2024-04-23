@@ -26,6 +26,9 @@ const DashboardGirls = () => {
   const [updateDate, setUpdateDate] = useState('');
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
+
+
+  const [totalExpenses, setTotalExpenses] = useState(0);
  
   //=====================================================
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -135,6 +138,32 @@ const DashboardGirls = () => {
  
  
   //-======================================
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = ('0' + date.getDate()).slice(-2);
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
+  };
+
+  useEffect(() => {
+    const expensesRef = ref(database, 'Hostel/girls/expenses');
+    onValue(expensesRef, (snapshot) => {
+      const data = snapshot.val();
+      let total = 0; // Variable to hold the total expenses
+      for (const key in data) {
+        const expense = {
+          id: key,
+          ...data[key],
+          expenseDate: formatDate(data[key].expenseDate)
+        };
+        total += expense.expenseAmount; // Add expense amount to total
+      }
+      setTotalExpenses(total); // Set total expenses state
+    });
+  }, []);
+
  
   useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/girls/tenants');
@@ -363,7 +392,7 @@ const DashboardGirls = () => {
     {
       image: Expenses,
       heading: 'Total Expenses',
-      number: 28635,
+      number: `${totalExpenses}`,
       btntext: 'Add Expenses',
     },
   ];

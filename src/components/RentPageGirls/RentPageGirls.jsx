@@ -482,7 +482,6 @@ const RentPageGirls = () => {
               </div>
               <div class="modal-body">
                 <div className="container-fluid">
-                  <h1 className='text-center mb-2 fs-5'>Create Rents</h1>
                   <form class="row lg-10" onSubmit={handleSubmit}>
                     <div class='col-12 mb-3'>
                       <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)}>

@@ -29,8 +29,6 @@ const DashboardBoys = () => {
   const [updateDate, setUpdateDate] = useState('');
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
-
-
   const [totalExpenses, setTotalExpenses] = useState(0);
 
   //===============================
@@ -55,6 +53,30 @@ const DashboardBoys = () => {
   const idInputRef = useRef(null);
   const [boysRoomsData, setBoysRoomsData] = useState([]);
   // const { data } = useContext(DataContext);
+
+  const handleRoomsIntegerChange = (event) => {
+    const value = event.target.value;
+    const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
+
+    if (value === '' || re.test(value)) {
+      switch (event.target.name) {
+        case 'floorNumber':
+          setFloorNumber(value);
+          break;
+        case 'roomNumber':
+          setRoomNumber(value);
+          break;
+        case 'numberOfBeds':
+          setNumberOfBeds(value);
+          break;
+        case 'bedRent':
+          setBedRent(value);
+          break;
+        default:
+          break;
+      }
+    }
+  };
 
   const handleBoysRoomsSubmit = (e) => {
     e.preventDefault();
@@ -289,13 +311,9 @@ const DashboardBoys = () => {
 
   const handleTenantSubmit = async (e) => {
     e.preventDefault();
-
-    
-
     if (!validate()) return;
 
     let imageUrlToUpdate = tenantImageUrl;
-
     if (tenantImage) {
       const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantImage/${tenantImage.name}`);
       try {
@@ -315,9 +333,7 @@ const DashboardBoys = () => {
         idUrlToUpdate = await getDownloadURL(snapshot.ref);
       } catch (error) {
         console.error("Error uploading tenant image:", error);
-      }
-    
-      
+      }  
     }
 
     const tenantData = {
@@ -347,6 +363,194 @@ const DashboardBoys = () => {
     
   };
 
+  //handle add rent==============================================
+  
+  const [selectedTenant, setSelectedTenant] = useState('');
+  const [bedNumber, setBedNumber] = useState('');
+  const [totalFee, setTotalFee] = useState('');
+  const [paidAmount, setPaidAmount] = useState('');
+  const [due, setDue] = useState('');
+  const [tenantsWithRents, setTenantsWithRents] = useState([]);
+  const [paidDate, setPaidDate] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [editingRentId, setEditingRentId] = useState(null);
+  const [availableTenants, setAvailableTenants] = useState([]);
+
+  // useEffect(() => {
+  //   // Fetch tenants data once when component mounts
+  //   const tenantsRef = ref(database, 'Hostel/boys/tenants');
+  //   onValue(tenantsRef, (snapshot) => {
+  //     const data = snapshot.val();
+  //     const loadedTenants = data ? Object.keys(data).map(key => ({
+  //       id: key,
+  //       ...data[key],
+  //     })) : [];
+  //     setTenants(loadedTenants);
+  //   });
+
+  //   // Fetch room data once when component mounts
+    
+  // }, []);
+
+  useEffect(() => {
+    const updateTotalFeeFromRoom = () => {
+      // Convert the rooms object into an array of its values
+      const roomsArray = Object.values(rooms);
+      // Find the room that matches the roomNumber
+      const matchingRoom = roomsArray.find(room => room.roomNumber === roomNumber);
+
+      if (matchingRoom && matchingRoom.bedRent) {
+        setTotalFee(matchingRoom.bedRent.toString());
+      } else {
+        // Reset totalFee if no matching room is found
+        setTotalFee('');
+      }
+    };
+    if (roomNumber) {
+      updateTotalFeeFromRoom();
+    }
+  }, [roomNumber, rooms]);
+
+
+  useEffect(() => {
+    if (selectedTenant) {
+      const tenant = tenants.find(t => t.id === selectedTenant);
+      if (tenant) {
+        setRoomNumber(tenant.roomNo || '');
+        setBedNumber(tenant.bedNo || '');
+        setDateOfJoin(tenant.dateOfJoin || '');
+      }
+    } else {
+      // Reset these fields if no tenant is selected
+      setRoomNumber('');
+      setBedNumber('');
+      setPaidAmount('');
+      setDue('');
+      setDateOfJoin('');
+      setDueDate('');
+    }
+  }, [selectedTenant, tenants]);
+
+  useEffect(() => {
+    // Assuming tenantsWithRents already populated
+    const tenantIdsWithRents = tenantsWithRents.flatMap(tenant =>
+      tenant.rents.length > 0 ? [tenant.id] : []
+    );
+
+    const availableTenants = tenants.filter(
+      tenant => !tenantIdsWithRents.includes(tenant.id)
+    );
+
+    // Optionally, you can store availableTenants in a state if you need to use it elsewhere
+    setAvailableTenants(availableTenants);
+  }, [tenants, tenantsWithRents]);
+
+
+  useEffect(() => {
+    // Recalculate due when paid amount changes
+    const calculatedDue = Math.max(parseFloat(totalFee) - parseFloat(paidAmount), 0).toString();
+    setDue(calculatedDue);
+  }, [paidAmount, totalFee]);
+
+  useEffect(() => {
+    // Fetch tenants data once when component mounts
+    const tenantsRef = ref(database, 'Hostel/boys/tenants');
+    onValue(tenantsRef, (snapshot) => {
+      const tenantsData = snapshot.val();
+      const tenantIds = tenantsData ? Object.keys(tenantsData) : [];
+
+      // Initialize an array to hold promises for fetching each tenant's rents
+      const rentsPromises = tenantIds.map(tenantId => {
+        return new Promise((resolve) => {
+          const rentsRef = ref(database, `Hostel/boys/tenants/${tenantId}/rents`);
+          onValue(rentsRef, (rentSnapshot) => {
+            const rents = rentSnapshot.val() ? Object.keys(rentSnapshot.val()).map(key => ({
+              id: key,
+              ...rentSnapshot.val()[key],
+            })) : [];
+            resolve({ id: tenantId, ...tenantsData[tenantId], rents });
+          }, {
+            onlyOnce: true // This ensures the callback is only executed once.
+          });
+        });
+      });
+
+      // Wait for all promises to resolve and then set the state
+      Promise.all(rentsPromises).then(tenantsWithTheirRents => {
+        setTenantsWithRents(tenantsWithTheirRents);
+      });
+    });
+  }, []);
+
+  const validateRentForm = () => {
+    let formIsValid = true;
+    let errors = {};
+
+    if (!selectedTenant) {
+      formIsValid = false;
+      errors["selectedTenant"] = "Selecting a tenant is required.";
+    }
+
+    // Paid Amount
+    if (!paidAmount) {
+      formIsValid = false;
+      errors["paidAmount"] = "Paid amount is required.";
+    }
+
+    // Paid Date
+    if (!paidDate) {
+      formIsValid = false;
+      errors["paidDate"] = "Paid date is required.";
+    }
+
+    // Due Date
+    if (!dueDate) {
+      formIsValid = false;
+      errors["dueDate"] = "Due date is required.";
+    }
+
+    setErrors(errors);
+    return formIsValid;
+  };
+
+
+  const handleRentSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validate form before proceeding
+    if (!validateRentForm()) {
+      // If validation fails, stop form submission
+      return;
+    }
+
+    const rentData = {
+      roomNumber,
+      bedNumber,
+      totalFee,
+      paidAmount,
+      due,
+      dateOfJoin,
+      paidDate,
+      dueDate,
+      status: parseFloat(due) <= 0 ? 'Paid' : 'Unpaid',
+    };
+
+    if (isEditing) {
+      // Update the existing rent record
+      const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents/${editingRentId}`);
+      await update(rentRef, rentData);
+    } else {
+      // Create a new rent record
+      const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents`);
+      await push(rentRef, rentData);
+    }
+    setShowModal(false);
+
+    resetForm();
+   
+  };
+
+//-------------------------------------------------------------------------------------------------
   const resetForm = () => {
     setSelectedRoom('');
     setSelectedBed('');
@@ -355,7 +559,7 @@ const DashboardBoys = () => {
     setMobileNo('');
     setIdNumber('');
     setEmergencyContact('');
-    setStatus('unoccupied');
+    setStatus('occupied');
     setIsEditing(false);
     setCurrentId('');
     setErrors({});
@@ -367,7 +571,19 @@ const DashboardBoys = () => {
     setRoomNumber('');
     setNumberOfBeds('');
     setBedRent('');
-    setCreatedBy('admin')
+    setCreatedBy('admin');
+
+    setSelectedTenant(''); 
+    setRoomNumber('');  
+    setBedNumber('');      
+    setTotalFee('');     
+    setPaidAmount('');     
+    setDue('');        
+    setDateOfJoin('');     
+    setPaidDate('');       
+    setDueDate('');        
+    setErrors({});         
+    setIsEditing(false);
   };
 
 
@@ -384,7 +600,7 @@ const DashboardBoys = () => {
       image: Beds,
       heading: 'Total Beds',
       number: `${totalBeds}`,
-      btntext: 'Add Beds',
+      btntext: 'Add Rent',
     },
     {
       image: Tenants,
@@ -400,7 +616,7 @@ const DashboardBoys = () => {
     },
   ];
 
-  const Buttons = ['Add Rooms', 'Add Beds', 'Add Tenants', 'Add Expenses'];
+  const Buttons = ['Add Rooms', 'Add Rent', 'Add Tenants', 'Add Expenses'];
 
   const handleClick = (text) => {
     setModelText(text);
@@ -440,28 +656,27 @@ const DashboardBoys = () => {
           <form className="row g-3" onSubmit={handleBoysRoomsSubmit}>
           <div className="col-md-6">
             <label htmlFor="inputNumber" className="form-label">Floor Number</label>
-            <input type="number" className="form-control" id="inputNumber" name="number" value={floorNumber} onChange={(e) => setFloorNumber(e.target.value)} />
+            <input type="number" className="form-control" id="inputNumber" name="number" value={floorNumber}  onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
             {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
           </div>
           <div className="col-md-6">
             <label htmlFor="inputRent" className="form-label">Room Number</label>
-            <input type="number" className="form-control" id="inputRent" name="rent" value={roomNumber} onChange={(e) => setRoomNumber(e.target.value)} />
+            <input type="number" className="form-control" id="inputRent" name="rent" value={roomNumber} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
             {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
           </div>
           <div className="col-md-6">
             <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
-            <input type="number" className="form-control" id="inputRooms" name="rooms" value={numberOfBeds} onChange={(e) => setNumberOfBeds(e.target.value)} />
+            <input type="number" className="form-control" id="inputRooms" name="rooms" value={numberOfBeds} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
             {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
           </div>
           <div className="col-md-6">
             <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
-            <input type="text" className="form-control" id="inputStatus" name="status" value={bedRent} onChange={(e) => setBedRent(e.target.value)} />
+            <input type="text" className="form-control" id="inputStatus" name="status" value={bedRent} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
             {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
           </div>
           <div className="col-md-6">
             <label htmlFor="inputRole" className="form-label">Created By</label>
             <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
-
               <option value="admin">Admin</option>
               <option value="sub-admin">Sub-admin</option>
             </select>
@@ -471,34 +686,70 @@ const DashboardBoys = () => {
           </div>
         </form>
         )
-      case 'Add Beds':
+      case 'Add Rent':
         return (
-          <form class="row g-3">
-            <div class="col-md-6">
-              <label for="inputslno" class="form-label">S.No</label>
-              <input type="number" class="form-control" id="inputslno" />
-            </div>
-            <div class="col-md-6">
-              <label for="inputBedNum" class="form-label">Bed Number</label>
-              <input type="number" class="form-control" id="inputBedNum" />
-            </div>
-            <div class="col-md-6">
-              <label for="inputroomNo" class="form-label">Room No</label>
-              <input type="number" class="form-control" id="inputroomNo" />
-            </div>
-            <div class="col-md-6">
-              <label for="inputfloor" class="form-label">Floor</label>
-              <input type="number" class="form-control" id="inputfloor" />
-            </div>
-            <div class="col-md-6">
-              <label for="inputRemarks" class="form-label">Rent</label>
-              <input type="number" class="form-control" id="inputRemarks" />
-            </div>
-            <div class="col-md-6">
-              <label for="inputupdatedDate" class="form-label">Date</label>
-              <input type="date" class="form-control" id="inputupdatedDate" />
-            </div>
-          </form>
+          <form class="row lg-10" onSubmit={handleRentSubmit}>
+          <div class='col-12 mb-3'>
+            <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)}>
+              <option value="">Select a Tenant *</option>
+              {availableTenants.map(tenant => (
+                <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+              ))}
+            </select>
+            {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label htmlFor='roomNo' class="form-label">Room Number:</label>
+            <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly/>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+            <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+            <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+            <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)}/>
+            {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label htmlFor="Due" class="form-label">Due:</label>
+            <input id="Due" class="form-control" type="number" value={due} readOnly />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+            <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
+            />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+            <input
+              id="PaidDate"
+              class="form-control"
+              type="date"
+              value={paidDate}
+              onChange={e => setPaidDate(e.target.value)}
+            />
+            {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label htmlFor="DueDate" class="form-label">Due Date:</label>
+            <input
+              id="DueDate"
+              class="form-control"
+              type="date"
+              value={dueDate}
+              onChange={e => setDueDate(e.target.value)}
+            />
+            {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
+          </div>
+          <div class="col-12 text-center mt-2">
+            <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+          </div>
+        </form>
         )
       case 'Add Tenants':
         return (
@@ -513,7 +764,6 @@ const DashboardBoys = () => {
                   </option>
                 ))}
               </select>
-            
           {tenatErrors.selectedRoom && <p style={{ color: 'red' }}>{tenatErrors.selectedRoom}</p>}
           </div>
 
@@ -544,7 +794,7 @@ const DashboardBoys = () => {
             <label htmlFor='tenantName' class="form-label">
               Name:
               </label>
-              <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} />
+              <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')}/>
             
             {tenatErrors.name && <p style={{ color: 'red' }}>{tenatErrors.name}</p>}
           </div>
@@ -706,7 +956,8 @@ const DashboardBoys = () => {
         ))}
         <div className='button-container'>
           {Buttons?.map((item, index) => (
-            <button id="deskaddButton" type="button"  onClick={() => handleClick(item)}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item} </button>
+            <button id="deskaddButton" type="button"  onClick={() =>{ handleClick(item)}}>
+                <img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item} </button>
           ))}
         </div>
 
@@ -730,7 +981,6 @@ const DashboardBoys = () => {
           </div>
         </div>
       </div>
-
     </div>
 
   );

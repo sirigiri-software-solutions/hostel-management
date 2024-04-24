@@ -929,7 +929,7 @@ const DashboardGirls = () => {
  
   return (
     <div className="dashboardgirls">
-      <h1 className="heading">Women's</h1>
+      <h1 className="heading-women">Women's</h1>
       <div className="menu">
         {/* {btn ?
           (

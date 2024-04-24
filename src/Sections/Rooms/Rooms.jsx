@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import Admin from '../../images/Icons.png';
 import { Tab, Tabs } from 'react-bootstrap';
 import RoomsBoys from '../../components/RoomsBoys/RoomsBoys';
 import RoomsGirls from '../../components/RoomsGirls/RoomsGirls';
 
 function Rooms() {
     const [activeTab, setActiveTab] = useState('boys');
-    // const name=localStorage.getItem("username");
 
     const handleTabSelect = (tab) => {
         setActiveTab(tab);

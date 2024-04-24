@@ -9,6 +9,7 @@ import { DataContext } from '../../ApiData/ContextProvider'
 import { FetchData } from '../../ApiData/FetchData'
 import { onValue, remove, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { FaDownload } from "react-icons/fa";
 
 const TenantsGirls = () => {
 
@@ -43,6 +44,7 @@ const TenantsGirls = () => {
   const [singleTenantDetails,setSingleTenantDetails] = useState(false);
 
   const [dueDateOfTenant,setDueDateOfTenant] = useState("");
+  const [singleTenantProofId,setSingleTenantProofId] = useState("");
 
   useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/girls/tenants');
@@ -88,18 +90,6 @@ const TenantsGirls = () => {
     }
   }, [selectedRoom, girlsRooms]);
 
-//=========================
-  // useEffect(() => {
-  //   if (selectedRoom) {
-  //     const room = girlsRoomsData.find(room => room.roomNumber === selectedRoom);
-  //     if (room) {
-  //       const options = Array.from({ length: room.numberOfBeds }, (_, i) => i + 1);
-  //       setBedOptions(options);
-  //     }
-  //   } else {
-  //     setBedOptions([]);
-  //   }
-  // }, [selectedRoom, girlsRoomsData]);
 
   const validate = () => {
     let tempErrors = {};
@@ -223,6 +213,8 @@ const TenantsGirls = () => {
     // setTenantImage(tenant.tenantImageUrl);
     setTenantImageUrl(tenant.tenantImageUrl || ''); // Set the current image URL
     setTenantIdUrl(tenant.tenantIdUrl || '');
+    // console.log(tenant.tenantImageUrl,"Getting")
+    console.log(tenant.tenantIdUrl,"Getting")
     imageInputRef.current.value = "";
     idInputRef.current.value = "";
     // Open the modal
@@ -261,25 +253,6 @@ const TenantsGirls = () => {
     setTenantIdUrl('');
   };
 
-
-
-
-
-  // ==================================
-
-  // const [formData, setFormData] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: ''
-  // });
-
-  // const [formErrors, setFormErrors] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: ''
-  // });
 
   useEffect(() => {
     const fetchDataFromAPI = async () => {
@@ -320,74 +293,6 @@ const TenantsGirls = () => {
 
     fetchDataFromAPI();
   }, [data]);
-
-  
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: value
-  //   });
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   let errors = {};
-  //   let formIsValid = true;
-
-  //   // Basic validation for required fields
-  //   if (!formData.number) {
-  //     errors.number = 'Number is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rent) {
-  //     errors.rent = 'Rent is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rooms) {
-  //     errors.rooms = 'Rooms is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.status) {
-  //     errors.status = 'Status is required';
-  //     formIsValid = false;
-  //   }
-
-  //   // If form is valid, proceed with submission
-  //   if (formIsValid) {
-  //     // console.log('Form submitted successfully:', formData);
-  //     const newData = {
-  //       number: formData.number,
-  //       rent: formData.rent,
-  //       rooms: formData.rooms,
-  //       status: formData.status
-  //     };
-
-  //     // Push the new data to the 'beds' node
-  //     push(ref(database, 'beds'), newData)
-  //       .then(() => {
-  //         // Data successfully stored in Firebase
-  //         // console.log('Data successfully stored in Firebase');
-  //         // Clear the form after submission if needed
-  //         setFormData({
-  //           number: '',
-  //           rent: '',
-  //           rooms: '',
-  //           status: ''
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         // Handle errors
-  //         // console.error('Error storing data in Firebase: ', error.message);
-  //       });
-  //   } else {
-  //     // Set errors for form validation
-  //     setFormErrors(errors);
-  //   }
-  // };
 
 
   const columns = [
@@ -452,6 +357,11 @@ const TenantsGirls = () => {
       } else {
         console.log("Tenant with due date not found or due date is missing");
       }
+      
+      if(singleUserDueDate && singleUserDueDate.tenantIdUrl){
+        setSingleTenantProofId(singleUserDueDate.tenantIdUrl)
+      }
+      
     
   };
   
@@ -460,6 +370,7 @@ const TenantsGirls = () => {
   const tenantPopupClose = () => {
     setUserDetailsTenantsPopup(false);
     setDueDateOfTenant("")
+    setSingleTenantProofId("")
   }
 
 
@@ -606,7 +517,7 @@ const TenantsGirls = () => {
                           width="50%"
                           height="200px"
                         >
-                          <a href={tenantIdUrl}>Download PDF</a>
+                          
                         </object>
                       )}
                       <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
@@ -654,6 +565,13 @@ const TenantsGirls = () => {
                   <p><strong>Room/Bed No :</strong> {singleTenantDetails.room_bed_no}</p>
                   <p><strong>Joining Date :</strong> {singleTenantDetails.joining_date}</p>
                   <p><strong>Due Date :</strong> {dueDateOfTenant}</p>
+                  <p><strong>ID Proof:</strong>
+                    {singleTenantProofId ? (
+                      <a className='downloadPdfText' href={singleTenantProofId} download> <FaDownload /> Download PDF</a>
+                    ) : (
+                      <span className='NotUploadedText'> Not Uploaded</span>
+                    )}
+                  </p>
              </div>
           </div>
           <div className='popup-tenants-closeBtn'>

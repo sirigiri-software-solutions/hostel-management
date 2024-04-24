@@ -7,7 +7,7 @@ import Admin from '../../images/Icons.png';
 import ExpensesImage from '../../images/Icons (5).png'
 import RentImage from '../../images/Icons (6).png'
 import SettingsImage from '../../images/Icons (7).png'
-import logo from '../../images/Kiran Reddy Boys Hostel 1.png'
+import logo from "../../images/image.png"
 import './MainPage.css'
 import '../../Sections/Dashboard/Dashboard.css'
 import Dashboard from '../../Sections/Dashboard/Dashboard'

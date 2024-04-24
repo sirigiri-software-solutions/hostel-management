@@ -52,6 +52,34 @@ const DashboardGirls = () => {
   const idInputRef = useRef(null);
   const [girlsRoomsData, setGirlsRoomsData] = useState([]);
   // const { data } = useContext(DataContext);
+
+
+  // expenses related 
+
+  const [formData, setFormData] = useState({
+    expenseName: '',
+    expenseAmount: '',
+    expenseDate: '',
+    createdBy: 'admin'
+  });
+
+  const [formErrors, setFormErrors] = useState({
+    number: '',
+    rent: '',
+    rooms: '',
+    status: ''
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+
+
  
 
   const handleRoomsIntegerChange = (event) => {
@@ -630,6 +658,75 @@ const DashboardGirls = () => {
   //     window.removeEventListener('resize', handleResize);
   //   };
   // }, []);
+
+
+  const expensesHandleSubmit = (e) => {
+    e.preventDefault();
+    // Validate the necessary fields
+    let errors = {};
+    let formIsValid = true;
+
+    if (!formData.expenseName.match(/^[a-zA-Z\s]+$/)) {
+      errors.expenseName = 'Expense name should contain only alphabets and spaces';
+      formIsValid = false;
+    }
+    
+  
+    if (!formData.expenseAmount.match(/^\d+(\.\d{1,2})?$/)) {
+      errors.expenseAmount = 'Expense amount should be a valid number';
+      formIsValid = false;
+    }
+  
+
+    if (!formData.expenseName) {
+      errors.expenseName = 'Expense name is required';
+      formIsValid = false;
+    }
+
+    if (!formData.expenseAmount) {
+      errors.expenseAmount = 'Expense amount is required';
+      formIsValid = false;
+    }
+
+    if (!formData.expenseDate) {
+      errors.expenseDate = 'Expense date is required';
+      formIsValid = false;
+    }
+
+    // Only proceed if form is valid
+    if (formIsValid) {
+      const expensesRef = ref(database, 'Hostel/girls/expenses');
+      push(expensesRef, {
+        ...formData,
+        expenseAmount: parseFloat(formData.expenseAmount),
+        expenseDate: new Date(formData.expenseDate).toISOString() // Proper ISO formatting
+      })
+        .then(() => {
+          // alert('Expense added!');
+          // Reset form or other UI updates here
+          setFormData({
+            expenseName: '',
+            expenseAmount: '',
+            expenseDate: '',
+            createdBy: 'admin'
+          });
+        })
+        .catch(error => {
+          console.error("Error adding document: ", error);
+          // alert('Error adding expense!');
+        });
+        setShowModal(false);
+        setFormErrors({number: '',
+        rent: '',
+        rooms: '',
+        status: ''});
+    } else {
+      // Set errors in state if form is not valid
+      setFormErrors(errors);
+    }
+
+    
+  };
  
  
   const renderFormLayout = () => {
@@ -871,55 +968,36 @@ const DashboardGirls = () => {
  
       case "Add Expenses":
         return (
-          <form class="row lg-10">
-            <div class="col-md-6">
-              <label for="inputName" class="form-label">Name</label>
-              <input type="text" class="form-control" id="inputName" />
-            </div>
- 
-            <div class="col-md-6">
-              <label for="inputName" class="form-label">Month</label>
-              <select class="form-select" id="inputName">
-                <option value="">Select Month</option>
-                <option value="1">01</option>
-                <option value="2">02</option>
-                <option value="3">03</option>
-                <option value="4">04</option>
-                <option value="5">05</option>
-                <option value="6">06</option>
-                <option value="7">07</option>
-                <option value="8">08</option>
-                <option value="9">09</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-              </select>
-            </div>
- 
-            <div class="col-md-6">
-              <label for="inputYear" class="form-label">Year</label>
-              <input type="number" pattern="[0-9]" class="form-control" id="inputYear" />
-            </div>
- 
-            <div class="col-md-6">
-              <label for="inputRoomNo" class="form-label">Due Date</label>
-              <input type="date" class="form-control" id="inputRoomNo" />
-            </div>
- 
-            <div class="col-md-6">
-              <label for="inputAmount" class="form-label">Amount</label>
-              <input type="number" class="form-control" id="inputAmount" />
-            </div>
- 
-            <div class="col-md-6">
-              <label for="inputNum" class="form-label">Number</label>
-              <input type="tel" class="form-control" id="inputNum" />
-            </div>
- 
-            <div class="col-md-6">
-              <label for="inputCreatedON" class="form-label">Created on</label>
-              <input type="dal" class="form-control" id="inputCreatedON" />
-            </div>
+          <form className="row lg-10" onSubmit={expensesHandleSubmit}>
+          <div className="col-md-6">
+          <label htmlFor="inputExpenseName" className="form-label">Expense Name</label>
+          <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} />
+          {formErrors.expenseName && <div className="text-danger">{formErrors.expenseName}</div>}
+          </div>
+          <div className="col-md-6">
+          <label htmlFor="inputRent" className="form-label">Expense amount</label>
+          <input type="number"   className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} />
+          {formErrors.expenseAmount && <div className="text-danger">{formErrors.expenseAmount}</div>}
+          </div>
+          <div className="col-md-6">
+          <label htmlFor="inputRole" className="form-label">Created By</label>
+          <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
+          <option value="admin">Admin</option>
+          <option value="sub-admin">Sub-admin</option>
+          </select>
+          </div>
+          <div className="col-md-6">
+          <label htmlFor="inputDate" className="form-label">Expense Date</label>
+          <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
+          {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
+          </div>
+
+                      <div className="col-12 text-center mt-3">
+                   
+                          <button  type="submit" className="btn btn-warning">Create</button>
+                      
+        
+                      </div>
           </form>
         )
       default:

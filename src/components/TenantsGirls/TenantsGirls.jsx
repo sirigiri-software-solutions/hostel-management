@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react'
 import { database, push, ref, storage } from "../../firebase";
 import { DataContext } from '../../ApiData/ContextProvider'
 import { FetchData } from '../../ApiData/FetchData'
-import { onValue, remove, update } from 'firebase/database'
+import { onValue, remove, set, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const TenantsGirls = () => {
@@ -36,13 +36,15 @@ const TenantsGirls = () => {
   const [tenantIdUrl, setTenantIdUrl] = useState('');
   const imageInputRef = useRef(null);
   const idInputRef = useRef(null);
-  const [girlsRoomsData, setGirlsRoomsData]=useState([]);
+  const [girlsRoomsData, setGirlsRoomsData] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-  const [userDetailsTenantPopup,setUserDetailsTenantsPopup] = useState(false);
-  const [singleTenantDetails,setSingleTenantDetails] = useState(false);
+  const [userDetailsTenantPopup, setUserDetailsTenantsPopup] = useState(false);
+  const [singleTenantDetails, setSingleTenantDetails] = useState(false);
+  const [dueDateOfTenant, setDueDateOfTenant] = useState("");
 
-  const [dueDateOfTenant,setDueDateOfTenant] = useState("");
+  const [exTenants, setExTenants] = useState([]);
+  const [showExTenants, setShowExTenants] = useState(false);
 
   useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/girls/tenants');
@@ -56,7 +58,7 @@ const TenantsGirls = () => {
     });
   }, []);
 
-  
+
   const [girlsRooms, setGirlsRooms] = useState([]);
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/girls/rooms');
@@ -88,7 +90,7 @@ const TenantsGirls = () => {
     }
   }, [selectedRoom, girlsRooms]);
 
-//=========================
+  //=========================
   // useEffect(() => {
   //   if (selectedRoom) {
   //     const room = girlsRoomsData.find(room => room.roomNumber === selectedRoom);
@@ -118,8 +120,8 @@ const TenantsGirls = () => {
       tempErrors.mobileNo = "Invalid mobile number";
     }
     tempErrors.idNumber = idNumber ? "" : "ID number is required.";
-     // Validate emergency contact
-     if (!emergencyContact) {
+    // Validate emergency contact
+    if (!emergencyContact) {
       tempErrors.emergencyContact = "Emergency contact is required.";
     } else if (!/^\d{10,13}$/.test(emergencyContact)) {
       tempErrors.emergencyContact = "Invalid emergency contact";
@@ -300,7 +302,7 @@ const TenantsGirls = () => {
 
     fetchDataFromAPI();
   }, [data]);
-  
+
   useEffect(() => {
     const fetchDataFromAPI = async () => {
       try {
@@ -321,7 +323,7 @@ const TenantsGirls = () => {
     fetchDataFromAPI();
   }, [data]);
 
-  
+
   // const handleInputChange = (e) => {
   //   const { name, value } = e.target;
   //   setFormData({
@@ -410,17 +412,17 @@ const TenantsGirls = () => {
     mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
     joining_date: tenant.dateOfJoin, // Assuming 'payment_date' property exists in the fetched data
-    status:tenant.status,
+    status: tenant.status,
     actions: <button
-      style={{ backgroundColor: '#ff8a00', padding:'4px', borderRadius: '5px', color: 'white', border: 'none', }}
+      style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
       onClick={() => handleEdit(tenant)}
-      // data-bs-toggle="modal"
-      // data-bs-target="#exampleModalTenantsGirls"
+    // data-bs-toggle="modal"
+    // data-bs-target="#exampleModalTenantsGirls"
     >
       Edit
     </button>,
   }));
- 
+
 
   const onChangeInput = (e) => {
     setSearchQuery(e.target.value);
@@ -437,30 +439,85 @@ const TenantsGirls = () => {
   }
 
   const handleTentantRow = (tenant) => {
-  
-      setUserDetailsTenantsPopup(true);
-      setShowModal(false);
-      setSingleTenantDetails(tenant);
-  
-      const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
-  
-      if (singleUserDueDate && singleUserDueDate.rents) {
-        const dataWithDueDate = Object.values(singleUserDueDate.rents);
-        const dueDate = dataWithDueDate[0].dueDate;
-        console.log("Due date:", dueDate);
-        setDueDateOfTenant(dueDate);
-      } else {
-        console.log("Tenant with due date not found or due date is missing");
-      }
-    
-  };
-  
-  
 
+    setUserDetailsTenantsPopup(true);
+    setShowModal(false);
+    setSingleTenantDetails(tenant);
+
+    const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
+
+    if (singleUserDueDate && singleUserDueDate.rents) {
+      const dataWithDueDate = Object.values(singleUserDueDate.rents);
+      const dueDate = dataWithDueDate[0].dueDate;
+      console.log("Due date:", dueDate);
+      setDueDateOfTenant(dueDate);
+    } else {
+      console.log("Tenant with due date not found or due date is missing");
+    }
+
+  };
   const tenantPopupClose = () => {
     setUserDetailsTenantsPopup(false);
     setDueDateOfTenant("")
   }
+
+  //=====Vacate tenant ===========
+  const handleVacate = async (id) => {
+    const tenantRef = ref(database, `Hostel/girls/tenants/${currentId}`);
+    const newTenantRef = ref(database, `Hostel/girls/extenants/${currentId}`);
+    // Retrieve the data from the original location
+    onValue(tenantRef, async (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Write the data to the new location
+        await set(newTenantRef, data);
+        // Remove the data from the original location
+        await remove(tenantRef);
+        fetchExTenants()
+      }
+    }, {
+      onlyOnce: true // This ensures the callback is only executed once
+    });
+
+    setShowModal(false);
+    resetForm();
+    setErrors({});
+    imageInputRef.current.value = "";
+    idInputRef.current.value = "";
+  };
+  const fetchExTenants = () => {
+    const exTenantsRef = ref(database, 'Hostel/girls/extenants');
+    onValue(exTenantsRef, (snapshot) => {
+      const data = snapshot.val();
+      const loadedExTenants = data ? Object.entries(data).map(([key, value]) => ({ id: key, ...value })) : [];
+      setExTenants(loadedExTenants);
+    });
+  };
+  useEffect(() => { fetchExTenants() }, []);
+
+  const exTenantRows = exTenants.map((tenant, index) => ({
+    s_no: index + 1,
+    image: tenant.tenantImageUrl,
+    name: tenant.name,
+    id: tenant.idNumber,
+    mobile_no: tenant.mobileNo,
+    room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
+    joining_date: tenant.dateOfJoin,
+    status: 'vaccated',
+    actions: <button
+      style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
+    // onClick={() => handleEdit(tenant)}
+    // data-bs-toggle="modal"
+    // data-bs-target="#exampleModalTenantsBoys"
+    >
+      view
+    </button>
+  }));
+
+  const showExTenantsData = () => {
+    setShowExTenants(!showExTenants)
+  }
+
 
 
 
@@ -478,14 +535,19 @@ const TenantsGirls = () => {
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
-          <button type="button" class="add-button"  onClick={handleAddNew} >
+          {showExTenants ? '' : <button type="button" class="add-button" onClick={() => { handleAddNew() }} >
             Add Tenants
-          </button>
+          </button>}
+          {showExTenants ? <button type="button" class="add-button" onClick={showExTenantsData} >
+            Present-Tenants
+          </button> : <button type="button" class="add-button" onClick={showExTenantsData} >
+            Ex-Tenants
+          </button>}
         </div>
       </div>
 
       <div>
-        <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />
+        {showExTenants ? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
       </div>
 
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
@@ -497,124 +559,124 @@ const TenantsGirls = () => {
             </div>
             <div class="modal-body">
               <div className="container-fluid">
-               
-               <form class="row lg-10" onSubmit={handleSubmit}>
+
+                <form class="row lg-10" onSubmit={handleSubmit}>
                   <div class="col-md-6">
                     <label htmlFor='roomNo' class="form-label">
                       Room No:
-                      </label>
-                      <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
-                        <option value="">Select a Room</option>
-                        {girlsRooms.map((room) => (
-                          <option key={room.roomNumber} value={room.roomNumber}>
-                            {room.roomNumber}
-                          </option>
-                        ))}
-                      </select>
-                    
+                    </label>
+                    <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
+                      <option value="">Select a Room</option>
+                      {girlsRooms.map((room) => (
+                        <option key={room.roomNumber} value={room.roomNumber}>
+                          {room.roomNumber}
+                        </option>
+                      ))}
+                    </select>
+
                     {errors.selectedRoom && <p style={{ color: 'red' }}>{errors.selectedRoom}</p>}
                   </div>
 
                   <div class="col-md-6">
                     <label htmlFor='bedNo' class="form-label">
                       Bed No:
-                      </label>
-                      <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
-                        <option value="">Select a Bed</option>
-                        {bedOptions.map(bedNumber => (
-                          <option key={bedNumber} value={bedNumber}>
-                            {bedNumber}
-                          </option>
-                        ))}
-                      </select>
-                    
+                    </label>
+                    <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
+                      <option value="">Select a Bed</option>
+                      {bedOptions.map(bedNumber => (
+                        <option key={bedNumber} value={bedNumber}>
+                          {bedNumber}
+                        </option>
+                      ))}
+                    </select>
+
                     {errors.selectedBed && <p style={{ color: 'red' }}>{errors.selectedBed}</p>}
                   </div>
 
                   <div class="col-md-6">
                     <label htmlFor='dataofJoin' class="form-label">
                       Date of Join:
-                      </label>
-                      <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
-                    
+                    </label>
+                    <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
+
                     {errors.dateOfJoin && <p style={{ color: 'red' }}>{errors.dateOfJoin}</p>}
-                  </div> 
+                  </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantName' class="form-label">
                       Name:
-                      </label>
-                      <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')}/>
-                    
+                    </label>
+                    <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
+
                     {errors.name && <p style={{ color: 'red' }}>{errors.name}</p>}
                   </div>
 
                   <div class="col-md-6">
                     <label htmlFor='tenantMobileNo' class="form-label">
                       Mobile No:
-                      </label>
-                      <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
-                    
+                    </label>
+                    <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
+
                     {errors.mobileNo && <p style={{ color: 'red' }}>{errors.mobileNo}</p>}
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantIdNum' class="form-label">
                       ID Number:
-                      </label>
-                      <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
-                    
+                    </label>
+                    <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
+
                     {errors.idNumber && <p style={{ color: 'red' }}>{errors.idNumber}</p>}
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantEmergency' class="form-label">
                       Emergency Contact:
-                      </label>
-                      <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
-                    
+                    </label>
+                    <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
+
                     {errors.emergencyContact && <p style={{ color: 'red' }}>{errors.emergencyContact}</p>}
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantStatus' class="form-label">
                       Status:
-                      </label>
-                      <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
-                        <option value="occupied">Occupied</option>
-                        <option value="unoccupied">Unoccupied</option>
-                      </select>
-                    
+                    </label>
+                    <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
+                      <option value="occupied">Occupied</option>
+                      <option value="unoccupied">Unoccupied</option>
+                    </select>
+
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantUpload' class="form-label">
                       Upload Image:
-                      </label>
-                      {isEditing && tenantImageUrl && (
-                        <div>
-                          <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
-                          <p>Current Image</p>
-                        </div>
-                      )}
-                      <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required/>
-                      {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
+                    </label>
+                    {isEditing && tenantImageUrl && (
+                      <div>
+                        <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
+                        <p>Current Image</p>
+                      </div>
+                    )}
+                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required />
+                    {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantUploadId' class="form-label">
                       Upload Id:
-                      </label>
-                      {isEditing && tenantIdUrl && (
-                        <object
-                          data={tenantIdUrl}
-                          type="application/pdf"
-                          width="50%"
-                          height="200px"
-                        >
-                          <a href={tenantIdUrl}>Download PDF</a>
-                        </object>
-                      )}
-                      <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
-                   
+                    </label>
+                    {isEditing && tenantIdUrl && (
+                      <object
+                        data={tenantIdUrl}
+                        type="application/pdf"
+                        width="50%"
+                        height="200px"
+                      >
+                        <a href={tenantIdUrl}>Download PDF</a>
+                      </object>
+                    )}
+                    <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
+
                   </div>
                   {/* ===== */}
                   <div class="col-md-6">
-                    <label  for="file-upload" class="custom-file-upload">
+                    <label for="file-upload" class="custom-file-upload">
                       {/* <i class="fa fa-cloud-upload"></i> */}
                       {/* <MdUploadFile /> */}
                     </label>
@@ -624,7 +686,10 @@ const TenantsGirls = () => {
                   {/* =============== */}
                   <div className='col-12 text-center'>
                     {isEditing ? (
-                      <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Tenant</button>
+                      <div>
+                        <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Tenant</button>
+                        <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
+                      </div>
                     ) : (
                       <button className="btn btn-warning" type="submit">Add Tenant</button>
                     )}
@@ -633,35 +698,35 @@ const TenantsGirls = () => {
 
               </div>
             </div>
-            
+
           </div>
         </div>
       </div>
 
 
-      {userDetailsTenantPopup && 
-      <div className='userDetailsTenantPopup'>
-        <div className='tenants-dialog-container'>
-          <h1 className="tenants-popup-heading">Tenant Details </h1>
-          <div className='tenants-popup-mainContainer'>
-            <div className='tenants-profile-container'>
-             <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
-             </div>
-             <div className='tenants-popup-detailsContainer'>
-                 <p><strong>Name :</strong> {singleTenantDetails.name}</p>
-                  <p><strong>Mobile No :</strong> {singleTenantDetails.mobile_no}</p>
-                  <p><strong>Proof ID :</strong> {singleTenantDetails.id}</p>
-                  <p><strong>Room/Bed No :</strong> {singleTenantDetails.room_bed_no}</p>
-                  <p><strong>Joining Date :</strong> {singleTenantDetails.joining_date}</p>
-                  <p><strong>Due Date :</strong> {dueDateOfTenant}</p>
-             </div>
-          </div>
-          <div className='popup-tenants-closeBtn'>
-          <button className='btn btn-warning' onClick={tenantPopupClose}>Close</button>
+      {userDetailsTenantPopup &&
+        <div className='userDetailsTenantPopup'>
+          <div className='tenants-dialog-container'>
+            <h1 className="tenants-popup-heading">Tenant Details </h1>
+            <div className='tenants-popup-mainContainer'>
+              <div className='tenants-profile-container'>
+                <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
+              </div>
+              <div className='tenants-popup-detailsContainer'>
+                <p><strong>Name :</strong> {singleTenantDetails.name}</p>
+                <p><strong>Mobile No :</strong> {singleTenantDetails.mobile_no}</p>
+                <p><strong>Proof ID :</strong> {singleTenantDetails.id}</p>
+                <p><strong>Room/Bed No :</strong> {singleTenantDetails.room_bed_no}</p>
+                <p><strong>Joining Date :</strong> {singleTenantDetails.joining_date}</p>
+                <p><strong>Due Date :</strong> {dueDateOfTenant}</p>
+              </div>
+            </div>
+            <div className='popup-tenants-closeBtn'>
+              <button className='btn btn-warning' onClick={tenantPopupClose}>Close</button>
+            </div>
           </div>
         </div>
-      </div>
-      
+
       }
     </>
   )

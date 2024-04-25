@@ -327,7 +327,7 @@ const TenantsBoys = () => {
       value.toString().toLowerCase().includes(searchQuery.toLowerCase())
     );
   });
-  
+
   const handleClosePopUp = () => {
     setShowModal(false);
 
@@ -402,19 +402,20 @@ const TenantsBoys = () => {
       setExTenants(loadedExTenants);
     });
   };
-  useEffect(()=>{fetchExTenants()}, []);
+  useEffect(() => { fetchExTenants() }, []);
+  
   const exTenantRows = exTenants.map((tenant, index) => ({
     s_no: index + 1,
     image: tenant.tenantImageUrl,
-    name: tenant.name, // Assuming 'name' property exists in the fetched data
-    id: tenant.idNumber, // Assuming 'id' property exists in the fetched data
-    mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
-    room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
+    name: tenant.name, 
+    id: tenant.idNumber, 
+    mobile_no: tenant.mobileNo, 
+    room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, 
     joining_date: tenant.dateOfJoin,
     status: 'vaccated',
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
-      // onClick={() => handleEdit(tenant)}
+    // onClick={() => handleEdit(tenant)}
     // data-bs-toggle="modal"
     // data-bs-target="#exampleModalTenantsBoys"
     >
@@ -422,11 +423,10 @@ const TenantsBoys = () => {
     </button>
   }));
 
-  const showExTenantsData = ()=>{
+  const showExTenantsData = () => {
     setShowExTenants(!showExTenants)
   }
-  console.log("exTenants", exTenants)
-  
+
   return (
     <>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
@@ -441,21 +441,18 @@ const TenantsBoys = () => {
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
-          {showExTenants?'':<button type="button" class="add-button" onClick={()=>{handleAddNew()}} >
+          {showExTenants ? '' : <button type="button" class="add-button" onClick={() => { handleAddNew() }} >
             Add Tenants
           </button>}
-          
           {showExTenants ? <button type="button" class="add-button" onClick={showExTenantsData} >
             Present-Tenants
-          </button>:<button type="button" class="add-button" onClick={showExTenantsData} >
+          </button> : <button type="button" class="add-button" onClick={showExTenantsData} >
             Ex-Tenants
           </button>}
-          
         </div>
       </div>
       <div>
-        {showExTenants? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
-        
+        {showExTenants ? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
       </div>
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
         <div class="modal-dialog">

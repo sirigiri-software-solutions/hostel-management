@@ -13,6 +13,7 @@ import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage
 import { FaDownload } from "react-icons/fa";
 import { toast } from "react-toastify";
 
+
 const TenantsBoys = () => {
   const [selectedRoom, setSelectedRoom] = useState('');
   const [bedOptions, setBedOptions] = useState([]);
@@ -46,7 +47,7 @@ const TenantsBoys = () => {
   const [exTenants, setExTenants] = useState([]);
   const [showExTenants, setShowExTenants] = useState(false);
 
-  const submitButtonRef = useRef(null);
+  
 
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
@@ -105,8 +106,6 @@ const TenantsBoys = () => {
         if (data) {
           const boysTenantsData = Object.values(data.boys.tenants);
           setBoysTenants(boysTenantsData);
-
-
         } else {
           const apiData = await FetchData();
           const boysTenantsData = Object.values(apiData.boys.tenants);
@@ -171,21 +170,17 @@ const TenantsBoys = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (submitButtonRef.current) {
-      submitButtonRef.current.disabled = true;  // Disable the button using the ref
-    }
-  
+    if(!isEditing){
+    e.target.querySelector('button[type="submit"]').disabled = true;
     if (!validate()) {
-      if (submitButtonRef.current) {
-        submitButtonRef.current.disabled = false;  // Re-enable the button if validation fails
-      }
-      return;
-    }
-    // Proceed with your form submission logic here
-    if (submitButtonRef.current) {
-      submitButtonRef.current.disabled = false;  // Re-enable the button after submission logic
-    }
+      e.target.querySelector('button[type="submit"]').disabled = false;  
+      return
+    };
+  } else{
+    if(!validate()) return;
+  }
+
+
     let imageUrlToUpdate = tenantImageUrl;
 
     if (tenantImage) {
@@ -225,9 +220,49 @@ const TenantsBoys = () => {
     };
 
     if (isEditing) {
-      await update(ref(database, `Hostel/boys/tenants/${currentId}`), tenantData)
+      await update(ref(database, `Hostel/boys/tenants/${currentId}`), tenantData).then(() => {
+        toast.success("Tenant updated successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }).catch(error => {
+        toast.error("Error update Tenant: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     } else {
-      await push(ref(database, 'Hostel/boys/tenants'), tenantData)
+      await push(ref(database, 'Hostel/boys/tenants'), tenantData).then(() => {
+        toast.success("Tenant added successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }).catch(error => {
+        toast.error("Error adding Tenant: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     }
     setShowModal(false);
 
@@ -373,13 +408,7 @@ const TenantsBoys = () => {
 
     if(singleUserDueDate && singleUserDueDate.tenantIdUrl){
       setSingleTenantProofId(singleUserDueDate.tenantIdUrl)
-    }
-
-
-
-
-    
-  
+    } 
 };
 
   const tenantPopupClose = () => {
@@ -609,7 +638,7 @@ const TenantsBoys = () => {
                         <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
                       </div>
                     ) : (
-                      <button ref={submitButtonRef} className="btn btn-warning" type="submit">Add Tenant</button>
+                      <button  className="btn btn-warning" type="submit">Add Tenant</button>
                     )}
                   </div>
                 </form>

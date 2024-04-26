@@ -10,6 +10,7 @@ import { FetchData } from '../../ApiData/FetchData'
 import { onValue, remove, set, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { FaDownload } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const TenantsGirls = () => {
 
@@ -47,6 +48,7 @@ const TenantsGirls = () => {
   const [exTenants, setExTenants] = useState([]);
   const [showExTenants, setShowExTenants] = useState(false);
   const [singleTenantProofId,setSingleTenantProofId] = useState("");
+
 
   useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/girls/tenants');
@@ -159,11 +161,15 @@ const TenantsGirls = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    e.target.querySelector('button[type="submit"]').disabled = true;
-    if (!validate()) {
-      e.target.querySelector('button[type="submit"]').disabled = false;  
-      return
-    };
+    if(!isEditing){
+      e.target.querySelector('button[type="submit"]').disabled = true;
+      if (!validate()) {
+        e.target.querySelector('button[type="submit"]').disabled = false;  
+        return
+      };
+    } else{
+      if(!validate()) return;
+    }
 
     let imageUrlToUpdate = tenantImageUrl;
 
@@ -204,9 +210,49 @@ const TenantsGirls = () => {
     };
 
     if (isEditing) {
-      await update(ref(database, `Hostel/girls/tenants/${currentId}`), tenantData);
+      await update(ref(database, `Hostel/girls/tenants/${currentId}`), tenantData).then(() => {
+        toast.success("Tenant updated successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }).catch(error => {
+        toast.error("Error updating Tenant: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });;
     } else {
-      await push(ref(database, 'Hostel/girls/tenants'), tenantData);
+      await push(ref(database, 'Hostel/girls/tenants'), tenantData).then(() => {
+        toast.success("Tenant added successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }).catch(error => {
+        toast.error("Error adding Tenant: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     }
     setShowModal(false);
 
@@ -625,7 +671,7 @@ const TenantsGirls = () => {
                         <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
                       </div>
                     ) : (
-                      <button className="btn btn-warning" type="submit">Add Tenant</button>
+                      <button  className="btn btn-warning" type="submit">Add Tenant</button>
                     )}
                   </div>
                 </form>

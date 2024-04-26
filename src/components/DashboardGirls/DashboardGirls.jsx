@@ -769,21 +769,28 @@ const DashboardGirls = () => {
         ...formData,
         expenseAmount: parseFloat(formData.expenseAmount),
         expenseDate: new Date(formData.expenseDate).toISOString() // Proper ISO formatting
-      })
-        .then(() => {
-          // alert('Expense added!');
-          // Reset form or other UI updates here
-          setFormData({
-            expenseName: '',
-            expenseAmount: '',
-            expenseDate: '',
-            createdBy: 'admin'
-          });
-        })
-        .catch(error => {
-          console.error("Error adding document: ", error);
-          // alert('Error adding expense!');
+      }).then(() => {
+        toast.success("Expense added successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         });
+        // setIsEditing(false); // Reset editing state
+      }).catch(error => {
+        toast.error("Error adding expense: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
         setShowModal(false);
         setFormErrors({number: '',
         rent: '',

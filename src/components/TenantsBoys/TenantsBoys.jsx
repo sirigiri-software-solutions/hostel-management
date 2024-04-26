@@ -10,6 +10,7 @@ import { DataContext } from '../../ApiData/ContextProvider'
 import { FetchData } from '../../ApiData/FetchData'
 import { onValue, remove, set, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { toast } from "react-toastify";
 
 const TenantsBoys = () => {
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -196,11 +197,15 @@ const TenantsBoys = () => {
       setTenantId(e.target.files[0]);
     }
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validate()) return;
+    // if (!validate()) return;
+    e.target.querySelector('button[type="submit"]').disabled = true;
+    if (!validate()) {
+      e.target.querySelector('button[type="submit"]').disabled = false;  
+      return
+    };
 
     let imageUrlToUpdate = tenantImageUrl;
 
@@ -241,9 +246,9 @@ const TenantsBoys = () => {
     };
 
     if (isEditing) {
-      await update(ref(database, `Hostel/boys/tenants/${currentId}`), tenantData);
+      await update(ref(database, `Hostel/boys/tenants/${currentId}`), tenantData)
     } else {
-      await push(ref(database, 'Hostel/boys/tenants'), tenantData);
+      await push(ref(database, 'Hostel/boys/tenants'), tenantData)
     }
     setShowModal(false);
 
@@ -559,7 +564,6 @@ const TenantsBoys = () => {
                       <option value="occupied">Occupied</option>
                       <option value="unoccupied">Unoccupied</option>
                     </select>
-
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantUpload' class="form-label">

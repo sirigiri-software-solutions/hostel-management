@@ -11,7 +11,8 @@ import { onValue, update } from 'firebase/database';
 import { DataContext } from '../../ApiData/ContextProvider';
 import { FetchData } from '../../ApiData/FetchData';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
- 
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
  
 const DashboardGirls = () => {
   const [modelText, setModelText] = useState('');
@@ -105,7 +106,28 @@ const DashboardGirls = () => {
       bedRent,
       createdBy,
       updateDate: now
+    }).then(() => {
+      toast.success("Room added successfully.", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }).catch(error => {
+      toast.error("Error adding room: " + error.message, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     });
+  
     // }
  
     // Reset form
@@ -294,7 +316,12 @@ const DashboardGirls = () => {
   const handleTenantSubmit = async (e) => {
     e.preventDefault();
  
-    if (!validate()) return;
+    // if (!validate()) return;
+    e.target.querySelector('button[type="submit"]').disabled = true;
+    if (!validate()) {
+      e.target.querySelector('button[type="submit"]').disabled = false;  
+      return
+    };
  
     let imageUrlToUpdate = tenantImageUrl;
  
@@ -524,11 +551,53 @@ const DashboardGirls = () => {
     if (isEditing) {
       // Update the existing rent record
       const rentRef = ref(database, `Hostel/girls/tenants/${selectedTenant}/rents/${editingRentId}`);
-      await update(rentRef, rentData);
+      await update(rentRef, rentData).then(() => {
+        toast.success("Rent updated successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setIsEditing(false); // Reset editing state
+      }).catch(error => {
+        toast.error("Error updating rent: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     } else {
       // Create a new rent record
       const rentRef = ref(database, `Hostel/girls/tenants/${selectedTenant}/rents`);
-      await push(rentRef, rentData);
+      await push(rentRef, rentData).then(() => {
+        toast.success("Rent added successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setIsEditing(false); // Reset editing state
+      }).catch(error => {
+        toast.error("Error adding rent: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     }
     setShowModal(false);
 
@@ -930,32 +999,8 @@ const DashboardGirls = () => {
   return (
     <div className="dashboardgirls">
       <h1 className="heading">Women's</h1>
+      <br/>
       <div className="menu">
-        {/* {btn ?
-          (
-            menu.map((item, index) => (
-              <React.Fragment key={index}>
-                <SmallCard index={index} item={item} />
-                <button id="addButton" key={index} onClick={() => handleClick(item.btntext)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' />{item.btntext}</button>
-              </React.Fragment>
-            ))
-          )
-          :
-          (
-              <React.Fragment>
-                { menu.map((item, index) => (
-                      <SmallCard key={index} index={index} item={item} />
-                     
-                ))}
-                <div className='button-container'>
-                    {Buttons?.map((item, index) => (
-                        <button id="addButton" key={index} onClick={() => handleClick(item)} type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModalBoysDashboard"><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item}</button>
-                    ))}
-                </div>
-              </React.Fragment>
- 
-          )}   */}
- 
         {menu.map((item, index) => (
           <>
             <SmallCard key={index} index={index} item={item} />

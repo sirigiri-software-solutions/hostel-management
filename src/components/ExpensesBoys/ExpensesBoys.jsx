@@ -6,6 +6,7 @@ import { database, push, ref } from "../../firebase";
 import { onValue } from 'firebase/database';
 //import ImageIcon from '../../images/Icons (10).png'
 import { remove, update, set } from 'firebase/database';
+import { toast } from "react-toastify";
 
 const ExpensesBoys = () => {
 
@@ -79,21 +80,28 @@ const ExpensesBoys = () => {
         ...formData,
         expenseAmount: parseFloat(formData.expenseAmount),
         expenseDate: new Date(formData.expenseDate).toISOString() // Proper ISO formatting
-      })
-        .then(() => {
-          // alert('Expense added!');
-          // Reset form or other UI updates here
-          setFormData({
-            expenseName: '',
-            expenseAmount: '',
-            expenseDate: '',
-            createdBy: 'admin'
-          });
-        })
-        .catch(error => {
-          console.error("Error adding document: ", error);
-          // alert('Error adding expense!');
+      }).then(() => {
+        toast.success("Expense updated successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         });
+        // setIsEditing(false); // Reset editing state
+      }).catch(error => {
+        toast.error("Error updating expense: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
       setShowModal(false);
       setFormErrors({
         number: '',
@@ -250,14 +258,36 @@ const ExpensesBoys = () => {
 
       const expenseRef = ref(database, `Hostel/boys/expenses/${editingExpense.id}`);
       set(expenseRef, updatedFormData)
-        .then(() => {
-          setEditingExpense(null);
-          // alert('Expense updated!');
-        })
-        .catch(error => {
-          console.error("Error updating document: ", error);
-          // alert('Error updating expense!');
+      .then(() => {
+        toast.success("Expense updated successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         });
+        setEditingExpense(null); 
+      }).catch(error => {
+        toast.error("Error updating Expense: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
+        // .then(() => {
+          
+        //   // alert('Expense updated!');
+        // })
+        // .catch(error => {
+        //   console.error("Error updating document: ", error);
+        //   // alert('Error updating expense!');
+        // });
 
       setShowModal(false);
       setFormData({
@@ -400,7 +430,7 @@ const ExpensesBoys = () => {
 
                     <div className="col-12 text-center">
                       {!editingExpense && (
-                        <button type="submit" className="btn btn-warning">Create</button>
+                        <button type="submit" className="btn btn-warning">Create Expense</button>
                       )}
                       {editingExpense && (
                         <>

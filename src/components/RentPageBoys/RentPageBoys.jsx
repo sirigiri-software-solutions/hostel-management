@@ -7,6 +7,8 @@ import { useState } from 'react'
 import { DataContext } from '../../ApiData/ContextProvider';
 import { onValue, update } from 'firebase/database';
 import "../RoomsBoys/RoomsBoys.css"
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const RentPageBoys = () => {
 
@@ -221,14 +223,55 @@ const RentPageBoys = () => {
     if (isEditing) {
       // Update the existing rent record
       const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents/${editingRentId}`);
-      await update(rentRef, rentData);
+      await update(rentRef, rentData).then(() => {
+        toast.success("Rent updated successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setIsEditing(false); // Reset editing state
+      }).catch(error => {
+        toast.error("Error updating rent: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     } else {
       // Create a new rent record
       const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents`);
-      await push(rentRef, rentData);
+      await push(rentRef, rentData).then(() => {
+        toast.success("Rent added successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setIsEditing(false); // Reset editing state
+      }).catch(error => {
+        toast.error("Error adding rent: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     }
     setShowModal(false);
-
     resetForm();
 
   };

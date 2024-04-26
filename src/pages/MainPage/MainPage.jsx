@@ -195,9 +195,12 @@ const MainPage = () => {
         <div className='top-section' >
           <img src={logo} alt="logo" className='logo' />
         </div>
-        <div className='nav-div' onClick={toggleModal}>
+        <div className='nav-div' >
           <img src={Admin} alt="admin" className='mbl-dashboard-icon' />
           <h1 className='mb-dashboard-name'>{name}</h1>
+          <div className='logoutButton' onClick={toggleModal}>
+              <RiLogoutCircleRLine />
+            </div>
         </div>
         <div style={sidebarItems}>
           {
@@ -272,10 +275,10 @@ const MainPage = () => {
 
       <div style={rightSectionMainContainer} >
         <div>
-          <div className='top-div' onClick={toggleModal}>
+          <div className='top-div' >
             <img src={Admin} alt="admin" className='dashboard-icon' />
             <h1 className='dashboard-heading'>{name}</h1>
-            <div className='logoutButton'>
+            <div className='logoutButton' onClick={toggleModal}>
               <RiLogoutCircleRLine />
             </div>
           </div>

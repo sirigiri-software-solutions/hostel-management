@@ -159,7 +159,11 @@ const TenantsGirls = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validate()) return;
+    e.target.querySelector('button[type="submit"]').disabled = true;
+    if (!validate()) {
+      e.target.querySelector('button[type="submit"]').disabled = false;  
+      return
+    };
 
     let imageUrlToUpdate = tenantImageUrl;
 
@@ -170,7 +174,6 @@ const TenantsGirls = () => {
         imageUrlToUpdate = await getDownloadURL(snapshot.ref);
       } catch (error) {
         console.error("Error uploading tenant image:", error);
-
       }
     }
 

@@ -12,6 +12,8 @@ import { DataContext } from '../../ApiData/ContextProvider';
 import { FetchData } from '../../ApiData/FetchData';
 import { onValue, remove, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const DashboardBoys = () => {
@@ -133,7 +135,28 @@ const DashboardBoys = () => {
         bedRent,
         createdBy,
         updateDate: now
+      }).then(() => {
+        toast.success("Room added successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }).catch(error => {
+        toast.error("Error adding room: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       });
+    
     // }(
 
     // Reset form
@@ -338,7 +361,12 @@ const DashboardBoys = () => {
 
   const handleTenantSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    // if (!validate()) return;
+    e.target.querySelector('button[type="submit"]').disabled = true;
+    if (!validate()) {
+      e.target.querySelector('button[type="submit"]').disabled = false;  
+      return
+    };
 
     let imageUrlToUpdate = tenantImageUrl;
     if (tenantImage) {
@@ -565,11 +593,53 @@ const DashboardBoys = () => {
     if (isEditing) {
       // Update the existing rent record
       const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents/${editingRentId}`);
-      await update(rentRef, rentData);
+      await update(rentRef, rentData).then(() => {
+        toast.success("Rent updated successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setIsEditing(false); // Reset editing state
+      }).catch(error => {
+        toast.error("Error updating rent: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     } else {
       // Create a new rent record
       const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents`);
-      await push(rentRef, rentData);
+      await push(rentRef, rentData).then(() => {
+        toast.success("Rent adding successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setIsEditing(false); // Reset editing state
+      }).catch(error => {
+        toast.error("Error addinging rent: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     }
     setShowModal(false);
 

@@ -46,6 +46,8 @@ const TenantsBoys = () => {
   const [exTenants, setExTenants] = useState([]);
   const [showExTenants, setShowExTenants] = useState(false);
 
+  const submitButtonRef = useRef(null);
+
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
     onValue(roomsRef, (snapshot) => {
@@ -170,13 +172,20 @@ const TenantsBoys = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // if (!validate()) return;
-    e.target.querySelector('button[type="submit"]').disabled = true;
+    if (submitButtonRef.current) {
+      submitButtonRef.current.disabled = true;  // Disable the button using the ref
+    }
+  
     if (!validate()) {
-      e.target.querySelector('button[type="submit"]').disabled = false;  
-      return
-    };
-
+      if (submitButtonRef.current) {
+        submitButtonRef.current.disabled = false;  // Re-enable the button if validation fails
+      }
+      return;
+    }
+    // Proceed with your form submission logic here
+    if (submitButtonRef.current) {
+      submitButtonRef.current.disabled = false;  // Re-enable the button after submission logic
+    }
     let imageUrlToUpdate = tenantImageUrl;
 
     if (tenantImage) {
@@ -600,7 +609,7 @@ const TenantsBoys = () => {
                         <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
                       </div>
                     ) : (
-                      <button className="btn btn-warning" type="submit">Add Tenant</button>
+                      <button ref={submitButtonRef} className="btn btn-warning" type="submit">Add Tenant</button>
                     )}
                   </div>
                 </form>

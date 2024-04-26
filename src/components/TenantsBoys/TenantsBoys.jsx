@@ -30,8 +30,8 @@ const TenantsBoys = () => {
   const [tenantImageUrl, setTenantImageUrl] = useState(''); // For the image URL from Firebase Storage
   const [tenantId, setTenantId] = useState(null);
   const [tenantIdUrl, setTenantIdUrl] = useState('');
-  const imageInputRef = useRef(null);
-  const idInputRef = useRef(null);
+  // const imageInputRef = useRef(null);
+  // const idInputRef = useRef(null);
   // const [boysRoomsData, setBoysRoomsData] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
@@ -219,16 +219,19 @@ const TenantsBoys = () => {
 
     resetForm();
     setErrors({});
-    if (imageInputRef.current) {
-      imageInputRef.current.value = null;
-    }
-    if (idInputRef.current) {
-      idInputRef.current.value =null;
-    }
+    // if (imageInputRef.current) {
+    //   imageInputRef.current.value = null;
+    // }
+    // if (idInputRef.current) {
+    //   idInputRef.current.value =null;
+    // }
     
   };
 
   const handleEdit = (tenant) => {
+
+
+
     setSelectedRoom(tenant.roomNo);
     setSelectedBed(tenant.bedNo);
     setDateOfJoin(tenant.dateOfJoin);
@@ -239,12 +242,11 @@ const TenantsBoys = () => {
     setStatus(tenant.status);
     setIsEditing(true);
     setCurrentId(tenant.id);
-    setTenantImageUrl(tenant.tenantImageUrl || '');
+    setTenantImageUrl(tenant.tenantImageUrl);
     setTenantIdUrl(tenant.tenantIdUrl || '');
-    // setTenantId(tenant.tenantIdUrl ? tenant.tenantIdUrl : null);
-    imageInputRef.current.value = "";
-    idInputRef.current.value = "";
-    // Open the modal
+    
+    // imageInputRef.current.value = "";
+    // idInputRef.current.value = "";
 
     setShowModal(true);
 
@@ -260,6 +262,7 @@ const TenantsBoys = () => {
     // Open the modal
     setShowModal(true);
     setUserDetailsTenantsPopup(false);
+    setTenantIdUrl('')
 
   };
 
@@ -330,6 +333,7 @@ const TenantsBoys = () => {
 
   const handleClosePopUp = () => {
     setShowModal(false);
+    setTenantIdUrl('')
 
   }
 
@@ -367,7 +371,8 @@ const TenantsBoys = () => {
   const tenantPopupClose = () => {
     setUserDetailsTenantsPopup(false);
     setDueDateOfTenant("")
-    setSingleTenantProofId("")
+    setSingleTenantProofId("");
+    
   }
 
   //=====Vacate tenant ===========
@@ -391,8 +396,8 @@ const TenantsBoys = () => {
     setShowModal(false);
     resetForm();
     setErrors({});
-    imageInputRef.current.value = "";
-    idInputRef.current.value = "";
+    // imageInputRef.current.value = "";
+    // idInputRef.current.value = "";
   };
   const fetchExTenants = () => {
     const exTenantsRef = ref(database, 'Hostel/boys/extenants');
@@ -436,17 +441,17 @@ const TenantsBoys = () => {
           </div>
           <h1 className='fs-5'>Tenants Management</h1>
         </div>
-        <div className="col-6 col-md-4 search-wrapper">
+        <div className="col-5 col-md-4 search-wrapper">
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={handleSearchChange} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
-        <div className="col-6 col-md-4 d-flex justify-content-end">
-          {showExTenants ? '' : <button type="button" class="add-button" onClick={() => { handleAddNew() }} >
+        <div className="col-7 col-md-4 d-flex justify-content-end gap-2">
+          {showExTenants ? '' : <button type="button" class="add-button tenantaddBtn" onClick={() => { handleAddNew() }} >
             Add Tenants
           </button>}
           {showExTenants ? <button type="button" class="add-button" onClick={showExTenantsData} >
             Present-Tenants
-          </button> : <button type="button" class="add-button" onClick={showExTenantsData} >
+          </button> : <button type="button" class="add-button tenantaddBtn" onClick={showExTenantsData} >
             Ex-Tenants
           </button>}
         </div>
@@ -554,7 +559,7 @@ const TenantsBoys = () => {
                         <p>Current Image</p>
                       </div>
                     )}
-                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required />
+                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
                     {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
                  <div className="col-md-6">
@@ -566,17 +571,17 @@ const TenantsBoys = () => {
                         <object
                           data={tenantIdUrl}
                           type="application/pdf"
-                          width="50%"
-                          height="200px"
+                          width="100%"
+                          height="133px"
                         >
                           {/* Anchor tag for downloading the PDF */}
-                           <a href={tenantIdUrl} download>Download PDF</a>
+                           
                         </object>
                       </div>
                     )}
                     {/* Show input for uploading ID only if not editing or tenantIdUrl doesn't exist */}
                     
-                      <input id="tenantUploadId" className="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
+                      <input id="tenantUploadId" className="form-control" type="file" onChange={handleTenantIdChange} />
                     
                   </div> 
 
@@ -586,7 +591,7 @@ const TenantsBoys = () => {
                   {/* =============== */}
                   <div className='col-12 text-center mt-3'>
                     {isEditing ? (
-                      <div>
+                      <div className="d-flex justify-content-center gap-2">
                         <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Tenant</button>
                         <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
                       </div>

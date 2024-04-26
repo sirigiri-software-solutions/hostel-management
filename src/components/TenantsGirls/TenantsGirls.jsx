@@ -35,8 +35,8 @@ const TenantsGirls = () => {
   const [tenantImageUrl, setTenantImageUrl] = useState('');
   const [tenantId, setTenantId] = useState(null);
   const [tenantIdUrl, setTenantIdUrl] = useState('');
-  const imageInputRef = useRef(null);
-  const idInputRef = useRef(null);
+  // const imageInputRef = useRef(null);
+  // const idInputRef = useRef(null);
   const [girlsRoomsData, setGirlsRoomsData] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
@@ -208,8 +208,8 @@ const TenantsGirls = () => {
     setShowModal(false);
 
     resetForm();
-    imageInputRef.current.value = "";
-    idInputRef.current.value = "";
+    // imageInputRef.current.value = "";
+    // idInputRef.current.value = "";
     setErrors({});
   };
 
@@ -229,8 +229,8 @@ const TenantsGirls = () => {
     setTenantIdUrl(tenant.tenantIdUrl || '');
     // console.log(tenant.tenantImageUrl,"Getting")
     console.log(tenant.tenantIdUrl,"Getting")
-    imageInputRef.current.value = "";
-    idInputRef.current.value = "";
+    // imageInputRef.current.value = "";
+    // idInputRef.current.value = "";
     // Open the modal
     setShowModal(true);
   };
@@ -243,6 +243,7 @@ const TenantsGirls = () => {
     // Open the modal
     setShowModal(true);
     setUserDetailsTenantsPopup(false);
+    setTenantIdUrl('')
   };
 
   const handleDelete = async (id) => {
@@ -353,6 +354,7 @@ const TenantsGirls = () => {
 
   const handleClosePopUp = () => {
     setShowModal(false);
+    setTenantIdUrl('')
   }
 
   const handleTentantRow = (tenant) => {
@@ -411,8 +413,8 @@ const TenantsGirls = () => {
     setShowModal(false);
     resetForm();
     setErrors({});
-    imageInputRef.current.value = "";
-    idInputRef.current.value = "";
+    // imageInputRef.current.value = "";
+    // idInputRef.current.value = "";
   };
   const fetchExTenants = () => {
     const exTenantsRef = ref(database, 'Hostel/girls/extenants');
@@ -459,17 +461,17 @@ const TenantsGirls = () => {
           </div>
           <h1 className='fs-5'>Tenants Management</h1>
         </div>
-        <div className="col-6 col-md-4 search-wrapper">
+        <div className="col-5 col-md-4 search-wrapper">
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={onChangeInput} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
-        <div className="col-6 col-md-4 d-flex justify-content-end">
-          {showExTenants ? '' : <button type="button" class="add-button" onClick={() => { handleAddNew() }} >
+        <div className="col-7 col-md-4 d-flex justify-content-end gap-2">
+          {showExTenants ? '' : <button type="button" class="add-button tenantaddBtn" onClick={() => { handleAddNew() }} >
             Add Tenants
           </button>}
-          {showExTenants ? <button type="button" class="add-button" onClick={showExTenantsData} >
+          {showExTenants ? <button type="button" class="add-button " onClick={showExTenantsData} >
             Present-Tenants
-          </button> : <button type="button" class="add-button" onClick={showExTenantsData} >
+          </button> : <button type="button" class="add-button tenantaddBtn" onClick={showExTenantsData} >
             Ex-Tenants
           </button>}
         </div>
@@ -583,7 +585,7 @@ const TenantsGirls = () => {
                         <p>Current Image</p>
                       </div>
                     )}
-                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required />
+                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
                     {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
                   <div class="col-md-6">
@@ -594,13 +596,13 @@ const TenantsGirls = () => {
                       <object
                         data={tenantIdUrl}
                         type="application/pdf"
-                        width="50%"
-                        height="200px"
+                        width="100%"
+                        height="133px"
                       >
-                        <a href={tenantIdUrl}>Download PDF</a>
+                      
                       </object>
                     )}
-                    <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
+                    <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange}  />
 
                   </div>
                   {/* ===== */}
@@ -609,13 +611,13 @@ const TenantsGirls = () => {
                       {/* <i class="fa fa-cloud-upload"></i> */}
                       {/* <MdUploadFile /> */}
                     </label>
-                    <input id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
+                    <input id="file-upload" type="file" onChange={handleTenantIdChange} style={{ display: 'none' }} />
                   </div>
 
                   {/* =============== */}
                   <div className='col-12 text-center'>
                     {isEditing ? (
-                      <div>
+                      <div className="d-flex justify-content-center gap-2">
                         <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Tenant</button>
                         <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
                       </div>

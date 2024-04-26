@@ -286,8 +286,8 @@ const MainPage = () => {
               </div>
               <p>Are you sure you want to logout?</p>
               <button onClick={logout} className="logout-button">Logout</button>
-              <br /><br />
-              <button onClick={toggleModal}>Close</button>
+              
+              <button className='logout-closeBtn' onClick={toggleModal}>Close</button>
             </div>
           )}
         </div>

@@ -752,22 +752,22 @@ const DashboardBoys = () => {
           <form className="row g-3" onSubmit={handleBoysRoomsSubmit}>
           <div className="col-md-6">
             <label htmlFor="inputNumber" className="form-label">Floor Number</label>
-            <input type="number" className="form-control" id="inputNumber" name="number" value={floorNumber}  onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
+            <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber}  onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
             {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
           </div>
           <div className="col-md-6">
             <label htmlFor="inputRent" className="form-label">Room Number</label>
-            <input type="number" className="form-control" id="inputRent" name="rent" value={roomNumber} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
+            <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
             {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
           </div>
           <div className="col-md-6">
             <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
-            <input type="number" className="form-control" id="inputRooms" name="rooms" value={numberOfBeds} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
+            <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
             {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
           </div>
           <div className="col-md-6">
             <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
-            <input type="text" className="form-control" id="inputStatus" name="status" value={bedRent} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
+            <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
             {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
           </div>
           <div className="col-md-6">

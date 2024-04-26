@@ -81,7 +81,7 @@ const ExpensesBoys = () => {
         expenseAmount: parseFloat(formData.expenseAmount),
         expenseDate: new Date(formData.expenseDate).toISOString() // Proper ISO formatting
       }).then(() => {
-        toast.success("Expense updated successfully.", {
+        toast.success("Expense added successfully.", {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -92,7 +92,7 @@ const ExpensesBoys = () => {
         });
         // setIsEditing(false); // Reset editing state
       }).catch(error => {
-        toast.error("Error updating expense: " + error.message, {
+        toast.error("Error adding expense: " + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,

@@ -9,6 +9,7 @@ import { DataContext } from '../../ApiData/ContextProvider'
 import { FetchData } from '../../ApiData/FetchData'
 import { onValue, remove, set, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { FaDownload } from "react-icons/fa";
 
 const TenantsGirls = () => {
 
@@ -34,8 +35,8 @@ const TenantsGirls = () => {
   const [tenantImageUrl, setTenantImageUrl] = useState('');
   const [tenantId, setTenantId] = useState(null);
   const [tenantIdUrl, setTenantIdUrl] = useState('');
-  const imageInputRef = useRef(null);
-  const idInputRef = useRef(null);
+  // const imageInputRef = useRef(null);
+  // const idInputRef = useRef(null);
   const [girlsRoomsData, setGirlsRoomsData] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
@@ -45,6 +46,7 @@ const TenantsGirls = () => {
 
   const [exTenants, setExTenants] = useState([]);
   const [showExTenants, setShowExTenants] = useState(false);
+  const [singleTenantProofId,setSingleTenantProofId] = useState("");
 
   useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/girls/tenants');
@@ -209,8 +211,8 @@ const TenantsGirls = () => {
     setShowModal(false);
 
     resetForm();
-    imageInputRef.current.value = "";
-    idInputRef.current.value = "";
+    // imageInputRef.current.value = "";
+    // idInputRef.current.value = "";
     setErrors({});
   };
 
@@ -228,8 +230,10 @@ const TenantsGirls = () => {
     // setTenantImage(tenant.tenantImageUrl);
     setTenantImageUrl(tenant.tenantImageUrl || ''); // Set the current image URL
     setTenantIdUrl(tenant.tenantIdUrl || '');
-    imageInputRef.current.value = "";
-    idInputRef.current.value = "";
+    // console.log(tenant.tenantImageUrl,"Getting")
+    console.log(tenant.tenantIdUrl,"Getting")
+    // imageInputRef.current.value = "";
+    // idInputRef.current.value = "";
     // Open the modal
     setShowModal(true);
   };
@@ -242,6 +246,7 @@ const TenantsGirls = () => {
     // Open the modal
     setShowModal(true);
     setUserDetailsTenantsPopup(false);
+    setTenantIdUrl('')
   };
 
   const handleDelete = async (id) => {
@@ -266,25 +271,6 @@ const TenantsGirls = () => {
     setTenantIdUrl('');
   };
 
-
-
-
-
-  // ==================================
-
-  // const [formData, setFormData] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: ''
-  // });
-
-  // const [formErrors, setFormErrors] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: ''
-  // });
 
   useEffect(() => {
     const fetchDataFromAPI = async () => {
@@ -325,74 +311,6 @@ const TenantsGirls = () => {
 
     fetchDataFromAPI();
   }, [data]);
-
-
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: value
-  //   });
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   let errors = {};
-  //   let formIsValid = true;
-
-  //   // Basic validation for required fields
-  //   if (!formData.number) {
-  //     errors.number = 'Number is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rent) {
-  //     errors.rent = 'Rent is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rooms) {
-  //     errors.rooms = 'Rooms is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.status) {
-  //     errors.status = 'Status is required';
-  //     formIsValid = false;
-  //   }
-
-  //   // If form is valid, proceed with submission
-  //   if (formIsValid) {
-  //     // console.log('Form submitted successfully:', formData);
-  //     const newData = {
-  //       number: formData.number,
-  //       rent: formData.rent,
-  //       rooms: formData.rooms,
-  //       status: formData.status
-  //     };
-
-  //     // Push the new data to the 'beds' node
-  //     push(ref(database, 'beds'), newData)
-  //       .then(() => {
-  //         // Data successfully stored in Firebase
-  //         // console.log('Data successfully stored in Firebase');
-  //         // Clear the form after submission if needed
-  //         setFormData({
-  //           number: '',
-  //           rent: '',
-  //           rooms: '',
-  //           status: ''
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         // Handle errors
-  //         // console.error('Error storing data in Firebase: ', error.message);
-  //       });
-  //   } else {
-  //     // Set errors for form validation
-  //     setFormErrors(errors);
-  //   }
-  // };
 
 
   const columns = [
@@ -439,29 +357,42 @@ const TenantsGirls = () => {
 
   const handleClosePopUp = () => {
     setShowModal(false);
+    setTenantIdUrl('')
   }
 
   const handleTentantRow = (tenant) => {
-
-    setUserDetailsTenantsPopup(true);
-    setShowModal(false);
-    setSingleTenantDetails(tenant);
-
-    const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
-
-    if (singleUserDueDate && singleUserDueDate.rents) {
-      const dataWithDueDate = Object.values(singleUserDueDate.rents);
-      const dueDate = dataWithDueDate[0].dueDate;
-      console.log("Due date:", dueDate);
-      setDueDateOfTenant(dueDate);
-    } else {
-      console.log("Tenant with due date not found or due date is missing");
-    }
-
+  
+      setUserDetailsTenantsPopup(true);
+      setShowModal(false);
+      setSingleTenantDetails(tenant);
+  
+      const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
+  
+      if (singleUserDueDate && singleUserDueDate.rents) {
+        const dataWithDueDate = Object.values(singleUserDueDate.rents);
+        const dueDate = dataWithDueDate[0].dueDate;
+        console.log("Due date:", dueDate);
+        setDueDateOfTenant(dueDate);
+      } else {
+        console.log("Tenant with due date not found or due date is missing");
+      }
+      
+      if(singleUserDueDate && singleUserDueDate.tenantIdUrl){
+        setSingleTenantProofId(singleUserDueDate.tenantIdUrl)
+      }
+      
+    
   };
+  
+  
+
+   
+
+  
   const tenantPopupClose = () => {
     setUserDetailsTenantsPopup(false);
     setDueDateOfTenant("")
+    setSingleTenantProofId("")
   }
 
   //=====Vacate tenant ===========
@@ -485,8 +416,8 @@ const TenantsGirls = () => {
     setShowModal(false);
     resetForm();
     setErrors({});
-    imageInputRef.current.value = "";
-    idInputRef.current.value = "";
+    // imageInputRef.current.value = "";
+    // idInputRef.current.value = "";
   };
   const fetchExTenants = () => {
     const exTenantsRef = ref(database, 'Hostel/girls/extenants');
@@ -533,17 +464,17 @@ const TenantsGirls = () => {
           </div>
           <h1 className='fs-5'>Tenants Management</h1>
         </div>
-        <div className="col-6 col-md-4 search-wrapper">
+        <div className="col-5 col-md-4 search-wrapper">
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={onChangeInput} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
-        <div className="col-6 col-md-4 d-flex justify-content-end">
-          {showExTenants ? '' : <button type="button" class="add-button" onClick={() => { handleAddNew() }} >
+        <div className="col-7 col-md-4 d-flex justify-content-end gap-2">
+          {showExTenants ? '' : <button type="button" class="add-button tenantaddBtn" onClick={() => { handleAddNew() }} >
             Add Tenants
           </button>}
-          {showExTenants ? <button type="button" class="add-button" onClick={showExTenantsData} >
+          {showExTenants ? <button type="button" class="add-button " onClick={showExTenantsData} >
             Present-Tenants
-          </button> : <button type="button" class="add-button" onClick={showExTenantsData} >
+          </button> : <button type="button" class="add-button tenantaddBtn" onClick={showExTenantsData} >
             Ex-Tenants
           </button>}
         </div>
@@ -657,7 +588,7 @@ const TenantsGirls = () => {
                         <p>Current Image</p>
                       </div>
                     )}
-                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required />
+                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
                     {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
                   <div class="col-md-6">
@@ -668,13 +599,13 @@ const TenantsGirls = () => {
                       <object
                         data={tenantIdUrl}
                         type="application/pdf"
-                        width="50%"
-                        height="200px"
+                        width="100%"
+                        height="133px"
                       >
-                        <a href={tenantIdUrl}>Download PDF</a>
+                      
                       </object>
                     )}
-                    <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
+                    <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange}  />
 
                   </div>
                   {/* ===== */}
@@ -683,13 +614,13 @@ const TenantsGirls = () => {
                       {/* <i class="fa fa-cloud-upload"></i> */}
                       {/* <MdUploadFile /> */}
                     </label>
-                    <input id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
+                    <input id="file-upload" type="file" onChange={handleTenantIdChange} style={{ display: 'none' }} />
                   </div>
 
                   {/* =============== */}
                   <div className='col-12 text-center'>
                     {isEditing ? (
-                      <div>
+                      <div className="d-flex justify-content-center gap-2">
                         <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Tenant</button>
                         <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
                       </div>
@@ -707,29 +638,35 @@ const TenantsGirls = () => {
       </div>
 
 
-      {userDetailsTenantPopup &&
-        <div className='userDetailsTenantPopup'>
-          <div className='tenants-dialog-container'>
-            <h1 className="tenants-popup-heading">Tenant Details </h1>
-            <div className='tenants-popup-mainContainer'>
-              <div className='tenants-profile-container'>
-                <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
-              </div>
-              <div className='tenants-popup-detailsContainer'>
-                <p><strong>Name :</strong> {singleTenantDetails.name}</p>
-                <p><strong>Mobile No :</strong> {singleTenantDetails.mobile_no}</p>
-                <p><strong>Proof ID :</strong> {singleTenantDetails.id}</p>
-                <p><strong>Room/Bed No :</strong> {singleTenantDetails.room_bed_no}</p>
-                <p><strong>Joining Date :</strong> {singleTenantDetails.joining_date}</p>
-                <p><strong>Due Date :</strong> {dueDateOfTenant}</p>
-              </div>
-            </div>
-            <div className='popup-tenants-closeBtn'>
-              <button className='btn btn-warning' onClick={tenantPopupClose}>Close</button>
-            </div>
+      {userDetailsTenantPopup && 
+      <div className='userDetailsTenantPopup'>
+        <div className='tenants-dialog-container'>
+          <h1 className="tenants-popup-heading">Tenant Details </h1>
+          <div className='tenants-popup-mainContainer'>
+            <div className='tenants-profile-container'>
+             <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
+             </div>
+             <div className='tenants-popup-detailsContainer'>
+                 <p><strong>Name :</strong> {singleTenantDetails.name}</p>
+                  <p><strong>Mobile No :</strong> {singleTenantDetails.mobile_no}</p>
+                  <p><strong>Proof ID :</strong> {singleTenantDetails.id}</p>
+                  <p><strong>Room/Bed No :</strong> {singleTenantDetails.room_bed_no}</p>
+                  <p><strong>Joining Date :</strong> {singleTenantDetails.joining_date}</p>
+                  <p><strong>Due Date :</strong> {dueDateOfTenant}</p>
+                  <p><strong>ID Proof:</strong>
+                    {singleTenantProofId ? (
+                      <a className='downloadPdfText' href={singleTenantProofId} download> <FaDownload /> Download PDF</a>
+                    ) : (
+                      <span className='NotUploadedText'> Not Uploaded</span>
+                    )}
+                  </p>
+             </div>
+          </div>
+          <div className='popup-tenants-closeBtn'>
+          <button className='btn btn-warning' onClick={tenantPopupClose}>Close</button>
           </div>
         </div>
-
+      </div>
       }
     </>
   )

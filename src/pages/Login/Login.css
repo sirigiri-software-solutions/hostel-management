@@ -45,18 +45,18 @@ justify-content: center;
 /* border: 1px solid; */
 }
 
-.image-container{
+/* .image-container{
 /* border: 1px solid; */
-}
+ /* } */ 
 
 .input-form{
 width: 50%;
 text-align: center;
 }
 
-.down-image{
+/* .down-image{
 /* height: auto; */
-}
+ */
 
 /* CSS for form styling */
 .input-form {
@@ -229,4 +229,7 @@ color: #FF8a00;
       flex-direction: column;
       text-align: center;
    }
+}
+.img{
+  height:250px;
 }

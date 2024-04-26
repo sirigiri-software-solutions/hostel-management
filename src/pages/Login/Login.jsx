@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ImageOne from "../../images/Vector 1 (1).png";
 import ImageTwo from "../../images/Vector 3 (2).png";
-import Logo from "../../images/Kiran Reddy Boys Hostel 1.png";
+import Logo from "../../images/image.png";
 import './Login.css'
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';

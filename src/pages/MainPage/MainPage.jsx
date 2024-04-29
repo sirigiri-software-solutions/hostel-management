@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import DashboardImage from '../../images/Icons (1).png'
+import DashboardImage from '../../images/Icons (11).png'
 import RoomsImage from '../../images/Icons (2).png'
 import BedsImage from '../../images/Icons (3).png'
 import TenantsImage from '../../images/Icons (4).png'
@@ -202,7 +202,7 @@ const MainPage = () => {
           <div className='logoutButton' onClick={toggleModal}>
               <RiLogoutCircleRLine />
             </div>
-        </div>
+        </div>    
         <div style={sidebarItems}>
           {
             menuItems.map((item, index) => (

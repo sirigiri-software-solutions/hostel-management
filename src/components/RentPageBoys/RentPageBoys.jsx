@@ -314,6 +314,8 @@ const RentPageBoys = () => {
     'Person Mobile',
     'Bed No',
     'Rent',
+    'paid',
+    'due',
     'Joining Date',
     'Due Date',
     'Last Fee',
@@ -321,13 +323,15 @@ const RentPageBoys = () => {
     'update'
   ];
 
-  // console.log("rents====>",tenantsWithRents)
+  console.log("rents====>",tenantsWithRents)
   const rentsRows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map((rent) => ({
     roomNumber: rent.roomNumber,
     name: tenant.name,
     mobileNo: tenant.mobileNo,
     bedNumber: rent.bedNumber,
     totalFee: rent.totalFee,
+    paid:rent.paidAmount,
+    due:rent.due,
     dateOfJoin: tenant.dateOfJoin,
     dueDate: rent.dueDate,
     paidDate: rent.paidDate,
@@ -335,7 +339,7 @@ const RentPageBoys = () => {
     tenantId: tenant.id,
     rentId: rent.id,
   })))
-  // console.log(rentsRows,'rent')
+  console.log(rentsRows,'rent')
   // const count = 0;
   const rows = rentsRows.map((rent, index) => ({
     s_no: index + 1,
@@ -344,6 +348,8 @@ const RentPageBoys = () => {
     person_mobile: rent.mobileNo,
     bed_no: rent.bedNumber,
     rent: "Rs. " + rent.totalFee,
+    paid: rent.paid,
+    due:rent.due,
     joining_date: rent.dateOfJoin,
     due_date: rent.dueDate,
     last_fee: rent.paidDate,

@@ -541,7 +541,7 @@ const TenantsGirls = () => {
           {showExTenants ? <button type="button" class="add-button " onClick={showExTenantsData} >
             Present-Tenants
           </button> : <button type="button" class="add-button tenantaddBtn" onClick={showExTenantsData} >
-            Ex-Tenants
+            Vacated
           </button>}
         </div>
       </div>

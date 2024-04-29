@@ -166,7 +166,7 @@ const RentPageBoys = () => {
       setEditingRentId(rentId);
     }
     setShowModal(true);
-    console.log(selectedTenant)
+    // console.log(selectedTenant)
   };
 
   const validateForm = () => {
@@ -323,7 +323,7 @@ const RentPageBoys = () => {
     'update'
   ];
 
-  console.log("rents====>",tenantsWithRents)
+  // console.log("rents====>",tenantsWithRents)
   const rentsRows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map((rent) => ({
     roomNumber: rent.roomNumber,
     name: tenant.name,
@@ -339,7 +339,7 @@ const RentPageBoys = () => {
     tenantId: tenant.id,
     rentId: rent.id,
   })))
-  console.log(rentsRows,'rent')
+  // console.log(rentsRows,'rent')
   // const count = 0;
   const rows = rentsRows.map((rent, index) => ({
     s_no: index + 1,

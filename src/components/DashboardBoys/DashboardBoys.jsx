@@ -733,17 +733,18 @@ const DashboardBoys = () => {
       number:`${rooms.length}` ,
       btntext: 'Add Rooms',
     },
-    {
-      image: Beds,
-      heading: 'Total Beds',
-      number: `${totalBeds}`,
-      btntext: 'Add Rent',
-    },
+    
     {
       image: Tenants,
       heading: 'Total Tenants',
       number: `${tenants.length}`,
       btntext: 'Add Tenants',
+    },
+    {
+      image: Beds,
+      heading: 'Total Beds',
+      number: `${totalBeds}`,
+      btntext: 'Add Rent',
     },
     {
       image: Expenses,
@@ -753,7 +754,7 @@ const DashboardBoys = () => {
     },
   ];
 
-  const Buttons = ['Add Rooms', 'Add Rent', 'Add Tenants', 'Add Expenses'];
+  const Buttons = ['Add Rooms',  'Add Tenants','Add Rent', 'Add Expenses'];
 
   const handleClick = (text) => {
     setModelText(text);

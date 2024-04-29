@@ -528,11 +528,21 @@ const RentPageGirls = () => {
                 <div className="container-fluid">
                   <form class="row lg-10" onSubmit={handleSubmit}>
                     <div class='col-12 mb-3'>
-                      <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)}>
+                      <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
                         <option value="">Select a Tenant *</option>
-                        {availableTenants.map(tenant => (
+                        {/* {availableTenants.map(tenant => (
                           <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
-                        ))}
+                        ))} */}
+
+{isEditing ? (
+    <option key={selectedTenant} value={selectedTenant}>{tenantsWithRents.find(tenant => tenant.id === selectedTenant)?.name}</option>
+  ) : (
+    availableTenants.map(tenant => (
+      <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+    ))
+  )}
+
+
                       </select>
                       {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                     </div>

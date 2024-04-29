@@ -172,7 +172,7 @@ const Login = () => {
     <div className="form-container">
     <form onSubmit={checkData} className="input-form">
       <h1 className="login-heading">LOGIN</h1>
-      <div>
+      <div className="mbl-inputField">
         <input
           type="email"
           className={`form-control ${loginErrors?.email && "is-invalid"} ${loginData.email.trim() === "" && "empty-field"}`}

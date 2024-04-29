@@ -45,6 +45,7 @@ justify-content: center;
 /* border: 1px solid; */
 }
 
+
 /* .image-container{
 /* border: 1px solid; */
  /* } */ 
@@ -232,4 +233,33 @@ color: #FF8a00;
 }
 .img{
   height:250px;
+}
+
+
+@media screen and (max-width:500px){
+  .logo-container{
+    position:absolute;
+    top:100px;
+    left:75px;
+  }
+  .p{
+    display:none;
+  }
+
+
+  .right-div{
+    position: relative;
+    top:130px;
+  }
+  
+  .image-right-container{
+    position:absolute;
+    top:245px;
+  }
+  .form-container{
+     width:100%;
+  }
+  .mbl-inputField{
+    width:100%;
+  }
 }

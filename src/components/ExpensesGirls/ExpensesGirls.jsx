@@ -178,7 +178,6 @@ const ExpensesGirls = () => {
     // console.log(expense.expenseDate,"data was formated")
     const [day, month, year] = expense.expenseDate.split('-');
     const formattedDate = `${year}-${month}-${day}`;
-    console.log(formattedDate, "data was foramted")
     setFormData({
       expenseName: expense.expenseName,
       expenseAmount: expense.expenseAmount,
@@ -227,7 +226,6 @@ const ExpensesGirls = () => {
     }
 
     // Log the value of formData.expenseDate before conversion
-    console.log('Expense Date:', formData.expenseDate);
 
     if (formIsValid) {
       let updatedFormData = {

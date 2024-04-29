@@ -51,7 +51,7 @@ const RoomsBoys = () => {
     e.preventDefault();
     const now = new Date().toISOString();  // Get current date-time in ISO format
 
-    // Initialize an object to collect errors
+    
     const newErrors = {};
 
     // Validation checks

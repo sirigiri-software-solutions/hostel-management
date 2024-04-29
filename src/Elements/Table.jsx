@@ -16,7 +16,7 @@ const Table = ({columns, rows,onClickTentantRow}) => {
           <tbody>
             {
               rows.map((item, index) => <tr>
-                {item.s_no && <td data-label="S. No" style={{padding:"7px"}} onClick={onClickTentantRow ? () => onClickTentantRow() : null}>{item.s_no}</td>}
+                {item.s_no && <td data-label="S. No" style={{padding:"7px"}} onClick={onClickTentantRow ? () => onClickTentantRow(item) : null}>{item.s_no}</td>}
                 {item.image && <td data-label="image" onClick={onClickTentantRow ? () => onClickTentantRow(item) : null}><img className='personImage' src={item.image} alt='img'/></td>}
                 {item.name && <td data-label="name" onClick={onClickTentantRow ? () => onClickTentantRow(item) : null}>{item.name}</td>}
                 {item.id && <td data-label="id" onClick={onClickTentantRow ? () => onClickTentantRow(item) : null}>{item.id}</td>}

@@ -81,7 +81,7 @@ const RoomsGirls = () => {
         updateDate: now
       }).then(() => {
         toast.success("Room updated successfully.", {
-          position: "bottom-center",
+          position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: true,

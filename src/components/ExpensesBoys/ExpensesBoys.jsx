@@ -310,12 +310,27 @@ const ExpensesBoys = () => {
     if (!editingExpense) return;
     const expenseRef = ref(database, `Hostel/boys/expenses/${editingExpense.id}`);
     remove(expenseRef).then(() => {
-      setEditingExpense(null);
-      // alert('Expense deleted!');
-    }).catch(error => {
-      console.error("Error deleting document: ", error);
-      // alert('Error deleting expense!');
-    });
+        toast.success("Expense deleted successfully", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setEditingExpense(null); 
+      }).catch(error => {
+        toast.error("Error deleting Expense" + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     setShowModal(false);
     setFormData({
       expenseName: '',

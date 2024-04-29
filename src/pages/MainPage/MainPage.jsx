@@ -32,6 +32,7 @@ const MainPage = () => {
     console.log(data && data);
   }
   console.log("end");
+
   const menuItems = [
     {
       id: 1,
@@ -294,7 +295,8 @@ const MainPage = () => {
             </div>
           )}
         </div>
-        {Components && Components.map((item, index) => <div key={index} style={flag === index + 1 ? { display: 'block' } : { display: 'none' }}>
+        {Components && Components.map((item, index) =>
+         <div key={index} style={flag === index + 1 ? { display: 'block' } : { display: 'none' }}>
           {item}
         </div>)}
 

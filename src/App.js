@@ -5,7 +5,7 @@ import MainPage from './pages/MainPage/MainPage'
 import Login from './pages/Login/Login'
 import SignUp from './pages/SignUp/SignUp'
 import { ToastContainer } from 'react-toastify'
-import { FetchData } from './ApiData/FetchData'
+import { FetchData } from './ApiData/FetchData' 
 import { DataProvider } from './ApiData/ContextProvider'
 import ProtectedRoute from './ProtectedRoute'
 

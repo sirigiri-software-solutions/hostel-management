@@ -31,6 +31,9 @@ const Table = ({columns, rows,onClickTentantRow}) => {
                 {item.noofBeds && <td data-label="No.of Beds">{item.noofBeds}</td>}
                 {item.month_year && <td data-label="month_year">{item.month_year}</td>}
                 {item.rent && <td data-label="rent">{item.rent}</td>}
+                {item.paid && <td data-label="paid">{item.paid}</td>}
+                {item.due && <td data-label="paid">{item.due}</td>}
+
                 {item.joining_date && <td data-label="joining_date" onClick={onClickTentantRow ? () => onClickTentantRow(item) : null}>{item.joining_date}</td>}
                 {item.due_date && <td data-label="due_date">{item.due_date}</td>}
                 {item.last_fee && <td data-label="last_fee">{item.last_fee}</td>}

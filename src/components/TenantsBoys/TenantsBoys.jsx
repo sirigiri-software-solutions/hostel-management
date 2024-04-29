@@ -428,7 +428,27 @@ const TenantsBoys = () => {
         // Write the data to the new location
         await set(newTenantRef, data);
         // Remove the data from the original location
-        await remove(tenantRef);
+        await remove(tenantRef).then(() => {
+          toast.success("Tenant Vacated", {
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }).catch(error => {
+          toast.error("Error Tenant Vacate " + error.message, {
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        });
         fetchExTenants()
       }
     }, {

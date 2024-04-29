@@ -27,7 +27,7 @@ const RoomsBoys = () => {
     const value = event.target.value;
     const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
 
-    if (value === '' || re.test(value)) {
+    if (value === '' || re. test(value)) {
         switch(event.target.name) {
             case 'floorNumber':
                 setFloorNumber(value);

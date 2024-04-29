@@ -390,9 +390,49 @@ const DashboardGirls = () => {
     };
  
     if (isEditing) {
-      await update(ref(database, `Hostel/girls/tenants/${currentTenantId}`), tenantData);
+      await update(ref(database, `Hostel/girls/tenants/${currentTenantId}`), tenantData).then(() => {
+        toast.success("Tenant updated successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }).catch(error => {
+        toast.error("Error updating Tenant: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     } else {
-      await push(ref(database, 'Hostel/girls/tenants'), tenantData);
+      await push(ref(database, 'Hostel/girls/tenants'), tenantData).then(() => {
+        toast.success("Tenant added successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }).catch(error => {
+        toast.error("Error adding Tenant: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     }
     // setShowModal(false);
     setShowModal(false);

@@ -310,27 +310,27 @@ const ExpensesBoys = () => {
     if (!editingExpense) return;
     const expenseRef = ref(database, `Hostel/boys/expenses/${editingExpense.id}`);
     remove(expenseRef).then(() => {
-      toast.success("Expense updated successfully.", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+        toast.success("Expense deleted successfully", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setEditingExpense(null); 
+      }).catch(error => {
+        toast.error("Error deleting Expense" + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       });
-      setEditingExpense(null); 
-    }).catch(error => {
-      toast.error("Error updating Expense: " + error.message, {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    });
     setShowModal(false);
     setFormData({
       expenseName: '',

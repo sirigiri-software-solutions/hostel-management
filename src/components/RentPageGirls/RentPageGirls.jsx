@@ -8,6 +8,7 @@ import { DataContext } from '../../ApiData/ContextProvider';
 import { onValue, update } from 'firebase/database';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { FaWhatsapp } from "react-icons/fa";
 
 const RentPageGirls = () => {
   const { data } = useContext(DataContext);
@@ -32,6 +33,50 @@ const RentPageGirls = () => {
   const [dateOfJoin, setDateOfJoin] = useState()
 
   const [showModal, setShowModal] = useState(false);
+
+  const [notify, setNotify] = useState(false);
+  const [notifyUserInfo,setNotifyUserInfo] = useState(null);
+
+
+   // Function to send WhatsApp message
+   const sendMessage = (tenant, rentRecord) => {
+    console.log(rentRecord,"RentRecordUpdating")
+    const totalFee = rentRecord.totalFee;
+    const tenantName = tenant.name;
+  const amount = rentRecord.due;
+  const dateOfJoin = tenant.dateOfJoin;
+  const dueDate = rentRecord.dueDate;
+  const paidAmount = rentRecord.paidAmount;
+
+  const message = `Hi ${tenantName},\nHope you are doing fine!,\nYour total fee is ${totalFee},\n You paid ${paidAmount}\nYour due amount is ${amount}.\nYou joined on ${dateOfJoin}, and your due date is ${dueDate}.`;
+
+  const phoneNumber = tenant.mobileNo; // Replace with the recipient's phone number
+
+  // Check if the phone number starts with '+91' (India's country code)
+  const formattedPhoneNumber = phoneNumber.startsWith('+91') ? phoneNumber : `+91${phoneNumber}`;
+
+  const encodedMessage = encodeURIComponent(message);
+
+   
+    // Use web link for non-mobile devices
+    let whatsappLink = `https://web.whatsapp.com/send?phone=${formattedPhoneNumber}&text=${encodedMessage}`;
+  
+
+  // Open the WhatsApp link
+  window.open(whatsappLink, '_blank');
+  };
+
+  // Event handler for the notify checkbox
+  const handleNotifyCheckbox = (rentData) => {
+   // Toggle the state of the notify checkbox
+    if (notify && notifyUserInfo) {
+      const { tenant, rentRecord } = notifyUserInfo;
+      console.log(tenant,"InNotify")
+      sendMessage(tenant, rentData); // If checkbox is checked and tenant info is available, send WhatsApp message
+    }
+    setNotify(!notify); 
+  };
+
 
   useEffect(() => {
     // Fetch tenants data once when component mounts
@@ -165,7 +210,7 @@ const RentPageGirls = () => {
       setEditingRentId(rentId);
     }
     setShowModal(true);
-    
+    setNotifyUserInfo({ tenant, rentRecord });
   };
 
   const validateForm = () => {
@@ -234,7 +279,10 @@ const RentPageGirls = () => {
           draggable: true,
           progress: undefined,
         });
-        setIsEditing(false); // Reset editing state
+        setIsEditing(false);
+        if(notify){
+          handleNotifyCheckbox(rentData);
+        } // Reset editing state
       }).catch(error => {
         toast.error("Error updating rent: " + error.message, {
           position: "top-center",
@@ -273,8 +321,14 @@ const RentPageGirls = () => {
       });
     }
 
+
     resetForm();
     setShowModal(false);
+
+    
+
+
+
   };
 
   //===> For Clear Form for Add Rents
@@ -494,6 +548,11 @@ const RentPageGirls = () => {
 
   const handleClosePopUp = () => {
     setShowModal(false);
+    setNotify(false)
+  }
+
+  const onClickCheckbox = () => {
+    setNotify(!notify)
   }
 
   return (
@@ -599,6 +658,21 @@ const RentPageGirls = () => {
                         onChange={e => setDueDate(e.target.value)}
                       />
                       {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
+                    </div>
+                    <div className="col-12 mb-3" >
+                      <div className="form-check">
+                        <input
+                          id="notifyCheckbox"
+                          className="form-check-input"
+                          type="checkbox"
+                          checked={notify}
+                          onChange={onClickCheckbox} // Toggle the state on change
+                        />
+                        <label className="form-check-label" htmlFor="notifyCheckbox">
+                          Notify
+                        </label>
+                        <FaWhatsapp style={{backgroundColor:'green',color:'white',marginLeft:'7px',marginBottom:'4px'}} />
+                      </div>
                     </div>
                     <div class="col-12 text-center mt-2">
                       <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>

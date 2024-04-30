@@ -275,9 +275,27 @@ const ExpensesGirls = () => {
     if (!editingExpense) return;
     const expenseRef = ref(database, `Hostel/girls/expenses/${editingExpense.id}`);
     remove(expenseRef).then(() => {
+      toast.success("Expense deleted successfully", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       setEditingExpense(null);
       // alert('Expense deleted!');
     }).catch(error => {
+      toast.error("Error deleting Expense" + error.message, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       console.error("Error deleting document: ", error);
       // alert('Error deleting expense!');
     });

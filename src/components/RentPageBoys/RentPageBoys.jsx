@@ -58,7 +58,7 @@ const RentPageBoys = () => {
 
    
     // Use web link for non-mobile devices
-    let whatsappLink = `https://web.whatsapp.com/send?phone=${formattedPhoneNumber}&text=${encodedMessage}`;
+    let whatsappLink = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
   
 
   // Open the WhatsApp link

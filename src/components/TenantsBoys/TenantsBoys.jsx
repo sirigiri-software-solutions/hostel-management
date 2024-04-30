@@ -10,6 +10,9 @@ import { DataContext } from '../../ApiData/ContextProvider'
 import { FetchData } from '../../ApiData/FetchData'
 import { onValue, remove, set, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { FaDownload } from "react-icons/fa";
+import { toast } from "react-toastify";
+
 
 const TenantsBoys = () => {
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -29,8 +32,8 @@ const TenantsBoys = () => {
   const [tenantImageUrl, setTenantImageUrl] = useState(''); // For the image URL from Firebase Storage
   const [tenantId, setTenantId] = useState(null);
   const [tenantIdUrl, setTenantIdUrl] = useState('');
-  const imageInputRef = useRef(null);
-  const idInputRef = useRef(null);
+  // const imageInputRef = useRef(null);
+  // const idInputRef = useRef(null);
   // const [boysRoomsData, setBoysRoomsData] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
@@ -38,10 +41,13 @@ const TenantsBoys = () => {
   const [userDetailsTenantPopup, setUserDetailsTenantsPopup] = useState(false);
   const [singleTenantDetails, setSingleTenantDetails] = useState(false);
   const [dueDateOfTenant, setDueDateOfTenant] = useState("");
+  const [singleTenantProofId,setSingleTenantProofId] = useState("");
 
   const [boysRooms, setBoysRooms] = useState([]);
   const [exTenants, setExTenants] = useState([]);
   const [showExTenants, setShowExTenants] = useState(false);
+
+  
 
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
@@ -100,13 +106,10 @@ const TenantsBoys = () => {
         if (data) {
           const boysTenantsData = Object.values(data.boys.tenants);
           setBoysTenants(boysTenantsData);
-
-
         } else {
           const apiData = await FetchData();
           const boysTenantsData = Object.values(apiData.boys.tenants);
-          setBoysTenants(boysTenantsData);
-
+          setBoysTenants(boysTenantsData)
         }
       } catch (error) {
         console.error('Error fetching tenants data:', error);
@@ -114,38 +117,6 @@ const TenantsBoys = () => {
     };
     fetchDataFromAPI();
   }, [data]);
-
-
-  // useEffect(() => {
-  //   const fetchDataFromAPI = async () => {
-  //     try {
-  //       if (data) {
-  //         const boysRoomsData = Object.values(data.boys.rooms);
-  //         setBoysRoomsData(boysRoomsData);
-  //       } else {
-  //         const apiData = await FetchData();
-  //         const boysRoomsData = Object.values(apiData.boys.rooms);
-  //         setBoysRoomsData(boysRoomsData);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching tenants data:', error);
-  //     }
-  //   };
-
-  //   fetchDataFromAPI();
-  // }, [data]);
-
-  // useEffect(() => {
-  //   if (selectedRoom) {
-  //     const room = boysRoomsData.find(room => room.roomNumber === selectedRoom);
-  //     if (room) {
-  //       const options = Array.from({ length: room.numberOfBeds }, (_, i) => i + 1);
-  //       setBedOptions(options);
-  //     }
-  //   } else {
-  //     setBedOptions([]);
-  //   }
-  // }, [selectedRoom, boysRoomsData]);
 
   const validate = () => {
     let tempErrors = {};
@@ -196,11 +167,18 @@ const TenantsBoys = () => {
       setTenantId(e.target.files[0]);
     }
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(!isEditing){
+    e.target.querySelector('button[type="submit"]').disabled = true;
+    if (!validate()) {
+      e.target.querySelector('button[type="submit"]').disabled = false;  
+      return
+    };
+  } else{
+    if(!validate()) return;
+  }
 
-    if (!validate()) return;
 
     let imageUrlToUpdate = tenantImageUrl;
 
@@ -241,19 +219,66 @@ const TenantsBoys = () => {
     };
 
     if (isEditing) {
-      await update(ref(database, `Hostel/boys/tenants/${currentId}`), tenantData);
+      await update(ref(database, `Hostel/boys/tenants/${currentId}`), tenantData).then(() => {
+        toast.success("Tenant updated successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }).catch(error => {
+        toast.error("Error update Tenant: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     } else {
-      await push(ref(database, 'Hostel/boys/tenants'), tenantData);
+      await push(ref(database, 'Hostel/boys/tenants'), tenantData).then(() => {
+        toast.success("Tenant added successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }).catch(error => {
+        toast.error("Error adding Tenant: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     }
     setShowModal(false);
 
     resetForm();
     setErrors({});
-    imageInputRef.current.value = "";
-    idInputRef.current.value = "";
+    // if (imageInputRef.current) {
+    //   imageInputRef.current.value = null;
+    // }
+    // if (idInputRef.current) {
+    //   idInputRef.current.value =null;
+    // }
+    
   };
 
   const handleEdit = (tenant) => {
+
+
 
     setSelectedRoom(tenant.roomNo);
     setSelectedBed(tenant.bedNo);
@@ -265,17 +290,18 @@ const TenantsBoys = () => {
     setStatus(tenant.status);
     setIsEditing(true);
     setCurrentId(tenant.id);
-    // setTenantImage(tenant.tenantImageUrl ? tenant.tenantImageUrl : null);
-    setTenantImageUrl(tenant.tenantImageUrl || ''); // Set the current image URL
+    setTenantImageUrl(tenant.tenantImageUrl);
     setTenantIdUrl(tenant.tenantIdUrl || '');
-    // setTenantId(tenant.tenantIdUrl ? tenant.tenantIdUrl : null);
-    imageInputRef.current.value = "";
-    idInputRef.current.value = "";
-    // Open the modal
+    
+    // imageInputRef.current.value = "";
+    // idInputRef.current.value = "";
 
     setShowModal(true);
 
   };
+  
+
+  
   const handleAddNew = () => {
     // Reset any previous data
     resetForm();
@@ -284,6 +310,7 @@ const TenantsBoys = () => {
     // Open the modal
     setShowModal(true);
     setUserDetailsTenantsPopup(false);
+    setTenantIdUrl('')
 
   };
 
@@ -309,18 +336,11 @@ const TenantsBoys = () => {
     setTenantIdUrl('');
   };
 
-
-
-  // ================================================
-
-
   // Filter tenants based on search query
-
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value)
 
   };
-
 
   const columns = [
     'S. No',
@@ -358,9 +378,11 @@ const TenantsBoys = () => {
       value.toString().toLowerCase().includes(searchQuery.toLowerCase())
     );
   });
-  
+
   const handleClosePopUp = () => {
     setShowModal(false);
+    setTenantIdUrl('')
+
   }
 
 
@@ -369,6 +391,8 @@ const TenantsBoys = () => {
     setUserDetailsTenantsPopup(true);
     setShowModal(false);
     setSingleTenantDetails(tenant);
+
+    
 
     const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
 
@@ -380,11 +404,17 @@ const TenantsBoys = () => {
     } else {
       console.log("Tenant with due date not found or due date is missing");
     }
-  };
+
+    if(singleUserDueDate && singleUserDueDate.tenantIdUrl){
+      setSingleTenantProofId(singleUserDueDate.tenantIdUrl)
+    } 
+};
 
   const tenantPopupClose = () => {
     setUserDetailsTenantsPopup(false);
     setDueDateOfTenant("")
+    setSingleTenantProofId("");
+    
   }
 
   //=====Vacate tenant ===========
@@ -398,7 +428,27 @@ const TenantsBoys = () => {
         // Write the data to the new location
         await set(newTenantRef, data);
         // Remove the data from the original location
-        await remove(tenantRef);
+        await remove(tenantRef).then(() => {
+          toast.success("Tenant Vacated", {
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }).catch(error => {
+          toast.error("Error Tenant Vacate " + error.message, {
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        });
         fetchExTenants()
       }
     }, {
@@ -408,8 +458,8 @@ const TenantsBoys = () => {
     setShowModal(false);
     resetForm();
     setErrors({});
-    imageInputRef.current.value = "";
-    idInputRef.current.value = "";
+    // imageInputRef.current.value = "";
+    // idInputRef.current.value = "";
   };
   const fetchExTenants = () => {
     const exTenantsRef = ref(database, 'Hostel/boys/extenants');
@@ -419,19 +469,20 @@ const TenantsBoys = () => {
       setExTenants(loadedExTenants);
     });
   };
-  useEffect(()=>{fetchExTenants()}, []);
+  useEffect(() => { fetchExTenants() }, []);
+  
   const exTenantRows = exTenants.map((tenant, index) => ({
     s_no: index + 1,
     image: tenant.tenantImageUrl,
-    name: tenant.name, // Assuming 'name' property exists in the fetched data
-    id: tenant.idNumber, // Assuming 'id' property exists in the fetched data
-    mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
-    room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
+    name: tenant.name, 
+    id: tenant.idNumber, 
+    mobile_no: tenant.mobileNo, 
+    room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, 
     joining_date: tenant.dateOfJoin,
     status: 'vaccated',
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
-      // onClick={() => handleEdit(tenant)}
+    // onClick={() => handleEdit(tenant)}
     // data-bs-toggle="modal"
     // data-bs-target="#exampleModalTenantsBoys"
     >
@@ -439,11 +490,10 @@ const TenantsBoys = () => {
     </button>
   }));
 
-  const showExTenantsData = ()=>{
+  const showExTenantsData = () => {
     setShowExTenants(!showExTenants)
   }
-  console.log("exTenants", exTenants)
-  
+
   return (
     <>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
@@ -453,26 +503,23 @@ const TenantsBoys = () => {
           </div>
           <h1 className='fs-5'>Tenants Management</h1>
         </div>
-        <div className="col-6 col-md-4 search-wrapper">
+        <div className="col-5 col-md-4 search-wrapper">
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={handleSearchChange} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
-        <div className="col-6 col-md-4 d-flex justify-content-end">
-          {showExTenants?'':<button type="button" class="add-button" onClick={()=>{handleAddNew()}} >
+        <div className="col-7 col-md-4 d-flex justify-content-end gap-2">
+          {showExTenants ? '' : <button type="button" class="add-button tenantaddBtn" onClick={() => { handleAddNew() }} >
             Add Tenants
           </button>}
-          
           {showExTenants ? <button type="button" class="add-button" onClick={showExTenantsData} >
             Present-Tenants
-          </button>:<button type="button" class="add-button" onClick={showExTenantsData} >
-            Ex-Tenants
+          </button> : <button type="button" class="add-button tenantaddBtn" onClick={showExTenantsData} >
+            Vacated
           </button>}
-          
         </div>
       </div>
       <div>
-        {showExTenants? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
-        
+        {showExTenants ? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
       </div>
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
         <div class="modal-dialog">
@@ -562,7 +609,6 @@ const TenantsBoys = () => {
                       <option value="occupied">Occupied</option>
                       <option value="unoccupied">Unoccupied</option>
                     </select>
-
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantUpload' class="form-label">
@@ -574,44 +620,44 @@ const TenantsBoys = () => {
                         <p>Current Image</p>
                       </div>
                     )}
-                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required />
+                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
                     {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
-                  <div class="col-md-6">
-                    <label htmlFor='tenantUploadId' class="form-label">
+                 <div className="col-md-6">
+                    <label htmlFor='tenantUploadId' className="form-label">
                       Upload Id:
                     </label>
                     {isEditing && tenantIdUrl && (
-                      <object
-                        data={tenantIdUrl}
-                        type="application/pdf"
-                        width="50%"
-                        height="200px"
-                      >
-                        <a href={tenantIdUrl}>Download PDF</a>
-                      </object>
-                    )}
-                    <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
-
-                  </div>
-                  {/* ===== */}
-                  <div class="col-md-6">
-                    <label for="file-upload" class="custom-file-upload">
-                      {/* <i class="fa fa-cloud-upload"></i> */}
-                      {/* <MdUploadFile /> */}
-                    </label>
-                    <input id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
-                  </div>
-
-                  {/* =============== */}
-                  <div className='col-12 text-center'>
-                    {isEditing ? (
                       <div>
+                        <object
+                          data={tenantIdUrl}
+                          type="application/pdf"
+                          width="100%"
+                          height="133px"
+                        >
+                          {/* Anchor tag for downloading the PDF */}
+                           
+                        </object>
+                      </div>
+                    )}
+                    {/* Show input for uploading ID only if not editing or tenantIdUrl doesn't exist */}
+                    
+                      <input id="tenantUploadId" className="form-control" type="file" onChange={handleTenantIdChange} />
+                    
+                  </div> 
+
+
+                  
+                  
+                  {/* =============== */}
+                  <div className='col-12 text-center mt-3'>
+                    {isEditing ? (
+                      <div className="d-flex justify-content-center gap-2">
                         <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Tenant</button>
                         <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
                       </div>
                     ) : (
-                      <button className="btn btn-warning" type="submit">Add Tenant</button>
+                      <button  className="btn btn-warning" type="submit">Add Tenant</button>
                     )}
                   </div>
                 </form>
@@ -620,35 +666,45 @@ const TenantsBoys = () => {
           </div>
         </div>
       </div>
-      {userDetailsTenantPopup &&
-        <div className='userDetailsTenantPopup'>
-          <div className='tenants-dialog-container'>
-            <h1 className="tenants-popup-heading">Tenant Details </h1>
-            <div className='tenants-popup-mainContainer'>
-              <div className='tenants-profile-container'>
-                <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
-              </div>
-              <div className='tenants-popup-detailsContainer'>
-                <p><strong>Name :</strong> {singleTenantDetails.name}</p>
-                <p><strong>Mobile No :</strong> {singleTenantDetails.mobile_no}</p>
-                <p><strong>Proof ID :</strong> {singleTenantDetails.id}</p>
-                <p><strong>Room/Bed No :</strong> {singleTenantDetails.room_bed_no}</p>
-                <p><strong>Joining Date :</strong> {singleTenantDetails.joining_date}</p>
-                <p><strong>Due Date :</strong> {dueDateOfTenant}</p>
-              </div>
-            </div>
-            <div className='popup-tenants-closeBtn'>
-              <button className='btn btn-warning' onClick={tenantPopupClose}>Close</button>
-            </div>
+
+     
+
+      {userDetailsTenantPopup && 
+      <div className='userDetailsTenantPopup'>
+        <div className='tenants-dialog-container'>
+          <h1 className="tenants-popup-heading">Tenant Details </h1>
+          <div className='tenants-popup-mainContainer'>
+            <div className='tenants-profile-container'>
+             <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
+             </div>
+             <div className='tenants-popup-detailsContainer'>
+                 <p><strong>Name :</strong> {singleTenantDetails.name}</p>
+                  <p><strong>Mobile No :</strong> {singleTenantDetails.mobile_no}</p>
+                  <p><strong>Proof ID :</strong> {singleTenantDetails.id}</p>
+                  <p><strong>Room/Bed No :</strong> {singleTenantDetails.room_bed_no}</p>
+                  <p><strong>Joining Date :</strong> {singleTenantDetails.joining_date}</p>
+                  <p><strong>Due Date :</strong> {dueDateOfTenant}</p>
+                  <p><strong>ID Proof:</strong>
+                    {singleTenantProofId ? (
+                      <a className='downloadPdfText' href={singleTenantProofId} download> <FaDownload /> Download PDF</a>
+                    ) : (
+                      <span className='NotUploadedText'> Not Uploaded</span>
+                    )}
+                  </p>
+             </div>
+          </div>
+          <div className='popup-tenants-closeBtn'>
+          <button className='btn btn-warning' onClick={tenantPopupClose}>Close</button>
           </div>
         </div>
-
+      </div>
       }
 
 
 
     </>
-  )
+  );
+
 }
 
 export default TenantsBoys;

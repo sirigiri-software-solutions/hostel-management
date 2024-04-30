@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react'
-import DashboardImage from '../../images/Icons (1).png'
+import DashboardImage from '../../images/Icons (11).png'
 import RoomsImage from '../../images/Icons (2).png'
 import BedsImage from '../../images/Icons (3).png'
 import TenantsImage from '../../images/Icons (4).png'
 import Admin from '../../images/Icons.png';
 import ExpensesImage from '../../images/Icons (5).png'
 import RentImage from '../../images/Icons (6).png'
-//import SettingsImage from '../../images/Icons (7).png'
-import logo from '../../images/Kiran Reddy Boys Hostel 1.png'
+import SettingsImage from '../../images/Icons (7).png'
+import logo from "../../images/image.png"
 import './MainPage.css'
 import '../../Sections/Dashboard/Dashboard.css'
 import Dashboard from '../../Sections/Dashboard/Dashboard'
@@ -32,6 +32,7 @@ const MainPage = () => {
     console.log(data && data);
   }
   console.log("end");
+
   const menuItems = [
     {
       id: 1,
@@ -195,10 +196,13 @@ const MainPage = () => {
         <div className='top-section' >
           <img src={logo} alt="logo" className='logo' />
         </div>
-        <div className='nav-div' onClick={toggleModal}>
+        <div className='nav-div' >
           <img src={Admin} alt="admin" className='mbl-dashboard-icon' />
           <h1 className='mb-dashboard-name'>{name}</h1>
-        </div>
+          <div className='logoutButton' onClick={toggleModal}>
+              <RiLogoutCircleRLine />
+            </div>
+        </div>    
         <div style={sidebarItems}>
           {
             menuItems.map((item, index) => (
@@ -272,10 +276,10 @@ const MainPage = () => {
 
       <div style={rightSectionMainContainer} >
         <div>
-          <div className='top-div' onClick={toggleModal}>
+          <div className='top-div' >
             <img src={Admin} alt="admin" className='dashboard-icon' />
             <h1 className='dashboard-heading'>{name}</h1>
-            <div className='logoutButton'>
+            <div className='logoutButton' onClick={toggleModal}>
               <RiLogoutCircleRLine />
             </div>
           </div>
@@ -286,12 +290,13 @@ const MainPage = () => {
               </div>
               <p>Are you sure you want to logout?</p>
               <button onClick={logout} className="logout-button">Logout</button>
-              <br /><br />
-              <button onClick={toggleModal}>Close</button>
+              
+              <button className='logout-closeBtn' onClick={toggleModal}>Close</button>
             </div>
           )}
         </div>
-        {Components && Components.map((item, index) => <div key={index} style={flag === index + 1 ? { display: 'block' } : { display: 'none' }}>
+        {Components && Components.map((item, index) =>
+         <div key={index} style={flag === index + 1 ? { display: 'block' } : { display: 'none' }}>
           {item}
         </div>)}
 

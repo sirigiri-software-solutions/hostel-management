@@ -20,6 +20,9 @@
 
     }
 }
+.top-section{
+    text-align:center;
+}
 
 .nav-div {
     display: none;
@@ -110,6 +113,7 @@
     border: 1px solid #333333;
     cursor: pointer;
   }
+
   
 @media screen and (max-width:400px) {
     .popup {
@@ -122,4 +126,18 @@
     font-size: 30px;
     font-weight: 800;
    cursor: pointer;
+}
+.logout-button{
+    background-color:#ff8a00;
+    color:white;
+}
+.logout-button:hover{
+    background-color:red;
+}
+.logout-closeBtn{
+    background-color:#ff8a00;
+    color:white;
+}
+.logout-closeBtn:hover{
+    background-color: #ffa135; 
 }

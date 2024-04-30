@@ -7,6 +7,8 @@ import { useState } from 'react'
 import { DataContext } from '../../ApiData/ContextProvider';
 import { onValue, update } from 'firebase/database';
 import "../RoomsBoys/RoomsBoys.css"
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const RentPageBoys = () => {
 
@@ -149,9 +151,10 @@ const RentPageBoys = () => {
   const loadRentForEditing = (tenantId, rentId) => {
     const tenant = tenantsWithRents.find(t => t.id === tenantId);
     const rentRecord = tenant.rents.find(r => r.id === rentId);
+    
 
     if (rentRecord) {
-      setSelectedTenant(tenantId);
+      setSelectedTenant(tenantId || '');
       setRoomNumber(rentRecord.roomNumber || '');
       setBedNumber(rentRecord.bedNumber || '');
       setTotalFee(rentRecord.totalFee || '');
@@ -163,6 +166,7 @@ const RentPageBoys = () => {
       setEditingRentId(rentId);
     }
     setShowModal(true);
+    // console.log(selectedTenant)
   };
 
   const validateForm = () => {
@@ -221,14 +225,55 @@ const RentPageBoys = () => {
     if (isEditing) {
       // Update the existing rent record
       const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents/${editingRentId}`);
-      await update(rentRef, rentData);
+      await update(rentRef, rentData).then(() => {
+        toast.success("Rent updated successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setIsEditing(false); // Reset editing state
+      }).catch(error => {
+        toast.error("Error updating rent: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     } else {
       // Create a new rent record
       const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents`);
-      await push(rentRef, rentData);
+      await push(rentRef, rentData).then(() => {
+        toast.success("Rent added successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setIsEditing(false); // Reset editing state
+      }).catch(error => {
+        toast.error("Error adding rent: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     }
     setShowModal(false);
-
     resetForm();
 
   };
@@ -256,126 +301,12 @@ const RentPageBoys = () => {
     setErrors({});
   };
 
-  // let rentsData = [];
-  // if (data !== null && data !== undefined && data.boys && data.boys.tenants) {
-  //   // console.log(data,"know data")
-  //   const rentsBoysData = data.boys.tenants;
-  //   // console.log(rentsBoysData,"fetched all data")
-  //   // console.log(Object.values(rentsBoysData),"eachData")
-  //   for(let each of Object.values(rentsBoysData)){
-  //     if(each.rents !== undefined){
-  //     //   rentsData = Object.values(rentsBoysData).map(entry => Object.values(entry.rents))
-  //          rentsData.push(Object.values(each.rents));
-  //     //   console.log(rentsData,"see")
-  //     }
-  //     // console.log(each.rents,"rentsDefined")
-  //   }
-  // } else {
-  //   console.error("Data structure mismatch or data is not available:", data);
-  // }
-
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
 
 
-
-  //   const extractedData = rentsBoysData.map(obj => {
-  //     const [userId, userData] = Object.entries(obj)[0]; // Destructure the first entry to get userId and userData
-  //     const { userId: _, ...dataWithoutUserId } = userData; // Exclude userId from userData
-  //     return dataWithoutUserId;
-  // });
-
-  // console.log("singleUserData");
-  // console.log(extractedData);
-  // console.log("singleUserData")
-
-
-
-
-
-
-  // const [formData, setFormData] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: ''
-  // });
-
-  // const [formErrors, setFormErrors] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: ''
-  // });
-
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: value
-  //   });
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   let errors = {};
-  //   let formIsValid = true;
-
-  //   // Basic validation for required fields
-  //   if (!formData.number) {
-  //     errors.number = 'Number is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rent) {
-  //     errors.rent = 'Rent is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rooms) {
-  //     errors.rooms = 'Rooms is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.status) {
-  //     errors.status = 'Status is required';
-  //     formIsValid = false;
-  //   }
-
-  //   // If form is valid, proceed with submission
-  //   if (formIsValid) {
-  //     // console.log('Form submitted successfully:', formData);
-  //     const newData = {
-  //       number: formData.number,
-  //       rent: formData.rent,
-  //       rooms: formData.rooms,
-  //       status: formData.status
-  //     };
-
-  //     // Push the new data to the 'beds' node
-  //     push(ref(database, 'beds'), newData)
-  //       .then(() => {
-  //         // Data successfully stored in Firebase
-  //         // console.log('Data successfully stored in Firebase');
-  //         // Clear the form after submission if needed
-  //         setFormData({
-  //           number: '',
-  //           rent: '',
-  //           rooms: '',
-  //           status: ''
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         // Handle errors
-  //         // console.error('Error storing data in Firebase: ', error.message);
-  //       });
-  //   } else {
-  //     // Set errors for form validation
-  //     setFormErrors(errors);
-  //   }
-  // };
   const columns = [
     'S. No',
     'Room.No',
@@ -383,6 +314,8 @@ const RentPageBoys = () => {
     'Person Mobile',
     'Bed No',
     'Rent',
+    'paid',
+    'due',
     'Joining Date',
     'Due Date',
     'Last Fee',
@@ -397,6 +330,8 @@ const RentPageBoys = () => {
     mobileNo: tenant.mobileNo,
     bedNumber: rent.bedNumber,
     totalFee: rent.totalFee,
+    paid:rent.paidAmount,
+    due:rent.due,
     dateOfJoin: tenant.dateOfJoin,
     dueDate: rent.dueDate,
     paidDate: rent.paidDate,
@@ -413,6 +348,8 @@ const RentPageBoys = () => {
     person_mobile: rent.mobileNo,
     bed_no: rent.bedNumber,
     rent: "Rs. " + rent.totalFee,
+    paid: rent.paid,
+    due:rent.due,
     joining_date: rent.dateOfJoin,
     due_date: rent.dueDate,
     last_fee: rent.paidDate,
@@ -497,11 +434,23 @@ const RentPageBoys = () => {
                 <div className="container-fluid">
                   <form class="row lg-10" onSubmit={handleSubmit}>
                     <div class='col-12 mb-3'>
-                      <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)}>
+                      <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}> 
                         <option value="">Select a Tenant *</option>
-                        {availableTenants.map(tenant => (
+                        {/* {availableTenants.map(tenant => (
                           <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
-                        ))}
+                        ))} */}
+
+{isEditing ? (
+    <option key={selectedTenant} value={selectedTenant}>{tenantsWithRents.find(tenant => tenant.id === selectedTenant)?.name}</option>
+  ) : (
+    availableTenants.map(tenant => (
+      <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+    ))
+  )}
+
+
+
+
                       </select>
                       {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                     </div>

@@ -59,7 +59,7 @@ const RentPageGirls = () => {
 
    
     // Use web link for non-mobile devices
-    let whatsappLink = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    let whatsappLink = `https://wa.me/${formattedPhoneNumber}?text=${encodedMessage}`;
   
 
   // Open the WhatsApp link

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import TenantsBoys from './TenantsBoys';
 
+
 const CreateTenantsBoys = () => {
   const [showCreateTenantsBoys, setShowCreateTenantsBoys] = useState(false);
   const [errors, setErrors] = useState({});
+
 
   const toggleCreateTenantsBoys = () => {
     setShowCreateTenantsBoys(!showCreateTenantsBoys);

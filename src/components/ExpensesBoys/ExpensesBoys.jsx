@@ -6,6 +6,7 @@ import { database, push, ref } from "../../firebase";
 import { onValue } from 'firebase/database';
 //import ImageIcon from '../../images/Icons (10).png'
 import { remove, update, set } from 'firebase/database';
+import { toast } from "react-toastify";
 
 const ExpensesBoys = () => {
 
@@ -49,13 +50,13 @@ const ExpensesBoys = () => {
       errors.expenseName = 'Expense name should contain only alphabets and spaces';
       formIsValid = false;
     }
-    
-  
+
+
     if (!formData.expenseAmount.match(/^\d+(\.\d{1,2})?$/)) {
       errors.expenseAmount = 'Expense amount should be a valid number';
       formIsValid = false;
     }
-  
+
 
     if (!formData.expenseName) {
       errors.expenseName = 'Expense name is required';
@@ -79,32 +80,41 @@ const ExpensesBoys = () => {
         ...formData,
         expenseAmount: parseFloat(formData.expenseAmount),
         expenseDate: new Date(formData.expenseDate).toISOString() // Proper ISO formatting
-      })
-        .then(() => {
-          // alert('Expense added!');
-          // Reset form or other UI updates here
-          setFormData({
-            expenseName: '',
-            expenseAmount: '',
-            expenseDate: '',
-            createdBy: 'admin'
-          });
-        })
-        .catch(error => {
-          console.error("Error adding document: ", error);
-          // alert('Error adding expense!');
+      }).then(() => {
+        toast.success("Expense added successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         });
-        setShowModal(false);
-        setFormErrors({number: '',
+        // setIsEditing(false); // Reset editing state
+      }).catch(error => {
+        toast.error("Error adding expense: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
+      setShowModal(false);
+      setFormErrors({
+        number: '',
         rent: '',
         rooms: '',
-        status: ''});
+        status: ''
+      });
     } else {
       // Set errors in state if form is not valid
       setFormErrors(errors);
     }
 
-    
+
   };
 
   //for date format
@@ -152,8 +162,8 @@ const ExpensesBoys = () => {
       edit_room: <button
         style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
         onClick={() => handleEdit(expense)}
-        // data-bs-toggle="modal"
-        // data-bs-target="#exampleModalExpensesBoys"
+      // data-bs-toggle="modal"
+      // data-bs-target="#exampleModalExpensesBoys"
       >
         Edit
       </button>
@@ -167,7 +177,7 @@ const ExpensesBoys = () => {
     // console.log(expense.expenseDate,"data was formated")
     const [day, month, year] = expense.expenseDate.split('-');
     const formattedDate = `${year}-${month}-${day}`;
-    console.log(formattedDate,"data was foramted")
+    // console.log(formattedDate, "data was foramted")
     setFormData({
       expenseName: expense.expenseName,
       expenseAmount: expense.expenseAmount,
@@ -177,9 +187,9 @@ const ExpensesBoys = () => {
     setShowModal(true);
     setFormErrors({
       number: '',
-    rent: '',
-    rooms: '',
-    status: ''
+      rent: '',
+      rooms: '',
+      status: ''
     })
   };
 
@@ -209,54 +219,76 @@ const ExpensesBoys = () => {
 
   const handleUpdate = () => {
     if (!editingExpense) return;
-  
+
     let errors = {};
     let formIsValid = true;
-  
+
     if (!formData.expenseName.match(/^[a-zA-Z\s]+$/)) {
       errors.expenseName = 'Expense name should contain only alphabets and spaces';
       formIsValid = false;
     }
-    
-  
+
+
     const expenseAmountString = String(formData.expenseAmount); // Convert to string
     if (!expenseAmountString.match(/^\d+(\.\d{1,2})?$/)) {
       errors.expenseAmount = 'Expense amount should be a valid number';
       formIsValid = false;
     }
-  
-  
+
+
     if (!formData.expenseDate) {
       errors.expenseDate = 'Expense date is required';
       formIsValid = false;
     }
-  
+
     const parsedAmount = parseFloat(formData.expenseAmount);
     if (isNaN(parsedAmount)) {
       errors.expenseAmount = 'Expense amount should be a valid number';
       formIsValid = false;
     }
-  
+
     // Log the value of formData.expenseDate before conversion
-    console.log('Expense Date:', formData.expenseDate);
-  
+    // console.log('Expense Date:', formData.expenseDate);
+
     if (formIsValid) {
       let updatedFormData = {
         ...formData,
         expenseAmount: parseFloat(formData.expenseAmount)
       };
-  
+
       const expenseRef = ref(database, `Hostel/boys/expenses/${editingExpense.id}`);
       set(expenseRef, updatedFormData)
-        .then(() => {
-          setEditingExpense(null);
-          // alert('Expense updated!');
-        })
-        .catch(error => {
-          console.error("Error updating document: ", error);
-          // alert('Error updating expense!');
+      .then(() => {
+        toast.success("Expense updated successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         });
-  
+        setEditingExpense(null); 
+      }).catch(error => {
+        toast.error("Error updating Expense: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
+        // .then(() => {
+          
+        //   // alert('Expense updated!');
+        // })
+        // .catch(error => {
+        //   console.error("Error updating document: ", error);
+        //   // alert('Error updating expense!');
+        // });
+
       setShowModal(false);
       setFormData({
         expenseName: '',
@@ -269,21 +301,36 @@ const ExpensesBoys = () => {
       setFormErrors(errors);
     }
   };
-  
-  
-  
-  
+
+
+
+
 
   const handleDelete = () => {
     if (!editingExpense) return;
     const expenseRef = ref(database, `Hostel/boys/expenses/${editingExpense.id}`);
     remove(expenseRef).then(() => {
-      setEditingExpense(null);
-      // alert('Expense deleted!');
-    }).catch(error => {
-      console.error("Error deleting document: ", error);
-      // alert('Error deleting expense!');
-    });
+        toast.success("Expense deleted successfully", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setEditingExpense(null); 
+      }).catch(error => {
+        toast.error("Error deleting Expense" + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     setShowModal(false);
     setFormData({
       expenseName: '',
@@ -302,9 +349,9 @@ const ExpensesBoys = () => {
       value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
-  console.log("==>expense==>", expenses)
 
- 
+
+
   const handleAddNew = () => {
     setShowModal(true);
     setFormData({
@@ -320,18 +367,18 @@ const ExpensesBoys = () => {
     });
     setEditingExpense(null);
   };
-  
 
-  const handleCLoseModal = ()=>{
+
+  const handleCLoseModal = () => {
     setShowModal(false);
-  
-      setFormData({
-        expenseName: '',
-        expenseAmount: '',
-        expenseDate: '',
-        createdBy: 'admin'
-      });
-  
+
+    setFormData({
+      expenseName: '',
+      expenseAmount: '',
+      expenseDate: '',
+      createdBy: 'admin'
+    });
+
   }
 
   // const handleCreateFunction = () => {
@@ -373,36 +420,36 @@ const ExpensesBoys = () => {
               <div class="modal-body">
                 <div className="container-fluid">
                   <form className="row g-3" onSubmit={handleSubmit}>
-                  <div className="col-md-6">
-  <label htmlFor="inputExpenseName" className="form-label">Expense Name</label>
-  <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} />
-  {formErrors.expenseName && <div className="text-danger">{formErrors.expenseName}</div>}
-</div>
-<div className="col-md-6">
-  <label htmlFor="inputRent" className="form-label">Expense amount</label>
-  <input type="number"   className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} />
-  {formErrors.expenseAmount && <div className="text-danger">{formErrors.expenseAmount}</div>}
-</div>
-<div className="col-md-6">
-  <label htmlFor="inputRole" className="form-label">Created By</label>
-  <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
-    <option value="admin">Admin</option>
-    <option value="sub-admin">Sub-admin</option>
-  </select>
-</div>
-<div className="col-md-6">
-  <label htmlFor="inputDate" className="form-label">Expense Date</label>
-  <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
-  {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
-</div>
+                    <div className="col-md-6">
+                      <label htmlFor="inputExpenseName" className="form-label">Expense Name</label>
+                      <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} />
+                      {formErrors.expenseName && <div className="text-danger">{formErrors.expenseName}</div>}
+                    </div>
+                    <div className="col-md-6">
+                      <label htmlFor="inputRent" className="form-label">Expense amount</label>
+                      <input type="number" className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} />
+                      {formErrors.expenseAmount && <div className="text-danger">{formErrors.expenseAmount}</div>}
+                    </div>
+                    <div className="col-md-6">
+                      <label htmlFor="inputRole" className="form-label">Created By</label>
+                      <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
+                        <option value="admin">Admin</option>
+                        <option value="sub-admin">Sub-admin</option>
+                      </select>
+                    </div>
+                    <div className="col-md-6">
+                      <label htmlFor="inputDate" className="form-label">Expense Date</label>
+                      <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
+                      {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
+                    </div>
 
                     <div className="col-12 text-center">
                       {!editingExpense && (
-                        <button  type="submit" className="btn btn-warning">Create</button>
+                        <button type="submit" className="btn btn-warning">Create Expense</button>
                       )}
                       {editingExpense && (
                         <>
-                          <button type="button" className="btn btn-success" style={{ marginRight: '10px' }}  onClick={handleUpdate}>Update Expense</button>
+                          <button type="button" className="btn btn-success" style={{ marginRight: '10px' }} onClick={handleUpdate}>Update Expense</button>
                           <button type="button" className="btn btn-danger" onClick={handleDelete}>Delete Expense</button>
                         </>
                       )}

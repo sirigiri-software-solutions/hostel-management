@@ -6,6 +6,8 @@ import Table from '../../Elements/Table';
 import { database, push, ref } from "../../firebase";
 import { DataContext } from "../../ApiData/ContextProvider"
 import { onValue, remove, update } from 'firebase/database';
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const RoomsBoys = () => {
 
@@ -76,8 +78,28 @@ const RoomsBoys = () => {
         bedRent,
         createdBy,
         updateDate: now
+      }).then(() => {
+        toast.success("Room updated successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setIsEditing(false); // Reset editing state
+      }).catch(error => {
+        toast.error("Error updating room: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       });
-      setIsEditing(false); // Reset editing state
     } else {
       const roomsRef = ref(database, 'Hostel/boys/rooms');
       push(roomsRef, {
@@ -87,8 +109,30 @@ const RoomsBoys = () => {
         bedRent,
         createdBy,
         updateDate: now
+      }).then(() => {
+        toast.success("Room added successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }).catch(error => {
+        toast.error("Error adding room: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       });
     }
+  
+    
 
     // Close the modal
     setShowModal(false);
@@ -219,7 +263,6 @@ const resetForm = () => {
       value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
-  console.log("data==>",filteredRows)
   return (
     <div className='h-100'>
       <>

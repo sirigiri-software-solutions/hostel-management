@@ -273,13 +273,10 @@ const TenantsBoys = () => {
     // if (idInputRef.current) {
     //   idInputRef.current.value =null;
     // }
-    
+
   };
 
   const handleEdit = (tenant) => {
-
-
-
     setSelectedRoom(tenant.roomNo);
     setSelectedBed(tenant.bedNo);
     setDateOfJoin(tenant.dateOfJoin);
@@ -339,7 +336,6 @@ const TenantsBoys = () => {
   // Filter tenants based on search query
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value)
-
   };
 
   const columns = [

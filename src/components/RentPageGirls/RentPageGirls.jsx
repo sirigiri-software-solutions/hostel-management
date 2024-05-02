@@ -9,7 +9,7 @@ import { onValue, update } from 'firebase/database';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FaWhatsapp } from "react-icons/fa";
-
+import "../../App.css"
 const RentPageGirls = () => {
   const { data } = useContext(DataContext);
   // console.log(data && data, 'rentsBoysApi')
@@ -35,46 +35,47 @@ const RentPageGirls = () => {
   const [showModal, setShowModal] = useState(false);
 
   const [notify, setNotify] = useState(false);
-  const [notifyUserInfo,setNotifyUserInfo] = useState(null);
+  const [notifyUserInfo, setNotifyUserInfo] = useState(null);
+  const [showForm, setShowForm] = useState(true);
 
 
-   // Function to send WhatsApp message
-   const sendMessage = (tenant, rentRecord) => {
-    console.log(rentRecord,"RentRecordUpdating")
+  // Function to send WhatsApp message
+  const sendMessage = (tenant, rentRecord) => {
+    console.log(rentRecord, "RentRecordUpdating")
     const totalFee = rentRecord.totalFee;
     const tenantName = tenant.name;
-  const amount = rentRecord.due;
-  const dateOfJoin = tenant.dateOfJoin;
-  const dueDate = rentRecord.dueDate;
-  const paidAmount = rentRecord.paidAmount;
+    const amount = rentRecord.due;
+    const dateOfJoin = tenant.dateOfJoin;
+    const dueDate = rentRecord.dueDate;
+    const paidAmount = rentRecord.paidAmount;
 
-  const message = `Hi ${tenantName},\nHope you are doing fine!,\nYour total fee is ${totalFee},\n You paid ${paidAmount}\nYour due amount is ${amount}.\nYou joined on ${dateOfJoin}, and your due date is ${dueDate}.`;
+    const message = `Hi ${tenantName},\nHope you are doing fine!,\nYour total fee is ${totalFee},\n You paid ${paidAmount}\nYour due amount is ${amount}.\nYou joined on ${dateOfJoin}, and your due date is ${dueDate}.`;
 
-  const phoneNumber = tenant.mobileNo; // Replace with the recipient's phone number
+    const phoneNumber = tenant.mobileNo; // Replace with the recipient's phone number
 
-  // Check if the phone number starts with '+91' (India's country code)
-  const formattedPhoneNumber = phoneNumber.startsWith('+91') ? phoneNumber : `+91${phoneNumber}`;
+    // Check if the phone number starts with '+91' (India's country code)
+    const formattedPhoneNumber = phoneNumber.startsWith('+91') ? phoneNumber : `+91${phoneNumber}`;
 
-  const encodedMessage = encodeURIComponent(message);
+    const encodedMessage = encodeURIComponent(message);
 
-   
+
     // Use web link for non-mobile devices
     let whatsappLink = `https://wa.me/${formattedPhoneNumber}?text=${encodedMessage}`;
-  
 
-  // Open the WhatsApp link
-  window.open(whatsappLink, '_blank');
+
+    // Open the WhatsApp link
+    window.open(whatsappLink, '_blank');
   };
 
   // Event handler for the notify checkbox
   const handleNotifyCheckbox = (rentData) => {
-   // Toggle the state of the notify checkbox
+    // Toggle the state of the notify checkbox
     if (notify && notifyUserInfo) {
       const { tenant, rentRecord } = notifyUserInfo;
-      console.log(tenant,"InNotify")
+      console.log(tenant, "InNotify")
       sendMessage(tenant, rentData); // If checkbox is checked and tenant info is available, send WhatsApp message
     }
-    setNotify(!notify); 
+    setNotify(!notify);
   };
 
 
@@ -280,7 +281,7 @@ const RentPageGirls = () => {
           progress: undefined,
         });
         setIsEditing(false);
-        if(notify){
+        if (notify) {
           handleNotifyCheckbox(rentData);
         } // Reset editing state
       }).catch(error => {
@@ -325,7 +326,7 @@ const RentPageGirls = () => {
     resetForm();
     setShowModal(false);
 
-    
+
 
 
 
@@ -476,22 +477,22 @@ const RentPageGirls = () => {
     'Status',
     'update'
   ];
-  
+
   const rentsRows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map((rent) => ({
     roomNumber: rent.roomNumber,
     name: tenant.name,
     mobileNo: tenant.mobileNo,
     bedNumber: rent.bedNumber,
-    totalFee:  rent.totalFee,
-    paid : rent.paidAmount,
-    due : rent.due,
+    totalFee: rent.totalFee,
+    paid: rent.paidAmount,
+    due: rent.due,
     dateOfJoin: tenant.dateOfJoin,
     dueDate: rent.dueDate,
     paidDate: rent.paidDate,
-    status:rent.status==='Unpaid' ? 'Unpaid' : 'Paid',
+    status: rent.status === 'Unpaid' ? 'Unpaid' : 'Paid',
     tenantId: tenant.id,
     rentId: rent.id,
-    })))
+  })))
 
   const rows = rentsRows.map((rent, index) => ({
     s_no: index + 1,
@@ -500,20 +501,21 @@ const RentPageGirls = () => {
     person_mobile: rent.mobileNo,
     bed_no: rent.bedNumber,
     rent: "Rs. " + rent.totalFee,
-    paid : rent.paid,
+    paid: rent.paid,
     due: rent.due,
     joining_date: rent.dateOfJoin,
     due_date: rent.dueDate,
     last_fee: rent.paidDate,
     status: rent.status === 'Unpaid' ? 'Unpaid' : 'Paid',
     actions: <button
-    style={{ backgroundColor: '#ff8a00', padding:'4px', borderRadius: '5px', color: 'white', border: 'none', }}
-    onClick={() => loadRentForEditing(rent.tenantId, rent.rentId)}
+      style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
+      onClick={() => {loadRentForEditing(rent.tenantId, rent.rentId);  setShowForm(true)}}
+    
     // data-bs-toggle="modal"
     // data-bs-target="#exampleModalRGirls"
-  >
-    update
-  </button>,
+    >
+      update
+    </button>,
   }));
 
   // const flatRentsData = rentsData.flat();
@@ -572,7 +574,7 @@ const RentPageGirls = () => {
             <img src={SearchIcon} alt="search-icon" className='search-icon' />
           </div>
           <div className="col-6 col-md-4 d-flex justify-content-end">
-            <button type="button" class="add-button"  onClick={handleAddNew} >
+            <button type="button" class="add-button" onClick={handleAddNew} >
               Add Rents
             </button>
           </div>
@@ -582,105 +584,206 @@ const RentPageGirls = () => {
           <Table columns={columns} rows={filteredRows} />
         </div>
 
-        <div class={`modal fade ${showModal ? 'show' : ''}`} style={{display : showModal ? 'block' : 'none'}} id="exampleModalRentsGirls"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
+        <div class={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalRentsGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Create Rents</h1>
-                <button onClick={handleClosePopUp}  type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button onClick={handleClosePopUp} type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <div className="container-fluid">
-                  <form class="row lg-10" onSubmit={handleSubmit}>
-                    <div class='col-12 mb-3'>
-                      <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
-                        <option value="">Select a Tenant *</option>
-                        {/* {availableTenants.map(tenant => (
+                  <div className='monthlyDailyButtons'>
+                    <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(true)}>
+                      <text>Monthly</text>
+                    </div>
+                    <div className={!showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(false)}>
+                      <text>Daily</text>
+                    </div>
+                  </div>
+                  {showForm ?
+                    <div className='monthlyAddForm'>
+                      <form class="row lg-10" onSubmit={handleSubmit}>
+                        <div class='col-12 mb-3'>
+                          <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
+                            <option value="">Select a Tenant *</option>
+                            {/* {availableTenants.map(tenant => (
                           <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
                         ))} */}
 
-{isEditing ? (
-    <option key={selectedTenant} value={selectedTenant}>{tenantsWithRents.find(tenant => tenant.id === selectedTenant)?.name}</option>
-  ) : (
-    availableTenants.map(tenant => (
-      <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
-    ))
-  )}
+                            {isEditing ? (
+                              <option key={selectedTenant} value={selectedTenant}>{tenantsWithRents.find(tenant => tenant.id === selectedTenant)?.name}</option>
+                            ) : (
+                              availableTenants.map(tenant => (
+                                <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+                              ))
+                            )}
 
 
-                      </select>
-                      {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
+                          </select>
+                          {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                          <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                          <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                          <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                          <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
+                          {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor="Due" class="form-label">Due:</label>
+                          <input id="Due" class="form-control" type="number" value={due} readOnly />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                          <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
+                          />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                          <input
+                            id="PaidDate"
+                            class="form-control"
+                            type="date"
+                            value={paidDate}
+                            onChange={e => setPaidDate(e.target.value)}
+                          />
+                          {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                          <input
+                            id="DueDate"
+                            class="form-control"
+                            type="date"
+                            value={dueDate}
+                            onChange={e => setDueDate(e.target.value)}
+                          />
+                          {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
+                        </div>
+                        <div className="col-12 mb-3" >
+                          <div className="form-check">
+                            <input
+                              id="notifyCheckbox"
+                              className="form-check-input"
+                              type="checkbox"
+                              checked={notify}
+                              onChange={onClickCheckbox} // Toggle the state on change
+                            />
+                            <label className="form-check-label" htmlFor="notifyCheckbox">
+                              Notify
+                            </label>
+                            <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
+                          </div>
+                        </div>
+                        <div class="col-12 text-center mt-2">
+                          <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                        </div>
+                      </form>
+                    </div> :
+                    <div className='monthlyAddForm'>
+                      <form class="row lg-10" onSubmit={handleSubmit}>
+                        <div class='col-12 mb-3'>
+                          <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
+                            <option value="">Select a Tenant *</option>
+                            {/* {availableTenants.map(tenant => (
+                                            <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+                                          ))} */}
+
+                            {isEditing ? (
+                              <option key={selectedTenant} value={selectedTenant}>{tenantsWithRents.find(tenant => tenant.id === selectedTenant)?.name}</option>
+                            ) : (
+                              availableTenants.map(tenant => (
+                                <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+                              ))
+                            )}
+
+
+                          </select>
+                          {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                          <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                          <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                          <input id="TotalFee" class="form-control" type="number" value={totalFee}  onChange={e => setTotalFee(e.target.value)} />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                          <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
+                          {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor="Due" class="form-label">Due:</label>
+                          <input id="Due" class="form-control" type="number" value={due} readOnly />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                          <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
+                          />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                          <input
+                            id="PaidDate"
+                            class="form-control"
+                            type="date"
+                            value={paidDate}
+                            onChange={e => setPaidDate(e.target.value)}
+                          />
+                          {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                          <input
+                            id="DueDate"
+                            class="form-control"
+                            type="date"
+                            value={dueDate}
+                            onChange={e => setDueDate(e.target.value)}
+                          />
+                          {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
+                        </div>
+                        <div className="col-12 mb-3" >
+                          <div className="form-check">
+                            <input
+                              id="notifyCheckbox"
+                              className="form-check-input"
+                              type="checkbox"
+                              checked={notify}
+                              onChange={onClickCheckbox} // Toggle the state on change
+                            />
+                            <label className="form-check-label" htmlFor="notifyCheckbox">
+                              Notify
+                            </label>
+                            <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
+                          </div>
+                        </div>
+                        <div class="col-12 text-center mt-2">
+                          <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                        </div>
+                      </form>
                     </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor='roomNo' class="form-label">Room Number:</label>
-                      <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly/>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
-                      <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
-                      <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
-                      <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)}/>
-                      {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor="Due" class="form-label">Due:</label>
-                      <input id="Due" class="form-control" type="number" value={due} readOnly />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
-                      <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
-                      <input
-                        id="PaidDate"
-                        class="form-control"
-                        type="date"
-                        value={paidDate}
-                        onChange={e => setPaidDate(e.target.value)}
-                      />
-                      {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor="DueDate" class="form-label">Due Date:</label>
-                      <input
-                        id="DueDate"
-                        class="form-control"
-                        type="date"
-                        value={dueDate}
-                        onChange={e => setDueDate(e.target.value)}
-                      />
-                      {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
-                    </div>
-                    <div className="col-12 mb-3" >
-                      <div className="form-check">
-                        <input
-                          id="notifyCheckbox"
-                          className="form-check-input"
-                          type="checkbox"
-                          checked={notify}
-                          onChange={onClickCheckbox} // Toggle the state on change
-                        />
-                        <label className="form-check-label" htmlFor="notifyCheckbox">
-                          Notify
-                        </label>
-                        <FaWhatsapp style={{backgroundColor:'green',color:'white',marginLeft:'7px',marginBottom:'4px'}} />
-                      </div>
-                    </div>
-                    <div class="col-12 text-center mt-2">
-                      <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
-                    </div>
-                  </form>
+                    }
                 </div>
               </div>
-             
+
             </div>
           </div>
         </div>

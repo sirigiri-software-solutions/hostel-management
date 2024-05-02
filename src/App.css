@@ -20,3 +20,26 @@
   box-sizing: border-box;
   margin: 0;
 }
+
+.monthlyDailyButtons{
+  width: 100%;
+  border: 1px solid #333333;
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+}
+
+.manageRentButton {
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #f0f0f0; /* Light grey background */
+  color: #000; /* Black text */
+  border: 1px solid #ccc; /* Light grey border */
+  width: 100%;
+}
+
+.manageRentButton.active {
+  background-color: #FF8A00; /* Green background for active state */
+  color: white; /* White text for active state */
+  border-color: #FF8A00; /* Green border to match */
+}

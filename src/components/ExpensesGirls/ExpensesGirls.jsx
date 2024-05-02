@@ -101,7 +101,7 @@ const ExpensesGirls = () => {
           draggable: true,
           progress: undefined,
         });
-      });
+        });
       setShowModal(false);
       setFormErrors({
         number: '',
@@ -150,7 +150,7 @@ const ExpensesGirls = () => {
     'Date',
     'actions'
   ];
-
+  
 
   useEffect(() => {
 
@@ -178,7 +178,7 @@ const ExpensesGirls = () => {
     // console.log(expense.expenseDate,"data was formated")
     const [day, month, year] = expense.expenseDate.split('-');
     const formattedDate = `${year}-${month}-${day}`;
-    setFormData({
+        setFormData({
       expenseName: expense.expenseName,
       expenseAmount: expense.expenseAmount,
       expenseDate: formattedDate,
@@ -226,6 +226,7 @@ const ExpensesGirls = () => {
     }
 
     // Log the value of formData.expenseDate before conversion
+    console.log('Expense Date:', formData.expenseDate);
 
     if (formIsValid) {
       let updatedFormData = {
@@ -235,28 +236,28 @@ const ExpensesGirls = () => {
 
       const expenseRef = ref(database, `Hostel/girls/expenses/${editingExpense.id}`);
       set(expenseRef, updatedFormData)
-        .then(() => {
-          toast.success("Expense updated successfully.", {
-            position: "top-center",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-          setEditingExpense(null);
-        }).catch(error => {
-          toast.error("Error updating Expense: " + error.message, {
-            position: "top-center",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+      .then(() => {
+        toast.success("Expense updated successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         });
+        setEditingExpense(null); 
+      }).catch(error => {
+        toast.error("Error updating Expense: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
 
       setShowModal(false);
       setFormData({
@@ -275,27 +276,9 @@ const ExpensesGirls = () => {
     if (!editingExpense) return;
     const expenseRef = ref(database, `Hostel/girls/expenses/${editingExpense.id}`);
     remove(expenseRef).then(() => {
-      toast.success("Expense deleted successfully", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
       setEditingExpense(null);
       // alert('Expense deleted!');
     }).catch(error => {
-      toast.error("Error deleting Expense" + error.message, {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
       console.error("Error deleting document: ", error);
       // alert('Error deleting expense!');
     });
@@ -351,7 +334,6 @@ const ExpensesGirls = () => {
 
   return (
     <div className='h-100'>
-
       <>
         <div className="row d-flex flex-wrap align-items-center justify-content-between">
           <div className="col-12 col-md-4 d-flex align-items-center mr-5 mb-2">
@@ -377,7 +359,7 @@ const ExpensesGirls = () => {
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Expenses</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
                 <button type="button" onClick={onClickClose} class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
@@ -408,7 +390,7 @@ const ExpensesGirls = () => {
 
                     <div className="col-12 text-center">
                       {!editingExpense && (
-                        <button type="submit" className="btn btn-warning">Create Expense</button>
+                        <button type="submit" className="btn btn-warning">Create</button>
                       )}
                       {editingExpense && (
                         <>

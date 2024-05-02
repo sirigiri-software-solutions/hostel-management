@@ -14,6 +14,7 @@ import { onValue, remove, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import Table from '../../Elements/Table';
 
 
 const DashboardBoys = () => {
@@ -256,59 +257,6 @@ const DashboardBoys = () => {
     }
   }, [selectedRoom, boysRooms]);
 
-
-  // useEffect(() => {
-  //   const fetchDataFromAPI = async () => {
-  //     try {
-  //       if (data) {
-  //         const boysTenantsData = Object.values(data.boys.tenants);
-  //         setBoysTenants(boysTenantsData);
-
-  //       } else {
-  //         const apiData = await FetchData();
-  //         const boysTenantsData = Object.values(apiData.boys.tenants);
-  //         setBoysTenants(boysTenantsData);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching tenants data:', error);
-  //     }
-  //   };
-  //   fetchDataFromAPI();
-  // }, [data]);
-
-
-  //------------------------------------
-  
-  // useEffect(() => {
-  //   const fetchDataFromAPI = async () => {
-  //     try {
-  //       if (data) {
-  //         const boysRoomsData = Object.values(data.boys.rooms);
-  //         setBoysRoomsData(boysRoomsData);
-  //       } else {
-  //         const apiData = await FetchData();
-  //         const boysRoomsData = Object.values(apiData.boys.rooms);
-  //         setBoysRoomsData(boysRoomsData);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching tenants data:', error);
-  //     }
-  //   };
-
-  //   fetchDataFromAPI();
-  // }, [data]);
- 
-  // useEffect(() => {
-  //   if (selectedRoom) {
-  //     const room = boysRoomsData.find(room => room.roomNumber === selectedRoom);
-  //     if (room) {
-  //       const options = Array.from({ length: room.numberOfBeds }, (_, i) => i + 1);
-  //       setBedOptions(options);
-  //     }
-  //   } else {
-  //     setBedOptions([]);
-  //   }
-  // }, [selectedRoom, boysRoomsData]);
 //--------------------------------------
   const validate = () => {
     let tempErrors = {};
@@ -471,21 +419,6 @@ const DashboardBoys = () => {
   const [editingRentId, setEditingRentId] = useState(null);
   const [availableTenants, setAvailableTenants] = useState([]);
 
-  // useEffect(() => {
-  //   // Fetch tenants data once when component mounts
-  //   const tenantsRef = ref(database, 'Hostel/boys/tenants');
-  //   onValue(tenantsRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     const loadedTenants = data ? Object.keys(data).map(key => ({
-  //       id: key,
-  //       ...data[key],
-  //     })) : [];
-  //     setTenants(loadedTenants);
-  //   });
-
-  //   // Fetch room data once when component mounts
-    
-  // }, []);
 
   useEffect(() => {
     const updateTotalFeeFromRoom = () => {
@@ -743,7 +676,7 @@ const DashboardBoys = () => {
     {
       image: Beds,
       heading: 'Total Beds',
-      number: `${totalBeds}`,
+      number: `${totalBeds}/${totalBeds-tenants.length}`,
       btntext: 'Add Rent',
     },
     {
@@ -769,23 +702,6 @@ const DashboardBoys = () => {
     setShowModal(false);
     
   };
-
-  // useEffect(() => {
-
-  //   const handleResize = () => {
-  //     if (window.innerWidth < 650) {
-  //       setBtn(true);
-  //     } else {
-  //       setBtn(false);
-  //     }
-  //   };
-  //   handleResize();
-  //   window.addEventListener('resize', handleResize);
-  //   // Cleanup
-  //   return () => {
-  //     window.removeEventListener('resize', handleResize);
-  //   };
-  // }, []);
 
 
   const expensesHandleSubmit = (e) => {
@@ -1137,6 +1053,70 @@ const DashboardBoys = () => {
     }
   }
 
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [bedsData, setBedsData] = useState([]);
+  const handleCardClick = (item) => {
+    if (item.heading === 'Total Beds') {
+        // Logic to open the popup for "Total Beds" card
+        setPopupOpen(true);
+    }
+  };
+
+ 
+  const onClickCloseBedsPopup = () => {
+    setPopupOpen(false);
+  }
+  
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("closed")
+      if(popupOpen && event.target.id === "example"){
+        setPopupOpen(false)
+      }
+    };
+    window.addEventListener('click', handleOutsideClick)
+  }, [popupOpen])
+
+  useEffect(() => {
+    if (!boysRooms || boysRooms.length === 0) {
+      // If rooms are not defined or the array is empty, clear bedsData and exit early
+      setBedsData([]);
+      return;
+    }
+
+    const allBeds = boysRooms.flatMap(room => {
+      return Array.from({ length: room.numberOfBeds }, (_, i) => {
+        const bedNumber = i + 1;
+        // Find if there's a tenant for the current bed
+        const tenant = tenants.find(tenant => tenant.roomNo === room.roomNumber && tenant.bedNo === String(bedNumber));
+        return {
+          floorNumber: room.floorNumber,
+          roomNumber: room.roomNumber,
+          bedNumber: bedNumber,
+          rent: room.bedRent || "N/A", // Assuming rent is provided by the tenant data
+          status: tenant ? "Occupied" : "Unoccupied"
+        };
+      });
+    });
+    setBedsData(allBeds);
+  }, [boysRooms, tenants]); // Depend on rooms and tenants data
+
+  const rows = bedsData.filter((bed) => bed.status === 'Unoccupied').map((bed, index) => ({
+    s_no: index + 1,
+    bed_number: bed.bedNumber,
+    room_no: bed.roomNumber,
+    floor: bed.floorNumber,
+    status: bed.status
+  }));
+
+  const columns = [
+    'S. No',
+    'Bed Number',
+    'Room No',
+    'Floor',
+    'Status'
+  ];
+
   return (
     <div className="dashboardboys">
       <h1 className="heading">Men's</h1>
@@ -1144,7 +1124,7 @@ const DashboardBoys = () => {
 
         {menu.map((item, index) => (
           <>
-            <SmallCard key={index} index={index} item={item} />
+            <SmallCard key={index} index={index} item={item} handleClick={handleCardClick}/>
             <button id="mbladdButton" type="button"  onClick={() => handleClick(item.btntext)}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
           </>
         ))}
@@ -1155,10 +1135,8 @@ const DashboardBoys = () => {
           ))}
         </div>
 
-
-
       </div>
-
+     
 
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalRoomsBoys" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal} >
         <div className="modal-dialog ">
@@ -1175,6 +1153,20 @@ const DashboardBoys = () => {
           </div>
         </div>
       </div>
+
+      {popupOpen &&
+      <div className="popupBeds" id="example">
+        <div className="popup-contentBeds">
+          <h5>Unoccupied Beds Data Boys</h5>
+          <div>
+            <Table columns={columns} rows={rows}/>
+          </div>
+          <button onClick={onClickCloseBedsPopup} className='close-button'>Close</button>
+        </div>
+      </div>
+      }
+
+
     </div>
 
   );

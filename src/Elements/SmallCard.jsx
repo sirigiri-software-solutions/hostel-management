@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 const SmallCard = (props) => {
 
-    const {index, item} = props
+    const {index, item, handleClick} = props
     let [card,setCard]=useState(false)
 
     useEffect(()=>{
@@ -15,9 +15,17 @@ const SmallCard = (props) => {
         handleResize();
         window.addEventListener('resize',handleResize);
       })
+
+    const handleCardClick = () => {
+        // Add your logic to handle the click event here
+        // You can open the popup or perform any other action
+        console.log(`Clicked on ${item.heading} card`);
+        handleClick(item);
+    };
+
     return (
         <>
-        {card ? (<div key={index} className="menu-item" style={{width:"500px"}}>
+        {card ? (<div key={index} className="menu-item" style={{width:"500px"}} onClick={handleCardClick}>
             <div style={{backgroundColor: 'rgba(255, 205, 77, 0.2)', padding:'30px 20px', borderRadius:'15px'}}>
                 <img style={{width:'45px', height:'45px'}} src={item.image} alt={item.heading} className='image' />
             </div>
@@ -29,7 +37,7 @@ const SmallCard = (props) => {
             
             ):
             
-            (<div key={index} className="menu-item">
+            (<div key={index} className="menu-item" onClick={handleCardClick}>
             <div style={{backgroundColor: 'rgba(255, 205, 77, 0.2)', padding:'30px 20px', borderRadius:'15px'}} className='image-container'>
                 <img style={{width:'45px', height:'45px'}} src={item.image} alt={item.heading} className='image' />
             </div>

@@ -44,12 +44,20 @@ const RentPageGirls = () => {
     console.log(rentRecord, "RentRecordUpdating")
     const totalFee = rentRecord.totalFee;
     const tenantName = tenant.name;
-    const amount = rentRecord.due;
-    const dateOfJoin = tenant.dateOfJoin;
-    const dueDate = rentRecord.dueDate;
-    const paidAmount = rentRecord.paidAmount;
+  const amount = rentRecord.due;
+  const dateOfJoin = tenant.dateOfJoin;
+  const dueDate = rentRecord.dueDate;
+  const paidAmount = rentRecord.paidAmount;
+  const paidDate = rentRecord.paidDate;
 
-    const message = `Hi ${tenantName},\nHope you are doing fine!,\nYour total fee is ${totalFee},\n You paid ${paidAmount}\nYour due amount is ${amount}.\nYou joined on ${dateOfJoin}, and your due date is ${dueDate}.`;
+
+  const message = `Hi ${tenantName},\n
+Hope you are doing fine.\n
+Your total fee is ${totalFee}.\n
+You have paid ${paidAmount} so far.\n
+Therefore, your remaining due amount is ${amount}.\n
+You joined on ${dateOfJoin}, and your due date is ${dueDate}.\n
+Please note that you made your last payment on ${paidDate}.\n`
 
     const phoneNumber = tenant.mobileNo; // Replace with the recipient's phone number
 
@@ -77,6 +85,20 @@ const RentPageGirls = () => {
     }
     setNotify(!notify);
   };
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && event.target.id === "exampleModalRentsGirls") {
+            setShowModal(false);
+        }
+       
+    };
+    window.addEventListener('click', handleOutsideClick);
+    
+}, [showModal]);
+
+  
 
 
   useEffect(() => {
@@ -355,111 +377,13 @@ const RentPageGirls = () => {
     setErrors({});
   };
 
-  // let rentsData = [];
-
-  // if (data !== null && data !== undefined && data.girls && data.girls.tenants) {
-  //   console.log(data,"know data")
-  //   const rentsBoysData = data.girls.tenants;
-  //   // console.log(rentsBoysData,"fetched all data")
-  //   // console.log(Object.values(rentsBoysData),"eachData")
-  //   for(let each of Object.values(rentsBoysData)){
-  //     if(each.rents !== undefined){
-  //     //   rentsData = Object.values(rentsBoysData).map(entry => Object.values(entry.rents))
-  //          rentsData.push(Object.values(each.rents));
-  //     //   console.log(rentsData,"see")
-  //     }
-  //     // console.log(each.rents,"rentsDefined")
-  //   }
-  // } else {
-  //   console.error("Data structure mismatch or data is not available:", data);
-  // }
-
-
-  // const [formData, setFormData] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: ''
-  // });
-
-  // const [formErrors, setFormErrors] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: ''
-  // });
-
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: value
-  //   });
-  // };
+ 
 
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   let errors = {};
-  //   let formIsValid = true;
-
-  //   // Basic validation for required fields
-  //   if (!formData.number) {
-  //     errors.number = 'Number is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rent) {
-  //     errors.rent = 'Rent is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rooms) {
-  //     errors.rooms = 'Rooms is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.status) {
-  //     errors.status = 'Status is required';
-  //     formIsValid = false;
-  //   }
-
-  //   // If form is valid, proceed with submission
-  //   if (formIsValid) {
-  //     // console.log('Form submitted successfully:', formData);
-  //     const newData = {
-  //       number: formData.number,
-  //       rent: formData.rent,
-  //       rooms: formData.rooms,
-  //       status: formData.status
-  //     };
-
-  //     // Push the new data to the 'beds' node
-  //     push(ref(database, 'beds'), newData)
-  //       .then(() => {
-  //         // Data successfully stored in Firebase
-  //         // console.log('Data successfully stored in Firebase');
-  //         // Clear the form after submission if needed
-  //         setFormData({
-  //           number: '',
-  //           rent: '',
-  //           rooms: '',
-  //           status: ''
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         // Handle errors
-  //         // console.error('Error storing data in Firebase: ', error.message);
-  //       });
-  //   } else {
-  //     // Set errors for form validation
-  //     setFormErrors(errors);
-  //   }
-  // };
 
 
   const columns = [
@@ -508,38 +432,13 @@ const RentPageGirls = () => {
     last_fee: rent.paidDate,
     status: rent.status === 'Unpaid' ? 'Unpaid' : 'Paid',
     actions: <button
-      style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
-      onClick={() => {loadRentForEditing(rent.tenantId, rent.rentId);  setShowForm(true)}}
-    
-    // data-bs-toggle="modal"
-    // data-bs-target="#exampleModalRGirls"
-    >
-      update
-    </button>,
+    style={{ backgroundColor: '#ff8a00', padding:'4px', borderRadius: '5px', color: 'white', border: 'none', }}
+    onClick={() => loadRentForEditing(rent.tenantId, rent.rentId)}
+
+  >
+    update
+  </button>,
   }));
-
-  // const flatRentsData = rentsData.flat();
-  // const rows = flatRentsData.map((rentData, index) => {
-
-  //   const tenantInfo = Object.values(data.girls.tenants).find(tenant => tenant.bedNo === rentData.bedNumber);
-
-  //   return {
-  //     s_no: index + 1,
-  //     room_no: rentData.roomNumber,
-  //     person_name: tenantInfo.name ,
-  //     person_mobile: tenantInfo.mobileNo ,
-  //     bed_no: rentData.bedNumber,
-  //     rent: "Rs. " + rentData.totalFee,
-  //     due_date: rentData.dueDate,
-  //     last_fee: rentData.paidDate, 
-  //     edit: {
-  //         icon: false,
-  //         variant: { color: rentData.status === 'Unpaid' ? '#f71313' : '#166919', radius: '10px' },
-  //         text: rentData.status === 'Unpaid' ? 'Unpaid' : 'Paid'
-  //     }
-  //   };
-  // });
-
 
 
   const filteredRows = rows.filter(row => {

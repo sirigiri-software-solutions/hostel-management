@@ -43,12 +43,19 @@ const RentPageBoys = () => {
   const sendMessage = (tenant, rentRecord) => {
     const totalFee = rentRecord.totalFee;
     const tenantName = tenant.name;
-    const amount = rentRecord.due;
-    const dateOfJoin = tenant.dateOfJoin;
-    const dueDate = rentRecord.dueDate;
-    const paidAmount = rentRecord.paidAmount;
+  const amount = rentRecord.due;
+  const dateOfJoin = tenant.dateOfJoin;
+  const dueDate = rentRecord.dueDate;
+  const paidAmount = rentRecord.paidAmount;
+  const paidDate = rentRecord.paidDate;
 
-    const message = `Hi ${tenantName},\nHope you are doing fine!,\nYour total fee is ${totalFee},\n You paid ${paidAmount}\nYour due amount is ${amount}.\nYou joined on ${dateOfJoin}, and your due date is ${dueDate}.`;
+  const message = `Hi ${tenantName},\n
+Hope you are doing fine.\n
+Your total fee is ${totalFee}.\n
+You have paid ${paidAmount} so far.\n
+Therefore, your remaining due amount is ${amount}.\n
+You joined on ${dateOfJoin}, and your due date is ${dueDate}.\n
+Please note that you made your last payment on ${paidDate}.\n`
 
     const phoneNumber = tenant.mobileNo; // Replace with the recipient's phone number
 
@@ -76,6 +83,19 @@ const RentPageBoys = () => {
     }
     setNotify(!notify);
   };
+
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && event.target.id === "exampleModalRentsBoys") {
+            setShowModal(false);
+        }
+       
+    };
+    window.addEventListener('click', handleOutsideClick);
+    
+}, [showModal]);
 
 
 
@@ -427,28 +447,7 @@ const RentPageBoys = () => {
     </button>,
   }));
 
-  // console.log(rows, 'rr')
-
-  // const flatRentsData = tenantsWithRents.flat();
-  // const rows = flatRentsData.map((rentData, index) => {
-  //   const tenantInfo = Object.values(data.boys.tenants).find(tenant => tenant.bedNo === rentData.bedNumber);
-  //   return {
-  //     s_no: index + 1,
-  //     room_no: rentData.roomNumber,
-  //     person_name: tenantInfo.name,
-  //     person_mobile: tenantInfo.mobileNo,
-  //     bed_no: rentData.bedNumber,
-  //     rent: "Rs. " + rentData.totalFee,
-  //     due_date: rentData.dueDate,
-  //     last_fee: rentData.paidDate,
-  //     edit: {
-  //       icon: false,
-  //       variant: { color: rentData.status === 'Unpaid' ? '#f71313' : '#166919', radius: '10px' },
-  //       text: rentData.status === 'Unpaid' ? 'Unpaid' : 'Paid'
-  //     }
-  //   };
-  // });
-
+  
   const filteredRows = rows.filter(row => {
     return Object.values(row).some(value =>
       value.toString().toLowerCase().includes(searchQuery.toLowerCase())
@@ -514,16 +513,19 @@ const RentPageBoys = () => {
                     <div class='col-12 mb-3'>
                       <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
                         <option value="">Select a Tenant *</option>
-                        {/* {availableTenants.map(tenant => (
-                          <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
-                        ))} */}
-                        {isEditing ? (
-                          <option key={selectedTenant} value={selectedTenant}>{tenantsWithRents.find(tenant => tenant.id === selectedTenant)?.name}</option>
-                        ) : (
-                          availableTenants.map(tenant => (
-                            <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
-                          ))
-                        )}
+                        
+
+{isEditing ? (
+    <option key={selectedTenant} value={selectedTenant}>{tenantsWithRents.find(tenant => tenant.id === selectedTenant)?.name}</option>
+  ) : (
+    availableTenants.map(tenant => (
+      <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+    ))
+  )}
+
+
+
+
                       </select>
                       {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                     </div>

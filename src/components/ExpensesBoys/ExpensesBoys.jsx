@@ -4,13 +4,11 @@ import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
 import { database, push, ref } from "../../firebase";
 import { onValue } from 'firebase/database';
-//import ImageIcon from '../../images/Icons (10).png'
 import { remove, update, set } from 'firebase/database';
 import { toast } from "react-toastify";
 
 const ExpensesBoys = () => {
 
-  // const [createdBy, setCreatedBy] = useState('admin');
   const [searchTerm, setSearchTerm] = useState('');
   const [initialRows, setInitialRows] = useState([]);
   const [expenses, setExpenses] = useState([]);
@@ -40,9 +38,22 @@ const ExpensesBoys = () => {
     });
   };
 
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && event.target.id === "exampleModalExpensesBoys") {
+            setShowModal(false);
+        }
+       
+    };
+    window.addEventListener('click', handleOutsideClick);
+    
+}, [showModal]);
+
+  
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Validate the necessary fields
     let errors = {};
     let formIsValid = true;
 
@@ -194,28 +205,7 @@ const ExpensesBoys = () => {
   };
 
 
-  // const handleUpdate = () => {
-  //   if (!editingExpense) return;
-  //   const expenseRef = ref(database, `Hostel/boys/expenses/${editingExpense.id}`);
-  //   set(expenseRef, {
-  //     ...formData,
-  //     expenseAmount: parseFloat(formData.expenseAmount),
-  //     expenseDate: new Date(formData.expenseDate).toISOString()
-  //   }).then(() => {
-  //     setEditingExpense(null);
-  //     // alert('Expense updated!');
-  //   }).catch(error => {
-  //     console.error("Error updating document: ", error);
-  //     // alert('Error updating expense!');
-  //   });
-  //   setShowModal(false);
-  //   setFormData({
-  //     expenseName: '',
-  //     expenseAmount: '',
-  //     expenseDate: '',
-  //     createdBy: 'admin'
-  //   });
-  // };
+
 
   const handleUpdate = () => {
     if (!editingExpense) return;
@@ -247,8 +237,7 @@ const ExpensesBoys = () => {
       formIsValid = false;
     }
 
-    // Log the value of formData.expenseDate before conversion
-    // console.log('Expense Date:', formData.expenseDate);
+
 
     if (formIsValid) {
       let updatedFormData = {
@@ -280,14 +269,7 @@ const ExpensesBoys = () => {
           progress: undefined,
         });
       });
-        // .then(() => {
-          
-        //   // alert('Expense updated!');
-        // })
-        // .catch(error => {
-        //   console.error("Error updating document: ", error);
-        //   // alert('Error updating expense!');
-        // });
+        
 
       setShowModal(false);
       setFormData({
@@ -297,7 +279,7 @@ const ExpensesBoys = () => {
         createdBy: 'admin'
       });
     } else {
-      // Set errors in state if form is not valid
+      
       setFormErrors(errors);
     }
   };
@@ -381,9 +363,7 @@ const ExpensesBoys = () => {
 
   }
 
-  // const handleCreateFunction = () => {
-  //   setShowModal(false);
-  // }
+
 
 
   return (
@@ -457,10 +437,7 @@ const ExpensesBoys = () => {
                   </form>
                 </div>
               </div>
-              {/* <div className="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
-            </div> */}
+             
             </div>
           </div>
         </div>

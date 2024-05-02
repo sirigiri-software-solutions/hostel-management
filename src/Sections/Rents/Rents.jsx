@@ -1,14 +1,13 @@
-import React, { useContext, useState } from 'react';
-import Adminlogo from '../../images/Icons.png'
+import React, { useState } from 'react';
 import { Tab, Tabs } from 'react-bootstrap';
 import RentPageBoys from '../../components/RentPageBoys/RentPageBoys';
 import RentPageGirls from '../../components/RentPageGirls/RentPageGirls';
-import { DataContext } from '../../ApiData/ContextProvider';
+
 
 const Rents = () => {
     
     const [activeTab, setActiveTab] = useState('boys');
-
+    
     const handleTabSelect = (tab) => {
         setActiveTab(tab);
     };

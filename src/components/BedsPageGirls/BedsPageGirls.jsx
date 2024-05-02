@@ -132,7 +132,6 @@ const BedsPageGirls = () => {
               <h1 className='text-center mb-2 fs-5'>
                 Create Beds
               </h1>
-             
             </div>
           </div>
           <div className="modal-footer">

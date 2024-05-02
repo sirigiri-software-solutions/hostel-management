@@ -174,16 +174,6 @@ const MainPage = () => {
           }
         </div>
 
-        {/* Hamberger icon */}
-        {/* <GiHamburgerMenu style={hamburgerMenu} onClick={handleHamburgerMenu} /> */}
-        {/* {
-              hamburgerMenuItems && menuItems.map((item, index) => (
-                <label key={index}>{item.name}</label>
-              ))
-            } */}
-
-        {/*another approach popup model */}
-
 
         <Popup modal
           trigger={<GiHamburgerMenu style={hamburgerMenu} onClick={handleHamburgerMenu} />}>
@@ -222,7 +212,7 @@ const MainPage = () => {
           )}
         </Popup>
       </div>
-     
+      
 
       <div style={rightSectionMainContainer} >
         <div>

@@ -70,8 +70,6 @@ const BedsPageBoys = () => {
     setBedsData(allBeds);
   }, [boysRooms, tenants]); // Depend on rooms and tenants data
 
- 
-
   const columns = [
     'S. No',
     'Bed Number',
@@ -118,7 +116,6 @@ const filteredRows = rows.filter(row => {
         <input value={searchValue} onChange={onChangeSearch} type="text" placeholder='Search' className='search-input'/>
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
       </div>
-      
     </div>
 
     <div>   

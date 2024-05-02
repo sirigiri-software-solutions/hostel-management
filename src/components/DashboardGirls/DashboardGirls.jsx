@@ -82,7 +82,20 @@ const DashboardGirls = () => {
 
 
 
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && event.target.id === "exampleModalRoomsGirls") {
+            setShowModal(false);
+        }
+       
+    };
+    window.addEventListener('click', handleOutsideClick);
+    
+}, [showModal]);
 
+
+ 
 
   const handleRoomsIntegerChange = (event) => {
     const value = event.target.value;
@@ -260,40 +273,7 @@ const DashboardGirls = () => {
     }
   }, [selectedRoom, girlsRooms]);
 
-
-
-  //==================================
-  // useEffect(() => {
-  //   const fetchDataFromAPI = async () => {
-  //     try {
-  //       if (data) {
-  //         const girlsRoomsData = Object.values(data.girls.rooms);
-  //         setGirlsRoomsData(girlsRoomsData);
-  //       } else {
-  //         const apiData = await FetchData();
-  //         const girlsRoomsData = Object.values(apiData.girls.rooms);
-  //         setGirlsRoomsData(girlsRoomsData);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching tenants data:', error);
-  //     }
-  //   };
-  //   fetchDataFromAPI();
-  // }, [data]);
-
-
-  // useEffect(() => {
-  //   if (selectedRoom) {
-  //     const room = girlsRoomsData.find(room => room.roomNumber === selectedRoom);
-  //     if (room) {
-  //       const options = Array.from({ length: room.numberOfBeds }, (_, i) => i + 1);
-  //       setBedOptions(options);
-  //     }
-  //   } else {
-  //     setBedOptions([]);
-  //   }
-  // }, [selectedRoom, girlsRoomsData]);
-
+ 
   const validate = () => {
     let tempErrors = {};
     tempErrors.selectedRoom = selectedRoom ? "" : "Room number is required.";
@@ -457,21 +437,7 @@ const DashboardGirls = () => {
   const [editingRentId, setEditingRentId] = useState(null);
   const [availableTenants, setAvailableTenants] = useState([]);
 
-  // useEffect(() => {
-  //   // Fetch tenants data once when component mounts
-  //   const tenantsRef = ref(database, 'Hostel/boys/tenants');
-  //   onValue(tenantsRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     const loadedTenants = data ? Object.keys(data).map(key => ({
-  //       id: key,
-  //       ...data[key],
-  //     })) : [];
-  //     setTenants(loadedTenants);
-  //   });
-
-  //   // Fetch room data once when component mounts
-
-  // }, []);
+  
 
   useEffect(() => {
     const updateTotalFeeFromRoom = () => {
@@ -751,24 +717,8 @@ const DashboardGirls = () => {
     resetForm();
     setShowModal(false);
   };
-
-  // useEffect(() => {
-
-  //   const handleResize = () => {
-  //     if (window.innerWidth < 650) {
-  //       setBtn(true);
-  //     } else {
-  //       setBtn(false);
-  //     }
-  //   };
-  //   handleResize();
-  //   window.addEventListener('resize', handleResize);
-  //   // Cleanup
-  //   return () => {
-  //     window.removeEventListener('resize', handleResize);
-  //   };
-  // }, []);
-
+ 
+ 
 
   const expensesHandleSubmit = (e) => {
     e.preventDefault();
@@ -1274,7 +1224,7 @@ const DashboardGirls = () => {
       </div>
 
       {/* popup model */}
-      <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalRoomsBoys" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal} >
+      <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalRoomsGirls" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal} >
         <div className="modal-dialog ">
           <div className="modal-content">
             <div className="modal-header">

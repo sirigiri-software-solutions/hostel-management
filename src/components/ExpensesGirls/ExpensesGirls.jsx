@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import ExpenseIcon from '../../images/Icons (5).png'
 import SearchIcon from '../../images/Icons (9).png'
 import Table from '../../Elements/Table'
-//import ImageIcon from '../../images/Icons (10).png'
 import { database, push, ref } from "../../firebase";
 import "../RoomsBoys/RoomsBoys.css"
 import { onValue } from 'firebase/database';
@@ -40,6 +39,19 @@ const ExpensesGirls = () => {
       [name]: value
     });
   };
+
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && event.target.id === "exampleModalExpensesGirls") {
+            setShowModal(false);
+        }
+       
+    };
+    window.addEventListener('click', handleOutsideClick);
+    
+}, [showModal]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -402,10 +414,7 @@ const ExpensesGirls = () => {
                   </form>
                 </div>
               </div>
-              {/* <div className="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
-            </div> */}
+             
             </div>
           </div>
         </div>

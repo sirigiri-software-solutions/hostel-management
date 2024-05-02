@@ -57,6 +57,19 @@ const DashboardBoys = () => {
   const [showForm, setShowForm] = useState(true);
   // const { data } = useContext(DataContext);
 
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && event.target.id === "exampleModalRoomsBoys") {
+            setShowModal(false);
+        }
+       
+    };
+    window.addEventListener('click', handleOutsideClick);
+    
+}, [showModal]);
+
   const handleRoomsIntegerChange = (event) => {
     const value = event.target.value;
     const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
@@ -258,59 +271,6 @@ const DashboardBoys = () => {
   }, [selectedRoom, boysRooms]);
 
 
-  // useEffect(() => {
-  //   const fetchDataFromAPI = async () => {
-  //     try {
-  //       if (data) {
-  //         const boysTenantsData = Object.values(data.boys.tenants);
-  //         setBoysTenants(boysTenantsData);
-
-  //       } else {
-  //         const apiData = await FetchData();
-  //         const boysTenantsData = Object.values(apiData.boys.tenants);
-  //         setBoysTenants(boysTenantsData);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching tenants data:', error);
-  //     }
-  //   };
-  //   fetchDataFromAPI();
-  // }, [data]);
-
-
-  //------------------------------------
-
-  // useEffect(() => {
-  //   const fetchDataFromAPI = async () => {
-  //     try {
-  //       if (data) {
-  //         const boysRoomsData = Object.values(data.boys.rooms);
-  //         setBoysRoomsData(boysRoomsData);
-  //       } else {
-  //         const apiData = await FetchData();
-  //         const boysRoomsData = Object.values(apiData.boys.rooms);
-  //         setBoysRoomsData(boysRoomsData);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching tenants data:', error);
-  //     }
-  //   };
-
-  //   fetchDataFromAPI();
-  // }, [data]);
-
-  // useEffect(() => {
-  //   if (selectedRoom) {
-  //     const room = boysRoomsData.find(room => room.roomNumber === selectedRoom);
-  //     if (room) {
-  //       const options = Array.from({ length: room.numberOfBeds }, (_, i) => i + 1);
-  //       setBedOptions(options);
-  //     }
-  //   } else {
-  //     setBedOptions([]);
-  //   }
-  // }, [selectedRoom, boysRoomsData]);
-  //--------------------------------------
   const validate = () => {
     let tempErrors = {};
     tempErrors.selectedRoom = selectedRoom ? "" : "Room number is required.";
@@ -459,8 +419,7 @@ const DashboardBoys = () => {
 
   };
 
-  //handle add rent==============================================
-
+  
   const [selectedTenant, setSelectedTenant] = useState('');
   const [bedNumber, setBedNumber] = useState('');
   const [totalFee, setTotalFee] = useState('');
@@ -472,22 +431,7 @@ const DashboardBoys = () => {
   const [editingRentId, setEditingRentId] = useState(null);
   const [availableTenants, setAvailableTenants] = useState([]);
 
-  // useEffect(() => {
-  //   // Fetch tenants data once when component mounts
-  //   const tenantsRef = ref(database, 'Hostel/boys/tenants');
-  //   onValue(tenantsRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     const loadedTenants = data ? Object.keys(data).map(key => ({
-  //       id: key,
-  //       ...data[key],
-  //     })) : [];
-  //     setTenants(loadedTenants);
-  //   });
-
-  //   // Fetch room data once when component mounts
-
-  // }, []);
-
+  
   useEffect(() => {
     const updateTotalFeeFromRoom = () => {
       // Convert the rooms object into an array of its values
@@ -771,22 +715,7 @@ const DashboardBoys = () => {
 
   };
 
-  // useEffect(() => {
 
-  //   const handleResize = () => {
-  //     if (window.innerWidth < 650) {
-  //       setBtn(true);
-  //     } else {
-  //       setBtn(false);
-  //     }
-  //   };
-  //   handleResize();
-  //   window.addEventListener('resize', handleResize);
-  //   // Cleanup
-  //   return () => {
-  //     window.removeEventListener('resize', handleResize);
-  //   };
-  // }, []);
 
 
   const expensesHandleSubmit = (e) => {
@@ -1295,7 +1224,10 @@ const DashboardBoys = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> 
+
+      
+
     </div>
 
   );

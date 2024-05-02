@@ -55,7 +55,21 @@ const DashboardBoys = () => {
   const imageInputRef = useRef(null);
   const idInputRef = useRef(null);
   const [boysRoomsData, setBoysRoomsData] = useState([]);
+  const [showForm, setShowForm] = useState(true);
   // const { data } = useContext(DataContext);
+
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && event.target.id === "exampleModalRoomsBoys") {
+            setShowModal(false);
+        }
+       
+    };
+    window.addEventListener('click', handleOutsideClick);
+    
+}, [showModal]);
 
   const handleRoomsIntegerChange = (event) => {
     const value = event.target.value;
@@ -127,37 +141,37 @@ const DashboardBoys = () => {
       setErrors(newErrors);
       return; // Prevent form submission if there are errors
     }
-   
-      const roomsRef = ref(database, 'Hostel/boys/rooms');
-      push(roomsRef, {
-        floorNumber,
-        roomNumber,
-        numberOfBeds,
-        bedRent,
-        createdBy,
-        updateDate: now
-      }).then(() => {
-        toast.success("Room added successfully.", {
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      }).catch(error => {
-        toast.error("Error adding room: " + error.message, {
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+
+    const roomsRef = ref(database, 'Hostel/boys/rooms');
+    push(roomsRef, {
+      floorNumber,
+      roomNumber,
+      numberOfBeds,
+      bedRent,
+      createdBy,
+      updateDate: now
+    }).then(() => {
+      toast.success("Room added successfully.", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
       });
-    
+    }).catch(error => {
+      toast.error("Error adding room: " + error.message, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    });
+
     // }(
 
     // Reset form
@@ -215,7 +229,7 @@ const DashboardBoys = () => {
     });
   }, []);
 
-  
+
   useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/boys/tenants');
     onValue(tenantsRef, snapshot => {
@@ -257,7 +271,6 @@ const DashboardBoys = () => {
     }
   }, [selectedRoom, boysRooms]);
 
-//--------------------------------------
   const validate = () => {
     let tempErrors = {};
     tempErrors.selectedRoom = selectedRoom ? "" : "Room number is required.";
@@ -312,7 +325,7 @@ const DashboardBoys = () => {
     // if (!validate()) return;
     e.target.querySelector('button[type="submit"]').disabled = true;
     if (!validate()) {
-      e.target.querySelector('button[type="submit"]').disabled = false;  
+      e.target.querySelector('button[type="submit"]').disabled = false;
       return
     };
 
@@ -336,7 +349,7 @@ const DashboardBoys = () => {
         idUrlToUpdate = await getDownloadURL(snapshot.ref);
       } catch (error) {
         console.error("Error uploading tenant image:", error);
-      }  
+      }
     }
 
     const tenantData = {
@@ -403,10 +416,9 @@ const DashboardBoys = () => {
     resetForm();
     imageInputRef.current.value = "";
     idInputRef.current.value = "";
-    
+
   };
 
-  //handle add rent==============================================
   
   const [selectedTenant, setSelectedTenant] = useState('');
   const [bedNumber, setBedNumber] = useState('');
@@ -418,7 +430,6 @@ const DashboardBoys = () => {
   const [dueDate, setDueDate] = useState('');
   const [editingRentId, setEditingRentId] = useState(null);
   const [availableTenants, setAvailableTenants] = useState([]);
-
 
   useEffect(() => {
     const updateTotalFeeFromRoom = () => {
@@ -617,10 +628,10 @@ const DashboardBoys = () => {
     setShowModal(false);
 
     resetForm();
-   
+
   };
 
-//-------------------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------------------
   const resetForm = () => {
     setSelectedRoom('');
     setSelectedBed('');
@@ -643,30 +654,30 @@ const DashboardBoys = () => {
     setBedRent('');
     setCreatedBy('admin');
 
-    setSelectedTenant(''); 
-    setRoomNumber('');  
-    setBedNumber('');      
-    setTotalFee('');     
-    setPaidAmount('');     
-    setDue('');        
-    setDateOfJoin('');     
-    setPaidDate('');       
-    setDueDate('');        
-    setErrors({});         
+    setSelectedTenant('');
+    setRoomNumber('');
+    setBedNumber('');
+    setTotalFee('');
+    setPaidAmount('');
+    setDue('');
+    setDateOfJoin('');
+    setPaidDate('');
+    setDueDate('');
+    setErrors({});
     setIsEditing(false);
   };
 
 
-  
+
 
   const menu = [
     {
       image: Rooms,
       heading: 'Total Rooms',
-      number:`${rooms.length}` ,
+      number: `${rooms.length}`,
       btntext: 'Add Rooms',
     },
-    
+
     {
       image: Tenants,
       heading: 'Total Tenants',
@@ -687,7 +698,7 @@ const DashboardBoys = () => {
     },
   ];
 
-  const Buttons = ['Add Rooms',  'Add Tenants','Add Rent', 'Add Expenses'];
+  const Buttons = ['Add Rooms', 'Add Tenants', 'Add Rent', 'Add Expenses'];
 
   const handleClick = (text) => {
     setModelText(text);
@@ -700,9 +711,8 @@ const DashboardBoys = () => {
     setFormLayout('');
     resetForm();
     setShowModal(false);
-    
-  };
 
+  };
 
   const expensesHandleSubmit = (e) => {
     e.preventDefault();
@@ -714,13 +724,13 @@ const DashboardBoys = () => {
       errors.expenseName = 'Expense name should contain only alphabets and spaces';
       formIsValid = false;
     }
-    
-  
+
+
     if (!formData.expenseAmount.match(/^\d+(\.\d{1,2})?$/)) {
       errors.expenseAmount = 'Expense amount should be a valid number';
       formIsValid = false;
     }
-  
+
 
     if (!formData.expenseName) {
       errors.expenseName = 'Expense name is required';
@@ -766,17 +776,19 @@ const DashboardBoys = () => {
           progress: undefined,
         });
       });
-        setShowModal(false);
-        setFormErrors({number: '',
+      setShowModal(false);
+      setFormErrors({
+        number: '',
         rent: '',
         rooms: '',
-        status: ''});
+        status: ''
+      });
     } else {
       // Set errors in state if form is not valid
       setFormErrors(errors);
     }
 
-    
+
   };
 
   const renderFormLayout = () => {
@@ -784,108 +796,232 @@ const DashboardBoys = () => {
       case 'Add Rooms':
         return (
           <form className="row g-3" onSubmit={handleBoysRoomsSubmit}>
-          <div className="col-md-6">
-            <label htmlFor="inputNumber" className="form-label">Floor Number</label>
-            <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber}  onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
-            {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
-          </div>
-          <div className="col-md-6">
-            <label htmlFor="inputRent" className="form-label">Room Number</label>
-            <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
-            {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
-          </div>
-          <div className="col-md-6">
-            <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
-            <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
-            {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
-          </div>
-          <div className="col-md-6">
-            <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
-            <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')}/>
-            {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
-          </div>
-          <div className="col-md-6">
-            <label htmlFor="inputRole" className="form-label">Created By</label>
-            <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
-              <option value="admin">Admin</option>
-              <option value="sub-admin">Sub-admin</option>
-            </select>
-          </div>
-          <div className="col-12 text-center">    
+            <div className="col-md-6">
+              <label htmlFor="inputNumber" className="form-label">Floor Number</label>
+              <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')} />
+              {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="inputRent" className="form-label">Room Number</label>
+              <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')} />
+              {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
+              <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')} />
+              {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
+              <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')} />
+              {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="inputRole" className="form-label">Created By</label>
+              <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
+                <option value="admin">Admin</option>
+                <option value="sub-admin">Sub-admin</option>
+              </select>
+            </div>
+            <div className="col-12 text-center">
               <button type="submit" className="btn btn-warning" onClick={handleBoysRoomsSubmit}>Create Room</button>
-          </div>
-        </form>
+            </div>
+          </form>
         )
       case 'Add Rent':
         return (
-          <form class="row lg-10" onSubmit={handleRentSubmit}>
-          <div class='col-12 mb-3'>
-            <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)}>
-              <option value="">Select a Tenant *</option>
-              {availableTenants.map(tenant => (
-                <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
-              ))}
-            </select>
-            {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
+          <div>
+            <div className='monthlyDailyButtons'>
+              <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(true)}>
+                <text>Monthly</text>
+              </div>
+              <div className={!showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(false)}>
+                <text>Daily</text>
+              </div>
+            </div>
+            {showForm ?
+              <div className='monthlyAddForm'>
+                <form class="row lg-10" onSubmit={handleRentSubmit}>
+                  <div class='col-12 mb-3'>
+                    <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
+                      <option value="">Select a Tenant *</option>
+                      {/* {availableTenants.map(tenant => (
+                          <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+                        ))} */}
+                      {isEditing ? (
+                        <option key={selectedTenant} value={selectedTenant}>{tenantsWithRents.find(tenant => tenant.id === selectedTenant)?.name}</option>
+                      ) : (
+                        availableTenants.map(tenant => (
+                          <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+                        ))
+                      )}
+                    </select>
+                    {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                    <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                    <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                    <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                    <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
+                    {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor="Due" class="form-label">Due:</label>
+                    <input id="Due" class="form-control" type="number" value={due} readOnly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                    <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                    <input
+                      id="PaidDate"
+                      class="form-control"
+                      type="date"
+                      value={paidDate}
+                      onChange={e => setPaidDate(e.target.value)}
+                    />
+                    {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                    <input
+                      id="DueDate"
+                      class="form-control"
+                      type="date"
+                      value={dueDate}
+                      onChange={e => setDueDate(e.target.value)}
+                    />
+                    {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
+                  </div>
+                  <div className="col-12 mb-3">
+                    <div className="form-check">
+                      <input
+                        id="notifyCheckbox"
+                        className="form-check-input"
+                        type="checkbox"
+                        // checked={notify}
+                        // onChange={onClickCheckbox}
+                      // Toggle the state on change
+                      />
+                      <label className="form-check-label" htmlFor="notifyCheckbox">
+                        Notify
+                      </label>
+                      {/* <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} /> */}
+                    </div>
+                  </div>
+                  <div class="col-12 text-center mt-2">
+                    <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                  </div>
+                </form>
+              </div> :
+              <div className='monthlyAddForm'>
+                <form class="row lg-10" onSubmit={handleRentSubmit}>
+                  <div class='col-12 mb-3'>
+                    <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
+                      <option value="">Select a Tenant *</option>
+                      {/* {availableTenants.map(tenant => (
+                          <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+                        ))} */}
+                      {isEditing ? (
+                        <option key={selectedTenant} value={selectedTenant}>{tenantsWithRents.find(tenant => tenant.id === selectedTenant)?.name}</option>
+                      ) : (
+                        availableTenants.map(tenant => (
+                          <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+                        ))
+                      )}
+                    </select>
+                    {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                    <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                    <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                    <input id="TotalFee" class="form-control" type="number" value={totalFee} onChange={e => setTotalFee(e.target.value)} />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                    <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
+                    {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor="Due" class="form-label">Due:</label>
+                    <input id="Due" class="form-control" type="number" value={due} readOnly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                    <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                    <input
+                      id="PaidDate"
+                      class="form-control"
+                      type="date"
+                      value={paidDate}
+                      onChange={e => setPaidDate(e.target.value)}
+                    />
+                    {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                    <input
+                      id="DueDate"
+                      class="form-control"
+                      type="date"
+                      value={dueDate}
+                      onChange={e => setDueDate(e.target.value)}
+                    />
+                    {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
+                  </div>
+                  <div className="col-12 mb-3">
+                    <div className="form-check">
+                      <input
+                        id="notifyCheckbox"
+                        className="form-check-input"
+                        type="checkbox"
+                        // checked={notify}
+                        // onChange={onClickCheckbox}
+                      // Toggle the state on change
+                      />
+                      <label className="form-check-label" htmlFor="notifyCheckbox">
+                        Notify
+                      </label>
+                      {/* <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} /> */}
+                    </div>
+                  </div>
+
+                  <div class="col-12 text-center mt-2">
+                    <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                  </div>
+                </form>
+              </div>}
           </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor='roomNo' class="form-label">Room Number:</label>
-            <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly/>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
-            <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
-            <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
-            <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)}/>
-            {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
-          </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor="Due" class="form-label">Due:</label>
-            <input id="Due" class="form-control" type="number" value={due} readOnly />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
-            <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
-            />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
-            <input
-              id="PaidDate"
-              class="form-control"
-              type="date"
-              value={paidDate}
-              onChange={e => setPaidDate(e.target.value)}
-            />
-            {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
-          </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor="DueDate" class="form-label">Due Date:</label>
-            <input
-              id="DueDate"
-              class="form-control"
-              type="date"
-              value={dueDate}
-              onChange={e => setDueDate(e.target.value)}
-            />
-            {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
-          </div>
-          <div class="col-12 text-center mt-2">
-            <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
-          </div>
-        </form>
         )
       case 'Add Tenants':
         return (
           <form class="row lg-10" onSubmit={handleTenantSubmit}>
-          <div class="col-md-6">
-            <label htmlFor='roomNo' class="form-label">Room No:</label>
+            <div class="col-md-6">
+              <label htmlFor='roomNo' class="form-label">Room No:</label>
               <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
                 <option value="">Select a Room</option>
                 {boysRooms.map((room) => (
@@ -894,12 +1030,12 @@ const DashboardBoys = () => {
                   </option>
                 ))}
               </select>
-          {tenatErrors.selectedRoom && <p style={{ color: 'red' }}>{tenatErrors.selectedRoom}</p>}
-          </div>
+              {tenatErrors.selectedRoom && <p style={{ color: 'red' }}>{tenatErrors.selectedRoom}</p>}
+            </div>
 
-          <div class="col-md-6">
-            <label htmlFor='bedNo' class="form-label">
-              Bed No:
+            <div class="col-md-6">
+              <label htmlFor='bedNo' class="form-label">
+                Bed No:
               </label>
               <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
                 <option value="">Select a Bed</option>
@@ -909,62 +1045,62 @@ const DashboardBoys = () => {
                   </option>
                 ))}
               </select>
-            
-            {tenatErrors.selectedBed && <p style={{ color: 'red' }}>{tenatErrors.selectedBed}</p>}
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='dataofJoin' class="form-label">
-              Date of Join:
+
+              {tenatErrors.selectedBed && <p style={{ color: 'red' }}>{tenatErrors.selectedBed}</p>}
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='dataofJoin' class="form-label">
+                Date of Join:
               </label>
               <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
-            
-            {tenatErrors.dateOfJoin && <p style={{ color: 'red' }}>{tenatErrors.dateOfJoin}</p>}
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='tenantName' class="form-label">
-              Name:
+
+              {tenatErrors.dateOfJoin && <p style={{ color: 'red' }}>{tenatErrors.dateOfJoin}</p>}
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='tenantName' class="form-label">
+                Name:
               </label>
-              <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')}/>
-            
-            {tenatErrors.name && <p style={{ color: 'red' }}>{tenatErrors.name}</p>}
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='tenantMobileNo' class="form-label">
-              Mobile No:
+              <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
+
+              {tenatErrors.name && <p style={{ color: 'red' }}>{tenatErrors.name}</p>}
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='tenantMobileNo' class="form-label">
+                Mobile No:
               </label>
               <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
-            
-            {tenatErrors.mobileNo && <p style={{ color: 'red' }}>{tenatErrors.mobileNo}</p>}
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='tenantIdNum' class="form-label">
-              ID Number:
+
+              {tenatErrors.mobileNo && <p style={{ color: 'red' }}>{tenatErrors.mobileNo}</p>}
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='tenantIdNum' class="form-label">
+                ID Number:
               </label>
               <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
-            
-            {tenatErrors.idNumber && <p style={{ color: 'red' }}>{tenatErrors.idNumber}</p>}
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='tenantEmergency' class="form-label">
-              Emergency Contact:
+
+              {tenatErrors.idNumber && <p style={{ color: 'red' }}>{tenatErrors.idNumber}</p>}
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='tenantEmergency' class="form-label">
+                Emergency Contact:
               </label>
               <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
-            
-            {tenatErrors.emergencyContact && <p style={{ color: 'red' }}>{tenatErrors.emergencyContact}</p>}
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='tenantStatus' class="form-label">
-              Status:
+
+              {tenatErrors.emergencyContact && <p style={{ color: 'red' }}>{tenatErrors.emergencyContact}</p>}
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='tenantStatus' class="form-label">
+                Status:
               </label>
               <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
                 <option value="occupied">Occupied</option>
                 <option value="unoccupied">Unoccupied</option>
               </select>
-            
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='tenantUpload' class="form-label">
-              Upload Image:
+
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='tenantUpload' class="form-label">
+                Upload Image:
               </label>
               {isEditing && tenantImageUrl && (
                 <div>
@@ -972,12 +1108,12 @@ const DashboardBoys = () => {
                   <p>Current Image</p>
                 </div>
               )}
-              <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required/>
+              <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required />
               {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='tenantUploadId' class="form-label">
-              Upload Id:
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='tenantUploadId' class="form-label">
+                Upload Id:
               </label>
               {isEditing && tenantIdUrl && (
                 <object
@@ -990,60 +1126,60 @@ const DashboardBoys = () => {
                 </object>
               )}
               <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
-           
-          </div>
-          {/* ===== */}
-          <div class="col-md-6">
-            <label htmlFor='tenantIdInput'  for="file-upload" class="custom-file-upload form-label">
-              {/* <i class="fa fa-cloud-upload"></i> */}
-              {/* <MdUploadFile /> */}
-            </label>
-            <input  class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
-          </div>
 
-          {/* =============== */}
-          <div className='col-12 text-center'>
-            {isEditing ? (
-              <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>Update Tenant</button>
-            ) : (
-              <button className='btn btn-warning' type="submit">Add Tenant</button>
-            )}
-          </div>
-        </form>
+            </div>
+            {/* ===== */}
+            <div class="col-md-6">
+              <label htmlFor='tenantIdInput' for="file-upload" class="custom-file-upload form-label">
+                {/* <i class="fa fa-cloud-upload"></i> */}
+                {/* <MdUploadFile /> */}
+              </label>
+              <input class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
+            </div>
+
+            {/* =============== */}
+            <div className='col-12 text-center'>
+              {isEditing ? (
+                <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>Update Tenant</button>
+              ) : (
+                <button className='btn btn-warning' type="submit">Add Tenant</button>
+              )}
+            </div>
+          </form>
         )
 
       case "Add Expenses":
         return (
           <form className="row 1g-10" onSubmit={expensesHandleSubmit}>
-          <div className="col-md-6">
-          <label htmlFor="inputExpenseName" className="form-label">Expense Name</label>
-          <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} />
-          {formErrors.expenseName && <div className="text-danger">{formErrors.expenseName}</div>}
-          </div>
-          <div className="col-md-6">
-          <label htmlFor="inputRent" className="form-label">Expense amount</label>
-          <input type="number"   className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} />
-          {formErrors.expenseAmount && <div className="text-danger">{formErrors.expenseAmount}</div>}
-          </div>
-          <div className="col-md-6">
-          <label htmlFor="inputRole" className="form-label">Created By</label>
-          <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
-          <option value="admin">Admin</option>
-          <option value="sub-admin">Sub-admin</option>
-          </select>
-          </div>
-          <div className="col-md-6">
-          <label htmlFor="inputDate" className="form-label">Expense Date</label>
-          <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
-          {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
-          </div>
+            <div className="col-md-6">
+              <label htmlFor="inputExpenseName" className="form-label">Expense Name</label>
+              <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} />
+              {formErrors.expenseName && <div className="text-danger">{formErrors.expenseName}</div>}
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="inputRent" className="form-label">Expense amount</label>
+              <input type="number" className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} />
+              {formErrors.expenseAmount && <div className="text-danger">{formErrors.expenseAmount}</div>}
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="inputRole" className="form-label">Created By</label>
+              <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
+                <option value="admin">Admin</option>
+                <option value="sub-admin">Sub-admin</option>
+              </select>
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="inputDate" className="form-label">Expense Date</label>
+              <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
+              {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
+            </div>
 
-                      <div className="col-12 text-center mt-3">
-                   
-                          <button  type="submit" className="btn btn-warning">Create</button>
-                      
-        
-                      </div>
+            <div className="col-12 text-center mt-3">
+
+              <button type="submit" className="btn btn-warning">Create</button>
+
+
+            </div>
           </form>
 
         )
@@ -1121,7 +1257,6 @@ const DashboardBoys = () => {
     <div className="dashboardboys">
       <h1 className="heading">Men's</h1>
       <div className="menu">
-
         {menu.map((item, index) => (
           <>
             <SmallCard key={index} index={index} item={item} handleClick={handleCardClick}/>
@@ -1130,14 +1265,11 @@ const DashboardBoys = () => {
         ))}
         <div className='button-container'>
           {Buttons?.map((item, index) => (
-            <button id="deskaddButton" type="button"  onClick={() =>{ handleClick(item)}}>
-                <img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item} </button>
+            <button id="deskaddButton" type="button" onClick={() => { handleClick(item); setShowForm(true) }}>
+              <img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item} </button>
           ))}
         </div>
-
       </div>
-     
-
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalRoomsBoys" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal} >
         <div className="modal-dialog ">
           <div className="modal-content">
@@ -1147,7 +1279,7 @@ const DashboardBoys = () => {
             </div>
             <div className="modal-body">
               <div className="container-fluid">
-               {renderFormLayout()}
+                {renderFormLayout()}
               </div>
             </div>
           </div>
@@ -1165,8 +1297,6 @@ const DashboardBoys = () => {
         </div>
       </div>
       }
-
-
     </div>
 
   );

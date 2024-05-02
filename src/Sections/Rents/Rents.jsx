@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Tab, Tabs } from 'react-bootstrap';
 import RentPageBoys from '../../components/RentPageBoys/RentPageBoys';
 import RentPageGirls from '../../components/RentPageGirls/RentPageGirls';

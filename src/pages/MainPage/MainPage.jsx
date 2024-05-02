@@ -70,12 +70,7 @@ const MainPage = () => {
       name: "Expenses",
       icon: ExpensesImage
     },
-    // {
-    //   id: 7,
-    //   path: "/Settings",
-    //   name: "Settings",
-    //   icon: SettingsImage
-    // },
+
   ]
 
   const Components = [<Dashboard />, <Rooms />, <Beds />, <Rents />, <Tenants />, <Expenses />, <Settings />]
@@ -86,12 +81,7 @@ const MainPage = () => {
     setFlag(value);
   }
 
-  // console.log(data, 'fetchApiData')
-
-
-
-
-  // by using resize
+ 
 
   useEffect(() => {
     const handleResize = () => {
@@ -121,7 +111,7 @@ const MainPage = () => {
 
     // Cleanup the event listener
     return () => window.removeEventListener('resize', handleResize);
-  }, []); // Empty dependency array ensures that the effect only runs once after component mount
+  }, []); 
 
 
 

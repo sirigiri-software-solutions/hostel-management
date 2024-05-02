@@ -13,6 +13,8 @@ const BedsPageBoys = () => {
 
   const [searchValue,setSearchValue] = useState("");
 
+
+
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
     onValue(roomsRef, (snapshot) => {

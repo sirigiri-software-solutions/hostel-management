@@ -29,10 +29,6 @@ const Dashboard = () => {
 
   return (
     <div className='container_main'>
-      {/* <div className='top-div'>
-        <img src={Admin} alt="admin" className='dashboard-icon' />
-        <h1 className='dashboard-heading'>{name}</h1>
-      </div> */}
       <h1 className='dashboard-welcome'>Welcome</h1>
       {isSmallScreen ? 
       (

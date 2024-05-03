@@ -9,6 +9,7 @@ import { onValue, update } from 'firebase/database';
 import "../RoomsBoys/RoomsBoys.css"
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { FaWhatsapp } from "react-icons/fa";
 
 const RentPageBoys = () => {
 
@@ -34,6 +35,47 @@ const RentPageBoys = () => {
   const [dateOfJoin, setDateOfJoin] = useState();
   const [showModal, setShowModal] = useState(false);
   const [notify, setNotify] = useState(false);
+  const [notifyUserInfo,setNotifyUserInfo] = useState(null);
+
+
+   // Function to send WhatsApp message
+   const sendMessage = (tenant, rentRecord) => {
+    const totalFee = rentRecord.totalFee;
+    const tenantName = tenant.name;
+  const amount = rentRecord.due;
+  const dateOfJoin = tenant.dateOfJoin;
+  const dueDate = rentRecord.dueDate;
+  const paidAmount = rentRecord.paidAmount;
+
+  const message = `Hi ${tenantName},\nHope you are doing fine!,\nYour total fee is ${totalFee},\n You paid ${paidAmount}\nYour due amount is ${amount}.\nYou joined on ${dateOfJoin}, and your due date is ${dueDate}.`;
+
+  const phoneNumber = tenant.mobileNo; // Replace with the recipient's phone number
+
+  // Check if the phone number starts with '+91' (India's country code)
+  const formattedPhoneNumber = phoneNumber.startsWith('+91') ? phoneNumber : `+91${phoneNumber}`;
+
+  const encodedMessage = encodeURIComponent(message);
+
+   
+    // Use web link for non-mobile devices
+    let whatsappLink = `https://wa.me/${formattedPhoneNumber}?text=${encodedMessage}`;
+  
+
+  // Open the WhatsApp link
+  window.open(whatsappLink, '_blank');
+  };
+
+  // Event handler for the notify checkbox
+  const handleNotifyCheckbox = (rentData) => {
+    // Toggle the state of the notify checkbox
+    if (notify && notifyUserInfo) {
+      const { tenant, rentRecord } = notifyUserInfo;
+      console.log(tenant,"InNotify")
+      sendMessage(tenant, rentData); // If checkbox is checked and tenant info is available, send WhatsApp message
+    }
+    setNotify(!notify); 
+  };
+
 
 
   useEffect(() => {
@@ -164,9 +206,12 @@ const RentPageBoys = () => {
       setDueDate(rentRecord.dueDate || '');
       setIsEditing(true);
       setEditingRentId(rentId);
+
+      
     }
     setShowModal(true);
     // console.log(selectedTenant)
+    setNotifyUserInfo({ tenant, rentRecord });
   };
 
   const validateForm = () => {
@@ -236,6 +281,11 @@ const RentPageBoys = () => {
           progress: undefined,
         });
         setIsEditing(false); // Reset editing state
+
+        console.log(rentData, "Getting");
+        if(notify){
+          handleNotifyCheckbox(rentData);
+        }
       }).catch(error => {
         toast.error("Error updating rent: " + error.message, {
           position: "top-center",
@@ -247,6 +297,15 @@ const RentPageBoys = () => {
           progress: undefined,
         });
       });
+
+
+      
+
+
+
+
+
+     
     } else {
       // Create a new rent record
       const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents`);
@@ -275,6 +334,9 @@ const RentPageBoys = () => {
     }
     setShowModal(false);
     resetForm();
+    
+      
+    
 
   };
   //===> For Clear Form for Add Rents
@@ -394,6 +456,11 @@ const RentPageBoys = () => {
 
   const handleClosePopUp = () => {
     setShowModal(false);
+    setNotify(false)
+  }
+
+  const onClickCheckbox = () => {
+    setNotify(!notify)
   }
 
   return (
@@ -509,11 +576,13 @@ const RentPageBoys = () => {
                           className="form-check-input"
                           type="checkbox"
                           checked={notify}
-                          onChange={e => setNotify(e.target.checked)} // Toggle the state on change
+                          onChange={onClickCheckbox}
+                           // Toggle the state on change
                         />
                         <label className="form-check-label" htmlFor="notifyCheckbox">
                           Notify
                         </label>
+                        <FaWhatsapp style={{backgroundColor:'green',color:'white',marginLeft:'7px',marginBottom:'4px'}} />
                       </div>
                     </div>
 

@@ -77,6 +77,11 @@ const MainPage = () => {
     //   icon: SettingsImage
     // },
   ]
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
 
   const Components = [<Dashboard />, <Rooms />, <Beds />, <Rents />, <Tenants />, <Expenses />, <Settings />]
 
@@ -85,6 +90,36 @@ const MainPage = () => {
   const handlesideBar = (value) => {
     setFlag(value);
   }
+  // useEffect(()=>{
+  //   const handleoutsideclick=(event)=>{
+  //     if(isModalOpen&& event.target.id==='poplogoutbtn')
+  //     {
+  //       setIsModalOpen(false)
+  //     }
+  //   }
+  // window.addEventListener('click',handleoutsideclick)
+    
+  // },[isModalOpen])
+
+  useEffect(() => {
+    // Add event listener to handle clicks outside the popup
+    const handleClickOutsideModal = (event) => {
+      const popup = document.getElementById('poplogoutbtn');
+      if (popup && !popup.contains(event.target)) {
+        // Clicked outside the popup, close the modal
+        setIsModalOpen(false);
+      }
+    };
+
+    // Attach the event listener
+    document.addEventListener('mousedown', handleClickOutsideModal);
+
+    // Cleanup: remove event listener on component unmount
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideModal);
+    };
+  }, []);
+  
 
   // console.log(data, 'fetchApiData')
 
@@ -174,11 +209,11 @@ const MainPage = () => {
     close(); // Close the popup modal
   }
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
+  // const toggleModal = () => {
+  //   setIsModalOpen(!isModalOpen);
+  // };
 
   const navigate = useNavigate();
 
@@ -275,26 +310,26 @@ const MainPage = () => {
             </div> */}
 
       <div style={rightSectionMainContainer} >
-        <div>
-          <div className='top-div' >
-            <img src={Admin} alt="admin" className='dashboard-icon' />
-            <h1 className='dashboard-heading'>{name}</h1>
-            <div className='logoutButton' onClick={toggleModal}>
-              <RiLogoutCircleRLine />
-            </div>
-          </div>
-          {isModalOpen && (
-            <div className="popup">
-              <div>
-                <p>Manage your account</p>
-              </div>
-              <p>Are you sure you want to logout?</p>
-              <button onClick={logout} className="logout-button">Logout</button>
-              
-              <button className='logout-closeBtn' onClick={toggleModal}>Close</button>
-            </div>
-          )}
+      <div>
+      <div className='top-div'>
+        <img src={Admin} alt="admin" className='dashboard-icon' />
+        <h1 className='dashboard-heading'>{name}</h1>
+        <div className='logoutButton' onClick={toggleModal}>
+          <RiLogoutCircleRLine />
         </div>
+      </div>
+      {isModalOpen && (
+        <div id="poplogoutbtn" className="popup">
+          <div>
+            <p>Manage your account</p>
+          </div>
+          <p>Are you sure you want to logout?</p>
+          <button onClick={logout} className="logout-button">Logout</button>
+          
+          <button className='logout-closeBtn' onClick={toggleModal}>Close</button>
+        </div>
+      )}
+    </div>
         {Components && Components.map((item, index) =>
          <div key={index} style={flag === index + 1 ? { display: 'block' } : { display: 'none' }}>
           {item}

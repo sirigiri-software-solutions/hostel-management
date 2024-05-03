@@ -55,6 +55,18 @@ const DashboardBoys = () => {
   const idInputRef = useRef(null);
   const [boysRoomsData, setBoysRoomsData] = useState([]);
   // const { data } = useContext(DataContext);
+  const [hasBike, setHasBike] = useState(false);
+  const [bikeNumber, setBikeNumber] = useState('');
+
+  const handleCheckboxChange = (e) => {
+    setHasBike(e.target.value === 'yes');
+    if (e.target.value === 'no') {
+      setBikeNumber('--N/A--');
+    } else {
+      setBikeNumber('');
+    }
+  };
+  
 
   const handleRoomsIntegerChange = (event) => {
     const value = event.target.value;
@@ -1076,6 +1088,50 @@ const DashboardBoys = () => {
               <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
            
           </div>
+          <div className="col-md-8" style={{ marginTop: '20px' }}>
+      <label htmlFor="bikeCheck">Do you have a bike?</label>
+      <input
+        type="radio"
+        id="bikeCheck"
+        name="bike"
+        value="yes"
+        onClick={handleCheckboxChange}
+        checked={hasBike}
+      />
+      Yes
+      <input
+        type="radio"
+        id="bikeCheck1"
+        name="bike"
+        value="no"
+        onClick={handleCheckboxChange}
+        checked={!hasBike}
+        style={{ marginLeft: '30px' }}
+      />
+      No
+
+      {hasBike && (
+        <div>
+          <label htmlFor="bikeNumber">Bike Number Plate ID:</label>
+          <br />
+          <input
+            type="text"
+            id="bikeNumber"
+            placeholder="Enter bike number plate ID"
+            value={bikeNumber}
+            onChange={(event) => setBikeNumber(event.target.value)
+              
+            }
+            
+          />
+          <br />
+          
+        </div>
+       
+      )}
+    </div>
+
+
           {/* ===== */}
           <div class="col-md-6">
             <label htmlFor='tenantIdInput'  for="file-upload" class="custom-file-upload form-label">

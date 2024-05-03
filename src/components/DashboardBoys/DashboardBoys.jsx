@@ -1173,12 +1173,8 @@ const DashboardBoys = () => {
               <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
               {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
             </div>
-
             <div className="col-12 text-center mt-3">
-
               <button type="submit" className="btn btn-warning">Create</button>
-
-
             </div>
           </form>
 

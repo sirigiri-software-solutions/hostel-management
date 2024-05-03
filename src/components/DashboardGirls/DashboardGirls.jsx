@@ -59,6 +59,18 @@ const DashboardGirls = () => {
 
   // expenses related 
 
+  const [hasBike, setHasBike] = useState(false);
+  const [bikeNumber, setBikeNumber] = useState('');
+
+  const handleCheckboxChange = (e) => {
+    setHasBike(e.target.value === 'yes');
+    if (e.target.value === 'no') {
+      setBikeNumber('--N/A--');
+    } else {
+      setBikeNumber('');
+    }
+  };
+
   const [formData, setFormData] = useState({
     expenseName: '',
     expenseAmount: '',
@@ -1133,28 +1145,72 @@ const DashboardGirls = () => {
                   <a href={tenantIdUrl}>Download PDF</a>
                 </object>
               )}
-              <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
+              <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />   
+          </div>
 
-            </div>
-            {/* ===== */}
-            <div class="col-md-6">
-              <label htmlFor='tenantIdInput' for="file-upload" class="custom-file-upload form-label">
-                {/* <i class="fa fa-cloud-upload"></i> */}
-                {/* <MdUploadFile /> */}
-              </label>
-              <input class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
-            </div>
+          <div className="col-md-8" style={{ marginTop: '20px' }}>
+      <label htmlFor="bikeCheck">Do you have a bike?</label>
+      <input
+        type="radio"
+        id="bikeCheck"
+        name="bike"
+        value="yes"
+        onClick={handleCheckboxChange}
+        checked={hasBike}
+      />
+      Yes
+      <input
+        type="radio"
+        id="bikeCheck1"
+        name="bike"
+        value="no"
+        onClick={handleCheckboxChange}
+        checked={!hasBike}
+        style={{ marginLeft: '30px' }}
+      />
+      No
 
-            {/* =============== */}
-            <div className='col-12 text-center'>
-              {isEditing ? (
-                <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>Update Tenant</button>
-              ) : (
-                <button className='btn btn-warning' type="submit">Add Tenant</button>
-              )}
-            </div>
-          </form>
+      {hasBike && (
+        <div>
+          <label htmlFor="bikeNumber">Bike Number Plate ID:</label>
+          <br />
+          <input
+            type="text"
+            id="bikeNumber"
+            placeholder="Enter bike number plate ID"
+            value={bikeNumber}
+            onChange={(event) => setBikeNumber(event.target.value)
+              
+            }
+            
+          />
+          <br />
+          
+        </div>
+       
+      )}
+    </div>
 
+
+          {/* ===== */}
+          <div class="col-md-6">
+            <label htmlFor='tenantIdInput'  for="file-upload" class="custom-file-upload form-label">
+              {/* <i class="fa fa-cloud-upload"></i> */}
+              {/* <MdUploadFile /> */}
+            </label>
+            <input  class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
+          </div>
+ 
+          {/* =============== */}
+          <div className='col-12 text-center'>
+            {isEditing ? (
+              <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>Update Tenant</button>
+            ) : (
+              <button className='btn btn-warning' type="submit">Add Tenant</button>
+            )}
+          </div>
+        </form>
+ 
         )
 
       case "Add Expenses":

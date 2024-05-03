@@ -147,6 +147,22 @@
     background-color: white; /* White background for content */
     border-radius: 10px; /* Rounded corners */
   }
+  @media screen and (max-width:1440px)
+  {
+    .menu-item{
+        width:20%;
+    }
+  }
+  @media screen and (max-width:768px)
+   {
+     .menu-item{
+        width:70%;
+     }
+    
+     
+    
+  }
+  
   
 /* styles.css */
 

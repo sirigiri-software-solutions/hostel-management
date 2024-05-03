@@ -47,6 +47,46 @@ const TenantsBoys = () => {
   const [exTenants, setExTenants] = useState([]);
   const [showExTenants, setShowExTenants] = useState(false);
 
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && event.target.id === "exampleModalTenantsBoys") {
+            setShowModal(false);
+            setTenantIdUrl('')
+        }
+        
+       
+       
+    };
+
+    window.addEventListener('click', handleOutsideClick);
+    
+}, [showModal]);
+
+
+const handleClickOutside = (event) => {
+  const popup = document.getElementById('userDetailsTenantPopupId');
+  if (popup && !popup.contains(event.target)) {
+    setUserDetailsTenantsPopup(false);
+  }
+};
+
+useEffect(() => {
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+
+
+
+
+
+
+  
+
   
 
   useEffect(() => {
@@ -267,19 +307,10 @@ const TenantsBoys = () => {
 
     resetForm();
     setErrors({});
-    // if (imageInputRef.current) {
-    //   imageInputRef.current.value = null;
-    // }
-    // if (idInputRef.current) {
-    //   idInputRef.current.value =null;
-    // }
     
   };
 
   const handleEdit = (tenant) => {
-
-
-
     setSelectedRoom(tenant.roomNo);
     setSelectedBed(tenant.bedNo);
     setDateOfJoin(tenant.dateOfJoin);
@@ -293,8 +324,7 @@ const TenantsBoys = () => {
     setTenantImageUrl(tenant.tenantImageUrl);
     setTenantIdUrl(tenant.tenantIdUrl || '');
     
-    // imageInputRef.current.value = "";
-    // idInputRef.current.value = "";
+ 
 
     setShowModal(true);
 
@@ -314,9 +344,7 @@ const TenantsBoys = () => {
 
   };
 
-  // const handleDelete = async (id) => {
-  //   await remove(ref(database, `Hostel/boys/tenants/${id}`));
-  // };
+
 
   const resetForm = () => {
     setSelectedRoom('');
@@ -339,7 +367,6 @@ const TenantsBoys = () => {
   // Filter tenants based on search query
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value)
-
   };
 
   const columns = [
@@ -482,9 +509,7 @@ const TenantsBoys = () => {
     status: 'vaccated',
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
-    // onClick={() => handleEdit(tenant)}
-    // data-bs-toggle="modal"
-    // data-bs-target="#exampleModalTenantsBoys"
+    
     >
       view
     </button>
@@ -521,7 +546,7 @@ const TenantsBoys = () => {
       <div>
         {showExTenants ? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
       </div>
-      <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
+      <div   className={`modal fade ${showModal ? 'show' : ''}`}  style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}  >
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -666,11 +691,12 @@ const TenantsBoys = () => {
           </div>
         </div>
       </div>
+   
 
      
 
       {userDetailsTenantPopup && 
-      <div className='userDetailsTenantPopup'>
+      <div  id="userDetailsTenantPopupId"  className='userDetailsTenantPopup'>
         <div className='tenants-dialog-container'>
           <h1 className="tenants-popup-heading">Tenant Details </h1>
           <div className='tenants-popup-mainContainer'>

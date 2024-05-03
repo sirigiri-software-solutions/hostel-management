@@ -23,6 +23,18 @@ const RoomsGirls = () => {
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
 
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && event.target.id === "exampleModalGirls") {
+            setShowModal(false);
+        }
+       
+    };
+    window.addEventListener('click', handleOutsideClick);
+    
+}, [showModal]);
+
   const handleRoomsIntegerChange = (event) => {
     const value = event.target.value;
     const re = /^[0-9\b]+$/; // Regular expression to allow only numbers

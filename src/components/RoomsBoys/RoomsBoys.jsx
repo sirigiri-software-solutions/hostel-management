@@ -23,6 +23,18 @@ const RoomsBoys = () => {
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
 
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && event.target.id === "exampleModalRoomsBoys") {
+            setShowModal(false);
+        }
+       
+    };
+    window.addEventListener('click', handleOutsideClick);
+    
+}, [showModal]);
+
   const handleRoomsIntegerChange = (event) => {
     const value = event.target.value;
     const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
@@ -241,8 +253,6 @@ const resetForm = () => {
       edit_room: <button
         style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
         onClick={() => handleEdit(room)}
-        // data-bs-toggle="modal"
-        // data-bs-target="#exampleModalRoomsBoys"
       >
         Edit
       </button>
@@ -282,25 +292,7 @@ const resetForm = () => {
             Add Rooms
           </button>
         </div>
-        {/* <div className='mobile-layout !sticky-top'>
-          <div className="d-flex align-items-center justify-content-between mr-5">
-            <div className='d-flex flex-column gap-2 !align-items-start'>
-              <div className='roomlogo-container w-sm-[75px]'>
-                <img src={RoomsIcon} alt="RoomsIcon" className='roomlogo' />
-              </div>
-              <h1 className='fs-1'>Rooms Management</h1>
-            </div>
-            <div className='d-flex flex-column gap-2 align-items-center'>
-              <div className="search-wrapper">
-                <input type="text" placeholder='Search' className='search-input' />
-                <img src={SearchIcon} alt="search-icon" className='search-icon' />
-              </div>
-              <div className="d-flex justify-content-end">
-              <button type="button" className="add-button" onClick={handleAddNew}>Add Rooms</button>
-              </div>
-            </div>
-          </div>
-        </div> */}
+        
       </div>
       <div>
         <Table columns={columns} rows={filteredRows} />

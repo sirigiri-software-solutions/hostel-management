@@ -51,6 +51,39 @@ const TenantsGirls = () => {
 
 
   useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && event.target.id === "exampleModalTenantsGirls") {
+            setShowModal(false);
+            setTenantIdUrl('')
+        }
+        
+       
+       
+    };
+
+    window.addEventListener('click', handleOutsideClick);
+    
+}, [showModal]);
+
+
+const handleClickOutside = (event) => {
+  const popup = document.getElementById('userDetailsTenantPopupIdGirl');
+  if (popup && !popup.contains(event.target)) {
+    setUserDetailsTenantsPopup(false);
+  }
+};
+
+useEffect(() => {
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+
+
+  useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/girls/tenants');
     onValue(tenantsRef, snapshot => {
       const data = snapshot.val() || {};
@@ -94,18 +127,7 @@ const TenantsGirls = () => {
     }
   }, [selectedRoom, girlsRooms]);
 
-  //=========================
-  // useEffect(() => {
-  //   if (selectedRoom) {
-  //     const room = girlsRoomsData.find(room => room.roomNumber === selectedRoom);
-  //     if (room) {
-  //       const options = Array.from({ length: room.numberOfBeds }, (_, i) => i + 1);
-  //       setBedOptions(options);
-  //     }
-  //   } else {
-  //     setBedOptions([]);
-  //   }
-  // }, [selectedRoom, girlsRoomsData]);
+ 
 
   const validate = () => {
     let tempErrors = {};
@@ -278,9 +300,6 @@ const TenantsGirls = () => {
     setTenantIdUrl(tenant.tenantIdUrl || '');
     // console.log(tenant.tenantImageUrl,"Getting")
     console.log(tenant.tenantIdUrl,"Getting")
-    // imageInputRef.current.value = "";
-    // idInputRef.current.value = "";
-    // Open the modal
     setShowModal(true);
   };
 
@@ -705,7 +724,7 @@ const TenantsGirls = () => {
 
 
       {userDetailsTenantPopup && 
-      <div className='userDetailsTenantPopup'>
+      <div id="userDetailsTenantPopupIdGirl" className='userDetailsTenantPopup'>
         <div className='tenants-dialog-container'>
           <h1 className="tenants-popup-heading">Tenant Details </h1>
           <div className='tenants-popup-mainContainer'>

@@ -70,12 +70,7 @@ const MainPage = () => {
       name: "Expenses",
       icon: ExpensesImage
     },
-    // {
-    //   id: 7,
-    //   path: "/Settings",
-    //   name: "Settings",
-    //   icon: SettingsImage
-    // },
+
   ]
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -121,12 +116,7 @@ const MainPage = () => {
   }, []);
   
 
-  // console.log(data, 'fetchApiData')
-
-
-
-
-  // by using resize
+ 
 
   useEffect(() => {
     const handleResize = () => {
@@ -156,7 +146,7 @@ const MainPage = () => {
 
     // Cleanup the event listener
     return () => window.removeEventListener('resize', handleResize);
-  }, []); // Empty dependency array ensures that the effect only runs once after component mount
+  }, []); 
 
 
 
@@ -172,36 +162,6 @@ const MainPage = () => {
   const handleHamburgerMenu = () => {
     setHamburgerMenuItems(!hamburgerMenuItems)
   }
-  // CSS
-
-  // const [mainBackgroundContainerStyle, setMainBackgroundContainerStyle] = useState({
-  //   display: 'flex',
-  //   width: '100%',
-  //   margin: '0px',
-  //   flexDirection: 'row',
-  // });
-
-  // const [sidebarStyle, setSidebarStyle] = useState({
-  //   width: '21%',
-  //   backgroundColor: '#ECECEC',
-  //   padding: '20px',
-  //   borderRadius: '0px 65px 65px 0px',
-  //   display:'flex',
-  //   flexDirection:'column',
-  // });
-
-  // const [sidebarItems,setSidebarItems] = useState({
-  //   display:'flex',
-  //   flexDirection:'column',
-  //   gap:'15px'
-  // })
-
-
-  // const [rightSectionMainContainer,setrightSectionMainContainer] = useState({
-  //   width:'80%',
-  //   padding:'16px 20px'
-
-  // })
 
 
   const handleSidebarItemClick = (itemId, close) => {
@@ -249,16 +209,6 @@ const MainPage = () => {
           }
         </div>
 
-        {/* Hamberger icon */}
-        {/* <GiHamburgerMenu style={hamburgerMenu} onClick={handleHamburgerMenu} /> */}
-        {/* {
-              hamburgerMenuItems && menuItems.map((item, index) => (
-                <label key={index}>{item.name}</label>
-              ))
-            } */}
-
-        {/*another approach popup model */}
-
 
         <Popup modal
           trigger={<GiHamburgerMenu style={hamburgerMenu} onClick={handleHamburgerMenu} />}>
@@ -297,17 +247,7 @@ const MainPage = () => {
           )}
         </Popup>
       </div>
-      {/* <div style={mobileMenuItems}>
-        {
-              hamburgerMenu && (
-                hamburgerMenuItems && menuItems.map((item, index) => (
-                  <div key={index} className="link" style={flag === item.id ? {backgroundColor: 'hsla(30, 100%, 50%, 0.41)',  borderRadius: '10px'} : {borderRadius:'10px'} } onClick={() => handlesideBar(item.id)}>
-                    <label className='link-text'>{item.name}</label>
-                    </div>
-                ))
-              )
-            }
-            </div> */}
+      
 
       <div style={rightSectionMainContainer} >
       <div>

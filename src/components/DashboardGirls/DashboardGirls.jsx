@@ -13,6 +13,7 @@ import { FetchData } from '../../ApiData/FetchData';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import Table from '../../Elements/Table'
  
 const DashboardGirls = () => {
   const [modelText, setModelText] = useState('');
@@ -30,7 +31,7 @@ const DashboardGirls = () => {
 
 
   const [totalExpenses, setTotalExpenses] = useState(0);
- 
+
   //=====================================================
   const [selectedRoom, setSelectedRoom] = useState('');
   const [bedOptions, setBedOptions] = useState([]);
@@ -53,6 +54,7 @@ const DashboardGirls = () => {
   const idInputRef = useRef(null);
   const [girlsRoomsData, setGirlsRoomsData] = useState([]);
   // const { data } = useContext(DataContext);
+  const [showForm, setShowForm] = useState(true);
 
 
   // expenses related 
@@ -90,7 +92,17 @@ const DashboardGirls = () => {
       [name]: value
     });
   };
-
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && event.target.id === "exampleModalRoomsGirls") {
+            setShowModal(false);
+        }
+       
+    };
+    window.addEventListener('click', handleOutsideClick);
+    
+}, [showModal]);
 
 
  
@@ -131,13 +143,13 @@ const DashboardGirls = () => {
     }
     if (!numberOfBeds) newErrors.numberOfBeds = 'Number of beds is required';
     if (!bedRent) newErrors.bedRent = 'Bed rent is required';
- 
+
     // Check if there are any errors
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return; // Prevent form submission if there are errors
     }
- 
+
     const roomsRef = ref(database, 'Hostel/girls/rooms');
     push(roomsRef, {
       floorNumber,
@@ -167,9 +179,9 @@ const DashboardGirls = () => {
         progress: undefined,
       });
     });
-  
+
     // }
- 
+
     // Reset form
     setFloorNumber('');
     setRoomNumber('');
@@ -180,7 +192,7 @@ const DashboardGirls = () => {
     setErrors({}); // Clear errors
     setShowModal(false);
   };
- 
+
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/girls/rooms');
     onValue(roomsRef, (snapshot) => {
@@ -195,10 +207,10 @@ const DashboardGirls = () => {
       setRooms(loadedRooms);
     });
   }, []);
-    // Calculate the total number of beds
-    const totalBeds = rooms.reduce((acc, room) => acc + Number(room.numberOfBeds), 0);
- 
- 
+  // Calculate the total number of beds
+  const totalBeds = rooms.reduce((acc, room) => acc + Number(room.numberOfBeds), 0);
+
+
   //-======================================
 
   const formatDate = (dateString) => {
@@ -226,7 +238,7 @@ const DashboardGirls = () => {
     });
   }, []);
 
- 
+
   useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/girls/tenants');
     onValue(tenantsRef, snapshot => {
@@ -238,7 +250,7 @@ const DashboardGirls = () => {
       setTenants(loadedTenants);
     });
   }, []);
- 
+
 
   const [girlsRooms, setGirlsRooms] = useState([]);
   useEffect(() => {
@@ -271,39 +283,6 @@ const DashboardGirls = () => {
     }
   }, [selectedRoom, girlsRooms]);
 
-
-
-  //==================================
-  // useEffect(() => {
-  //   const fetchDataFromAPI = async () => {
-  //     try {
-  //       if (data) {
-  //         const girlsRoomsData = Object.values(data.girls.rooms);
-  //         setGirlsRoomsData(girlsRoomsData);
-  //       } else {
-  //         const apiData = await FetchData();
-  //         const girlsRoomsData = Object.values(apiData.girls.rooms);
-  //         setGirlsRoomsData(girlsRoomsData);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching tenants data:', error);
-  //     }
-  //   };
-  //   fetchDataFromAPI();
-  // }, [data]);
- 
-
-  // useEffect(() => {
-  //   if (selectedRoom) {
-  //     const room = girlsRoomsData.find(room => room.roomNumber === selectedRoom);
-  //     if (room) {
-  //       const options = Array.from({ length: room.numberOfBeds }, (_, i) => i + 1);
-  //       setBedOptions(options);
-  //     }
-  //   } else {
-  //     setBedOptions([]);
-  //   }
-  // }, [selectedRoom, girlsRoomsData]);
  
   const validate = () => {
     let tempErrors = {};
@@ -332,7 +311,7 @@ const DashboardGirls = () => {
     const isBedOccupied = tenants.some(tenant => {
       return tenant.roomNo === selectedRoom && tenant.bedNo === selectedBed && tenant.status === "occupied" && tenant.id !== currentTenantId;
     });
- 
+
     if (isBedOccupied) {
       tempErrors.selectedBed = "This bed is already occupied.";
     }
@@ -342,7 +321,7 @@ const DashboardGirls = () => {
     setTenantErrors(tempErrors);
     return Object.keys(tempErrors).every((key) => tempErrors[key] === "");
   };
- 
+
   const handleTenantImageChange = (e) => {
     if (e.target.files[0]) {
       setTenantImage(e.target.files[0]);
@@ -355,16 +334,16 @@ const DashboardGirls = () => {
   };
   const handleTenantSubmit = async (e) => {
     e.preventDefault();
- 
+
     // if (!validate()) return;
     e.target.querySelector('button[type="submit"]').disabled = true;
     if (!validate()) {
-      e.target.querySelector('button[type="submit"]').disabled = false;  
+      e.target.querySelector('button[type="submit"]').disabled = false;
       return
     };
- 
+
     let imageUrlToUpdate = tenantImageUrl;
- 
+
     if (tenantImage) {
       const imageRef = storageRef(storage, `Hostel/girls/tenants/images/tenantImage/${tenantImage.name}`);
       try {
@@ -372,10 +351,10 @@ const DashboardGirls = () => {
         imageUrlToUpdate = await getDownloadURL(snapshot.ref);
       } catch (error) {
         console.error("Error uploading tenant image:", error);
- 
+
       }
     }
- 
+
     let idUrlToUpdate = tenantIdUrl;
     if (tenantId) {
       const imageRef = storageRef(storage, `Hostel/girls/tenants/images/tenantId/${tenantId.name}`);
@@ -386,7 +365,7 @@ const DashboardGirls = () => {
         console.error("Error uploading tenant image:", error);
       }
     }
- 
+
     const tenantData = {
       roomNo: selectedRoom,
       bedNo: selectedBed,
@@ -400,7 +379,7 @@ const DashboardGirls = () => {
       tenantIdUrl: idUrlToUpdate,
       // tenantIdUrl,
     };
- 
+
     if (isEditing) {
       await update(ref(database, `Hostel/girls/tenants/${currentTenantId}`), tenantData).then(() => {
         toast.success("Tenant updated successfully.", {
@@ -454,9 +433,9 @@ const DashboardGirls = () => {
   };
 
   //===============================
-  
+
   //handle add rent==============================================
-  
+
   const [selectedTenant, setSelectedTenant] = useState('');
   const [bedNumber, setBedNumber] = useState('');
   const [totalFee, setTotalFee] = useState('');
@@ -467,22 +446,6 @@ const DashboardGirls = () => {
   const [dueDate, setDueDate] = useState('');
   const [editingRentId, setEditingRentId] = useState(null);
   const [availableTenants, setAvailableTenants] = useState([]);
-
-  // useEffect(() => {
-  //   // Fetch tenants data once when component mounts
-  //   const tenantsRef = ref(database, 'Hostel/boys/tenants');
-  //   onValue(tenantsRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     const loadedTenants = data ? Object.keys(data).map(key => ({
-  //       id: key,
-  //       ...data[key],
-  //     })) : [];
-  //     setTenants(loadedTenants);
-  //   });
-
-  //   // Fetch room data once when component mounts
-    
-  // }, []);
 
   useEffect(() => {
     const updateTotalFeeFromRoom = () => {
@@ -682,10 +645,10 @@ const DashboardGirls = () => {
     setShowModal(false);
 
     resetForm();
-   
+
   };
-//---------------------------------
- 
+  //---------------------------------
+
   const resetForm = () => {
     setSelectedRoom('');
     setSelectedBed('');
@@ -708,20 +671,20 @@ const DashboardGirls = () => {
     setBedRent('');
     setCreatedBy('admin');
 
-    setSelectedTenant(''); 
-    setRoomNumber('');  
-    setBedNumber('');      
-    setTotalFee('');     
-    setPaidAmount('');     
-    setDue('');        
-    setDateOfJoin('');     
-    setPaidDate('');       
-    setDueDate('');        
-    setErrors({});         
+    setSelectedTenant('');
+    setRoomNumber('');
+    setBedNumber('');
+    setTotalFee('');
+    setPaidAmount('');
+    setDue('');
+    setDateOfJoin('');
+    setPaidDate('');
+    setDueDate('');
+    setErrors({});
     setIsEditing(false);
   };
- 
- 
+
+
   const menu = [
     {
       image: Rooms,
@@ -738,7 +701,7 @@ const DashboardGirls = () => {
     {
       image: Beds,
       heading: 'Total Beds',
-      number: `${totalBeds}`,
+      number: `${totalBeds}/${totalBeds-tenants.length}`,
       btntext: 'Add Beds',
     },
     {
@@ -749,37 +712,19 @@ const DashboardGirls = () => {
     },
   ];
   const Buttons = ['Add Rooms', 'Add Tenants', 'Add Rent', 'Add Expenses'];
- 
+
   const handleClick = (text) => {
     setModelText(text);
     setFormLayout(text);
     setShowModal(true);
   };
- 
+
   const handleCloseModal = () => {
     setModelText('');
     setFormLayout('');
     resetForm();
     setShowModal(false);
   };
- 
-  // useEffect(() => {
- 
-  //   const handleResize = () => {
-  //     if (window.innerWidth < 650) {
-  //       setBtn(true);
-  //     } else {
-  //       setBtn(false);
-  //     }
-  //   };
-  //   handleResize();
-  //   window.addEventListener('resize', handleResize);
-  //   // Cleanup
-  //   return () => {
-  //     window.removeEventListener('resize', handleResize);
-  //   };
-  // }, []);
-
 
   const expensesHandleSubmit = (e) => {
     e.preventDefault();
@@ -791,13 +736,13 @@ const DashboardGirls = () => {
       errors.expenseName = 'Expense name should contain only alphabets and spaces';
       formIsValid = false;
     }
-    
-  
+
+
     if (!formData.expenseAmount.match(/^\d+(\.\d{1,2})?$/)) {
       errors.expenseAmount = 'Expense amount should be a valid number';
       formIsValid = false;
     }
-  
+
 
     if (!formData.expenseName) {
       errors.expenseName = 'Expense name is required';
@@ -843,25 +788,27 @@ const DashboardGirls = () => {
           progress: undefined,
         });
       });
-        setShowModal(false);
-        setFormErrors({number: '',
+      setShowModal(false);
+      setFormErrors({
+        number: '',
         rent: '',
         rooms: '',
-        status: ''});
+        status: ''
+      });
     } else {
       // Set errors in state if form is not valid
       setFormErrors(errors);
     }
 
-    
+
   };
- 
- 
+
+
   const renderFormLayout = () => {
     switch (formLayout) {
       case 'Add Rooms':
         return (
-         
+
           <form className="row g-3" onSubmit={handleGirlsRoomsSubmit}>
             <div className="col-md-6">
               <label htmlFor="inputNumber" className="form-label">Floor Number</label>
@@ -886,7 +833,7 @@ const DashboardGirls = () => {
             <div className="col-md-6">
               <label htmlFor="inputRole" className="form-label">Created By</label>
               <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
- 
+
                 <option value="admin">Admin</option>
                 <option value="sub-admin">Sub-admin</option>
               </select>
@@ -898,74 +845,202 @@ const DashboardGirls = () => {
         )
       case 'Add Rent':
         return (
-          <form class="row lg-10" onSubmit={handleRentSubmit}>
-          <div class='col-12 mb-3'>
-            <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)}>
-              <option value="">Select a Tenant *</option>
-              {availableTenants.map(tenant => (
-                <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
-              ))}
-            </select>
-            {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
+          <div >
+            <div className='monthlyDailyButtons'>
+              <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(true)}>
+                <text>Monthly</text>
+              </div>
+              <div className={!showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(false)}>
+                <text>Daily</text>
+              </div>
+            </div>
+            {showForm ?
+              <div className='monthlyAddForm'>
+                <form class="row lg-10" onSubmit={handleRentSubmit}>
+                  <div class='col-12 mb-3'>
+                    <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
+                      <option value="">Select a Tenant *</option>
+                      {/* {availableTenants.map(tenant => (
+                  <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+                ))} */}
+
+                      {isEditing ? (
+                        <option key={selectedTenant} value={selectedTenant}>{tenantsWithRents.find(tenant => tenant.id === selectedTenant)?.name}</option>
+                      ) : (
+                        availableTenants.map(tenant => (
+                          <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+                        ))
+                      )}
+
+
+                    </select>
+                    {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                    <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                    <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                    <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                    <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
+                    {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor="Due" class="form-label">Due:</label>
+                    <input id="Due" class="form-control" type="number" value={due} readOnly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                    <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                    <input
+                      id="PaidDate"
+                      class="form-control"
+                      type="date"
+                      value={paidDate}
+                      onChange={e => setPaidDate(e.target.value)}
+                    />
+                    {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                    <input
+                      id="DueDate"
+                      class="form-control"
+                      type="date"
+                      value={dueDate}
+                      onChange={e => setDueDate(e.target.value)}
+                    />
+                    {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
+                  </div>
+                  <div className="col-12 mb-3" >
+                    <div className="form-check">
+                      <input
+                        id="notifyCheckbox"
+                        className="form-check-input"
+                        type="checkbox"
+                      // checked={notify}
+                      // onChange={onClickCheckbox} // Toggle the state on change
+                      />
+                      <label className="form-check-label" htmlFor="notifyCheckbox">
+                        Notify
+                      </label>
+                      {/* <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} /> */}
+                    </div>
+                  </div>
+                  <div class="col-12 text-center mt-2">
+                    <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                  </div>
+                </form>
+              </div> :
+              <div className='monthlyAddForm'>
+                <form class="row lg-10" onSubmit={handleRentSubmit}>
+                  <div class='col-12 mb-3'>
+                    <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
+                      <option value="">Select a Tenant *</option>
+                      {/* {availableTenants.map(tenant => (
+                                    <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+                                  ))} */}
+
+                      {isEditing ? (
+                        <option key={selectedTenant} value={selectedTenant}>{tenantsWithRents.find(tenant => tenant.id === selectedTenant)?.name}</option>
+                      ) : (
+                        availableTenants.map(tenant => (
+                          <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+                        ))
+                      )}
+
+
+                    </select>
+                    {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                    <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                    <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                    <input id="TotalFee" class="form-control" type="number" value={totalFee} onChange={e => setTotalFee(e.target.value)} />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                    <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
+                    {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor="Due" class="form-label">Due:</label>
+                    <input id="Due" class="form-control" type="number" value={due} readOnly />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                    <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                    <input
+                      id="PaidDate"
+                      class="form-control"
+                      type="date"
+                      value={paidDate}
+                      onChange={e => setPaidDate(e.target.value)}
+                    />
+                    {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                    <input
+                      id="DueDate"
+                      class="form-control"
+                      type="date"
+                      value={dueDate}
+                      onChange={e => setDueDate(e.target.value)}
+                    />
+                    {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
+                  </div>
+                  <div className="col-12 mb-3" >
+                    <div className="form-check">
+                      <input
+                        id="notifyCheckbox"
+                        className="form-check-input"
+                        type="checkbox"
+                      // checked={notify}
+                      // onChange={onClickCheckbox} // Toggle the state on change
+                      />
+                      <label className="form-check-label" htmlFor="notifyCheckbox">
+                        Notify
+                      </label>
+                      {/* <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} /> */}
+                    </div>
+                  </div>
+                  <div class="col-12 text-center mt-2">
+                    <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                  </div>
+                </form>
+              </div>
+            }
           </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor='roomNo' class="form-label">Room Number:</label>
-            <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly/>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
-            <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
-            <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
-            <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)}/>
-            {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
-          </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor="Due" class="form-label">Due:</label>
-            <input id="Due" class="form-control" type="number" value={due} readOnly />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
-            <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
-            />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
-            <input
-              id="PaidDate"
-              class="form-control"
-              type="date"
-              value={paidDate}
-              onChange={e => setPaidDate(e.target.value)}
-            />
-            {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
-          </div>
-          <div class="col-md-6 mb-3">
-            <label htmlFor="DueDate" class="form-label">Due Date:</label>
-            <input
-              id="DueDate"
-              class="form-control"
-              type="date"
-              value={dueDate}
-              onChange={e => setDueDate(e.target.value)}
-            />
-            {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
-          </div>
-          <div class="col-12 text-center mt-2">
-            <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
-          </div>
-        </form>
         )
       case 'Add Tenants':
         return (
           <form class="row lg-10" onSubmit={handleTenantSubmit}>
-          <div class="col-md-6">
-            <label htmlFor='roomNo' class="form-label">Room No:</label>
+            <div class="col-md-6">
+              <label htmlFor='roomNo' class="form-label">Room No:</label>
               <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
                 <option value="">Select a Room</option>
                 {girlsRooms.map((room) => (
@@ -974,13 +1049,13 @@ const DashboardGirls = () => {
                   </option>
                 ))}
               </select>
-            
-          {tenatErrors.selectedRoom && <p style={{ color: 'red' }}>{tenatErrors.selectedRoom}</p>}
-          </div>
 
-          <div class="col-md-6">
-            <label htmlFor='bedNo' class="form-label">
-              Bed No:
+              {tenatErrors.selectedRoom && <p style={{ color: 'red' }}>{tenatErrors.selectedRoom}</p>}
+            </div>
+
+            <div class="col-md-6">
+              <label htmlFor='bedNo' class="form-label">
+                Bed No:
               </label>
               <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
                 <option value="">Select a Bed</option>
@@ -990,62 +1065,62 @@ const DashboardGirls = () => {
                   </option>
                 ))}
               </select>
-            
-            {tenatErrors.selectedBed && <p style={{ color: 'red' }}>{tenatErrors.selectedBed}</p>}
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='dataofJoin' class="form-label">
-              Date of Join:
+
+              {tenatErrors.selectedBed && <p style={{ color: 'red' }}>{tenatErrors.selectedBed}</p>}
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='dataofJoin' class="form-label">
+                Date of Join:
               </label>
               <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
-            
-            {tenatErrors.dateOfJoin && <p style={{ color: 'red' }}>{tenatErrors.dateOfJoin}</p>}
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='tenantName' class="form-label">
-              Name:
+
+              {tenatErrors.dateOfJoin && <p style={{ color: 'red' }}>{tenatErrors.dateOfJoin}</p>}
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='tenantName' class="form-label">
+                Name:
               </label>
-              <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')}/>
-            
-            {tenatErrors.name && <p style={{ color: 'red' }}>{tenatErrors.name}</p>}
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='tenantMobileNo' class="form-label">
-              Mobile No:
+              <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
+
+              {tenatErrors.name && <p style={{ color: 'red' }}>{tenatErrors.name}</p>}
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='tenantMobileNo' class="form-label">
+                Mobile No:
               </label>
               <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
-            
-            {tenatErrors.mobileNo && <p style={{ color: 'red' }}>{tenatErrors.mobileNo}</p>}
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='tenantIdNum' class="form-label">
-              ID Number:
+
+              {tenatErrors.mobileNo && <p style={{ color: 'red' }}>{tenatErrors.mobileNo}</p>}
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='tenantIdNum' class="form-label">
+                ID Number:
               </label>
               <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
-            
-            {tenatErrors.idNumber && <p style={{ color: 'red' }}>{tenatErrors.idNumber}</p>}
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='tenantEmergency' class="form-label">
-              Emergency Contact:
+
+              {tenatErrors.idNumber && <p style={{ color: 'red' }}>{tenatErrors.idNumber}</p>}
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='tenantEmergency' class="form-label">
+                Emergency Contact:
               </label>
               <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
-            
-            {tenatErrors.emergencyContact && <p style={{ color: 'red' }}>{tenatErrors.emergencyContact}</p>}
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='tenantStatus' class="form-label">
-              Status:
+
+              {tenatErrors.emergencyContact && <p style={{ color: 'red' }}>{tenatErrors.emergencyContact}</p>}
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='tenantStatus' class="form-label">
+                Status:
               </label>
               <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
                 <option value="occupied">Occupied</option>
                 <option value="unoccupied">Unoccupied</option>
               </select>
-            
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='tenantUpload' class="form-label">
-              Upload Image:
+
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='tenantUpload' class="form-label">
+                Upload Image:
               </label>
               {isEditing && tenantImageUrl && (
                 <div>
@@ -1053,12 +1128,12 @@ const DashboardGirls = () => {
                   <p>Current Image</p>
                 </div>
               )}
-              <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required/>
+              <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required />
               {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
-          </div>
-          <div class="col-md-6">
-            <label htmlFor='tenantUploadId' class="form-label">
-              Upload Id:
+            </div>
+            <div class="col-md-6">
+              <label htmlFor='tenantUploadId' class="form-label">
+                Upload Id:
               </label>
               {isEditing && tenantIdUrl && (
                 <object
@@ -1070,8 +1145,7 @@ const DashboardGirls = () => {
                   <a href={tenantIdUrl}>Download PDF</a>
                 </object>
               )}
-              <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
-           
+              <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />   
           </div>
 
           <div className="col-md-8" style={{ marginTop: '20px' }}>
@@ -1138,69 +1212,131 @@ const DashboardGirls = () => {
         </form>
  
         )
- 
+
       case "Add Expenses":
         return (
           <form className="row lg-10" onSubmit={expensesHandleSubmit}>
-          <div className="col-md-6">
-          <label htmlFor="inputExpenseName" className="form-label">Expense Name</label>
-          <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} />
-          {formErrors.expenseName && <div className="text-danger">{formErrors.expenseName}</div>}
-          </div>
-          <div className="col-md-6">
-          <label htmlFor="inputRent" className="form-label">Expense amount</label>
-          <input type="number"   className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} />
-          {formErrors.expenseAmount && <div className="text-danger">{formErrors.expenseAmount}</div>}
-          </div>
-          <div className="col-md-6">
-          <label htmlFor="inputRole" className="form-label">Created By</label>
-          <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
-          <option value="admin">Admin</option>
-          <option value="sub-admin">Sub-admin</option>
-          </select>
-          </div>
-          <div className="col-md-6">
-          <label htmlFor="inputDate" className="form-label">Expense Date</label>
-          <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
-          {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
-          </div>
+            <div className="col-md-6">
+              <label htmlFor="inputExpenseName" className="form-label">Expense Name</label>
+              <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} />
+              {formErrors.expenseName && <div className="text-danger">{formErrors.expenseName}</div>}
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="inputRent" className="form-label">Expense amount</label>
+              <input type="number" className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} />
+              {formErrors.expenseAmount && <div className="text-danger">{formErrors.expenseAmount}</div>}
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="inputRole" className="form-label">Created By</label>
+              <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
+                <option value="admin">Admin</option>
+                <option value="sub-admin">Sub-admin</option>
+              </select>
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="inputDate" className="form-label">Expense Date</label>
+              <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
+              {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
+            </div>
 
-                      <div className="col-12 text-center mt-3">
-                   
-                          <button  type="submit" className="btn btn-warning">Create</button>
-                      
-        
-                      </div>
+            <div className="col-12 text-center mt-3">
+
+              <button type="submit" className="btn btn-warning">Create</button>
+
+
+            </div>
           </form>
         )
       default:
         return null
     }
   }
+
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [bedsData, setBedsData] = useState([]);
+  const handleCardClick = (item) => {
+    if (item.heading === 'Total Beds') {
+        // Logic to open the popup for "Total Beds" card
+        setPopupOpen(true);
+    }
+  };
+
+ 
+  const onClickCloseBedsPopup = () => {
+    setPopupOpen(false);
+  }
+  
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("closed")
+      if(popupOpen && event.target.id === "example"){
+        setPopupOpen(false)
+      }
+    };
+    window.addEventListener('click', handleOutsideClick)
+  }, [popupOpen])
+
+  useEffect(() => {
+    if (!girlsRooms || girlsRooms.length === 0) {
+      // If rooms are not defined or the array is empty, clear bedsData and exit early
+      setBedsData([]);
+      return;
+    }
+
+    const allBeds = girlsRooms.flatMap(room => {
+      return Array.from({ length: room.numberOfBeds }, (_, i) => {
+        const bedNumber = i + 1;
+        // Find if there's a tenant for the current bed
+        const tenant = tenants.find(tenant => tenant.roomNo === room.roomNumber && tenant.bedNo === String(bedNumber));
+        return {
+          floorNumber: room.floorNumber,
+          roomNumber: room.roomNumber,
+          bedNumber: bedNumber,
+          rent: room.bedRent || "N/A", // Assuming rent is provided by the tenant data
+          status: tenant ? "Occupied" : "Unoccupied"
+        };
+      });
+    });
+    setBedsData(allBeds);
+  }, [girlsRooms, tenants]); // Depend on rooms and tenants data
+
+  const rows = bedsData.filter((bed) => bed.status === 'Unoccupied').map((bed, index) => ({
+    s_no: index + 1,
+    bed_number: bed.bedNumber,
+    room_no: bed.roomNumber,
+    floor: bed.floorNumber,
+    status: bed.status
+  }));
+
+  const columns = [
+    'S. No',
+    'Bed Number',
+    'Room No',
+    'Floor',
+    'Status'
+  ];
+
  
   return (
     <div className="dashboardgirls">
       <h1 className="heading">Women's</h1>
-      <br/>
+      <br />
       <div className="menu">
         {menu.map((item, index) => (
           <>
-            <SmallCard key={index} index={index} item={item} />
+            <SmallCard key={index} index={index} item={item} handleClick={handleCardClick}/>
             <button id="mbladdButton" type="button"  onClick={() => handleClick(item.btntext)}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
           </>
         ))}
         <div className='button-container'>
           {Buttons?.map((item, index) => (
-            <button id="deskaddButton" type="button"  onClick={() => handleClick(item)}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item} </button>
+            <button id="deskaddButton" type="button" onClick={() => {handleClick(item); setShowForm(true)}}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item} </button>
           ))}
         </div>
- 
- 
- 
       </div>
- 
+
       {/* popup model */}
-      <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalRoomsBoys" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal} >
+      <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalRoomsGirls" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal} >
         <div className="modal-dialog ">
           <div className="modal-content">
             <div className="modal-header">
@@ -1209,15 +1345,27 @@ const DashboardGirls = () => {
             </div>
             <div className="modal-body">
               <div className="container-fluid">
-               {renderFormLayout()}
+                {renderFormLayout()}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {popupOpen &&
+      <div className="popupBeds" id="example">
+        <div className="popup-contentBeds">
+          <h5>Unoccupied Beds Data Girls</h5>
+          <div>
+            <Table columns={columns} rows={rows}/>
+          </div>
+          <button onClick={onClickCloseBedsPopup} className='close-button'>Close</button>
+        </div>
+      </div>
+      }
  
     </div>
   );
- 
+
 };
 export default DashboardGirls

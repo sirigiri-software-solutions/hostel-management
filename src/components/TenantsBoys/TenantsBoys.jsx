@@ -612,7 +612,7 @@ const TenantsBoys = () => {
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantUpload' class="form-label">
-                      Upload Image:
+                      Upload Image :
                     </label>
                     {isEditing && tenantImageUrl && (
                       <div>

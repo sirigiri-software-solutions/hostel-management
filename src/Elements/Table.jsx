@@ -29,6 +29,7 @@ const Table = ({columns, rows,onClickTentantRow}) => {
                 {item.bed_no && <td data-label="Bed No">{item.bed_no}</td>}
                 {item.floor && <td data-label="Floor">{item.floor}</td>}
                 {item.noofBeds && <td data-label="No.of Beds">{item.noofBeds}</td>}
+                {item.bedRent && <td data-label="Bed Rent">{item.bedRent}</td>}
                 {item.month_year && <td data-label="month_year">{item.month_year}</td>}
                 {item.rent && <td data-label="Rent">{item.rent}</td>}
                 {item.paid && <td data-label="Paid">{item.paid}</td>}

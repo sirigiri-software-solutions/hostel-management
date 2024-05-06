@@ -53,15 +53,17 @@ const ExpensesBoys = () => {
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
-      // console.log("Triggering")
-      if (showModal && event.target.id === "exampleModalExpensesBoys") {
-        setShowModal(false);
-      }
-
+      console.log("Triggering")
+        if (showModal && (event.target.id === "exampleModalExpensesBoys"|| event.key === "Escape")) {
+            setShowModal(false);
+        }
+       
     };
     window.addEventListener('click', handleOutsideClick);
+    window.addEventListener('keydown',handleOutsideClick)
+    
+}, [showModal]);
 
-  }, [showModal]);
 
 
   const getMonthYearKey = (dateString) => {

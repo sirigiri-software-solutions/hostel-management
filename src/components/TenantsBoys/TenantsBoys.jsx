@@ -61,27 +61,44 @@ const TenantsBoys = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
+<<<<<<< HEAD
       if (showModal && event.target.id === "exampleModalTenantsBoys") {
         setShowModal(false);
         setTenantIdUrl('')
       }
+=======
+        if (showModal && (event.target.id === "exampleModalTenantsBoys" || event.key === "Escape" )) {
+            setShowModal(false);
+            setTenantIdUrl('')
+        }
+
+        
+       
+       
+>>>>>>> 485c1a73e9b25299e0170a8c5a79a094768acb37
     };
     window.addEventListener('click', handleOutsideClick);
+<<<<<<< HEAD
   }, [showModal]);
+=======
+    window.addEventListener('keydown', handleOutsideClick);
+    
+}, [showModal]);
+>>>>>>> 485c1a73e9b25299e0170a8c5a79a094768acb37
 
 
-const handleClickOutside = (event) => {
-  const popup = document.getElementById('userDetailsTenantPopupId');
-  if (popup && !popup.contains(event.target)) {
-    setUserDetailsTenantsPopup(false);
-  }
-};
+
 
 useEffect(() => {
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
+  const handleClickOutside = (event) => {
+    const popup = document.getElementById('userDetailsTenantPopupId');
+    if (popup && (!popup.contains(event.target) || event.key === "Escape")) {
+      setUserDetailsTenantsPopup(false);
+    }
   };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  document.addEventListener("keydown",handleClickOutside)
 }, []);
 
   useEffect(() => {
@@ -193,6 +210,12 @@ useEffect(() => {
   };
 
   const handleTenantImageChange = (e) => {
+
+    // tryin to compress code
+
+
+
+    // previous code
     if (e.target.files[0]) {
       setTenantImage(e.target.files[0]);
     }
@@ -720,7 +743,7 @@ useEffect(() => {
                         <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
                       </div>
                     ) : (
-                      <button  className="btn btn-warning" type="submit">Add Tenant</button>
+                      <button id="tenantAddBtn"  className="btn btn-warning" type="submit">Add Tenant</button>
                     )}
                   </div>
                 </form>

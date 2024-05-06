@@ -74,6 +74,19 @@ const DashboardBoys = () => {
     
 }, [showModal]);
 
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && (event.target.id === "exampleModalRoomsBoys" || event.key === "Escape")) {
+            setShowModal(false);
+        }
+       
+    };
+    window.addEventListener('click', handleOutsideClick);
+    window.addEventListener("keydown",handleOutsideClick)
+    
+}, [showModal]);
+
   const handleRoomsIntegerChange = (event) => {
     const value = event.target.value;
     const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
@@ -1209,12 +1222,20 @@ const DashboardBoys = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("closed")
+<<<<<<< HEAD
       if(popupOpen && (event.target.id === "example" || event.key === "Escape")){
+=======
+      if(popupOpen && (event.target.id === "example"|| event.key==="Escape")){
+>>>>>>> 485c1a73e9b25299e0170a8c5a79a094768acb37
         setPopupOpen(false)
       }
     };
     window.addEventListener('click', handleOutsideClick)
+<<<<<<< HEAD
     window.addEventListener('keydown', handleOutsideClick)
+=======
+    window.addEventListener('keydown',handleOutsideClick)
+>>>>>>> 485c1a73e9b25299e0170a8c5a79a094768acb37
   }, [popupOpen])
 
   useEffect(() => {
@@ -1242,6 +1263,7 @@ const DashboardBoys = () => {
   }, [boysRooms, tenants]); // Depend on rooms and tenants data
 
   const rows = bedsData.filter((bed) => bed.status === 'Unoccupied').map((bed, index) => ({
+<<<<<<< HEAD
     //s_no: index + 1,
     bed_number: bed.bedNumber,
     room_no: bed.roomNumber,
@@ -1255,6 +1277,21 @@ const DashboardBoys = () => {
     'Room No',
     'Floor',
     //'Status'
+=======
+    s_no: index + 1,
+    bed_number: bed.bedNumber,
+    room_no: bed.roomNumber,
+    floor: bed.floorNumber,
+    status: bed.status
+  }));
+
+  const columns = [
+    'S. No',
+    'Bed Number',
+    'Room No',
+    'Floor',
+    'Status'
+>>>>>>> 485c1a73e9b25299e0170a8c5a79a094768acb37
   ];
 
   return (

@@ -96,12 +96,13 @@ const DashboardGirls = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && event.target.id === "exampleModalRoomsGirls") {
+        if (showModal && (event.target.id === "exampleModalRoomsGirls" || event.key === "Escape")) {
             setShowModal(false);
         }
        
     };
     window.addEventListener('click', handleOutsideClick);
+    window.addEventListener('keydown',handleOutsideClick)
     
 }, [showModal]);
 

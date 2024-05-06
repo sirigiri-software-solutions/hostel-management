@@ -4,12 +4,16 @@ import Table from '../../Elements/Table'
 import SearchIcon from '../../images/Icons (9).png'
 import {database, ref, push} from '../../firebase'
 import { onValue } from 'firebase/database'
+import "../BedsPageBoys/BedsPageBoys.css"
 
 const BedsPageGirls = () => {
 
   const [girlsRooms, setGirlsRooms]= useState([])
   const [bedsData, setBedsData] = useState([]);
   const [tenants, setTenants] = useState([]);
+
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedFloor, setSelectedFloor] = useState('');
 
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/girls/rooms');
@@ -54,7 +58,9 @@ const BedsPageGirls = () => {
         const bedNumber = i + 1;
         // Find if there's a tenant for the current bed
         const tenant = tenants.find(tenant => tenant.roomNo === room.roomNumber && tenant.bedNo === String(bedNumber));
+        const tenantName = tenant ? tenant.name :"-";
         return {
+          name:tenantName,
           floorNumber: room.floorNumber,
           roomNumber: room.roomNumber,
           bedNumber: bedNumber,
@@ -69,6 +75,7 @@ const BedsPageGirls = () => {
 
   const columns = [
     'S. No',
+    'Name',
     'Bed Number',
     'Room. No',
     'Floor',
@@ -78,6 +85,7 @@ const BedsPageGirls = () => {
 
   const rows = bedsData.map((beds, index) => ({
     s_no: index + 1,
+    name:beds.name,
     bed_number:beds.bedNumber,
     room_no:beds.roomNumber,
    floor:beds.floorNumber,
@@ -91,9 +99,27 @@ const BedsPageGirls = () => {
     setSearchValue(e.target.value);
   }
 
-  const filteredRows = rows.filter(row => {
-    return Object.values(row).some(value =>
-      value.toString().toLowerCase().includes(searchValue.toLowerCase())
+  const onChangeStatus = (e) => {
+    setSelectedStatus(e.target.value);
+  };
+
+  const onChangeFloor = (e) => {
+    setSelectedFloor(e.target.value);
+  };
+
+  // const filteredRows = rows.filter(row => {
+  //   return Object.values(row).some(value =>
+  //     value.toString().toLowerCase().includes(searchValue.toLowerCase())
+  //   );
+  // });
+
+  const filteredRows = rows.filter((row) => {
+    return (
+      (selectedStatus === '' || row.status === selectedStatus) &&
+      (selectedFloor === '' || parseInt(row.floor) === parseInt(selectedFloor)) &&
+      Object.values(row).some((value) =>
+        value.toString().toLowerCase().includes(searchValue.toLowerCase())
+      )
     );
   });
  
@@ -109,9 +135,26 @@ const BedsPageGirls = () => {
         </div>
         <h1 className='fs-5'>Beds Management</h1>
       </div>
-      <div className="col-12 col-md-4 search-wrapper">
+      <div className="col-6 col-md-4 search-wrapper">
         <input onChange={onChangeSearch} value={searchValue} type="text" placeholder='Search' className='search-input'/>
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
+      </div>
+      <div className='col-6 col-md-4 d-flex justify-content-end'>
+        <div>
+      <select className="bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
+            <option value="">Status</option>
+            <option value="Occupied">Occupied</option>
+            <option value="Unoccupied">Unoccupied</option>
+          </select>
+          <select className="bedPageFilterDropdown" value={selectedFloor} onChange={onChangeFloor}>
+            <option value="">Floor number</option>
+            {girlsRooms.map((room) => (
+              <option key={room.floorNumber} value={room.floorNumber}>
+                {room.floorNumber}
+              </option>
+            ))}
+          </select>
+          </div>
       </div>
      
     </div>

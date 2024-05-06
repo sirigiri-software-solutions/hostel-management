@@ -35,28 +35,38 @@ const RoomsGirls = () => {
     
 }, [showModal]);
 
-  const handleRoomsIntegerChange = (event) => {
-    const value = event.target.value;
-    const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
+const handleRoomsIntegerChange = (event) => {
+  const { name, value } = event.target;
+  // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
 
-    if (value === '' || re.test(value)) {
-        switch(event.target.name) {
-            case 'floorNumber':
-                setFloorNumber(value);
-                break;
-            case 'roomNumber':
-                setRoomNumber(value);
-                break;
-            case 'numberOfBeds':
-                setNumberOfBeds(value);
-                break;
-            case 'bedRent':
-                setBedRent(value);
-                break;
-            default:
-                break;
-        }
-    }
+  let sanitizedValue = value;
+
+  if (name === 'floorNumber' || name === 'roomNumber') {
+    // Allow alphanumeric characters and hyphens only
+    sanitizedValue = value.replace(/[^a-zA-Z0-9-]/g, '');
+  } else if (name === 'numberOfBeds' || name === 'bedRent') {
+    // Allow numbers only
+    sanitizedValue = value.replace(/[^0-9]/g, '');
+  }
+
+  // if (value === '' || re.test(sanitizedValue)) {
+      switch(name) {
+          case 'floorNumber':
+              setFloorNumber(sanitizedValue);
+              break;
+          case 'roomNumber':
+              setRoomNumber(sanitizedValue);
+              break;
+          case 'numberOfBeds':
+              setNumberOfBeds(sanitizedValue);
+              break;
+          case 'bedRent':
+              setBedRent(sanitizedValue);
+              break;
+          default:
+              break;
+      }
+  // }
 };
 
 
@@ -208,6 +218,7 @@ const RoomsGirls = () => {
     'Room.No',
     'Floor',
     'No.of Beds',
+    'Bed Rent',
     'Created By',
     'Last Updated date',
     'Edit'
@@ -229,6 +240,7 @@ const RoomsGirls = () => {
       room_no: room.roomNumber,
       floor: `${room.floorNumber}`,
       noofBeds: room.numberOfBeds,
+      bedRent: room.bedRent,
       created_by: room.createdBy,
       last_updated_by: formatDate(room.updateDate),
       edit_room: <button

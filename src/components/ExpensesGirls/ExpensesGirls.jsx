@@ -58,12 +58,13 @@ const ExpensesGirls = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-      if (showModal && event.target.id === "exampleModalExpensesGirls") {
-        setShowModal(false);
+        if (showModal && (event.target.id === "exampleModalExpensesGirls" || event.key === "Escape")) {
+  setShowModal(false);
       }
 
-    };
-    window.addEventListener('click', handleOutsideClick);
+      };
+window.addEventListener('click', handleOutsideClick);
+window.addEventListener('keydown',handleOutsideClick);
 
   }, [showModal]);
 

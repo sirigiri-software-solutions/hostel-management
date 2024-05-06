@@ -61,16 +61,9 @@ const BedsPageBoys = () => {
         const bedNumber = i + 1;
         // Find if there's a tenant for the current bed
         const tenant = tenants.find(tenant => tenant.roomNo === room.roomNumber && tenant.bedNo === String(bedNumber));
-<<<<<<< HEAD
-        const tenantName = tenant ? tenant.name : "-"
-        //console.log(tenantName,"tenantName")
-        return {
-          Name : tenantName,
-=======
         const tenantName = tenant ? tenant.name : "-";
         return {
           name:tenantName,
->>>>>>> 485c1a73e9b25299e0170a8c5a79a094768acb37
           floorNumber: room.floorNumber,
           roomNumber: room.roomNumber,
           bedNumber: bedNumber,
@@ -96,11 +89,7 @@ const BedsPageBoys = () => {
 
   const rows = bedsData.map((beds, index) => ({
     s_no: index + 1,
-<<<<<<< HEAD
-    name : beds.Name,
-=======
     name:beds.name ,
->>>>>>> 485c1a73e9b25299e0170a8c5a79a094768acb37
     bed_number:beds.bedNumber,
     room_no:beds.roomNumber,
    floor:beds.floorNumber,

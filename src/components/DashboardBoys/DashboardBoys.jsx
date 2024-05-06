@@ -69,6 +69,19 @@ const DashboardBoys = () => {
   };
   
 
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && (event.target.id === "exampleModalRoomsBoys" || event.key === "Escape")) {
+            setShowModal(false);
+        }
+       
+    };
+    window.addEventListener('click', handleOutsideClick);
+    window.addEventListener("keydown",handleOutsideClick)
+    
+}, [showModal]);
+
   const handleRoomsIntegerChange = (event) => {
     const value = event.target.value;
     const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
@@ -1314,6 +1327,71 @@ const DashboardBoys = () => {
         return null
     }
   }
+
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [bedsData, setBedsData] = useState([]);
+  const handleCardClick = (item) => {
+    if (item.heading === 'Total Beds') {
+        // Logic to open the popup for "Total Beds" card
+        setPopupOpen(true);
+    }
+  };
+
+ 
+  const onClickCloseBedsPopup = () => {
+    setPopupOpen(false);
+  }
+  
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("closed")
+      if(popupOpen && (event.target.id === "example"|| event.key==="Escape")){
+        setPopupOpen(false)
+      }
+    };
+    window.addEventListener('click', handleOutsideClick)
+    window.addEventListener('keydown',handleOutsideClick)
+  }, [popupOpen])
+
+  useEffect(() => {
+    if (!boysRooms || boysRooms.length === 0) {
+      // If rooms are not defined or the array is empty, clear bedsData and exit early
+      setBedsData([]);
+      return;
+    }
+
+    const allBeds = boysRooms.flatMap(room => {
+      return Array.from({ length: room.numberOfBeds }, (_, i) => {
+        const bedNumber = i + 1;
+        // Find if there's a tenant for the current bed
+        const tenant = tenants.find(tenant => tenant.roomNo === room.roomNumber && tenant.bedNo === String(bedNumber));
+        return {
+          floorNumber: room.floorNumber,
+          roomNumber: room.roomNumber,
+          bedNumber: bedNumber,
+          rent: room.bedRent || "N/A", // Assuming rent is provided by the tenant data
+          status: tenant ? "Occupied" : "Unoccupied"
+        };
+      });
+    });
+    setBedsData(allBeds);
+  }, [boysRooms, tenants]); // Depend on rooms and tenants data
+
+  const rows = bedsData.filter((bed) => bed.status === 'Unoccupied').map((bed, index) => ({
+    s_no: index + 1,
+    bed_number: bed.bedNumber,
+    room_no: bed.roomNumber,
+    floor: bed.floorNumber,
+    status: bed.status
+  }));
+
+  const columns = [
+    'S. No',
+    'Bed Number',
+    'Room No',
+    'Floor',
+    'Status'
+  ];
 
   return (
     <div className="dashboardboys">

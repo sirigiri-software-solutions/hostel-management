@@ -88,13 +88,13 @@ Please note that you made your last payment on ${paidDate}.\n`
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && event.target.id === "exampleModalRentsBoys") {
+        if (showModal && (event.target.id === "exampleModalRentsBoys" || event.key==="Escape")) {
             setShowModal(false);
         }
        
     };
     window.addEventListener('click', handleOutsideClick);
-    
+    window.addEventListener('keydown',handleOutsideClick)
 }, [showModal]);
 
 

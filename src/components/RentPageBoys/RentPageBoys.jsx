@@ -483,13 +483,10 @@ Please note that you made your last payment on ${paidDate}.\n`
               Add Rents
             </button>
           </div>
-
         </div>
-
         <div>
           <Table columns={columns} rows={filteredRows} />
         </div>
-
         <div class={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalRentsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
           <div class="modal-dialog">
             <div class="modal-content">

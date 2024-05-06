@@ -61,32 +61,34 @@ const TenantsBoys = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && event.target.id === "exampleModalTenantsBoys") {
+        if (showModal && (event.target.id === "exampleModalTenantsBoys" || event.key === "Escape" )) {
             setShowModal(false);
             setTenantIdUrl('')
         }
+
         
        
        
     };
 
     window.addEventListener('click', handleOutsideClick);
+    window.addEventListener('keydown', handleOutsideClick);
     
 }, [showModal]);
 
 
-const handleClickOutside = (event) => {
-  const popup = document.getElementById('userDetailsTenantPopupId');
-  if (popup && !popup.contains(event.target)) {
-    setUserDetailsTenantsPopup(false);
-  }
-};
+
 
 useEffect(() => {
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
+  const handleClickOutside = (event) => {
+    const popup = document.getElementById('userDetailsTenantPopupId');
+    if (popup && (!popup.contains(event.target) || event.key === "Escape")) {
+      setUserDetailsTenantsPopup(false);
+    }
   };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  document.addEventListener("keydown",handleClickOutside)
 }, []);
 
 
@@ -208,6 +210,12 @@ useEffect(() => {
   };
 
   const handleTenantImageChange = (e) => {
+
+    // tryin to compress code
+
+
+
+    // previous code
     if (e.target.files[0]) {
       setTenantImage(e.target.files[0]);
     }
@@ -736,7 +744,7 @@ useEffect(() => {
                         <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
                       </div>
                     ) : (
-                      <button  className="btn btn-warning" type="submit">Add Tenant</button>
+                      <button id="tenantAddBtn"  className="btn btn-warning" type="submit">Add Tenant</button>
                     )}
                   </div>
                 </form>

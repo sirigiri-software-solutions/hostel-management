@@ -26,12 +26,13 @@ const RoomsBoys = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && event.target.id === "exampleModalRoomsBoys") {
+        if (showModal && (event.target.id === "exampleModalRoomsBoys" || event.key === "Escape")) {
             setShowModal(false);
         }
        
     };
     window.addEventListener('click', handleOutsideClick);
+    window.addEventListener("keydown",handleOutsideClick)
     
 }, [showModal]);
 

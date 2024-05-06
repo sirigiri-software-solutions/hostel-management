@@ -29,35 +29,47 @@ const RoomsBoys = () => {
         if (showModal && (event.target.id === "exampleModalRoomsBoys" || event.key === "Escape")) {
             setShowModal(false);
         }
-       
     };
     window.addEventListener('click', handleOutsideClick);
     window.addEventListener("keydown",handleOutsideClick)
     
 }, [showModal]);
 
-  const handleRoomsIntegerChange = (event) => {
-    const value = event.target.value;
-    const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
 
-    if (value === '' || re.test(value)) {
-        switch(event.target.name) {
+
+
+  const handleRoomsIntegerChange = (event) => {
+    const { name, value } = event.target;
+    // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
+
+    let sanitizedValue = value;
+
+    if (name === 'floorNumber' || name === 'roomNumber') {
+      // Allow alphanumeric characters and hyphens only
+      sanitizedValue = value.replace(/[^a-zA-Z0-9-]/g, '');
+    } else if (name === 'numberOfBeds' || name === 'bedRent') {
+      // Allow numbers only
+      sanitizedValue = value.replace(/[^0-9]/g, '');
+    }
+
+    // if (value === '' || re.test(sanitizedValue)) {
+        switch(name) {
             case 'floorNumber':
-                setFloorNumber(value);
+                setFloorNumber(sanitizedValue);
                 break;
             case 'roomNumber':
-                setRoomNumber(value);
+                setRoomNumber(sanitizedValue);
                 break;
             case 'numberOfBeds':
-                setNumberOfBeds(value);
+                setNumberOfBeds(sanitizedValue);
                 break;
             case 'bedRent':
-                setBedRent(value);
+                setBedRent(sanitizedValue);
                 break;
             default:
                 break;
         }
-    }
+    // }
 };
 
   const handleSubmit = (e) => {
@@ -225,6 +237,7 @@ const resetForm = () => {
     'Room.No',
     'Floor',
     'No.of Beds',
+    'Bed Rent',
     'Created By',
     'Last Updated date',
     'Edit'
@@ -249,6 +262,7 @@ const resetForm = () => {
       room_no: room.roomNumber,
       floor: `${room.floorNumber}`,
       noofBeds: room.numberOfBeds,
+      bedRent: room.bedRent,
       created_by: room.createdBy,
       last_updated_by: formatDate(room.updateDate),
       edit_room: <button
@@ -290,7 +304,7 @@ const resetForm = () => {
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
         <button type="button" className="add-button" onClick={handleAddNew}>
-            Add Rooms
+             Add Rooms
           </button>
         </div>
         

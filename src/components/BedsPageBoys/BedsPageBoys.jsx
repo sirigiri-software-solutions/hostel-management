@@ -11,7 +11,7 @@ const BedsPageBoys = () => {
   const [bedsData, setBedsData] = useState([]);
   const [tenants, setTenants] = useState([]);
 
-  const [searchValue,setSearchValue] = useState("");
+  const [searchValue,setSearchValue] = useState("");  
 
 
 

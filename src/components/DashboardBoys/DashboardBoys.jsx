@@ -70,28 +70,38 @@ const DashboardBoys = () => {
   
 
   const handleRoomsIntegerChange = (event) => {
-    const value = event.target.value;
-    const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
+    const { name, value } = event.target;
+    // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
 
-    if (value === '' || re.test(value)) {
-      switch (event.target.name) {
-        case 'floorNumber':
-          setFloorNumber(value);
-          break;
-        case 'roomNumber':
-          setRoomNumber(value);
-          break;
-        case 'numberOfBeds':
-          setNumberOfBeds(value);
-          break;
-        case 'bedRent':
-          setBedRent(value);
-          break;
-        default:
-          break;
-      }
+    let sanitizedValue = value;
+
+    if (name === 'floorNumber' || name === 'roomNumber') {
+      // Allow alphanumeric characters and hyphens only
+      sanitizedValue = value.replace(/[^a-zA-Z0-9-]/g, '');
+    } else if (name === 'numberOfBeds' || name === 'bedRent') {
+      // Allow numbers only
+      sanitizedValue = value.replace(/[^0-9]/g, '');
     }
-  };
+
+    // if (value === '' || re.test(sanitizedValue)) {
+        switch(name) {
+            case 'floorNumber':
+                setFloorNumber(sanitizedValue);
+                break;
+            case 'roomNumber':
+                setRoomNumber(sanitizedValue);
+                break;
+            case 'numberOfBeds':
+                setNumberOfBeds(sanitizedValue);
+                break;
+            case 'bedRent':
+                setBedRent(sanitizedValue);
+                break;
+            default:
+                break;
+        }
+    // }
+};
 
   // expenses related 
   const [formData, setFormData] = useState({
@@ -881,22 +891,22 @@ const DashboardBoys = () => {
           <form className="row g-3" onSubmit={handleBoysRoomsSubmit}>
             <div className="col-md-6">
               <label htmlFor="inputNumber" className="form-label">Floor Number</label>
-              <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')} />
+              <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange}  />
               {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="inputRent" className="form-label">Room Number</label>
-              <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')} />
+              <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange}  />
               {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
-              <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')} />
+              <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange}  />
               {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
-              <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')} />
+              <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange}  />
               {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
             </div>
             <div className="col-md-6">

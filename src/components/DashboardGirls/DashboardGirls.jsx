@@ -14,7 +14,7 @@ import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Table from '../../Elements/Table'
- 
+    
 const DashboardGirls = () => {
   const [modelText, setModelText] = useState('');
   const [formLayout, setFormLayout] = useState('');
@@ -107,29 +107,39 @@ const DashboardGirls = () => {
 
  
 
-  const handleRoomsIntegerChange = (event) => {
-    const value = event.target.value;
-    const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
+const handleRoomsIntegerChange = (event) => {
+  const { name, value } = event.target;
+  // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
 
-    if (value === '' || re.test(value)) {
-      switch (event.target.name) {
-        case 'floorNumber':
-          setFloorNumber(value);
-          break;
-        case 'roomNumber':
-          setRoomNumber(value);
-          break;
-        case 'numberOfBeds':
-          setNumberOfBeds(value);
-          break;
-        case 'bedRent':
-          setBedRent(value);
-          break;
-        default:
-          break;
+  let sanitizedValue = value;
+
+  if (name === 'floorNumber' || name === 'roomNumber') {
+    // Allow alphanumeric characters and hyphens only
+    sanitizedValue = value.replace(/[^a-zA-Z0-9-]/g, '');
+  } else if (name === 'numberOfBeds' || name === 'bedRent') {
+    // Allow numbers only
+    sanitizedValue = value.replace(/[^0-9]/g, '');
+  }
+
+  // if (value === '' || re.test(sanitizedValue)) {
+      switch(name) {
+          case 'floorNumber':
+              setFloorNumber(sanitizedValue);
+              break;
+          case 'roomNumber':
+              setRoomNumber(sanitizedValue);
+              break;
+          case 'numberOfBeds':
+              setNumberOfBeds(sanitizedValue);
+              break;
+          case 'bedRent':
+              setBedRent(sanitizedValue);
+              break;
+          default:
+              break;
       }
-    }
-  };
+  // }
+};
   const handleGirlsRoomsSubmit = (e) => {
     e.preventDefault();
     const now = new Date().toISOString();  // Get current date-time in ISO format

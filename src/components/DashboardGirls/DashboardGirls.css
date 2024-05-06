@@ -64,3 +64,8 @@
 .dashboardGirls{
     width: 100%;
 }
+
+.custom-modal-body{
+    height: 70vh;
+    overflow: auto;
+}

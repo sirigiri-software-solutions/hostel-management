@@ -61,18 +61,13 @@ const TenantsBoys = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && event.target.id === "exampleModalTenantsBoys") {
-            setShowModal(false);
-            setTenantIdUrl('')
-        }
-        
-       
-       
+      if (showModal && event.target.id === "exampleModalTenantsBoys") {
+        setShowModal(false);
+        setTenantIdUrl('')
+      }
     };
-
     window.addEventListener('click', handleOutsideClick);
-    
-}, [showModal]);
+  }, [showModal]);
 
 
 const handleClickOutside = (event) => {
@@ -88,16 +83,6 @@ useEffect(() => {
     document.removeEventListener("mousedown", handleClickOutside);
   };
 }, []);
-
-
-
-
-
-
-
-  
-
-  
 
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
@@ -333,8 +318,7 @@ useEffect(() => {
     setCurrentId(tenant.id);
     setTenantImageUrl(tenant.tenantImageUrl);
     setTenantIdUrl(tenant.tenantIdUrl || '');
-    
- 
+
 
     setShowModal(true);
 

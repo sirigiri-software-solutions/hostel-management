@@ -61,12 +61,6 @@ const TenantsBoys = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-<<<<<<< HEAD
-      if (showModal && event.target.id === "exampleModalTenantsBoys") {
-        setShowModal(false);
-        setTenantIdUrl('')
-      }
-=======
         if (showModal && (event.target.id === "exampleModalTenantsBoys" || event.key === "Escape" )) {
             setShowModal(false);
             setTenantIdUrl('')
@@ -75,16 +69,11 @@ const TenantsBoys = () => {
         
        
        
->>>>>>> 485c1a73e9b25299e0170a8c5a79a094768acb37
     };
     window.addEventListener('click', handleOutsideClick);
-<<<<<<< HEAD
-  }, [showModal]);
-=======
     window.addEventListener('keydown', handleOutsideClick);
     
 }, [showModal]);
->>>>>>> 485c1a73e9b25299e0170a8c5a79a094768acb37
 
 
 

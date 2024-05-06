@@ -70,6 +70,7 @@ const TenantsBoys = () => {
        
        
     };
+
     window.addEventListener('click', handleOutsideClick);
     window.addEventListener('keydown', handleOutsideClick);
     
@@ -89,6 +90,16 @@ useEffect(() => {
   document.addEventListener("mousedown", handleClickOutside);
   document.addEventListener("keydown",handleClickOutside)
 }, []);
+
+
+
+
+
+
+
+  
+
+  
 
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
@@ -330,7 +341,8 @@ useEffect(() => {
     setCurrentId(tenant.id);
     setTenantImageUrl(tenant.tenantImageUrl);
     setTenantIdUrl(tenant.tenantIdUrl || '');
-
+    
+ 
 
     setShowModal(true);
 

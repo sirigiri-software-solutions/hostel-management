@@ -18,51 +18,23 @@ const Login = () => {
   const [flag, setFlag] = useState(false);
   const [loginErrors, setLoginErrors] = useState({});
   const [rememberMe, setRememberMe] = useState(false);
-  // setLoginData({...loginData,[loginData.email]:localStorage.getItem('rememberedUsername')|| " "})
-  // setLoginData({...loginData,[]})
-  const [showforgotpassword,setShowforgotPassword]=useState(true);
-  const [showupdatepassword,setShowupdatePassword]=useState(true);
-
-  // main useState for entire page
-  const [usersDataWithID,setUsersDataWithID] = useState()
-  const [singleUserInfo,setSingleUserInfo] = useState();
-  
-
-
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmpassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [userData, setUserData] = useState(null);
-  
-
-
-
-  const toggleForgotPassword=()=>{
-    setShowforgotPassword(!showforgotpassword);
-  }
-  
 
   useEffect(()=>{
     const rememberedUsername=localStorage.getItem('rememberedUsername');
     const rememberedPassword=localStorage.getItem('rememberedPassword');
     if (rememberedUsername && rememberedPassword) {
          setLoginData({...loginData, [loginData.email]: rememberedUsername, [loginData.password]: rememberedPassword});
-      // setLoginData({...loginData,[loginData.email]:rememberedUsername});
-      // setLoginData({...loginData,[loginData.password]:rememberedPassword});
       setRememberMe(true);
     }
   },[])
 
   const handleRememberme=(e)=>{
-    // console.log(e);
-    // setRememberMe(e.target.checked)
     setRememberMe(!rememberMe);
   }
 
   useEffect(() => {
     axios
          .get("https://kiranreddy-58a8c-default-rtdb.firebaseio.com/register.json")
-      // .get("https://signuppage-2f4c8-default-rtdb.firebaseio.com/register.json")
       .then((response) => {
         let data = Object.values(response.data);
         setData(data);
@@ -219,18 +191,7 @@ const Login = () => {
         {loginErrors.password && <div className="invalid-feedback">{loginErrors.password}</div>}
       </div>
       <div className="check">
-        {/* <div>
-          <input
-            type="checkbox"
-            id="remember"
-            className="form-check-input"  
-            checked={rememberMe}
-            onChange={handleRememberme}
-          />
-          <label id="rememberText" className="form-check-label">
-            Remember me
-          </label>
-        </div> */}
+       
         <p className="text">Forgot Password?</p>
       </div>
       <div>

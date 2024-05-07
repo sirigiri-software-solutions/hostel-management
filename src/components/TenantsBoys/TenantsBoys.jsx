@@ -12,6 +12,10 @@ import { onValue, remove, set, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { FaDownload } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { Camera, CameraResultType } from '@capacitor/camera';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCamera } from '@fortawesome/free-solid-svg-icons';
+
 
 
 const TenantsBoys = () => {
@@ -36,6 +40,7 @@ const TenantsBoys = () => {
   // const idInputRef = useRef(null);
   // const [boysRoomsData, setBoysRoomsData] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
 
   const [userDetailsTenantPopup, setUserDetailsTenantsPopup] = useState(false);
@@ -46,8 +51,87 @@ const TenantsBoys = () => {
   const [boysRooms, setBoysRooms] = useState([]);
   const [exTenants, setExTenants] = useState([]);
   const [showExTenants, setShowExTenants] = useState(false);
+  const [hasBike, setHasBike] = useState(false);
+  const [bikeNumber, setBikeNumber] = useState('');
 
-  
+  // for camera icon
+  const [photoUrl, setPhotoUrl] = useState(null);
+
+  useEffect(() => {
+    // Check if the user agent is a mobile device
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    setIsMobile(/iPhone|iPod|iPad|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(userAgent));
+}, []);
+
+  const takePicture = async () => {
+
+    if (!isMobile) {
+      console.error("Camera access is not supported on your device.");
+      return;
+  }
+    try {
+      const photo = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri
+      });
+      const response = await fetch(photo.webPath);
+      const blob = await response.blob();
+      const imageRef = storageRef(storage, `Hostel/boys/tenants/images/${new Date().getTime()}`);
+      const snapshot = await uploadBytes(imageRef, blob);
+      const url = await getDownloadURL(snapshot.ref);
+      
+      setPhotoUrl(url); // Display in UI
+      setTenantImageUrl(url); // Use in form submission
+      // setPhotoUrl(photo.webPath);
+    } catch (error) {
+      console.error("Error accessing the camera", error);
+      toast.error("Error accessing the camera");
+    }
+  };
+
+  const handleCheckboxChange = (e) => {
+    setHasBike(e.target.value === 'yes');
+    if (e.target.value === 'no') {
+      setBikeNumber('--N/A--');
+    } else {
+      setBikeNumber('');
+    }
+  };
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && event.target.id === "exampleModalTenantsBoys") {
+            setShowModal(false);
+            setTenantIdUrl('')
+        }
+        
+       
+       
+    };
+
+    window.addEventListener('click', handleOutsideClick);
+    
+}, [showModal]);
+
+
+const handleClickOutside = (event) => {
+  const popup = document.getElementById('userDetailsTenantPopupId');
+  if (popup && !popup.contains(event.target)) {
+    setUserDetailsTenantsPopup(false);
+  }
+};
+
+useEffect(() => {
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+
+ 
 
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
@@ -182,7 +266,7 @@ const TenantsBoys = () => {
 
     let imageUrlToUpdate = tenantImageUrl;
 
-    if (tenantImage) {
+    if (tenantImage  && !tenantImageUrl) {
       const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantImage/${tenantImage.name}`);
       try {
         const snapshot = await uploadBytes(imageRef, tenantImage);
@@ -267,19 +351,10 @@ const TenantsBoys = () => {
 
     resetForm();
     setErrors({});
-    // if (imageInputRef.current) {
-    //   imageInputRef.current.value = null;
-    // }
-    // if (idInputRef.current) {
-    //   idInputRef.current.value =null;
-    // }
     
   };
 
   const handleEdit = (tenant) => {
-
-
-
     setSelectedRoom(tenant.roomNo);
     setSelectedBed(tenant.bedNo);
     setDateOfJoin(tenant.dateOfJoin);
@@ -293,8 +368,7 @@ const TenantsBoys = () => {
     setTenantImageUrl(tenant.tenantImageUrl);
     setTenantIdUrl(tenant.tenantIdUrl || '');
     
-    // imageInputRef.current.value = "";
-    // idInputRef.current.value = "";
+ 
 
     setShowModal(true);
 
@@ -314,9 +388,7 @@ const TenantsBoys = () => {
 
   };
 
-  // const handleDelete = async (id) => {
-  //   await remove(ref(database, `Hostel/boys/tenants/${id}`));
-  // };
+
 
   const resetForm = () => {
     setSelectedRoom(''); 
@@ -339,7 +411,6 @@ const TenantsBoys = () => {
   // Filter tenants based on search query
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value)
-
   };
 
   const columns = [
@@ -482,9 +553,7 @@ const TenantsBoys = () => {
     status: 'vaccated',
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
-    // onClick={() => handleEdit(tenant)}
-    // data-bs-toggle="modal"
-    // data-bs-target="#exampleModalTenantsBoys"
+    
     >
       view
     </button>
@@ -521,7 +590,7 @@ const TenantsBoys = () => {
       <div>
         {showExTenants ? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
       </div>
-      <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
+      <div   className={`modal fade ${showModal ? 'show' : ''}`}  style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}  >
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -621,7 +690,21 @@ const TenantsBoys = () => {
                         <p>Current Image</p>
                       </div>
                     )}
-                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
+                    
+                     <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required /> 
+                    
+                    {isMobile && (
+                      <div>
+                      <p>or</p>
+                      <div style={{display:'flex',flexDirection:'row'}}>
+                      <p>take photo</p>
+                     <FontAwesomeIcon icon={faCamera} size="3x" onClick={takePicture} style={{marginTop:'-20px',paddingLeft:'35px'}}/>
+                     {photoUrl && <img src={photoUrl} alt="Captured" style={{ marginTop: 50, maxWidth: '100%', height: 'auto' }} />}
+                    </div>
+                    </div>
+                    )}
+                   {/* <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required /> */}
+                   
                     {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
                  <div className="col-md-6">
@@ -646,6 +729,50 @@ const TenantsBoys = () => {
                       <input id="tenantUploadId" className="form-control" type="file" onChange={handleTenantIdChange} />
                     
                   </div> 
+                  <div className="col-md-8" style={{ marginTop: '20px' }}>
+      <label htmlFor="bikeCheck">Do you have a bike?</label>
+      <input
+        type="radio"
+        id="bikeCheck"
+        name="bike"
+        value="yes"
+        onClick={handleCheckboxChange}
+        checked={hasBike}
+      />
+      Yes
+      <input
+        type="radio"
+        id="bikeCheck1"
+        name="bike"
+        value="no"
+        onClick={handleCheckboxChange}
+        checked={!hasBike}
+        style={{ marginLeft: '30px' }}
+      />
+      No
+
+      {hasBike && (
+        <div>
+          <label htmlFor="bikeNumber">Bike Number Plate ID:</label>
+          <br />
+          <input
+            type="text"
+            id="bikeNumber"
+            placeholder="Enter bike number plate ID"
+            value={bikeNumber}
+            onChange={(event) => setBikeNumber(event.target.value)
+              
+            }
+            
+          />
+          <br />
+          
+        </div>
+       
+      )}
+    </div>
+            
+
 
 
                   
@@ -667,11 +794,12 @@ const TenantsBoys = () => {
           </div>
         </div>
       </div>
+   
 
      
 
       {userDetailsTenantPopup && 
-      <div className='userDetailsTenantPopup'>
+      <div  id="userDetailsTenantPopupId"  className='userDetailsTenantPopup'>
         <div className='tenants-dialog-container'>
           <h1 className="tenants-popup-heading">Tenant Details </h1>
           <div className='tenants-popup-mainContainer'>

@@ -100,32 +100,58 @@
 
 .popup {
     position: absolute;
+    position: fixed;
     top: 10%;  /* Adjust as needed */
     /* left: 20%; */
-    right: -10%;
+    right: -5%;
     transform: translateX(-50%);
-    width: auto;
+    width: 280px; 
     background: white;
-    padding: 20px;
+    padding: 20px;   
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     z-index: 1000; /* Ensure it's above other content */
     border: 1px solid #333333;
     cursor: pointer;
+   
   }
 
   
+
+@media screen and (max-width:768px) {
+    .popup {
+        top: 15%;
+        right: 10%;
+        width: 250px; 
+      }
+}
+@media screen and (max-width: 486px ) {
+    .popup {
+        right:-10%;
+       
+    }
+}
+
 @media screen and (max-width:400px) {
     .popup {
         top: 15%;  /* Adjust as needed */
-        right: -40%;
+        right: -10%;
+        
       }
+}
+
+@media screen and (max-width: 375px){
+    .popup{
+       
+        right: -18%;
+    }
 }
 
 .logoutButton{
     font-size: 30px;
     font-weight: 800;
    cursor: pointer;
+   
 }
 .logout-button{
     background-color:#ff8a00;

@@ -181,4 +181,30 @@
     height:35px;
   }
 }
+.Radio {
+  margin-left: 10px;
+}
+
+.bike {
+  margin-left: 3px;
+}
+
+.bikeField {
+  display: flex;
+  flex-direction: column;
+  margin:5px;
+}
+
+.bikedata {
+  height: 30px;
+  width: 50%;
+  border-radius: 5px;
+  /* border-color: lightcyan; */
+  outline: none;
+  margin-left: 10px;
+  /* border-top-color: lightcyan; */
+}
+.bikenumber{
+  margin-left:5px;
+}
   

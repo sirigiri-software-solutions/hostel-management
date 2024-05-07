@@ -7,10 +7,23 @@
 /* Table.css */
 .table-container {
   margin-top: 20px;
-  overflow: auto;
+  /* overflow: auto; */
+  overflow-y: auto;
   /* border: 1px solid ; */
   border-radius:12px;
   height: 400px;
+}
+.fixed {
+  position: sticky;
+  top: 0;
+  background-color: #fff; /* Change the background color as needed */
+  z-index: 0;
+}
+.bodystar td {
+  padding: 7px;
+}
+.bodystar{
+  overflow:auto;
 }
 .table{
   width: 100%;

@@ -85,16 +85,6 @@ const MainPage = () => {
   const handlesideBar = (value) => {
     setFlag(value);
   }
-  // useEffect(()=>{
-  //   const handleoutsideclick=(event)=>{
-  //     if(isModalOpen&& event.target.id==='poplogoutbtn')
-  //     {
-  //       setIsModalOpen(false)
-  //     }
-  //   }
-  // window.addEventListener('click',handleoutsideclick)
-    
-  // },[isModalOpen])
 
   useEffect(() => {
     // Add event listener to handle clicks outside the popup

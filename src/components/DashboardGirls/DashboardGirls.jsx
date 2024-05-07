@@ -1190,49 +1190,45 @@ const handleRoomsIntegerChange = (event) => {
               <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />   
           </div>
 
-          <div className="col-md-8" style={{ marginTop: '20px' }}>
-      <label htmlFor="bikeCheck">Do you have a bike?</label>
-      <input
-        type="radio"
-        id="bikeCheck"
-        name="bike"
-        value="yes"
-        onClick={handleCheckboxChange}
-        checked={hasBike}
-      />
-      Yes
-      <input
-        type="radio"
-        id="bikeCheck1"
-        name="bike"
-        value="no"
-        onClick={handleCheckboxChange}
-        checked={!hasBike}
-        style={{ marginLeft: '30px' }}
-      />
-      No
+          <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
+  <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">Do you have a bike?</label>
+  <input
+    type="radio"
+    className="Radio"
+    id="bikeCheck"
+    name="bike"
+    value="yes"
+    onClick={handleCheckboxChange}
+    checked={hasBike}
+  />
+  <label htmlFor='bikeCheck' className='bike'>Yes</label>
+  <input
+    type="radio"
+    id="bikeCheck1"
+    name="bike"
+    value="no"
+    onClick={handleCheckboxChange}
+    checked={!hasBike}
+    style={{ marginLeft: '30px' }}
+  />
+  <label htmlFor='bikeCheck1' className='bike'>No</label>
+</div>
 
-      {hasBike && (
-        <div>
-          <label htmlFor="bikeNumber">Bike Number Plate ID:</label>
-          <br />
-          <input
-            type="text"
-            id="bikeNumber"
-            placeholder="Enter bike number plate ID"
-            value={bikeNumber}
-            onChange={(event) => setBikeNumber(event.target.value)
-              
-            }
-            
-          />
-          <br />
-          
-        </div>
-       
-      )}
-    </div>
-
+{hasBike && (
+  <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+    <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+    <input
+      type="text"
+      id="bikeNumber"
+      
+      className='form-control'
+      placeholder="Enter number plate ID"
+      value={bikeNumber}
+      onChange={(event) => setBikeNumber(event.target.value)}
+      style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px',borderHeight:'40px',marginLeft:'8px' }}
+    />
+  </div>
+)}
 
           {/* ===== */}
           <div class="col-md-6">

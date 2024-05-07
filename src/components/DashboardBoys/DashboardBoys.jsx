@@ -14,7 +14,8 @@ import { onValue, remove, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import Table from '../../Elements/Table';
+// import Table from '../../Elements/Table';
+import { Modal, Button } from 'react-bootstrap';
 
 
 const DashboardBoys = () => {
@@ -57,9 +58,11 @@ const DashboardBoys = () => {
   const [boysRoomsData, setBoysRoomsData] = useState([]);
   const [showForm, setShowForm] = useState(true);
   // const { data } = useContext(DataContext);
+  // const onClickCloseBedsPopup = () => {
+  //   setPopupOpen(false);
+  // };
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('');
-
   const handleCheckboxChange = (e) => {
     setHasBike(e.target.value === 'yes');
     if (e.target.value === 'no') {
@@ -68,9 +71,21 @@ const DashboardBoys = () => {
       setBikeNumber('');
     }
   };
+
   
+  const getCurrentMonth = () => {
+    const monthNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+    const currentMonth = new Date().getMonth(); // getMonth returns month index (0 = January, 11 = December)
+    return monthNames[currentMonth];
+  };
+  
+  const getCurrentYear = () => {
+    return new Date().getFullYear().toString(); // getFullYear returns the full year (e.g., 2024)
+  };
 
-
+  const [year, setYear] = useState(getCurrentYear());
+  const [month, setMonth] = useState(getCurrentMonth());
+  
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
@@ -83,29 +98,52 @@ const DashboardBoys = () => {
     
 }, [showModal]);
 
-  const handleRoomsIntegerChange = (event) => {
-    const value = event.target.value;
-    const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && (event.target.id === "exampleModalRoomsBoys" || event.key === "Escape")) {
+            setShowModal(false);
+        }
+       
+    };
+    window.addEventListener('click', handleOutsideClick);
+    window.addEventListener("keydown",handleOutsideClick)
+    
+}, [showModal]);
 
-    if (value === '' || re.test(value)) {
-      switch (event.target.name) {
-        case 'floorNumber':
-          setFloorNumber(value);
-          break;
-        case 'roomNumber':
-          setRoomNumber(value);
-          break;
-        case 'numberOfBeds':
-          setNumberOfBeds(value);
-          break;
-        case 'bedRent':
-          setBedRent(value);
-          break;
-        default:
-          break;
+const handleRoomsIntegerChange = (event) => {
+  const { name, value } = event.target;
+  // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
+
+  let sanitizedValue = value;
+
+  if (name === 'floorNumber' || name === 'roomNumber') {
+    // Allow alphanumeric characters and hyphens only
+    sanitizedValue = value.replace(/[^a-zA-Z0-9-]/g, '');
+  } else if (name === 'numberOfBeds' || name === 'bedRent') {
+    // Allow numbers only
+    sanitizedValue = value.replace(/[^0-9]/g, '');
+  }
+
+  // if (value === '' || re.test(sanitizedValue)) {
+      switch(name) {
+          case 'floorNumber':
+              setFloorNumber(sanitizedValue);
+              break;
+          case 'roomNumber':
+              setRoomNumber(sanitizedValue);
+              break;
+          case 'numberOfBeds':
+              setNumberOfBeds(sanitizedValue);
+              break;
+          case 'bedRent':
+              setBedRent(sanitizedValue);
+              break;
+          default:
+              break;
       }
-    }
-  };
+  // }
+};
 
   // expenses related 
   const [formData, setFormData] = useState({
@@ -225,7 +263,8 @@ const DashboardBoys = () => {
   };
 
   useEffect(() => {
-    const expensesRef = ref(database, 'Hostel/boys/expenses');
+    const formattedMonth = month.slice(0, 3);
+    const expensesRef = ref(database, `Hostel/boys/expenses/${formattedMonth}-${year}`);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
       let total = 0; // Variable to hold the total expenses
@@ -349,7 +388,6 @@ const DashboardBoys = () => {
         imageUrlToUpdate = await getDownloadURL(snapshot.ref);
       } catch (error) {
         console.error("Error uploading tenant image:", error);
-
       }
     }
 
@@ -726,6 +764,13 @@ const DashboardBoys = () => {
 
   };
 
+  const getMonthYearKey = (dateString) => {
+    const date = new Date(dateString);
+    const month = date.toLocaleString('default', { month: 'short' }).toLowerCase(); // get short month name
+    const year = date.getFullYear();
+    return `${month}-${year}`;
+  };
+
   const expensesHandleSubmit = (e) => {
     e.preventDefault();
     // Validate the necessary fields
@@ -761,7 +806,8 @@ const DashboardBoys = () => {
 
     // Only proceed if form is valid
     if (formIsValid) {
-      const expensesRef = ref(database, 'Hostel/boys/expenses');
+      const monthYear = getMonthYearKey(formData.expenseDate);
+      const expensesRef = ref(database, `Hostel/boys/expenses/${monthYear}`);
       push(expensesRef, {
         ...formData,
         expenseAmount: parseFloat(formData.expenseAmount),
@@ -795,12 +841,16 @@ const DashboardBoys = () => {
         rooms: '',
         status: ''
       });
+      setFormData({
+        expenseName: '',
+        expenseAmount: '',
+        expenseDate: '',
+        createdBy: 'admin'
+      });
     } else {
       // Set errors in state if form is not valid
       setFormErrors(errors);
     }
-
-
   };
 
   const renderFormLayout = () => {
@@ -810,22 +860,22 @@ const DashboardBoys = () => {
           <form className="row g-3" onSubmit={handleBoysRoomsSubmit}>
             <div className="col-md-6">
               <label htmlFor="inputNumber" className="form-label">Floor Number</label>
-              <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')} />
+              <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange}  />
               {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="inputRent" className="form-label">Room Number</label>
-              <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')} />
+              <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange}  />
               {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
-              <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')} />
+              <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange}  />
               {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
-              <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} onInput={e => e.target.value = e.target.value.replace(/[^0-9]/g, '')} />
+              <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange}  />
               {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
             </div>
             <div className="col-md-6">
@@ -1138,60 +1188,64 @@ const DashboardBoys = () => {
                 </object>
               )}
               <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
-           
-          </div>
-          <div className="col-md-8" style={{ marginTop: '20px' }}>
-      <label htmlFor="bikeCheck">Do you have a bike?</label>
-      <input
-        type="radio"
-        id="bikeCheck"
-        name="bike"
-        value="yes"
-        onClick={handleCheckboxChange}
-        checked={hasBike}
-      />
-      Yes
-      <input
-        type="radio"
-        id="bikeCheck1"
-        name="bike"
-        value="no"
-        onClick={handleCheckboxChange}
-        checked={!hasBike}
-        style={{ marginLeft: '30px' }}
-      />
-      No
 
-      {hasBike && (
-        <div>
-          <label htmlFor="bikeNumber">Bike Number Plate ID:</label>
-          <br />
-          <input
-            type="text"
-            id="bikeNumber"
-            placeholder="Enter bike number plate ID"
-            value={bikeNumber}
-            onChange={(event) => setBikeNumber(event.target.value)
-              
-            }
-            
-          />
-          <br />
-          
-        </div>
-       
-      )}
-    </div>
+            </div>
 
 
-          {/* ===== */}
-          <div class="col-md-6">
-            <label htmlFor='tenantIdInput'  for="file-upload" class="custom-file-upload form-label">
-              {/* <i class="fa fa-cloud-upload"></i> */}
-              {/* <MdUploadFile /> */}
-            </label>
-            <input  class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
-          </div>
+
+            <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
+  <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">Do you have a bike?</label>
+  <input
+    type="radio"
+    className="Radio"
+    id="bikeCheck"
+    name="bike"
+    value="yes"
+    onClick={handleCheckboxChange}
+    checked={hasBike}
+  />
+  <label htmlFor='bikeCheck' className='bike'>Yes</label>
+  <input
+    type="radio"
+    id="bikeCheck1"
+    name="bike"
+    value="no"
+    onClick={handleCheckboxChange}
+    checked={!hasBike}
+    style={{ marginLeft: '30px' }}
+  />
+  <label htmlFor='bikeCheck1' className='bike'>No</label>
+</div>
+
+{hasBike && (
+  <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+    <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+    <input
+      type="text"
+      id="bikeNumber"
+      
+      className='form-control'
+      placeholder="Enter number plate ID"
+      value={bikeNumber}
+      onChange={(event) => setBikeNumber(event.target.value)}
+      style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px',borderHeight:'40px',marginLeft:'8px' }}
+    />
+  </div>
+)}
+
+    
+
+
+            {/* ===== */}
+            <div class="col-md-6">
+              <label htmlFor='tenantIdInput' for="file-upload" class="custom-file-upload form-label">
+                {/* <i class="fa fa-cloud-upload"></i> */}
+                {/* <MdUploadFile /> */}
+              </label>
+              <input class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
+            </div>
+
+            {/* =============== */}
             <div className='col-12 text-center'>
               {isEditing ? (
                 <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>Update Tenant</button>
@@ -1227,6 +1281,7 @@ const DashboardBoys = () => {
               <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
               {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
             </div>
+
             <div className="col-12 text-center mt-3">
               <button type="submit" className="btn btn-warning">Create</button>
             </div>
@@ -1256,11 +1311,12 @@ const DashboardBoys = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("closed")
-      if(popupOpen && event.target.id === "example"){
+      if(popupOpen && (event.target.id === "example"|| event.key==="Escape")){
         setPopupOpen(false)
       }
     };
     window.addEventListener('click', handleOutsideClick)
+    window.addEventListener('keydown',handleOutsideClick)
   }, [popupOpen])
 
   useEffect(() => {
@@ -1288,19 +1344,19 @@ const DashboardBoys = () => {
   }, [boysRooms, tenants]); // Depend on rooms and tenants data
 
   const rows = bedsData.filter((bed) => bed.status === 'Unoccupied').map((bed, index) => ({
-    s_no: index + 1,
+    //s_no: index + 1,
     bed_number: bed.bedNumber,
     room_no: bed.roomNumber,
     floor: bed.floorNumber,
-    status: bed.status
+    //status: bed.status
   }));
 
   const columns = [
-    'S. No',
+    //'S. No',
     'Bed Number',
     'Room No',
     'Floor',
-    'Status'
+    //'Status'
   ];
 
   return (
@@ -1337,16 +1393,39 @@ const DashboardBoys = () => {
       </div>
 
       {popupOpen &&
-      <div className="popupBeds" id="example">
-        <div className="popup-contentBeds">
-          <h5>Unoccupied Beds Data Boys</h5>
-          <div>
-            <Table columns={columns} rows={rows}/>
-          </div>
-          <button onClick={onClickCloseBedsPopup} className='close-button'>Close</button>
+        <div className="popupBeds" id="example">
+          <Button variant="primary" onClick={() => setPopupOpen(true)}>Open Popup</Button>
+          <Modal show={popupOpen} onHide={onClickCloseBedsPopup} dialogClassName="modal-90w">
+            <Modal.Header closeButton>
+              <Modal.Title>Unoccupied Beds</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="custom-modal-body">
+              <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                <thead>
+                  <tr>
+                    {columns.map((column, index) => (
+                      <th key={index} style={{ border: '1px solid black', padding: '8px' }}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row, index) => (
+                    <tr key={index} style={{ border: '1px solid black' }}>
+                      {Object.values(row).map((value, i) => (
+                        <td key={i} style={{ border: '1px solid black', padding: '8px' }}>{value}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={onClickCloseBedsPopup}>Close</Button>
+            </Modal.Footer>
+          </Modal>
         </div>
-      </div>
       }
+
     </div>
 
   );

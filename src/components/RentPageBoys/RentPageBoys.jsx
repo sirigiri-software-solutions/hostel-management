@@ -88,13 +88,13 @@ Please note that you made your last payment on ${paidDate}.\n`
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && event.target.id === "exampleModalRentsBoys") {
+        if (showModal && (event.target.id === "exampleModalRentsBoys" || event.key==="Escape")) {
             setShowModal(false);
         }
        
     };
     window.addEventListener('click', handleOutsideClick);
-    
+    window.addEventListener('keydown',handleOutsideClick)
 }, [showModal]);
 
 
@@ -483,13 +483,10 @@ Please note that you made your last payment on ${paidDate}.\n`
               Add Rents
             </button>
           </div>
-
         </div>
-
         <div>
           <Table columns={columns} rows={filteredRows} />
         </div>
-
         <div class={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalRentsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
           <div class="modal-dialog">
             <div class="modal-content">

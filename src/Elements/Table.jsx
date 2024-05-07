@@ -7,13 +7,13 @@ const Table = ({columns, rows,onClickTentantRow}) => {
     <div className='table-container'>
         <table className="table text-center">
           <thead>
-            <tr>
+            <tr class="fixed">
               {
                 columns.map((item, index) => <th style={{padding: "10px"}}>{item}</th>)
               }
             </tr>
           </thead>  
-          <tbody>
+          <tbody class="bodystar">
             {
               rows.map((item, index) => <tr>
                 {item.s_no && <td data-label="S. No" style={{padding:"7px"}} onClick={onClickTentantRow ? () => onClickTentantRow(item) : null}>{item.s_no}</td>}
@@ -29,6 +29,7 @@ const Table = ({columns, rows,onClickTentantRow}) => {
                 {item.bed_no && <td data-label="Bed No">{item.bed_no}</td>}
                 {item.floor && <td data-label="Floor">{item.floor}</td>}
                 {item.noofBeds && <td data-label="No.of Beds">{item.noofBeds}</td>}
+                {item.bedRent && <td data-label="Bed Rent">{item.bedRent}</td>}
                 {item.month_year && <td data-label="month_year">{item.month_year}</td>}
                 {item.rent && <td data-label="Rent">{item.rent}</td>}
                 {item.paid && <td data-label="Paid">{item.paid}</td>}

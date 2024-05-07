@@ -15,6 +15,19 @@ const ExpensesBoys = () => {
   const [editingExpense, setEditingExpense] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
+  const getCurrentMonth = () => {
+    const monthNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+    const currentMonth = new Date().getMonth(); // getMonth returns month index (0 = January, 11 = December)
+    return monthNames[currentMonth];
+  };
+  
+  const getCurrentYear = () => {
+    return new Date().getFullYear().toString(); // getFullYear returns the full year (e.g., 2024)
+  };
+
+  const [year, setYear] = useState(getCurrentYear());
+  const [month, setMonth] = useState(getCurrentMonth());
+  const [total, setTotal] = useState(0);
 
   const [formData, setFormData] = useState({
     expenseName: '',
@@ -41,16 +54,24 @@ const ExpensesBoys = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && event.target.id === "exampleModalExpensesBoys") {
+        if (showModal && (event.target.id === "exampleModalExpensesBoys"|| event.key === "Escape")) {
             setShowModal(false);
         }
        
     };
     window.addEventListener('click', handleOutsideClick);
+    window.addEventListener('keydown',handleOutsideClick)
     
 }, [showModal]);
 
-  
+
+
+  const getMonthYearKey = (dateString) => {
+    const date = new Date(dateString);
+    const month = date.toLocaleString('default', { month: 'short' }).toLowerCase(); // get short month name
+    const year = date.getFullYear();
+    return `${month}-${year}`;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -86,7 +107,8 @@ const ExpensesBoys = () => {
 
     // Only proceed if form is valid
     if (formIsValid) {
-      const expensesRef = ref(database, 'Hostel/boys/expenses');
+      const monthYear = getMonthYearKey(formData.expenseDate);
+      const expensesRef = ref(database, `Hostel/boys/expenses/${monthYear}`);
       push(expensesRef, {
         ...formData,
         expenseAmount: parseFloat(formData.expenseAmount),
@@ -124,8 +146,6 @@ const ExpensesBoys = () => {
       // Set errors in state if form is not valid
       setFormErrors(errors);
     }
-
-
   };
 
   //for date format
@@ -137,8 +157,11 @@ const ExpensesBoys = () => {
     return `${day}-${month}-${year}`;
   }
 
+
+
   useEffect(() => {
-    const expensesRef = ref(database, 'Hostel/boys/expenses');
+    const formattedMonth = month.slice(0, 3);
+    const expensesRef = ref(database, `Hostel/boys/expenses/${formattedMonth}-${year}`);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
       const loadedExpenses = [];
@@ -150,8 +173,10 @@ const ExpensesBoys = () => {
         });
       }
       setExpenses(loadedExpenses);
+      const totalExpenses = loadedExpenses.reduce((acc, current) => acc + current.expenseAmount, 0);
+      setTotal(totalExpenses);
     });
-  }, []);
+  }, [month, year]);
 
   const columns = [
     'S. No',
@@ -163,7 +188,6 @@ const ExpensesBoys = () => {
   ];
 
   useEffect(() => {
-
     const rows = expenses.map((expense, index) => ({
       s_no: index + 1,
       expense_name: expense.expenseName,
@@ -245,31 +269,31 @@ const ExpensesBoys = () => {
         expenseAmount: parseFloat(formData.expenseAmount)
       };
 
-      const expenseRef = ref(database, `Hostel/boys/expenses/${editingExpense.id}`);
+      const monthYear = getMonthYearKey(formData.expenseDate);
+      const expenseRef = ref(database, `Hostel/boys/expenses/${monthYear}/${editingExpense.id}`);
       set(expenseRef, updatedFormData)
-      .then(() => {
-        toast.success("Expense updated successfully.", {
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
+        .then(() => {
+          toast.success("Expense updated successfully.", {
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+          setEditingExpense(null);
+        }).catch(error => {
+          toast.error("Error updating Expense: " + error.message, {
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
         });
-        setEditingExpense(null); 
-      }).catch(error => {
-        toast.error("Error updating Expense: " + error.message, {
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      });
-        
 
       setShowModal(false);
       setFormData({
@@ -279,40 +303,38 @@ const ExpensesBoys = () => {
         createdBy: 'admin'
       });
     } else {
-      
+
       setFormErrors(errors);
     }
   };
 
 
-
-
-
   const handleDelete = () => {
     if (!editingExpense) return;
-    const expenseRef = ref(database, `Hostel/boys/expenses/${editingExpense.id}`);
+    const monthYear = getMonthYearKey(formData.expenseDate);
+    const expenseRef = ref(database, `Hostel/boys/expenses/${monthYear}/${editingExpense.id}`);
     remove(expenseRef).then(() => {
-        toast.success("Expense deleted successfully", {
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-        setEditingExpense(null); 
-      }).catch(error => {
-        toast.error("Error deleting Expense" + error.message, {
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+      toast.success("Expense deleted successfully", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
       });
+      setEditingExpense(null);
+    }).catch(error => {
+      toast.error("Error deleting Expense" + error.message, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    });
     setShowModal(false);
     setFormData({
       expenseName: '',
@@ -363,12 +385,8 @@ const ExpensesBoys = () => {
 
   }
 
-
-
-
   return (
     <div className='h-100'>
-
       <>
         <div className="row d-flex flex-wrap align-items-center justify-content-between">
           <div className="col-12 col-md-4 d-flex align-items-center mr-5">
@@ -387,8 +405,41 @@ const ExpensesBoys = () => {
             </button>
           </div>
         </div>
+        {/* ------------------------ */}
+        <div className='filterExpense'>
+          <div>
+            <select className='filterExpenseField' value={year} onChange={e => setYear(e.target.value)}>
+              <option value="2022">2022</option>
+              <option value="2023">2023</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+          </div>
+          <div>
+            <select className='filterExpenseField' value={month} onChange={e => { setMonth(e.target.value) }}>
+              <option value="jan">January</option>
+              <option value="feb">February</option>
+              <option value="mar">March</option>
+              <option value="apr">April</option>
+              <option value="may">May</option>
+              <option value="jun">June</option>
+              <option value="jul">July</option>
+              <option value="aug">August</option>
+              <option value="sep">September</option>
+              <option value="oct">October</option>
+              <option value="nov">November</option>
+              <option value="dec">December</option>
+            </select>
+          </div>
+
+          {/* Additional UI and functionality here */}
+        </div>
+        {/* --------------------------- */}
         <div>
           <Table columns={columns} rows={filteredRows} />
+        </div>
+        <div>
+          <text>Total Expenses : {total}</text>
         </div>
         <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalExpensesBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog">
@@ -437,7 +488,7 @@ const ExpensesBoys = () => {
                   </form>
                 </div>
               </div>
-             
+
             </div>
           </div>
         </div>

@@ -13,7 +13,8 @@ import { FetchData } from '../../ApiData/FetchData';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import Table from '../../Elements/Table'
+// import Table from '../../Elements/Table'
+import { Modal, Button } from 'react-bootstrap';
  
 const DashboardGirls = () => {
   const [modelText, setModelText] = useState('');
@@ -62,6 +63,20 @@ const DashboardGirls = () => {
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('');
 
+   
+  const getCurrentMonth = () => {
+    const monthNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+    const currentMonth = new Date().getMonth(); // getMonth returns month index (0 = January, 11 = December)
+    return monthNames[currentMonth];
+  };
+  
+  const getCurrentYear = () => {
+    return new Date().getFullYear().toString(); // getFullYear returns the full year (e.g., 2024)
+  };
+
+  const [year, setYear] = useState(getCurrentYear());
+  const [month, setMonth] = useState(getCurrentMonth());
+
   const handleCheckboxChange = (e) => {
     setHasBike(e.target.value === 'yes');
     if (e.target.value === 'no') {
@@ -95,41 +110,52 @@ const DashboardGirls = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && event.target.id === "exampleModalRoomsGirls") {
+        if (showModal && (event.target.id === "exampleModalRoomsGirls" || event.key === "Escape")) {
             setShowModal(false);
         }
        
     };
     window.addEventListener('click', handleOutsideClick);
+    window.addEventListener('keydown',handleOutsideClick)
     
 }, [showModal]);
 
 
  
 
-  const handleRoomsIntegerChange = (event) => {
-    const value = event.target.value;
-    const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
+const handleRoomsIntegerChange = (event) => {
+  const { name, value } = event.target;
+  // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
 
-    if (value === '' || re.test(value)) {
-      switch (event.target.name) {
-        case 'floorNumber':
-          setFloorNumber(value);
-          break;
-        case 'roomNumber':
-          setRoomNumber(value);
-          break;
-        case 'numberOfBeds':
-          setNumberOfBeds(value);
-          break;
-        case 'bedRent':
-          setBedRent(value);
-          break;
-        default:
-          break;
+  let sanitizedValue = value;
+
+  if (name === 'floorNumber' || name === 'roomNumber') {
+    // Allow alphanumeric characters and hyphens only
+    sanitizedValue = value.replace(/[^a-zA-Z0-9-]/g, '');
+  } else if (name === 'numberOfBeds' || name === 'bedRent') {
+    // Allow numbers only
+    sanitizedValue = value.replace(/[^0-9]/g, '');
+  }
+
+  // if (value === '' || re.test(sanitizedValue)) {
+      switch(name) {
+          case 'floorNumber':
+              setFloorNumber(sanitizedValue);
+              break;
+          case 'roomNumber':
+              setRoomNumber(sanitizedValue);
+              break;
+          case 'numberOfBeds':
+              setNumberOfBeds(sanitizedValue);
+              break;
+          case 'bedRent':
+              setBedRent(sanitizedValue);
+              break;
+          default:
+              break;
       }
-    }
-  };
+  // }
+};
   const handleGirlsRoomsSubmit = (e) => {
     e.preventDefault();
     const now = new Date().toISOString();  // Get current date-time in ISO format
@@ -222,7 +248,8 @@ const DashboardGirls = () => {
   };
 
   useEffect(() => {
-    const expensesRef = ref(database, 'Hostel/girls/expenses');
+    const formattedMonth = month.slice(0, 3);
+    const expensesRef = ref(database, `Hostel/girls/expenses/${formattedMonth}-${year}`);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
       let total = 0; // Variable to hold the total expenses
@@ -726,6 +753,14 @@ const DashboardGirls = () => {
     setShowModal(false);
   };
 
+
+  const getMonthYearKey = (dateString) => {
+    const date = new Date(dateString);
+    const month = date.toLocaleString('default', { month: 'short' }).toLowerCase(); // get short month name
+    const year = date.getFullYear();
+    return `${month}-${year}`;
+  };
+
   const expensesHandleSubmit = (e) => {
     e.preventDefault();
     // Validate the necessary fields
@@ -761,7 +796,8 @@ const DashboardGirls = () => {
 
     // Only proceed if form is valid
     if (formIsValid) {
-      const expensesRef = ref(database, 'Hostel/girls/expenses');
+      const monthYear = getMonthYearKey(formData.expenseDate);
+      const expensesRef = ref(database, `Hostel/girls/expenses/${monthYear}`);
       push(expensesRef, {
         ...formData,
         expenseAmount: parseFloat(formData.expenseAmount),
@@ -794,6 +830,12 @@ const DashboardGirls = () => {
         rent: '',
         rooms: '',
         status: ''
+      });
+      setFormData({
+        expenseName: '',
+        expenseAmount: '',
+        expenseDate: '',
+        createdBy: 'admin'
       });
     } else {
       // Set errors in state if form is not valid
@@ -1148,49 +1190,45 @@ const DashboardGirls = () => {
               <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />   
           </div>
 
-          <div className="col-md-8" style={{ marginTop: '20px' }}>
-      <label htmlFor="bikeCheck">Do you have a bike?</label>
-      <input
-        type="radio"
-        id="bikeCheck"
-        name="bike"
-        value="yes"
-        onClick={handleCheckboxChange}
-        checked={hasBike}
-      />
-      Yes
-      <input
-        type="radio"
-        id="bikeCheck1"
-        name="bike"
-        value="no"
-        onClick={handleCheckboxChange}
-        checked={!hasBike}
-        style={{ marginLeft: '30px' }}
-      />
-      No
+          <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
+  <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">Do you have a bike?</label>
+  <input
+    type="radio"
+    className="Radio"
+    id="bikeCheck"
+    name="bike"
+    value="yes"
+    onClick={handleCheckboxChange}
+    checked={hasBike}
+  />
+  <label htmlFor='bikeCheck' className='bike'>Yes</label>
+  <input
+    type="radio"
+    id="bikeCheck1"
+    name="bike"
+    value="no"
+    onClick={handleCheckboxChange}
+    checked={!hasBike}
+    style={{ marginLeft: '30px' }}
+  />
+  <label htmlFor='bikeCheck1' className='bike'>No</label>
+</div>
 
-      {hasBike && (
-        <div>
-          <label htmlFor="bikeNumber">Bike Number Plate ID:</label>
-          <br />
-          <input
-            type="text"
-            id="bikeNumber"
-            placeholder="Enter bike number plate ID"
-            value={bikeNumber}
-            onChange={(event) => setBikeNumber(event.target.value)
-              
-            }
-            
-          />
-          <br />
-          
-        </div>
-       
-      )}
-    </div>
-
+{hasBike && (
+  <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+    <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+    <input
+      type="text"
+      id="bikeNumber"
+      
+      className='form-control'
+      placeholder="Enter number plate ID"
+      value={bikeNumber}
+      onChange={(event) => setBikeNumber(event.target.value)}
+      style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px',borderHeight:'40px',marginLeft:'8px' }}
+    />
+  </div>
+)}
 
           {/* ===== */}
           <div class="col-md-6">
@@ -1301,19 +1339,19 @@ const DashboardGirls = () => {
   }, [girlsRooms, tenants]); // Depend on rooms and tenants data
 
   const rows = bedsData.filter((bed) => bed.status === 'Unoccupied').map((bed, index) => ({
-    s_no: index + 1,
+    // s_no: index + 1,
     bed_number: bed.bedNumber,
     room_no: bed.roomNumber,
     floor: bed.floorNumber,
-    status: bed.status
+    // status: bed.status
   }));
 
   const columns = [
-    'S. No',
+    // 'S. No',
     'Bed Number',
     'Room No',
     'Floor',
-    'Status'
+    // 'Status'
   ];
 
  
@@ -1353,15 +1391,37 @@ const DashboardGirls = () => {
       </div>
 
       {popupOpen &&
-      <div className="popupBeds" id="example">
-        <div className="popup-contentBeds">
-          <h5>Unoccupied Beds Data Girls</h5>
-          <div>
-            <Table columns={columns} rows={rows}/>
-          </div>
-          <button onClick={onClickCloseBedsPopup} className='close-button'>Close</button>
+        <div className="popupBeds" id="example">
+          <Button variant="primary" onClick={() => setPopupOpen(true)}>Open Popup</Button>
+          <Modal show={popupOpen} onHide={onClickCloseBedsPopup} dialogClassName="modal-90w">
+            <Modal.Header closeButton>
+              <Modal.Title>Unoccupied Beds</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className='custom-modal-body'>
+              <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                <thead>
+                  <tr>
+                    {columns.map((column, index) => (
+                      <th key={index} style={{ border: '1px solid black', padding: '8px' }}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row, index) => (
+                    <tr key={index} style={{ border: '1px solid black' }}>
+                      {Object.values(row).map((value, i) => (
+                        <td key={i} style={{ border: '1px solid black', padding: '8px' }}>{value}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={onClickCloseBedsPopup}>Close</Button>
+            </Modal.Footer>
+          </Modal>
         </div>
-      </div>
       }
  
     </div>

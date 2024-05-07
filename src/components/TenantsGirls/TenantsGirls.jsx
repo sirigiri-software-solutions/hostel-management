@@ -49,11 +49,24 @@ const TenantsGirls = () => {
   const [showExTenants, setShowExTenants] = useState(false);
   const [singleTenantProofId,setSingleTenantProofId] = useState("");
 
+  const [hasBike, setHasBike] = useState(false);
+  const [bikeNumber, setBikeNumber] = useState('');
+
+  const handleCheckboxChange = (e) => {
+    setHasBike(e.target.value === 'yes');
+    if (e.target.value === 'no') {
+      setBikeNumber('--N/A--');
+    } else {
+      setBikeNumber('');
+    }
+  };
+
+
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && event.target.id === "exampleModalTenantsGirls") {
+        if (showModal && (event.target.id === "exampleModalTenantsGirls" || event.key==="Escape")) {
             setShowModal(false);
             setTenantIdUrl('')
         }
@@ -63,22 +76,21 @@ const TenantsGirls = () => {
     };
 
     window.addEventListener('click', handleOutsideClick);
-    
+    window.addEventListener('keydown',handleOutsideClick)
 }, [showModal]);
 
 
-const handleClickOutside = (event) => {
-  const popup = document.getElementById('userDetailsTenantPopupIdGirl');
-  if (popup && !popup.contains(event.target)) {
-    setUserDetailsTenantsPopup(false);
-  }
-};
+
 
 useEffect(() => {
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
+  const handleClickOutside = (event) => {
+    const popup = document.getElementById('userDetailsTenantPopupIdGirl');
+    if (popup && (!popup.contains(event.target) || event.key === "Escape")) {
+      setUserDetailsTenantsPopup(false);
+    }
   };
+  document.addEventListener("mousedown", handleClickOutside);
+  document.addEventListener("keydown",handleClickOutside)
 }, []);
 
 
@@ -693,6 +705,48 @@ useEffect(() => {
                     <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange}  />
 
                   </div>
+                  <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
+  <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">Do you have a bike?</label>
+  <input
+    type="radio"
+    className="Radio"
+    id="bikeCheck"
+    name="bike"
+    value="yes"
+    onClick={handleCheckboxChange}
+    checked={hasBike}
+  />
+  <label htmlFor='bikeCheck' className='bike'>Yes</label>
+  <input
+    type="radio"
+    id="bikeCheck1"
+    name="bike"
+    value="no"
+    onClick={handleCheckboxChange}
+    checked={!hasBike}
+    style={{ marginLeft: '30px' }}
+  />
+  <label htmlFor='bikeCheck1' className='bike'>No</label>
+</div>
+
+{hasBike && (
+  <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+    <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+    <input
+      type="text"
+      id="bikeNumber"
+      
+      className='form-control'
+      placeholder="Enter number plate ID"
+      value={bikeNumber}
+      onChange={(event) => setBikeNumber(event.target.value)}
+      style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px',borderHeight:'40px',marginLeft:'8px' }}
+    />
+  </div>
+)}
+
+
+
                   {/* ===== */}
                   <div class="col-md-6">
                     <label for="file-upload" class="custom-file-upload">

@@ -109,13 +109,6 @@ const BedsPageBoys = () => {
     setSelectedFloor(e.target.value);
   };
 
-
-// const filteredRows = rows.filter(row => {
-//     return Object.values(row).some(value =>
-//       value.toString().toLowerCase().includes(searchValue.toLowerCase())
-//     );
-//   });
-
 const filteredRows = rows.filter((row) => {
   return (
     (selectedStatus === '' || row.status === selectedStatus) &&

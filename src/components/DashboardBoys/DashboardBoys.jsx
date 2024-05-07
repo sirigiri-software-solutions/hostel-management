@@ -59,6 +59,21 @@ const DashboardBoys = () => {
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('');
 
+  
+  const getCurrentMonth = () => {
+    const monthNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+    const currentMonth = new Date().getMonth(); // getMonth returns month index (0 = January, 11 = December)
+    return monthNames[currentMonth];
+  };
+  
+  const getCurrentYear = () => {
+    return new Date().getFullYear().toString(); // getFullYear returns the full year (e.g., 2024)
+  };
+
+  const [year, setYear] = useState(getCurrentYear());
+  const [month, setMonth] = useState(getCurrentMonth());
+ 
+
   const handleCheckboxChange = (e) => {
     setHasBike(e.target.value === 'yes');
     if (e.target.value === 'no') {
@@ -207,7 +222,8 @@ const DashboardBoys = () => {
   };
 
   useEffect(() => {
-    const expensesRef = ref(database, 'Hostel/boys/expenses');
+    const formattedMonth = month.slice(0, 3);
+    const expensesRef = ref(database, `Hostel/boys/expenses/${formattedMonth}-${year}`);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
       let total = 0; // Variable to hold the total expenses
@@ -385,7 +401,6 @@ const DashboardBoys = () => {
         imageUrlToUpdate = await getDownloadURL(snapshot.ref);
       } catch (error) {
         console.error("Error uploading tenant image:", error);
-
       }
     }
 
@@ -797,6 +812,13 @@ const DashboardBoys = () => {
   // }, []);
 
 
+  const getMonthYearKey = (dateString) => {
+    const date = new Date(dateString);
+    const month = date.toLocaleString('default', { month: 'short' }).toLowerCase(); // get short month name
+    const year = date.getFullYear();
+    return `${month}-${year}`;
+  };
+
   const expensesHandleSubmit = (e) => {
     e.preventDefault();
     // Validate the necessary fields
@@ -832,7 +854,8 @@ const DashboardBoys = () => {
 
     // Only proceed if form is valid
     if (formIsValid) {
-      const expensesRef = ref(database, 'Hostel/boys/expenses');
+      const monthYear = getMonthYearKey(formData.expenseDate);
+      const expensesRef = ref(database, `Hostel/boys/expenses/${monthYear}`);
       push(expensesRef, {
         ...formData,
         expenseAmount: parseFloat(formData.expenseAmount),
@@ -866,12 +889,16 @@ const DashboardBoys = () => {
         rooms: '',
         status: ''
       });
+      setFormData({
+        expenseName: '',
+        expenseAmount: '',
+        expenseDate: '',
+        createdBy: 'admin'
+      });
     } else {
       // Set errors in state if form is not valid
       setFormErrors(errors);
     }
-
-
   };
 
   const renderFormLayout = () => {
@@ -1301,10 +1328,7 @@ const DashboardBoys = () => {
             </div>
 
             <div className="col-12 text-center mt-3">
-
               <button type="submit" className="btn btn-warning">Create</button>
-
-
             </div>
           </form>
 

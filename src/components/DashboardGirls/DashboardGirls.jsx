@@ -13,7 +13,8 @@ import { FetchData } from '../../ApiData/FetchData';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import Table from '../../Elements/Table'
+// import Table from '../../Elements/Table'
+import { Modal, Button } from 'react-bootstrap';
  
 const DashboardGirls = () => {
   const [modelText, setModelText] = useState('');
@@ -109,12 +110,13 @@ const DashboardGirls = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && event.target.id === "exampleModalRoomsGirls") {
+        if (showModal && (event.target.id === "exampleModalRoomsGirls" || event.key === "Escape")) {
             setShowModal(false);
         }
        
     };
     window.addEventListener('click', handleOutsideClick);
+    window.addEventListener('keydown',handleOutsideClick)
     
 }, [showModal]);
 
@@ -1331,19 +1333,19 @@ const DashboardGirls = () => {
   }, [girlsRooms, tenants]); // Depend on rooms and tenants data
 
   const rows = bedsData.filter((bed) => bed.status === 'Unoccupied').map((bed, index) => ({
-    s_no: index + 1,
+    // s_no: index + 1,
     bed_number: bed.bedNumber,
     room_no: bed.roomNumber,
     floor: bed.floorNumber,
-    status: bed.status
+    // status: bed.status
   }));
 
   const columns = [
-    'S. No',
+    // 'S. No',
     'Bed Number',
     'Room No',
     'Floor',
-    'Status'
+    // 'Status'
   ];
 
  
@@ -1383,15 +1385,37 @@ const DashboardGirls = () => {
       </div>
 
       {popupOpen &&
-      <div className="popupBeds" id="example">
-        <div className="popup-contentBeds">
-          <h5>Unoccupied Beds Data Girls</h5>
-          <div>
-            <Table columns={columns} rows={rows}/>
-          </div>
-          <button onClick={onClickCloseBedsPopup} className='close-button'>Close</button>
+        <div className="popupBeds" id="example">
+          <Button variant="primary" onClick={() => setPopupOpen(true)}>Open Popup</Button>
+          <Modal show={popupOpen} onHide={onClickCloseBedsPopup} dialogClassName="modal-90w">
+            <Modal.Header closeButton>
+              <Modal.Title>Unoccupied Beds</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className='custom-modal-body'>
+              <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                <thead>
+                  <tr>
+                    {columns.map((column, index) => (
+                      <th key={index} style={{ border: '1px solid black', padding: '8px' }}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row, index) => (
+                    <tr key={index} style={{ border: '1px solid black' }}>
+                      {Object.values(row).map((value, i) => (
+                        <td key={i} style={{ border: '1px solid black', padding: '8px' }}>{value}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={onClickCloseBedsPopup}>Close</Button>
+            </Modal.Footer>
+          </Modal>
         </div>
-      </div>
       }
  
     </div>

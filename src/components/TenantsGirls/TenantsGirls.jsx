@@ -53,7 +53,7 @@ const TenantsGirls = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && event.target.id === "exampleModalTenantsGirls") {
+        if (showModal && (event.target.id === "exampleModalTenantsGirls" || event.key==="Escape")) {
             setShowModal(false);
             setTenantIdUrl('')
         }
@@ -63,22 +63,21 @@ const TenantsGirls = () => {
     };
 
     window.addEventListener('click', handleOutsideClick);
-    
+    window.addEventListener('keydown',handleOutsideClick)
 }, [showModal]);
 
 
-const handleClickOutside = (event) => {
-  const popup = document.getElementById('userDetailsTenantPopupIdGirl');
-  if (popup && !popup.contains(event.target)) {
-    setUserDetailsTenantsPopup(false);
-  }
-};
+
 
 useEffect(() => {
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
+  const handleClickOutside = (event) => {
+    const popup = document.getElementById('userDetailsTenantPopupIdGirl');
+    if (popup && (!popup.contains(event.target) || event.key === "Escape")) {
+      setUserDetailsTenantsPopup(false);
+    }
   };
+  document.addEventListener("mousedown", handleClickOutside);
+  document.addEventListener("keydown",handleClickOutside)
 }, []);
 
 

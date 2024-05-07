@@ -26,11 +26,13 @@ const RoomsBoys = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && event.target.id === "exampleModalRoomsBoys") {
+        if (showModal && (event.target.id === "exampleModalRoomsBoys" || event.key === "Escape")) {
             setShowModal(false);
         }
     };
     window.addEventListener('click', handleOutsideClick);
+    window.addEventListener("keydown",handleOutsideClick)
+    
 }, [showModal]);
 
 
@@ -74,7 +76,7 @@ const RoomsBoys = () => {
     e.preventDefault();
     const now = new Date().toISOString();  // Get current date-time in ISO format
 
-    // Initialize an object to collect errors
+    
     const newErrors = {};
 
     // Validation checks

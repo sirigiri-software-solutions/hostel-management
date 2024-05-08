@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Rooms from '../../images/Icons (2).png'
 import Beds from '../../images/Icons (3).png'
 import Tenants from '../../images/Icons (4).png'
@@ -8,9 +8,7 @@ import SmallCard from '../../Elements/SmallCard'
 import './DashboardBoys.css';
 import PlusIcon from "../../images/Icons (8).png"
 import { database, push, ref, storage } from "../../firebase";
-import { DataContext } from '../../ApiData/ContextProvider';
-import { FetchData } from '../../ApiData/FetchData';
-import { onValue, remove, update } from 'firebase/database'
+import { onValue, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -55,7 +53,6 @@ const DashboardBoys = () => {
   const [tenantIdUrl, setTenantIdUrl] = useState('');
   const imageInputRef = useRef(null);
   const idInputRef = useRef(null);
-  const [boysRoomsData, setBoysRoomsData] = useState([]);
   const [showForm, setShowForm] = useState(true);
   // const { data } = useContext(DataContext);
   // const onClickCloseBedsPopup = () => {
@@ -1364,17 +1361,17 @@ const handleRoomsIntegerChange = (event) => {
       <h1 className="heading">Men's</h1>
       <div className="menu">
         {menu.map((item, index) => (
-          <>
+          <div className='cardWithBtnsContainer'>
             <SmallCard key={index} index={index} item={item} handleClick={handleCardClick}/>
-            <button id="mbladdButton" type="button"  onClick={() => handleClick(item.btntext)}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
-          </>
+            <button id="mbladdButton" type="button"  onClick={() => { handleClick(item.btntext); setShowForm(true) }}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
+          </div>
         ))}
-        <div className='button-container'>
+        {/* <div className='button-container'>
           {Buttons?.map((item, index) => (
             <button id="deskaddButton" type="button" onClick={() => { handleClick(item); setShowForm(true) }}>
               <img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item} </button>
           ))}
-        </div>
+        </div> */}
       </div>
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalRoomsBoys" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal} >
         <div className="modal-dialog ">

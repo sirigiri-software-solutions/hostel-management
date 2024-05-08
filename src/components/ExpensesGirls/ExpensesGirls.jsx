@@ -398,7 +398,7 @@ window.addEventListener('keydown',handleOutsideClick);
             <div className='roomlogo-container'>
               <img src={ExpenseIcon} alt="RoomsIcon" className='roomlogo' />
             </div>
-            <h1 className='fs-5'>Expenses Management</h1>
+            <h1 className='management-heading'>Expenses Management</h1>
           </div>
           <div className="col-6 col-md-4 search-wrapper">
             <input type="text" placeholder='Search' className='search-input' onChange={handleChange} value={searchTerm} />

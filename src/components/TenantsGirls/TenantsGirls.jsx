@@ -402,6 +402,17 @@ useEffect(() => {
     'actions'
   ]
 
+  const excolumns = [
+    'S. No',
+    'Image',
+    'Name',
+    'ID',
+    'Mobile No',
+    'Room/Bed No',
+    'Joining Date',
+    'Status'
+  ]
+
   const rows = tenants.map((tenant, index) => ({
     s_no: index + 1,
     image: tenant.tenantImageUrl,
@@ -535,14 +546,14 @@ useEffect(() => {
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
     joining_date: tenant.dateOfJoin,
     status: 'vaccated',
-    actions: <button
-      style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
+    // actions: <button
+    //   style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
     // onClick={() => handleEdit(tenant)}
     // data-bs-toggle="modal"
     // data-bs-target="#exampleModalTenantsBoys"
-    >
-      view
-    </button>
+    // >
+    //   view
+    // </button>
   }));
 
   const showExTenantsData = () => {
@@ -559,7 +570,7 @@ useEffect(() => {
           <div className='roomlogo-container'>
             <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo' />
           </div>
-          <h1 className='fs-5'>Tenants Management</h1>
+          <h1 className='management-heading'>Tenants Management</h1>
         </div>
         <div className="col-5 col-md-4 search-wrapper">
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={onChangeInput} />
@@ -578,7 +589,7 @@ useEffect(() => {
       </div>
 
       <div>
-        {showExTenants ? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
+        {showExTenants ? <Table columns={excolumns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
       </div>
 
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>

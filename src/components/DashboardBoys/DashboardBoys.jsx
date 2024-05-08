@@ -1417,7 +1417,7 @@ const handleRoomsIntegerChange = (event) => {
               </table>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={onClickCloseBedsPopup}>Close</Button>
+              <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseBedsPopup}>Close</Button>
             </Modal.Footer>
           </Modal>
         </div>

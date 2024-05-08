@@ -178,6 +178,8 @@ const handleRoomsIntegerChange = (event) => {
     setCurrentId(room.id);
     // Open the modal
     setShowModal(true);
+    const formatedDate = formatDate(room.updateDate)
+    setUpdateDate(formatedDate);
   };
 
   const handleAddNew = () => {

@@ -266,7 +266,7 @@ useEffect(() => {
       roomNo: selectedRoom,
       bedNo: selectedBed,
       dateOfJoin,
-      name,
+      name:name.charAt(0).toUpperCase() + name.slice(1),
       mobileNo,
       idNumber,
       emergencyContact,

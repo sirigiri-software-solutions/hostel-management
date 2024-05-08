@@ -133,20 +133,20 @@ const BedsPageGirls = () => {
         <div className='roomlogo-container'>
           <img src={bedIcon} alt="RoomsIcon" className='roomlogo'/>
         </div>
-        <h1 className='fs-5'>Beds Management</h1>
+        <h1 className='management-heading'>Beds Management</h1>
       </div>
-      <div className="col-6 col-md-4 search-wrapper">
+      <div className="col-12 col-md-4 search-wrapper">
         <input onChange={onChangeSearch} value={searchValue} type="text" placeholder='Search' className='search-input'/>
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
       </div>
-      <div className='col-12 col-md-4 d-flex justify-content-md-end mt-2'>
-        <div className="d-flex">
-      <select className="bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
+      <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
+        <div className='d-flex w-100'>
+      <select className="col-6 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
             <option value="">Status</option>
             <option value="Occupied">Occupied</option>
             <option value="Unoccupied">Unoccupied</option>
           </select>
-          <select className="bedPageFilterDropdown" value={selectedFloor} onChange={onChangeFloor}>
+          <select className="col-6 bedPageFilterDropdown" value={selectedFloor} onChange={onChangeFloor}>
             <option value="">Floor number</option>
             {girlsRooms.map((room) => (
               <option key={room.floorNumber} value={room.floorNumber}>

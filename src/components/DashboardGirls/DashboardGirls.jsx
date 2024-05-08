@@ -729,7 +729,7 @@ const handleRoomsIntegerChange = (event) => {
       image: Beds,
       heading: 'Total Beds',
       number: `${totalBeds}/${totalBeds-tenants.length}`,
-      btntext: 'Add Beds',
+      btntext: 'Add Rent',
     },
     {
       image: Expenses,
@@ -1361,16 +1361,16 @@ const handleRoomsIntegerChange = (event) => {
       <br />
       <div className="menu">
         {menu.map((item, index) => (
-          <>
+          <div className='cardWithBtnsContainer'>
             <SmallCard key={index} index={index} item={item} handleClick={handleCardClick}/>
             <button id="mbladdButton" type="button"  onClick={() => handleClick(item.btntext)}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
-          </>
+          </div>
         ))}
-        <div className='button-container'>
+        {/* <div className='button-container'>
           {Buttons?.map((item, index) => (
             <button id="deskaddButton" type="button" onClick={() => {handleClick(item); setShowForm(true)}}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item} </button>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* popup model */}

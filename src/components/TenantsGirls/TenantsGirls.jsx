@@ -11,6 +11,10 @@ import { onValue, remove, set, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { FaDownload } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { Camera, CameraResultType } from '@capacitor/camera';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCamera } from '@fortawesome/free-solid-svg-icons';
+
 
 const TenantsGirls = () => {
 
@@ -51,6 +55,45 @@ const TenantsGirls = () => {
 
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('');
+
+  // for camera icon
+  const [isMobile, setIsMobile] = useState(false);
+
+  const [photoUrl, setPhotoUrl] = useState(null);
+
+  useEffect(() => {
+    // Check if the user agent is a mobile device
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    setIsMobile(/iPhone|iPod|iPad|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(userAgent));
+}, []);
+
+  const takePicture = async () => {
+
+    if (!isMobile) {
+      console.error("Camera access is not supported on your device.");
+      return;
+  }
+    try {
+      const photo = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri
+      });
+      const response = await fetch(photo.webPath);
+      const blob = await response.blob();
+      const imageRef = storageRef(storage, `Hostel/boys/tenants/images/${new Date().getTime()}`);
+      const snapshot = await uploadBytes(imageRef, blob);
+      const url = await getDownloadURL(snapshot.ref);
+      
+      setPhotoUrl(url); // Display in UI
+      setTenantImageUrl(url); // Use in form submission
+      // setPhotoUrl(photo.webPath);
+    } catch (error) {
+      console.error("Error accessing the camera", error);
+      toast.error("Error accessing the camera");
+    }
+  };
+
 
   const handleCheckboxChange = (e) => {
     setHasBike(e.target.value === 'yes');
@@ -207,7 +250,7 @@ useEffect(() => {
 
     let imageUrlToUpdate = tenantImageUrl;
 
-    if (tenantImage) {
+    if (tenantImage && !tenantImageUrl) {
       const imageRef = storageRef(storage, `Hostel/girls/tenants/images/tenantImage/${tenantImage.name}`);
       try {
         const snapshot = await uploadBytes(imageRef, tenantImage);
@@ -686,6 +729,17 @@ useEffect(() => {
                       </div>
                     )}
                     <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
+
+                    {isMobile && (
+                      <div>
+                      <p>or</p>
+                      <div style={{display:'flex',flexDirection:'row'}}>
+                      <p>take photo</p>
+                     <FontAwesomeIcon icon={faCamera} size="3x" onClick={takePicture} style={{marginTop:'-20px',paddingLeft:'35px'}}/>
+                     {photoUrl && <img src={photoUrl} alt="Captured" style={{ marginTop: 50, maxWidth: '100%', height: 'auto' }} />}
+                    </div>
+                    </div>
+                    )}
                     {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
                   <div class="col-md-6">

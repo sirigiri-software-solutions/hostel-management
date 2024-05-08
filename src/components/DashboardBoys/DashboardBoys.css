@@ -4,8 +4,14 @@
     background-color: white;
     border-radius: 15px;
     box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
-    min-width: 220px;
+    /* min-width: 220px; */
     margin-bottom: 10px;
+    width:100%;
+}
+@media screen and (max-width:546px){
+    .menu-item{
+        width:100%;
+    }
 }
  
 .menu{
@@ -103,6 +109,31 @@
 .plusIconProperties{
     width:20px;
 }
+.cardWithBtnsContainer{
+    display:flex;
+    flex-direction:column;
+    width:290px;
+    font-size:21px;
+    font-weight:bold;
+    align-items:flex-start;
+    margin-bottom:10px;
+}
+@media screen and (max-width:1500px){
+    .cardWithBtnsContainer{
+        width:240px;
+    }
+}
+@media screen and (min-width:1500px){
+    .cardWithBtnsContainer{
+        width:270px;
+    }
+}
+@media screen and (max-width:768px){
+    .cardWithBtnsContainer{
+        width:100%;
+    }
+}
+
 #mbladdButton{
     background-color:#ff8a00;
     outline:none;
@@ -110,6 +141,9 @@
     padding:8px 20px;
     border-radius:24px;
     color:#fff;
+    width:160px;
+    font-size:15px;
+    margin-left:5px;
 }
 #deskaddButton{
     background-color:#ff8a00;
@@ -119,12 +153,12 @@
     border-radius:24px;
     color:#fff;
 }
-@media screen and (min-width:646px){
+/* @media screen and (min-width:646px){
     #mbladdButton{
         display:none;
      
     }
-}
+} */
 @media screen and (max-width:645px){
     #deskaddButton{
         display:none;
@@ -147,7 +181,7 @@
     background-color: white; /* White background for content */
     border-radius: 10px; /* Rounded corners */
   }
-  @media screen and (max-width:1440px)
+  /* @media screen and (max-width:1440px)
   {
     .menu-item{
         width:20%;
@@ -161,7 +195,7 @@
     
      
     
-  }
+  } */
   
   
 /* styles.css */

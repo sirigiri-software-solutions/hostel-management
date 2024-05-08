@@ -139,8 +139,8 @@ const BedsPageGirls = () => {
         <input onChange={onChangeSearch} value={searchValue} type="text" placeholder='Search' className='search-input'/>
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
       </div>
-      <div className='col-6 col-md-4 d-flex justify-content-end'>
-        <div>
+      <div className='col-12 col-md-4 d-flex justify-content-md-end mt-2'>
+        <div className="d-flex">
       <select className="bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
             <option value="">Status</option>
             <option value="Occupied">Occupied</option>

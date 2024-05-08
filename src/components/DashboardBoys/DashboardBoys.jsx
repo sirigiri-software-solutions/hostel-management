@@ -1363,7 +1363,7 @@ const handleRoomsIntegerChange = (event) => {
         {menu.map((item, index) => (
           <div className='cardWithBtnsContainer'>
             <SmallCard key={index} index={index} item={item} handleClick={handleCardClick}/>
-            <button id="mbladdButton" type="button"  onClick={() => { handleClick(item.btntext); setShowForm(true) }}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
+            <button id="mbladdButton" type="button"  onClick={() => { handleClick(item.btntext) }}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
           </div>
         ))}
         {/* <div className='button-container'>

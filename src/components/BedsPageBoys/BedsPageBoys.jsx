@@ -132,28 +132,29 @@ const filteredRows = rows.filter((row) => {
         </div>
         <h1 className='fs-5'>Beds Management</h1>
       </div>
-      <div className="col-6 col-md-4 search-wrapper">
+      <div className="col-12 col-md-4 search-wrapper mb-2">
         <input value={searchValue} onChange={onChangeSearch} type="text" placeholder='Search' className='search-input'/>
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
       </div>
 
-      <div className='col-6 col-md-4 d-flex justify-content-end'>
-        <div>
+      <div className='col-12 col-md-4 d-flex justify-content-md-end mt-2'>
+        <div className="d-flex">
       <select className="bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
             <option value="">Status</option>
             <option value="Occupied">Occupied</option>
             <option value="Unoccupied">Unoccupied</option>
-          </select>
-          <select className='bedPageFilterDropdown' value={selectedFloor} onChange={onChangeFloor}>
+      </select>
+      <select className='bedPageFilterDropdown' value={selectedFloor} onChange={onChangeFloor}>
             <option value="">Floor number</option>
             {boysRooms.map((room) => (
               <option key={room.floorNumber} value={room.floorNumber}>
                 {room.floorNumber}
               </option>
             ))}
-          </select>
+        </select>
           </div>
-      </div>
+          </div>
+      
     </div>
 
 

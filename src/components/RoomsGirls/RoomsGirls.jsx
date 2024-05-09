@@ -164,10 +164,32 @@ const handleRoomsIntegerChange = (event) => {
     setErrors({});
   };
 
-  const handleDelete = (id) => {
+  const handleDeleteRoom = (id) => {
     const roomRef = ref(database, `Hostel/girls/rooms/${id}`);
-    remove(roomRef);
+    remove(roomRef).then(() => {
+      toast.success("Room deleted successfully.", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }).catch(error => {
+      toast.error("Error deleting room: " + error.message, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    });
+    setShowModal(false);
   };
+  
 
   const handleEdit = (room) => {
     setFloorNumber(room.floorNumber);
@@ -338,7 +360,10 @@ const handleRoomsIntegerChange = (event) => {
                   <div className="col-12 text-center">
                     {isEditing && <p>Last Updated: {updateDate || 'N/A'}</p>}
                     {isEditing ? (
-                      <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update</button>
+                      <>
+                      <button type="button" className="btn btn-warning roomUpdateBtn" onClick={handleSubmit}>Update Room</button>
+                      <button type="button" className='btn btn-warning' onClick={() => handleDeleteRoom(currentId)}>Delete Room</button>
+                      </>
                     ) : (
                       <button type="submit" className="btn btn-warning">Submit</button>
                     )}

@@ -279,6 +279,7 @@ useEffect(() => {
           draggable: true,
           progress: undefined,
         });
+        e.target.querySelector('button[type="submit"]').disabled = false;
       }).catch(error => {
         toast.error("Error adding Tenant: " + error.message, {
           position: "top-center",
@@ -297,7 +298,7 @@ useEffect(() => {
     // imageInputRef.current.value = "";
     // idInputRef.current.value = "";
     setErrors({});
-    e.target.querySelector('button[type="submit"]').disabled = false;  
+      
   };
 
   const handleEdit = (tenant) => {

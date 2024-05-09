@@ -313,6 +313,7 @@ useEffect(() => {
           draggable: true,
           progress: undefined,
         });
+        e.target.querySelector('button[type="submit"]').disabled = false;
       }).catch(error => {
         toast.error("Error adding Tenant: " + error.message, {
           position: "top-center",
@@ -329,7 +330,7 @@ useEffect(() => {
 
     resetForm();
     setErrors({});
-    e.target.querySelector('button[type="submit"]').disabled = false;
+   
     
   };
 

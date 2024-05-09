@@ -86,7 +86,7 @@ const TenantsBoys = () => {
       // setPhotoUrl(photo.webPath);
     } catch (error) {
       console.error("Error accessing the camera", error);
-      toast.error("Error accessing the camera");
+      toast.error("Image not Uploaded");
     }
   };
 
@@ -717,7 +717,7 @@ useEffect(() => {
                       <p>or</p>
                       <div style={{display:'flex',flexDirection:'row'}}>
                       <p>take photo</p>
-                     <FontAwesomeIcon icon={faCamera} size="3x" onClick={takePicture} style={{marginTop:'-20px',paddingLeft:'35px'}}/>
+                     <FontAwesomeIcon icon={faCamera} size="2x" onClick={takePicture} style={{marginTop:'-7px',paddingLeft:'30px'}}/>
                      {photoUrl && <img src={photoUrl} alt="Captured" style={{ marginTop: 50, maxWidth: '100%', height: 'auto' }} />}
                     </div>
                     </div>

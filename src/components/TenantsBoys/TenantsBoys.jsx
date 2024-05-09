@@ -401,6 +401,10 @@ useEffect(() => {
     'Actions'
   ]
 
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 
   const rows = tenants.map((tenant, index) => ({
     s_no: index + 1,
@@ -410,7 +414,7 @@ useEffect(() => {
     mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
     joining_date: tenant.dateOfJoin,
-    status: tenant.status,
+    status:capitalizeFirstLetter(tenant.status),
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
       onClick={() => handleEdit(tenant)}
@@ -526,9 +530,11 @@ useEffect(() => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [tenantIdToDelete, setTenantIdToDelete] = useState(null);
 
-  const handleExTenantDelete = (id) => {
+  const handleExTenantDelete = (id,name) => {
     setShowConfirmation(true);
     setTenantIdToDelete(id);
+    setName(name);
+    
   };
 
   const handleConfirmDelete = async () => {
@@ -563,34 +569,6 @@ useEffect(() => {
     setShowConfirmation(false);
   };
 
-
-  // const handleExTenantDelete =  (id) => {
-  //   const isConfirmed = window.confirm('Are you sure you want to delete ?');
-  //   if (isConfirmed){
-  //   const removeRef = ref(database,`Hostel/boys/extenants/${id}`);
-  //    remove(removeRef).then(() => {
-  //     toast.success("Tenant Deleted", {
-  //       position: "top-center",
-  //       autoClose: 2000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //     });
-  //   }).catch(error => {
-  //     toast.error("Error Tenant Delete " + error.message, {
-  //       position: "top-center",
-  //       autoClose: 2000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //     });
-  //   });;
-  //   }
-  // };
   
   const exTenantRows = exTenants.map((tenant, index) => ({
     s_no: index + 1, // Assuming `id` is a unique identifier for each tenant
@@ -600,7 +578,7 @@ useEffect(() => {
     mobile_no: tenant.mobileNo,
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
     joining_date: tenant.dateOfJoin,
-    status: 'vaccated',
+    status: 'Vacated',
     actions: (
       <button
         style={{
@@ -610,7 +588,7 @@ useEffect(() => {
           color: 'white',
           border: 'none',
         }}
-        onClick={() => handleExTenantDelete(tenant.id)} // Pass the `id` of the tenant
+        onClick={() => handleExTenantDelete(tenant.id,tenant.name)} // Pass the `id` of the tenant
       >
         Delete
       </button>
@@ -621,6 +599,7 @@ useEffect(() => {
   const showExTenantsData = () => {
     setShowExTenants(!showExTenants)
   }
+
 
   return (
     <>
@@ -869,11 +848,11 @@ useEffect(() => {
         </div>
       </div>
       }
-
       {showConfirmation && (
         <div className="confirmation-dialog">
           <div className='confirmation-card'>
-          <p>Are you sure you want to delete?</p>
+          <p style={{paddingBottom:'0px',marginBottom:'7px',fontSize:'20px'}}>Are you sure you want to delete the tenant with name <span style={{color:'red'}}>{name}</span>?</p>
+          <p style={{color:'red',fontSize:'15px',textAlign:'center'}}>Note : Once you delete he/she from tenant it can't be restored</p>
           <div className="buttons">
             <button onClick={handleConfirmDelete}>Yes</button>
             <button onClick={handleCancelDelete}>No</button>

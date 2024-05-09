@@ -414,15 +414,19 @@ useEffect(() => {
     'Actions'
   ]
 
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
   const rows = tenants.map((tenant, index) => ({
     s_no: index + 1,
     image: tenant.tenantImageUrl,
-    name: tenant.name, // Assuming 'name' property exists in the fetched data
+    name: capitalizeFirstLetter(tenant.name), // Assuming 'name' property exists in the fetched data
     id: tenant.idNumber, // Assuming 'id' property exists in the fetched data
     mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
     joining_date: tenant.dateOfJoin, // Assuming 'payment_date' property exists in the fetched data
-    status: tenant.status,
+    status:capitalizeFirstLetter(tenant.status),
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
       onClick={() => handleEdit(tenant)}
@@ -544,9 +548,10 @@ useEffect(() => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [tenantIdToDelete, setTenantIdToDelete] = useState(null);
 
-  const handleExTenantDelete = (id) => {
+  const handleExTenantDelete = (id,name) => {
     setShowConfirmation(true);
     setTenantIdToDelete(id);
+    setName(name);
   };
 
   const handleConfirmDelete = async () => {
@@ -585,12 +590,12 @@ useEffect(() => {
   const exTenantRows = exTenants.map((tenant, index) => ({
     s_no: index + 1, // Assuming `id` is a unique identifier for each tenant
     image: tenant.tenantImageUrl,
-    name: tenant.name,
+    name: capitalizeFirstLetter(tenant.name),
     id: tenant.idNumber,
     mobile_no: tenant.mobileNo,
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
     joining_date: tenant.dateOfJoin,
-    status: 'vaccated',
+    status: 'Vacated',
     actions: (
       <button
         style={{
@@ -600,7 +605,7 @@ useEffect(() => {
           color: 'white',
           border: 'none',
         }}
-        onClick={() => handleExTenantDelete(tenant.id)} // Pass the `id` of the tenant
+        onClick={() => handleExTenantDelete(tenant.id,tenant.name)} // Pass the `id` of the tenant
       >
         Delete
       </button>
@@ -871,7 +876,8 @@ useEffect(() => {
       {showConfirmation && (
         <div className="confirmation-dialog">
           <div className='confirmation-card'>
-          <p>Are you sure you want to delete?</p>
+          <p style={{paddingBottom:'0px',marginBottom:'7px',fontSize:'20px'}}>Are you sure you want to delete the tenant with name <span style={{color:'red'}}>{name}</span>?</p>
+          <p style={{color:'red',fontSize:'15px',textAlign:'center'}}>Note : Once you delete he/she from tenant it can't be restored</p>
           <div className="buttons">
             <button onClick={handleConfirmDelete}>Yes</button>
             <button onClick={handleCancelDelete}>No</button>

@@ -52,6 +52,9 @@ const TenantsGirls = () => {
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('');
 
+  const tenantImageInputRef = useRef(null);
+  const tenantProofIdRef = useRef(null);
+
   const handleCheckboxChange = (e) => {
     setHasBike(e.target.value === 'yes');
     if (e.target.value === 'no') {
@@ -276,6 +279,7 @@ useEffect(() => {
           draggable: true,
           progress: undefined,
         });
+        e.target.querySelector('button[type="submit"]').disabled = false;
       }).catch(error => {
         toast.error("Error adding Tenant: " + error.message, {
           position: "top-center",
@@ -294,6 +298,7 @@ useEffect(() => {
     // imageInputRef.current.value = "";
     // idInputRef.current.value = "";
     setErrors({});
+      
   };
 
   const handleEdit = (tenant) => {
@@ -312,6 +317,9 @@ useEffect(() => {
     setTenantIdUrl(tenant.tenantIdUrl || '');
     // console.log(tenant.tenantImageUrl,"Getting")
     console.log(tenant.tenantIdUrl,"Getting")
+    //setBikeNumber();
+   // setBikeNumber({bikeNumber});
+    setHasBike(false);
     setShowModal(true);
   };
 
@@ -346,6 +354,10 @@ useEffect(() => {
     setTenantId(null);
     setTenantImageUrl('');
     setTenantIdUrl('');
+    setBikeNumber('');
+    setHasBike(false);
+    tenantImageInputRef.current.value = null;
+    tenantProofIdRef.current.value = null;
   };
 
 
@@ -391,7 +403,7 @@ useEffect(() => {
 
 
   const columns = [
-    'S. No',
+    'S.No',
     'Image',
     'Name',
     'ID',
@@ -399,7 +411,7 @@ useEffect(() => {
     'Room/Bed No',
     'Joining Date',
     'Status',
-    'actions'
+    'Actions'
   ]
 
   const rows = tenants.map((tenant, index) => ({
@@ -435,6 +447,8 @@ useEffect(() => {
   const handleClosePopUp = () => {
     setShowModal(false);
     setTenantIdUrl('')
+    setHasBike(false);
+    setBikeNumber("");
   }
 
   const handleTentantRow = (tenant) => {
@@ -731,7 +745,7 @@ useEffect(() => {
                         <p>Current Image</p>
                       </div>
                     )}
-                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
+                    <input ref={tenantImageInputRef} id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
                     {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
                   <div class="col-md-6">
@@ -748,7 +762,7 @@ useEffect(() => {
                       
                       </object>
                     )}
-                    <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange}  />
+                    <input ref={tenantProofIdRef} id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange}  />
 
                   </div>
                   <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
@@ -777,7 +791,7 @@ useEffect(() => {
 
 {hasBike && (
   <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-    <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+    <label class="bikenumber" htmlFor="bikeNumber"Style={{marginLeft:'-1px',marginTop:'10px'}} >Bike Number:</label>
     <input
       type="text"
       id="bikeNumber"

@@ -334,9 +334,9 @@ useEffect(() => {
     setTenantIdUrl('')
   };
 
-  const handleDelete = async (id) => {
-    await remove(ref(database, `Hostel/girls/tenants/${id}`));
-  };
+  // const handleDelete = async (id) => {
+  //   await remove(ref(database, `Hostel/girls/tenants/${id}`));
+  // };
 
   const resetForm = () => {
     setSelectedRoom('');
@@ -412,17 +412,6 @@ useEffect(() => {
     'Joining Date',
     'Status',
     'Actions'
-  ]
-
-  const excolumns = [
-    'S. No',
-    'Image',
-    'Name',
-    'ID',
-    'Mobile No',
-    'Room/Bed No',
-    'Joining Date',
-    'Status'
   ]
 
   const rows = tenants.map((tenant, index) => ({
@@ -551,8 +540,50 @@ useEffect(() => {
   };
   useEffect(() => { fetchExTenants() }, []);
 
+
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [tenantIdToDelete, setTenantIdToDelete] = useState(null);
+
+  const handleExTenantDelete = (id) => {
+    setShowConfirmation(true);
+    setTenantIdToDelete(id);
+  };
+
+  const handleConfirmDelete = async () => {
+    const removeRef = ref(database, `Hostel/girls/extenants/${tenantIdToDelete}`);
+    remove(removeRef)
+      .then(() => {
+        toast.success('Tenant Deleted', {
+          position: 'top-center',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      })
+      .catch((error) => {
+        toast.error('Error Deleting Tenant: ' + error.message, {
+          position: 'top-center',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
+    setShowConfirmation(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmation(false);
+  };
+
+  
   const exTenantRows = exTenants.map((tenant, index) => ({
-    s_no: index + 1,
+    s_no: index + 1, // Assuming `id` is a unique identifier for each tenant
     image: tenant.tenantImageUrl,
     name: tenant.name,
     id: tenant.idNumber,
@@ -560,21 +591,25 @@ useEffect(() => {
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
     joining_date: tenant.dateOfJoin,
     status: 'vaccated',
-    // actions: <button
-    //   style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
-    // onClick={() => handleEdit(tenant)}
-    // data-bs-toggle="modal"
-    // data-bs-target="#exampleModalTenantsBoys"
-    // >
-    //   view
-    // </button>
+    actions: (
+      <button
+        style={{
+          backgroundColor: '#ff8a00',
+          padding: '4px',
+          borderRadius: '5px',
+          color: 'white',
+          border: 'none',
+        }}
+        onClick={() => handleExTenantDelete(tenant.id)} // Pass the `id` of the tenant
+      >
+        Delete
+      </button>
+    ),
   }));
 
   const showExTenantsData = () => {
     setShowExTenants(!showExTenants)
   }
-
-
 
 
   return (
@@ -603,7 +638,7 @@ useEffect(() => {
       </div>
 
       <div>
-        {showExTenants ? <Table columns={excolumns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
+        {showExTenants ? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
       </div>
 
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
@@ -832,6 +867,18 @@ useEffect(() => {
         </div>
       </div>
       }
+
+      {showConfirmation && (
+        <div className="confirmation-dialog">
+          <div className='confirmation-card'>
+          <p>Are you sure you want to delete?</p>
+          <div className="buttons">
+            <button onClick={handleConfirmDelete}>Yes</button>
+            <button onClick={handleCancelDelete}>No</button>
+          </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

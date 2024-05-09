@@ -48,12 +48,14 @@ const TenantsBoys = () => {
   const [showExTenants, setShowExTenants] = useState(false);
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('');
+  const[bikeOption,setBikeOption]=useState('no');
 
   const tenantImageInputRef = useRef(null);
   const tenantProofIdRef = useRef(null);
 
   const handleCheckboxChange = (e) => {
     setHasBike(e.target.value === 'yes');
+    setBikeOption(e.target.value);
     if (e.target.value === 'no') {
       setBikeNumber('--N/A--');
     } else {
@@ -68,10 +70,6 @@ const TenantsBoys = () => {
             setShowModal(false);
             setTenantIdUrl('')
         }
-
-        
-       
-       
     };
 
     window.addEventListener('click', handleOutsideClick);
@@ -93,15 +91,6 @@ useEffect(() => {
   document.addEventListener("mousedown", handleClickOutside);
   document.addEventListener("keydown",handleClickOutside)
 }, []);
-
-
-
-
-
-
-
-  
-
   
 
   useEffect(() => {
@@ -412,16 +401,6 @@ useEffect(() => {
     'Actions'
   ]
 
-  const excolumns = [
-    'S.No',
-    'Image',
-    'Name',
-    'ID',
-    'Mobile No',
-    'Room/Bed No',
-    'Joining Date',
-    'Status',
-  ]
 
   const rows = tenants.map((tenant, index) => ({
     s_no: index + 1,
@@ -543,23 +522,101 @@ useEffect(() => {
     });
   };
   useEffect(() => { fetchExTenants() }, []);
+
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [tenantIdToDelete, setTenantIdToDelete] = useState(null);
+
+  const handleExTenantDelete = (id) => {
+    setShowConfirmation(true);
+    setTenantIdToDelete(id);
+  };
+
+  const handleConfirmDelete = async () => {
+    const removeRef = ref(database, `Hostel/boys/extenants/${tenantIdToDelete}`);
+    remove(removeRef)
+      .then(() => {
+        toast.success('Tenant Deleted', {
+          position: 'top-center',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      })
+      .catch((error) => {
+        toast.error('Error Deleting Tenant: ' + error.message, {
+          position: 'top-center',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
+    setShowConfirmation(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmation(false);
+  };
+
+
+  // const handleExTenantDelete =  (id) => {
+  //   const isConfirmed = window.confirm('Are you sure you want to delete ?');
+  //   if (isConfirmed){
+  //   const removeRef = ref(database,`Hostel/boys/extenants/${id}`);
+  //    remove(removeRef).then(() => {
+  //     toast.success("Tenant Deleted", {
+  //       position: "top-center",
+  //       autoClose: 2000,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //     });
+  //   }).catch(error => {
+  //     toast.error("Error Tenant Delete " + error.message, {
+  //       position: "top-center",
+  //       autoClose: 2000,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //     });
+  //   });;
+  //   }
+  // };
   
   const exTenantRows = exTenants.map((tenant, index) => ({
-    s_no: index + 1,
+    s_no: index + 1, // Assuming `id` is a unique identifier for each tenant
     image: tenant.tenantImageUrl,
-    name: tenant.name, 
-    id: tenant.idNumber, 
-    mobile_no: tenant.mobileNo, 
-    room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, 
+    name: tenant.name,
+    id: tenant.idNumber,
+    mobile_no: tenant.mobileNo,
+    room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
     joining_date: tenant.dateOfJoin,
     status: 'vaccated',
-    // actions: <button
-    //   style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
-    
-    // >
-    //   view
-    // </button>
+    actions: (
+      <button
+        style={{
+          backgroundColor: '#ff8a00',
+          padding: '4px',
+          borderRadius: '5px',
+          color: 'white',
+          border: 'none',
+        }}
+        onClick={() => handleExTenantDelete(tenant.id)} // Pass the `id` of the tenant
+      >
+        Delete
+      </button>
+    ),
   }));
+  
 
   const showExTenantsData = () => {
     setShowExTenants(!showExTenants)
@@ -590,7 +647,7 @@ useEffect(() => {
         </div>
       </div>
       <div>
-        {showExTenants ? <Table columns={excolumns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
+        {showExTenants ? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
       </div>
       <div   className={`modal fade ${showModal ? 'show' : ''}`}  style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}  >
         <div class="modal-dialog">
@@ -813,7 +870,17 @@ useEffect(() => {
       </div>
       }
 
-
+      {showConfirmation && (
+        <div className="confirmation-dialog">
+          <div className='confirmation-card'>
+          <p>Are you sure you want to delete?</p>
+          <div className="buttons">
+            <button onClick={handleConfirmDelete}>Yes</button>
+            <button onClick={handleCancelDelete}>No</button>
+          </div>
+          </div>
+        </div>
+      )}
 
     </>
   );

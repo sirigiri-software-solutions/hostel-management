@@ -181,6 +181,8 @@ const RoomsBoys = () => {
     setCurrentId(room.id);
     // Open the modal
     setShowModal(true);
+    const formatedDate = formatDate(room.updateDate)
+    setUpdateDate(formatedDate);
   };
 
   const handleAddNew = () => {
@@ -297,7 +299,7 @@ const resetForm = () => {
           <div className='roomlogo-container'>
             <img src={RoomsIcon} alt="RoomsIcon" className='roomlogo' />
           </div>
-          <h1 className='fs-5'>Rooms Management</h1>
+          <h1 className='management-heading'>Rooms Management</h1>
         </div>
         <div className="col-6 col-md-4  search-wrapper">
           <input type="text" placeholder='Search' className='search-input' onChange={handleChange} value={searchTerm} />

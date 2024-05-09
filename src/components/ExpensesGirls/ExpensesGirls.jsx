@@ -316,9 +316,27 @@ window.addEventListener('keydown',handleOutsideClick);
     const monthYear = getMonthYearKey(formData.expenseDate);
     const expenseRef = ref(database, `Hostel/girls/expenses/${monthYear}/${editingExpense.id}`);
     remove(expenseRef).then(() => {
+      toast.success("Expense deleted successfully", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       setEditingExpense(null);
       // alert('Expense deleted!');
     }).catch(error => {
+      toast.error("Error deleting Expense" + error.message, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       console.error("Error deleting document: ", error);
       // alert('Error deleting expense!');
     });
@@ -380,7 +398,7 @@ window.addEventListener('keydown',handleOutsideClick);
             <div className='roomlogo-container'>
               <img src={ExpenseIcon} alt="RoomsIcon" className='roomlogo' />
             </div>
-            <h1 className='fs-5'>Expenses Management</h1>
+            <h1 className='management-heading'>Expenses Management</h1>
           </div>
           <div className="col-6 col-md-4 search-wrapper">
             <input type="text" placeholder='Search' className='search-input' onChange={handleChange} value={searchTerm} />

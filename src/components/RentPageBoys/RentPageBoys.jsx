@@ -471,7 +471,7 @@ Please note that you made your last payment on ${paidDate}.\n`
             <div className='roomlogo-container'>
               <img src={RentIcon} alt="RoomsIcon" className='roomlogo' />
             </div>
-            <h1 className='fs-5'>Rents Management</h1>
+            <h1 className='management-heading'>Rents Management</h1>
           </div>
           <div className="col-6 col-md-4 search-wrapper">
             <input type="text" placeholder='Search' className='search-input' value={searchQuery}

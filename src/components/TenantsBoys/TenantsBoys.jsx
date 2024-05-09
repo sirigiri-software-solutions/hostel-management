@@ -313,6 +313,7 @@ useEffect(() => {
           draggable: true,
           progress: undefined,
         });
+        e.target.querySelector('button[type="submit"]').disabled = false;
       }).catch(error => {
         toast.error("Error adding Tenant: " + error.message, {
           position: "top-center",
@@ -329,7 +330,7 @@ useEffect(() => {
 
     resetForm();
     setErrors({});
-    e.target.querySelector('button[type="submit"]').disabled = false;
+   
     
   };
 
@@ -346,6 +347,8 @@ useEffect(() => {
     setCurrentId(tenant.id);
     setTenantImageUrl(tenant.tenantImageUrl);
     setTenantIdUrl(tenant.tenantIdUrl || '');
+    setBikeNumber("");
+    setHasBike(false);
     
  
 
@@ -406,11 +409,11 @@ useEffect(() => {
     'Room/Bed No',
     'Joining Date',
     'Status',
-    'actions'
+    'Actions'
   ]
 
   const excolumns = [
-    'S. No',
+    'S.No',
     'Image',
     'Name',
     'ID',
@@ -448,6 +451,10 @@ useEffect(() => {
   const handleClosePopUp = () => {
     setShowModal(false);
     setTenantIdUrl('')
+    setHasBike(false);
+    setBikeNumber('');
+    console.log("popupclosed");
+    
 
   }
 

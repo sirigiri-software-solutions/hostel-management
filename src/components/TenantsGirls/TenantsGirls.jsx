@@ -279,6 +279,7 @@ useEffect(() => {
           draggable: true,
           progress: undefined,
         });
+        e.target.querySelector('button[type="submit"]').disabled = false;
       }).catch(error => {
         toast.error("Error adding Tenant: " + error.message, {
           position: "top-center",
@@ -297,7 +298,7 @@ useEffect(() => {
     // imageInputRef.current.value = "";
     // idInputRef.current.value = "";
     setErrors({});
-    e.target.querySelector('button[type="submit"]').disabled = false;  
+      
   };
 
   const handleEdit = (tenant) => {
@@ -316,6 +317,9 @@ useEffect(() => {
     setTenantIdUrl(tenant.tenantIdUrl || '');
     // console.log(tenant.tenantImageUrl,"Getting")
     console.log(tenant.tenantIdUrl,"Getting")
+    //setBikeNumber();
+   // setBikeNumber({bikeNumber});
+    setHasBike(false);
     setShowModal(true);
   };
 
@@ -399,7 +403,7 @@ useEffect(() => {
 
 
   const columns = [
-    'S. No',
+    'S.No',
     'Image',
     'Name',
     'ID',
@@ -407,7 +411,7 @@ useEffect(() => {
     'Room/Bed No',
     'Joining Date',
     'Status',
-    'actions'
+    'Actions'
   ]
 
   const excolumns = [
@@ -454,6 +458,8 @@ useEffect(() => {
   const handleClosePopUp = () => {
     setShowModal(false);
     setTenantIdUrl('')
+    setHasBike(false);
+    setBikeNumber("");
   }
 
   const handleTentantRow = (tenant) => {
@@ -750,7 +756,7 @@ useEffect(() => {
 
 {hasBike && (
   <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-    <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+    <label class="bikenumber" htmlFor="bikeNumber"Style={{marginLeft:'-1px',marginTop:'10px'}} >Bike Number:</label>
     <input
       type="text"
       id="bikeNumber"

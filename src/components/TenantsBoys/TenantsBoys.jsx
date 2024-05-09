@@ -49,6 +49,9 @@ const TenantsBoys = () => {
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('');
 
+  const tenantImageInputRef = useRef(null);
+  const tenantProofIdRef = useRef(null);
+
   const handleCheckboxChange = (e) => {
     setHasBike(e.target.value === 'yes');
     if (e.target.value === 'no') {
@@ -287,6 +290,7 @@ useEffect(() => {
           draggable: true,
           progress: undefined,
         });
+        
       }).catch(error => {
         toast.error("Error update Tenant: " + error.message, {
           position: "top-center",
@@ -325,6 +329,7 @@ useEffect(() => {
 
     resetForm();
     setErrors({});
+    e.target.querySelector('button[type="submit"]').disabled = false;
     
   };
 
@@ -380,6 +385,11 @@ useEffect(() => {
     setTenantId(null);
     setTenantImageUrl('');
     setTenantIdUrl('');
+    setBikeNumber('');
+    setHasBike(false);
+    tenantImageInputRef.current.value = null;
+    tenantProofIdRef.current.value = null;
+    
   };
 
   // Filter tenants based on search query
@@ -674,7 +684,7 @@ useEffect(() => {
                         <p>Current Image</p>
                       </div>
                     )}
-                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
+                    <input ref={tenantImageInputRef} id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
                     {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
                  <div className="col-md-6">
@@ -696,7 +706,7 @@ useEffect(() => {
                     )}
                     {/* Show input for uploading ID only if not editing or tenantIdUrl doesn't exist */}
                     
-                      <input id="tenantUploadId" className="form-control" type="file" onChange={handleTenantIdChange} />
+                      <input ref={tenantProofIdRef} id="tenantUploadId" className="form-control" type="file" onChange={handleTenantIdChange} />
                     
                   </div> 
                   <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>

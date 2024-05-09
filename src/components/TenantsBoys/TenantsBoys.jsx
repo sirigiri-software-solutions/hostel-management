@@ -341,6 +341,8 @@ useEffect(() => {
     setCurrentId(tenant.id);
     setTenantImageUrl(tenant.tenantImageUrl);
     setTenantIdUrl(tenant.tenantIdUrl || '');
+    setBikeNumber("");
+    setHasBike(false);
     
  
 
@@ -396,11 +398,11 @@ useEffect(() => {
     'Room/Bed No',
     'Joining Date',
     'Status',
-    'actions'
+    'Actions'
   ]
 
   const excolumns = [
-    'S. No',
+    'S.No',
     'Image',
     'Name',
     'ID',

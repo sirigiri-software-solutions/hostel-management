@@ -216,13 +216,13 @@ const handleRoomsIntegerChange = (event) => {
   }, []);
 
   const columns = [
-    'S. No',
+    'S.No',
     'Room.No',
     'Floor',
     'No.of Beds',
     'Bed Rent',
     'Created By',
-    'Last Updated date',
+    'Last Updated Date',
     'Edit'
   ];
 

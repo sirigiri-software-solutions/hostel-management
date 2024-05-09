@@ -167,10 +167,38 @@ const RoomsBoys = () => {
     setErrors({}); // Clear errors
   };
 
-  const handleDelete = (id) => {
+  // const handleDelete = (id) => {
+  //   console.log(id);
+  //   // const roomRef = ref(database, `Hostel/boys/rooms/${id}`);
+  //   // remove(roomRef);
+  // };
+
+  const handleDeleteRoom = (id) => {
     const roomRef = ref(database, `Hostel/boys/rooms/${id}`);
-    remove(roomRef);
+    remove(roomRef).then(() => {
+      toast.success("Room deleted successfully.", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }).catch(error => {
+      toast.error("Error deleting room: " + error.message, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    });
+    setShowModal(false);
   };
+  
 
   const handleEdit = (room) => {
     setFloorNumber(room.floorNumber);
@@ -228,10 +256,12 @@ const resetForm = () => {
 
   // console.log(data && data, "ApiData")
 
-  if (data !== null) {
-    const RoomsBoysData = data.boys.rooms
-    roomsData = Object.values(RoomsBoysData)
+  if (data && data.boys && data.boys.rooms) {
+    const RoomsBoysData = data.boys.rooms;
+    roomsData = Object.values(RoomsBoysData);
   }
+  
+  
 
 
   const columns = [
@@ -361,7 +391,10 @@ const resetForm = () => {
                   <div className="col-12 text-center">
                     {isEditing && <p>Last Updated: {updateDate || 'N/A'}</p>}
                     {isEditing ? (
-                      <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Room</button>
+                      <div className="roomsEditBtnsContainer">
+                      <button type="button"  className="btn btn-warning roomUpdateBtn" onClick={handleSubmit}>Update Room</button>
+                      <button type="button" className='btn btn-warning' onClick={() => handleDeleteRoom(currentId)}>Delete Room</button>
+                      </div>
                     ) : (
                       <button type="submit" className="btn btn-warning" >Create Room</button>
                     )}

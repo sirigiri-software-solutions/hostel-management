@@ -52,6 +52,9 @@ const TenantsGirls = () => {
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('');
 
+  const tenantImageInputRef = useRef(null);
+  const tenantProofIdRef = useRef(null);
+
   const handleCheckboxChange = (e) => {
     setHasBike(e.target.value === 'yes');
     if (e.target.value === 'no') {
@@ -294,6 +297,7 @@ useEffect(() => {
     // imageInputRef.current.value = "";
     // idInputRef.current.value = "";
     setErrors({});
+    e.target.querySelector('button[type="submit"]').disabled = false;  
   };
 
   const handleEdit = (tenant) => {
@@ -346,6 +350,10 @@ useEffect(() => {
     setTenantId(null);
     setTenantImageUrl('');
     setTenantIdUrl('');
+    setBikeNumber('');
+    setHasBike(false);
+    tenantImageInputRef.current.value = null;
+    tenantProofIdRef.current.value = null;
   };
 
 
@@ -696,7 +704,7 @@ useEffect(() => {
                         <p>Current Image</p>
                       </div>
                     )}
-                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
+                    <input ref={tenantImageInputRef} id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
                     {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
                   <div class="col-md-6">
@@ -713,7 +721,7 @@ useEffect(() => {
                       
                       </object>
                     )}
-                    <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange}  />
+                    <input ref={tenantProofIdRef} id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange}  />
 
                   </div>
                   <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>

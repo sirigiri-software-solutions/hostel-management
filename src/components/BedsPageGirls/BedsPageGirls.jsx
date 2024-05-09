@@ -15,7 +15,7 @@ const BedsPageGirls = () => {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedFloor, setSelectedFloor] = useState('');
   const [selectedRoomNo,setSelectedRoomNo] = useState('');
-
+  const [roomNumbersToShow,setRoomNumbersToShow] = useState([]);
 
 
   useEffect(() => {
@@ -108,6 +108,12 @@ const BedsPageGirls = () => {
 
   const onChangeFloor = (e) => {
     setSelectedFloor(e.target.value);
+    const filteredRows = rows.filter((row)=> (
+      row.floor === e.target.value
+    ))
+    const uniqueRoomNumbers = [...new Set(filteredRows.map(row => row.room_no))];
+    console.log(uniqueRoomNumbers,"filteredRows")
+    setRoomNumbersToShow(uniqueRoomNumbers);
   };
   const onChangeRoomNo = (e) => {
     setSelectedRoomNo(e.target.value);
@@ -163,11 +169,12 @@ const BedsPageGirls = () => {
           </select>
           <select className='col-4 bedPageFilterDropdown' value={selectedRoomNo} onChange={onChangeRoomNo}>
             <option value="">Room number</option>
-            {girlsRooms.map((room) => (
-              <option key={room.roomNumber} value={room.roomNumber}>
-                {room.roomNumber}
+            {roomNumbersToShow.map((room) => (
+              <option key={room} value={room}>
+                {room}
               </option>
             ))}
+            
           </select>
           </div>
       </div>

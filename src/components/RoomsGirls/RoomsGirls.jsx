@@ -163,9 +163,37 @@ const handleRoomsIntegerChange = (event) => {
     // Clear errors
     setErrors({});
   };
+  const [showConfirmationPopUp,setShowConfirmationPopUp] = useState(false);
 
   const handleDeleteRoom = (id) => {
-    const roomRef = ref(database, `Hostel/girls/rooms/${id}`);
+    // const roomRef = ref(database, `Hostel/girls/rooms/${id}`);
+    // remove(roomRef).then(() => {
+    //   toast.success("Room deleted successfully.", {
+    //     position: "top-center",
+    //     autoClose: 2000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //   });
+    // }).catch(error => {
+    //   toast.error("Error deleting room: " + error.message, {
+    //     position: "top-center",
+    //     autoClose: 2000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //   });
+    // });
+    setShowConfirmationPopUp(true);
+    setShowModal(false);
+  };
+
+  const confirmDeleteYes = () => {
+    const roomRef = ref(database, `Hostel/girls/rooms/${currentId}`);
     remove(roomRef).then(() => {
       toast.success("Room deleted successfully.", {
         position: "top-center",
@@ -187,8 +215,13 @@ const handleRoomsIntegerChange = (event) => {
         progress: undefined,
       });
     });
-    setShowModal(false);
-  };
+    setShowConfirmationPopUp(false);
+
+  }
+
+  const confirmDeleteNo = () => {
+    setShowConfirmationPopUp(false);
+  }
   
 
   const handleEdit = (room) => {
@@ -258,6 +291,13 @@ const handleRoomsIntegerChange = (event) => {
     return `${day}-${month}-${year}`;
 }
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+
+
+
   useEffect(() => {
     const rows = rooms.map((room, index) => ({
       s_no: index + 1,
@@ -265,7 +305,7 @@ const handleRoomsIntegerChange = (event) => {
       floor: `${room.floorNumber}`,
       noofBeds: room.numberOfBeds,
       bedRent: room.bedRent,
-      created_by: room.createdBy,
+      created_by: capitalizeFirstLetter(room.createdBy),
       last_updated_by: formatDate(room.updateDate),
       edit_room: <button
         style={{ backgroundColor: '#ff8a00', padding:'4px', borderRadius: '5px', color: 'white', border: 'none' }}
@@ -374,6 +414,18 @@ const handleRoomsIntegerChange = (event) => {
           </div>
         </div>
       </div>
+      {showConfirmationPopUp && (
+         <div className="confirmation-dialog">
+         <div className='confirmation-card'>
+         <p style={{paddingBottom:'0px',marginBottom:'7px'}}>Are you sure you want to delete the room with number <span style={{color:'red'}}>{roomNumber}</span> ?</p>
+         <p style={{fontSize:'15px',color:'red',textAlign:'center',paddingTop:'0px'}}>Note : Once you delete the room it will not be restored</p>
+         <div className="buttons">
+           <button onClick={confirmDeleteYes} >Yes</button>
+           <button onClick={confirmDeleteNo} >No</button>
+         </div>
+         </div>
+       </div>
+      )}
       </>
     </div>
   );

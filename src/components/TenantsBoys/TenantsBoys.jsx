@@ -438,6 +438,10 @@ useEffect(() => {
   const handleClosePopUp = () => {
     setShowModal(false);
     setTenantIdUrl('')
+    setHasBike(false);
+    setBikeNumber('');
+    console.log("popupclosed");
+    
 
   }
 

@@ -446,6 +446,8 @@ useEffect(() => {
   const handleClosePopUp = () => {
     setShowModal(false);
     setTenantIdUrl('')
+    setHasBike(false);
+    setBikeNumber("");
   }
 
   const handleTentantRow = (tenant) => {

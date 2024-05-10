@@ -16,7 +16,7 @@ const BedsPageGirls = () => {
   const [selectedFloor, setSelectedFloor] = useState('');
   const [selectedRoomNo,setSelectedRoomNo] = useState('');
   const [roomNumbersToShow,setRoomNumbersToShow] = useState([]);
-
+  const [floorNumbersToShow,setFloorNumbersToShow] = useState([]);
 
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/girls/rooms');
@@ -73,6 +73,21 @@ const BedsPageGirls = () => {
       });
     });
     setBedsData(allBeds);
+    const allFloornumbers = girlsRooms.map(each => (
+      each.floorNumber
+    ))
+ 
+    const uniqueFloornumbers = [...new Set(allFloornumbers)];
+    setFloorNumbersToShow(uniqueFloornumbers);
+
+    return () => {
+      setSelectedStatus('');
+      setSelectedFloor('');
+      setSelectedRoomNo('');
+      setRoomNumbersToShow([]);
+  };
+
+
   }, [girlsRooms, tenants]); // Depend on rooms and tenants data
 
 
@@ -108,6 +123,7 @@ const BedsPageGirls = () => {
 
   const onChangeFloor = (e) => {
     setSelectedFloor(e.target.value);
+    setSelectedRoomNo(''); 
     const filteredRows = rows.filter((row)=> (
       row.floor === e.target.value
     ))
@@ -119,16 +135,38 @@ const BedsPageGirls = () => {
     setSelectedRoomNo(e.target.value);
   }
 
-  // const filteredRows = rows.filter(row => {
-  //   return Object.values(row).some(value =>
-  //     value.toString().toLowerCase().includes(searchValue.toLowerCase())
-  //   );
-  // });
+  const compareFloor = (floor1, floor2) => {
+    // Check if both floors are purely numeric
+    const isNumericFloor = /^\d+$/.test(floor1) && /^\d+$/.test(floor2);
+  
+    if (isNumericFloor) {
+      // If both floors are numeric, compare them as numbers
+      const numericPart1 = parseInt(floor1);
+      const numericPart2 = parseInt(floor2);
+      return numericPart1 - numericPart2;
+    } else {
+      // If floors are not purely numeric, compare them as alphanumeric identifiers
+      const prefix1 = floor1.charAt(0);
+      const prefix2 = floor2.charAt(0);
+  
+      // Compare alphanumeric identifiers
+      if (prefix1 !== prefix2) {
+        return prefix1.localeCompare(prefix2);
+      }
+  
+      // Compare numeric parts if alphanumeric identifiers are the same
+      const numericPart1 = parseInt(floor1.substring(1));
+      const numericPart2 = parseInt(floor2.substring(1));
+  
+      return numericPart1 - numericPart2;
+    }
+  };
+
 
   const filteredRows = rows.filter((row) => {
     return (
       (selectedStatus === '' || row.status === selectedStatus) &&
-      (selectedFloor === '' || parseInt(row.floor) === parseInt(selectedFloor)) &&
+      (selectedFloor === '' || compareFloor(row.floor,selectedFloor) === 0)  &&
       (selectedRoomNo === '' || parseInt(row.room_no) === parseInt(selectedRoomNo)) &&
       Object.values(row).some((value) =>
         value.toString().toLowerCase().includes(searchValue.toLowerCase())
@@ -161,11 +199,13 @@ const BedsPageGirls = () => {
           </select>
           <select className="col-4 bedPageFilterDropdown" value={selectedFloor} onChange={onChangeFloor}>
             <option value="">Floor number</option>
-            {girlsRooms.map((room) => (
-              <option key={room.floorNumber} value={room.floorNumber}>
-                {room.floorNumber}
-              </option>
-            ))}
+            {
+              floorNumbersToShow.map((floor) => (
+                <option key={floor} value={floor}>
+                  {floor}
+                </option>
+              ))
+            }
           </select>
           <select className='col-4 bedPageFilterDropdown' value={selectedRoomNo} onChange={onChangeRoomNo}>
             <option value="">Room number</option>

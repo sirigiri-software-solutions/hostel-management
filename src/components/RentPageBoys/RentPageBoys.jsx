@@ -463,7 +463,7 @@ Please note that you made your last payment on ${paidDate}.\n`
     // data-bs-toggle="modal"
     // data-bs-target="#exampleModalRentsBoys"
     >
-      update
+      Update
     </button>,
   }));
 
@@ -542,6 +542,7 @@ Please note that you made your last payment on ${paidDate}.\n`
               </div>
               <div class="modal-body">
                 <div className="container-fluid">
+                  {isEditing ? null : 
                   <div className='monthlyDailyButtons'>
                     <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={()=>{setShowForm(true);  handleResetMonthly();}} >
                       <text>Monthly</text>
@@ -550,6 +551,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                     <text>Daily</text>
                     </div>
                   </div>
+}
                   {showForm?
                   <div className='monthlyAddForm'>
                   <form class="row lg-10" onSubmit={handleSubmit}>

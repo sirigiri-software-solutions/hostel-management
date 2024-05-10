@@ -490,6 +490,17 @@ setBikeNumber('NA');
   }, [data]);
 
 
+  const columnsEx = [
+    'S.No',
+    'Image',
+    'Name',
+    'ID',
+    'Mobile No',
+    'Room/Bed No',
+    'Joining Date',
+    'Status',
+    'Actions'
+  ]
   const columns = [
     'S.No',
     'Image',
@@ -733,7 +744,7 @@ setBikeNumber('NA');
       </div>
 
       <div>
-        {showExTenants ? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
+        {showExTenants ? <Table columns={columnsEx} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
       </div>
 
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>

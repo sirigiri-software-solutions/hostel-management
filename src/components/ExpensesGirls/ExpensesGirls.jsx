@@ -424,7 +424,9 @@ useEffect(() => {
   fetchExpenses();
 }, [year, expenses]);
 
-
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
   return (
     <div className='h-100'>
@@ -449,11 +451,11 @@ useEffect(() => {
 
         <div className='filterExpense' style={{width:'100%',display:'flex',justifyContent:'space-between'}}>
         <div style={{display:'flex',justifyContent:'start'}}>
-          <text><strong>{month} month expenses : {total} </strong>
-          <strong>{year}-total expenses :{totalAnnualExpenses} </strong> </text>
+          <text><strong>{capitalizeFirstLetter(month)} Month Expenses : {total} </strong>
+          <strong>Total Expenses of {year} :{totalAnnualExpenses} </strong> </text>
         </div>
 
-          <div style={{display:'flex'}} >
+          <div style={{display:'flex',marginTop:'10px'}} >
           <div>
             <select className='filterExpenseField' value={year} onChange={e => setYear(e.target.value)}>
               <option value="2022">2022</option>

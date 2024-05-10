@@ -302,7 +302,7 @@ function capitalizeFirstLetter(string) {
     const rows = rooms.map((room, index) => ({
       s_no: index + 1,
       room_no: room.roomNumber,
-      floor: `${room.floorNumber}`,
+      floor:capitalizeFirstLetter(room.floorNumber),
       noofBeds: room.numberOfBeds,
       bedRent: room.bedRent,
       created_by: capitalizeFirstLetter(room.createdBy),

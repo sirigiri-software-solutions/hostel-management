@@ -37,7 +37,8 @@ const RentPageGirls = () => {
   const [notify, setNotify] = useState(false);
   const [notifyUserInfo, setNotifyUserInfo] = useState(null);
   const [showForm, setShowForm] = useState(true);
-
+ 
+   
 
   // Function to send WhatsApp message
   const sendMessage = (tenant, rentRecord) => {
@@ -99,6 +100,7 @@ Please note that you made your last payment on ${paidDate}.\n`
     
 }, [showModal]);
 
+   
   
 
 
@@ -269,6 +271,23 @@ Please note that you made your last payment on ${paidDate}.\n`
   };
 
 
+  useEffect(() => {
+    if (selectedTenant) {
+      const tenant = tenants.find(t => t.id === selectedTenant);
+      if (tenant) {
+        // Set the date of join
+        setDateOfJoin(tenant.dateOfJoin || '');
+  
+        // Calculate the due date (one day less than adding one month)
+        const currentDate = new Date(tenant.dateOfJoin); // Get the join date
+        const dueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate(-1)); // Add one month and subtract one day
+        const formattedDueDate = dueDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+        setDueDate(formattedDueDate);
+      }
+    }
+  }, [selectedTenant, tenants]);
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -437,7 +456,7 @@ Please note that you made your last payment on ${paidDate}.\n`
     onClick={() => loadRentForEditing(rent.tenantId, rent.rentId)}
 
   >
-    update
+    Update
   </button>,
   }));
 
@@ -456,6 +475,8 @@ Please note that you made your last payment on ${paidDate}.\n`
   const onClickCheckbox = () => {
     setNotify(!notify)
   }
+
+   
 
   return (
     <div className='h-100'>
@@ -493,6 +514,7 @@ Please note that you made your last payment on ${paidDate}.\n`
               </div>
               <div class="modal-body">
                 <div className="container-fluid">
+                  {isEditing ? null :
                   <div className='monthlyDailyButtons'>
                     <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(true)}>
                       <text>Monthly</text>
@@ -501,6 +523,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                       <text>Daily</text>
                     </div>
                   </div>
+}
                   {showForm ?
                     <div className='monthlyAddForm'>
                       <form class="row lg-10" onSubmit={handleSubmit}>

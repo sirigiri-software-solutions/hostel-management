@@ -54,7 +54,7 @@ const TenantsGirls = () => {
   const [singleTenantProofId,setSingleTenantProofId] = useState("");
 
   const [hasBike, setHasBike] = useState(false);
-  const [bikeNumber, setBikeNumber] = useState('');
+  const [bikeNumber, setBikeNumber] = useState('NA');
 
   // for camera icon
   const [isMobile, setIsMobile] = useState(false);
@@ -127,9 +127,10 @@ const TenantsGirls = () => {
   const tenantProofIdRef = useRef(null);
 
   const handleCheckboxChange = (e) => {
-    setHasBike(e.target.value === 'yes');
-    if (e.target.value === 'no') {
-      setBikeNumber('--N/A--');
+    setHasBike(e.target.value == 'yes');
+    if (e.target.value == 'no') {
+      setHasBike(false);
+      setBikeNumber('NA');
     } else {
       setBikeNumber('');
     }
@@ -315,6 +316,7 @@ useEffect(() => {
       status,
       tenantImageUrl: imageUrlToUpdate,
       tenantIdUrl: idUrlToUpdate,
+      bikeNumber,
     };
 
     if (isEditing) {
@@ -392,6 +394,16 @@ useEffect(() => {
    // setBikeNumber({bikeNumber});
     setHasBike(false);
     setShowModal(true);
+    setBikeNumber(tenant.bikeNumber);
+    if(tenant.bikeNumber=='NA')
+    {
+      setHasBike(false);
+      setBikeNumber(tenant.bikeNumber);
+    }
+    else{
+      setHasBike(true);
+      setBikeNumber(tenant.bikeNumber);
+    }
   };
 
   const handleAddNew = () => {
@@ -403,6 +415,7 @@ useEffect(() => {
     setShowModal(true);
     setUserDetailsTenantsPopup(false);
     setTenantIdUrl('')
+    setHasBike(false);
   };
 
   // const handleDelete = async (id) => {
@@ -425,7 +438,7 @@ useEffect(() => {
     setTenantId(null);
     setTenantImageUrl('');
     setTenantIdUrl('');
-    setBikeNumber('');
+setBikeNumber('NA');
     setHasBike(false);
     if (tenantImageInputRef.current) {
       tenantImageInputRef.current.value = null;
@@ -485,6 +498,7 @@ useEffect(() => {
     'Mobile No',
     'Room/Bed No',
     'Joining Date',
+    'Bike',
     'Status',
     'Actions'
   ]
@@ -501,6 +515,7 @@ useEffect(() => {
     mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
     joining_date: tenant.dateOfJoin, // Assuming 'payment_date' property exists in the fetched data
+    bike_number:tenant.bikeNumber,
     status:capitalizeFirstLetter(tenant.status),
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
@@ -890,21 +905,36 @@ useEffect(() => {
   <label htmlFor='bikeCheck1' className='bike'>No</label>
 </div>
 
-{hasBike && (
-  <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-    <label class="bikenumber" htmlFor="bikeNumber"Style={{marginLeft:'-1px',marginTop:'10px'}} >Bike Number:</label>
-    <input
-      type="text"
-      id="bikeNumber"
-      
-      className='form-control'
-      placeholder="Enter number plate ID"
-      value={bikeNumber}
-      onChange={(event) => setBikeNumber(event.target.value)}
-      style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px',borderHeight:'40px',marginLeft:'8px' }}
-    />
-  </div>
-)}
+{hasBike ? (
+                    <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <input
+                        type="text"
+                        id="bikeNumber"
+
+                        className='form-control'
+                        placeholder="Enter number plate ID"
+                        value={bikeNumber}
+                        onChange={(event) => setBikeNumber(event.target.value)}
+                        style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                      />
+                    </div>
+                  ):(
+                    <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <input
+                        type="text"
+                        id="bikeNumber"
+
+                        className='form-control'
+                        placeholder="Enter number plate ID"
+                        value={bikeNumber}
+                        onChange={(event) => setBikeNumber(event.target.value)}
+                        style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                      />
+                    </div>
+
+                  )}
 
 
 

@@ -14,6 +14,9 @@ const BedsPageGirls = () => {
 
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedFloor, setSelectedFloor] = useState('');
+  const [selectedRoomNo,setSelectedRoomNo] = useState('');
+  const [roomNumbersToShow,setRoomNumbersToShow] = useState([]);
+
 
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/girls/rooms');
@@ -105,7 +108,16 @@ const BedsPageGirls = () => {
 
   const onChangeFloor = (e) => {
     setSelectedFloor(e.target.value);
+    const filteredRows = rows.filter((row)=> (
+      row.floor === e.target.value
+    ))
+    const uniqueRoomNumbers = [...new Set(filteredRows.map(row => row.room_no))];
+    console.log(uniqueRoomNumbers,"filteredRows")
+    setRoomNumbersToShow(uniqueRoomNumbers);
   };
+  const onChangeRoomNo = (e) => {
+    setSelectedRoomNo(e.target.value);
+  }
 
   // const filteredRows = rows.filter(row => {
   //   return Object.values(row).some(value =>
@@ -117,6 +129,7 @@ const BedsPageGirls = () => {
     return (
       (selectedStatus === '' || row.status === selectedStatus) &&
       (selectedFloor === '' || parseInt(row.floor) === parseInt(selectedFloor)) &&
+      (selectedRoomNo === '' || parseInt(row.room_no) === parseInt(selectedRoomNo)) &&
       Object.values(row).some((value) =>
         value.toString().toLowerCase().includes(searchValue.toLowerCase())
       )
@@ -140,19 +153,28 @@ const BedsPageGirls = () => {
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
       </div>
       <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
-        <div className='d-flex w-100'>
-      <select className="col-6 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
+        <div className='d-flex filterDropDownContainer'>
+      <select className="col-4 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
             <option value="">Status</option>
             <option value="Occupied">Occupied</option>
             <option value="Unoccupied">Unoccupied</option>
           </select>
-          <select className="col-6 bedPageFilterDropdown" value={selectedFloor} onChange={onChangeFloor}>
+          <select className="col-4 bedPageFilterDropdown" value={selectedFloor} onChange={onChangeFloor}>
             <option value="">Floor number</option>
             {girlsRooms.map((room) => (
               <option key={room.floorNumber} value={room.floorNumber}>
                 {room.floorNumber}
               </option>
             ))}
+          </select>
+          <select className='col-4 bedPageFilterDropdown' value={selectedRoomNo} onChange={onChangeRoomNo}>
+            <option value="">Room number</option>
+            {roomNumbersToShow.map((room) => (
+              <option key={room} value={room}>
+                {room}
+              </option>
+            ))}
+            
           </select>
           </div>
       </div>

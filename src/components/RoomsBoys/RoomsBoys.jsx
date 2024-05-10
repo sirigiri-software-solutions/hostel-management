@@ -167,10 +167,72 @@ const RoomsBoys = () => {
     setErrors({}); // Clear errors
   };
 
-  const handleDelete = (id) => {
-    const roomRef = ref(database, `Hostel/boys/rooms/${id}`);
-    remove(roomRef);
+  // const handleDelete = (id) => {
+  //   console.log(id);
+  //   // const roomRef = ref(database, `Hostel/boys/rooms/${id}`);
+  //   // remove(roomRef);
+  // };
+
+  const [showConfirmationPopUp,setShowConfirmationPopUp] = useState(false);
+
+  const handleDeleteRoom = () => {
+    // const roomRef = ref(database, `Hostel/boys/rooms/${id}`);
+    // remove(roomRef).then(() => {
+    //   toast.success("Room deleted successfully.", {
+    //     position: "top-center",
+    //     autoClose: 2000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //   });
+    // }).catch(error => {
+    //   toast.error("Error deleting room: " + error.message, {
+    //     position: "top-center",
+    //     autoClose: 2000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //   });
+    // });
+    setShowConfirmationPopUp(true);
+    setShowModal(false);
   };
+
+  const confirmDeleteYes = () => {
+    const roomRef = ref(database, `Hostel/boys/rooms/${currentId}`);
+    remove(roomRef).then(() => {
+      toast.success("Room deleted successfully.", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }).catch(error => {
+      toast.error("Error deleting room: " + error.message, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    });
+    setShowConfirmationPopUp(false);
+
+  }
+
+  const confirmDeleteNo = () => {
+    setShowConfirmationPopUp(false);
+  }
+  
 
   const handleEdit = (room) => {
     setFloorNumber(room.floorNumber);
@@ -228,20 +290,22 @@ const resetForm = () => {
 
   // console.log(data && data, "ApiData")
 
-  if (data !== null) {
-    const RoomsBoysData = data.boys.rooms
-    roomsData = Object.values(RoomsBoysData)
+  if (data && data.boys && data.boys.rooms) {
+    const RoomsBoysData = data.boys.rooms;
+    roomsData = Object.values(RoomsBoysData);
   }
+  
+  
 
 
   const columns = [
-    'S. No',
+    'S.No',
     'Room.No',
     'Floor',
     'No.of Beds',
     'Bed Rent',
     'Created By',
-    'Last Updated date',
+    'Last Updated Date',
     'Edit'
     
   ]
@@ -257,6 +321,10 @@ const resetForm = () => {
     return `${day}-${month}-${year}`;
 }
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 
   useEffect(() => {
     // if (data !== null) {
@@ -266,7 +334,7 @@ const resetForm = () => {
       floor: `${room.floorNumber}`,
       noofBeds: room.numberOfBeds,
       bedRent: room.bedRent,
-      created_by: room.createdBy,
+      created_by: capitalizeFirstLetter(room.createdBy),
       last_updated_by: formatDate(room.updateDate),
       edit_room: <button
         style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
@@ -353,15 +421,18 @@ const resetForm = () => {
                     <label htmlFor="inputRole" className="form-label">Created By</label>
                     <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
 
-                      <option value="admin">Admin</option>
-                      <option value="sub-admin">Sub-admin</option>
+                      <option value="Admin">Admin</option>
+                      <option value="Sub-admin">Sub-admin</option>
                     </select>
                     {/* {formErrors.role && <div className="text-danger">{formErrors.role}</div>} */}
                   </div>
                   <div className="col-12 text-center">
                     {isEditing && <p>Last Updated: {updateDate || 'N/A'}</p>}
                     {isEditing ? (
-                      <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Room</button>
+                      <div className="roomsEditBtnsContainer">
+                      <button type="button"  className="btn btn-warning roomUpdateBtn" onClick={handleSubmit}>Update Room</button>
+                      <button type="button" className='btn btn-warning' onClick={() => handleDeleteRoom(currentId)}>Delete Room</button>
+                      </div>
                     ) : (
                       <button type="submit" className="btn btn-warning" >Create Room</button>
                     )}
@@ -373,6 +444,20 @@ const resetForm = () => {
           </div>
         </div>
       </div>
+
+
+      {showConfirmationPopUp && (
+         <div className="confirmation-dialog">
+         <div className='confirmation-card'>
+         <p style={{paddingBottom:'0px',marginBottom:'7px'}}>Are you sure you want to delete the room with number <span style={{color:'red'}}>{roomNumber}</span> ?</p>
+         <p style={{fontSize:'15px',color:'red',textAlign:'center',paddingTop:'0px'}}>Note : Once you delete the room it will not be restored</p>
+         <div className="buttons">
+           <button onClick={confirmDeleteYes} >Yes</button>
+           <button onClick={confirmDeleteNo} >No</button>
+         </div>
+         </div>
+       </div>
+      )}
       </>
     </div>
   )

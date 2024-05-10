@@ -792,6 +792,8 @@ const handleRoomsIntegerChange = (event) => {
     setFormLayout('');
     resetForm();
     setShowModal(false);
+    setHasBike(false);
+    setBikeNumber("");
   };
 
 

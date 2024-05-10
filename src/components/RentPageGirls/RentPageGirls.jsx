@@ -388,19 +388,19 @@ Please note that you made your last payment on ${paidDate}.\n`
 
 
   const columns = [
-    'S. No',
+    'S.No',
     'Room.No',
     'Person Name',
     'Person Mobile',
     'Bed No',
     'Rent',
-    'paid',
-    'due',
+    'Paid',
+    'Due',
     'Joining Date',
     'Due Date',
     'Last Fee',
     'Status',
-    'update'
+    'Update'
   ];
 
   const rentsRows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map((rent) => ({

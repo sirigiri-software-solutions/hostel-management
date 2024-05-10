@@ -852,6 +852,23 @@ const handleRoomsIntegerChange = (event) => {
     }
   };
 
+  useEffect(() => {
+    if (selectedTenant) {
+      const tenant = tenants.find(t => t.id === selectedTenant);
+      if (tenant) {
+        // Set the date of join
+        setDateOfJoin(tenant.dateOfJoin || '');
+  
+        // Calculate the due date (one day less than adding one month)
+        const currentDate = new Date(tenant.dateOfJoin); // Get the join date
+        const dueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate(-1)); // Add one month and subtract one day
+        const formattedDueDate = dueDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+        setDueDate(formattedDueDate);
+      }
+    }
+  }, [selectedTenant, tenants]);
+  
+
   const renderFormLayout = () => {
     switch (formLayout) {
       case 'Add Rooms':

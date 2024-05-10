@@ -34,8 +34,8 @@ const Table = ({columns, rows,onClickTentantRow}) => {
                 {item.rent && <td data-label="Rent">{item.rent}</td>}
                 {item.paid && <td data-label="Paid">{item.paid}</td>}
                 {item.due && <td data-label="Due">{item.due}</td>}
-
                 {item.joining_date && <td data-label="Joining Date" onClick={onClickTentantRow ? () => onClickTentantRow(item) : null}>{item.joining_date}</td>}
+                {item.bike_number && <td data-label="Bike Number" onClick={onClickTentantRow ? () => onClickTentantRow(item) : null}>{item.bike_number}</td>}
                 {item.due_date && <td data-label="Due Date">{item.due_date}</td>}
                 {item.last_fee && <td data-label="Last Fee">{item.last_fee}</td>}
                 {item.created_on && <td data-label="created_on">{item.created_on}</td>}

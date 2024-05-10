@@ -13,7 +13,6 @@ import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage
 import { FaDownload } from "react-icons/fa";
 import { toast } from "react-toastify";
 
-
 const TenantsBoys = () => {
   const [selectedRoom, setSelectedRoom] = useState('');
   const [bedOptions, setBedOptions] = useState([]);
@@ -37,69 +36,58 @@ const TenantsBoys = () => {
   // const [boysRoomsData, setBoysRoomsData] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-
   const [userDetailsTenantPopup, setUserDetailsTenantsPopup] = useState(false);
   const [singleTenantDetails, setSingleTenantDetails] = useState(false);
   const [dueDateOfTenant, setDueDateOfTenant] = useState("");
-  const [singleTenantProofId,setSingleTenantProofId] = useState("");
+  const [singleTenantProofId, setSingleTenantProofId] = useState("");
 
   const [boysRooms, setBoysRooms] = useState([]);
   const [exTenants, setExTenants] = useState([]);
   const [showExTenants, setShowExTenants] = useState(false);
   const [hasBike, setHasBike] = useState(false);
-  const [bikeNumber, setBikeNumber] = useState('');
+  const [bikeNumber, setBikeNumber] = useState('NA');
 
   const handleCheckboxChange = (e) => {
-    setHasBike(e.target.value === 'yes');
-    if (e.target.value === 'no') {
-      setBikeNumber('--N/A--');
-    } else {
+    setHasBike(e.target.value == 'yes');
+    if (e.target.value == 'no') {
+      setHasBike(false);
+      setBikeNumber('NA');
+    }
+    // } 
+    else {
       setBikeNumber('');
     }
   };
+  // handleTentantRow
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && (event.target.id === "exampleModalTenantsBoys" || event.key === "Escape" )) {
-            setShowModal(false);
-            setTenantIdUrl('')
-        }
-
-        
-       
-       
+      if (showModal && (event.target.id === "exampleModalTenantsBoys" || event.key === "Escape")) {
+        setShowModal(false);
+        setTenantIdUrl('')
+      }
     };
 
     window.addEventListener('click', handleOutsideClick);
     window.addEventListener('keydown', handleOutsideClick);
-    
-}, [showModal]);
+
+  }, [showModal]);
 
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const popup = document.getElementById('userDetailsTenantPopupId');
+      if (popup && (!popup.contains(event.target) || event.key === "Escape")) {
+        setUserDetailsTenantsPopup(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleClickOutside)
+  }, []);
 
 
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    const popup = document.getElementById('userDetailsTenantPopupId');
-    if (popup && (!popup.contains(event.target) || event.key === "Escape")) {
-      setUserDetailsTenantsPopup(false);
-    }
-  };
-
-  document.addEventListener("mousedown", handleClickOutside);
-  document.addEventListener("keydown",handleClickOutside)
-}, []);
-
-
-
-
-
-
-
-  
-
-  
 
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
@@ -213,8 +201,6 @@ useEffect(() => {
 
     // tryin to compress code
 
-
-
     // previous code
     if (e.target.files[0]) {
       setTenantImage(e.target.files[0]);
@@ -227,15 +213,15 @@ useEffect(() => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if(!isEditing){
-    e.target.querySelector('button[type="submit"]').disabled = true;
-    if (!validate()) {
-      e.target.querySelector('button[type="submit"]').disabled = false;  
-      return
-    };
-  } else{
-    if(!validate()) return;
-  }
+    if (!isEditing) {
+      e.target.querySelector('button[type="submit"]').disabled = true;
+      if (!validate()) {
+        e.target.querySelector('button[type="submit"]').disabled = false;
+        return
+      };
+    } else {
+      if (!validate()) return;
+    }
 
 
     let imageUrlToUpdate = tenantImageUrl;
@@ -273,6 +259,7 @@ useEffect(() => {
       status,
       tenantImageUrl: imageUrlToUpdate,
       tenantIdUrl: idUrlToUpdate,
+      bikeNumber,
       // tenantIdUrl,
     };
 
@@ -325,7 +312,7 @@ useEffect(() => {
 
     resetForm();
     setErrors({});
-    
+
   };
 
   const handleEdit = (tenant) => {
@@ -341,15 +328,22 @@ useEffect(() => {
     setCurrentId(tenant.id);
     setTenantImageUrl(tenant.tenantImageUrl);
     setTenantIdUrl(tenant.tenantIdUrl || '');
-    
- 
-
     setShowModal(true);
+    setBikeNumber(tenant.bikeNumber);
+    if(tenant.bikeNumber=='NA')
+    {
+      setHasBike(false);
+      setBikeNumber(tenant.bikeNumber);
+    }
+    else{
+      setHasBike(true);
+      setBikeNumber(tenant.bikeNumber);
+    }
 
   };
-  
 
-  
+
+
   const handleAddNew = () => {
     // Reset any previous data
     resetForm();
@@ -359,6 +353,7 @@ useEffect(() => {
     setShowModal(true);
     setUserDetailsTenantsPopup(false);
     setTenantIdUrl('')
+    setHasBike(false);
 
   };
 
@@ -380,6 +375,7 @@ useEffect(() => {
     setTenantId(null);
     setTenantImageUrl('');
     setTenantIdUrl('');
+    setBikeNumber('NA')
   };
 
   // Filter tenants based on search query
@@ -395,6 +391,7 @@ useEffect(() => {
     'Mobile No',
     'Room/Bed No',
     'Joining Date',
+    'Bike',
     'Status',
     'actions'
   ]
@@ -407,10 +404,11 @@ useEffect(() => {
     mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
     joining_date: tenant.dateOfJoin,
+    bike_number:tenant.bikeNumber,
     status: tenant.status,
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
-      onClick={() => handleEdit(tenant)}
+      onClick={() =>{ handleEdit(tenant); }}
     // data-bs-toggle="modal"
     // data-bs-target="#exampleModalTenantsBoys"
     >
@@ -437,7 +435,7 @@ useEffect(() => {
     setShowModal(false);
     setSingleTenantDetails(tenant);
 
-    
+
 
     const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
 
@@ -450,16 +448,16 @@ useEffect(() => {
       console.log("Tenant with due date not found or due date is missing");
     }
 
-    if(singleUserDueDate && singleUserDueDate.tenantIdUrl){
+    if (singleUserDueDate && singleUserDueDate.tenantIdUrl) {
       setSingleTenantProofId(singleUserDueDate.tenantIdUrl)
-    } 
-};
+    }
+  };
 
   const tenantPopupClose = () => {
     setUserDetailsTenantsPopup(false);
     setDueDateOfTenant("")
     setSingleTenantProofId("");
-    
+
   }
 
   //=====Vacate tenant ===========
@@ -515,19 +513,19 @@ useEffect(() => {
     });
   };
   useEffect(() => { fetchExTenants() }, []);
-  
+
   const exTenantRows = exTenants.map((tenant, index) => ({
     s_no: index + 1,
     image: tenant.tenantImageUrl,
-    name: tenant.name, 
-    id: tenant.idNumber, 
-    mobile_no: tenant.mobileNo, 
-    room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, 
+    name: tenant.name,
+    id: tenant.idNumber,
+    mobile_no: tenant.mobileNo,
+    room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
     joining_date: tenant.dateOfJoin,
     status: 'vaccated',
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
-    
+
     >
       view
     </button>
@@ -536,7 +534,10 @@ useEffect(() => {
   const showExTenantsData = () => {
     setShowExTenants(!showExTenants)
   }
-
+  // const handleAddNew=()=>{
+  //   setHasBike(false);
+  // }
+console.log(hasBike, "==> Bike")
   return (
     <>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
@@ -551,7 +552,7 @@ useEffect(() => {
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
         <div className="col-7 col-md-4 d-flex justify-content-end gap-2">
-          {showExTenants ? '' : <button type="button" class="add-button tenantaddBtn" onClick={() => { handleAddNew() }} >
+          {showExTenants ? '' : <button type="button" class="add-button tenantaddBtn" onClick={() => { handleAddNew(); }} >
             Add Tenants
           </button>}
           {showExTenants ? <button type="button" class="add-button" onClick={showExTenantsData} >
@@ -564,7 +565,7 @@ useEffect(() => {
       <div>
         {showExTenants ? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
       </div>
-      <div   className={`modal fade ${showModal ? 'show' : ''}`}  style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}  >
+      <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}  >
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -663,10 +664,10 @@ useEffect(() => {
                         <p>Current Image</p>
                       </div>
                     )}
-                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
+                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} required />
                     {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
-                 <div className="col-md-6">
+                  <div className="col-md-6">
                     <label htmlFor='tenantUploadId' className="form-label">
                       Upload Id:
                     </label>
@@ -679,60 +680,75 @@ useEffect(() => {
                           height="133px"
                         >
                           {/* Anchor tag for downloading the PDF */}
-                           
+
                         </object>
                       </div>
                     )}
                     {/* Show input for uploading ID only if not editing or tenantIdUrl doesn't exist */}
-                    
-                      <input id="tenantUploadId" className="form-control" type="file" onChange={handleTenantIdChange} />
-                    
-                  </div> 
+
+                    <input id="tenantUploadId" className="form-control" type="file" onChange={handleTenantIdChange} />
+
+                  </div>
                   <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
-  <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">Do you have a bike?</label>
-  <input
-    type="radio"
-    className="Radio"
-    id="bikeCheck"
-    name="bike"
-    value="yes"
-    onClick={handleCheckboxChange}
-    checked={hasBike}
-  />
-  <label htmlFor='bikeCheck' className='bike'>Yes</label>
-  <input
-    type="radio"
-    id="bikeCheck1"
-    name="bike"
-    value="no"
-    onClick={handleCheckboxChange}
-    checked={!hasBike}
-    style={{ marginLeft: '30px' }}
-  />
-  <label htmlFor='bikeCheck1' className='bike'>No</label>
-</div>
+                    <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">Do you have a bike?</label>
+                    <input
+                      type="radio"
+                      className="Radio"
+                      id="bikeCheck"
+                      name="bike"
+                      value="yes"
+                      onClick={handleCheckboxChange}
+                      checked={hasBike}
+                    />
+                    <label htmlFor='bikeCheck' className='bike'>Yes</label>
+                    <input
+                      type="radio"
+                      id="bikeCheck1"
+                      name="bike"
+                      value="no"
+                      onClick={handleCheckboxChange}
+                      checked={!hasBike}
+                      style={{ marginLeft: '30px' }}
+                    />
+                    <label htmlFor='bikeCheck1' className='bike'>No</label>
+                  </div>
 
-{hasBike && (
-  <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-    <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
-    <input
-      type="text"
-      id="bikeNumber"
-      
-      className='form-control'
-      placeholder="Enter number plate ID"
-      value={bikeNumber}
-      onChange={(event) => setBikeNumber(event.target.value)}
-      style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px',borderHeight:'40px',marginLeft:'8px' }}
-    />
-  </div>
-)}
-            
+                  {hasBike ? (
+                    <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <input
+                        type="text"
+                        id="bikeNumber"
+
+                        className='form-control'
+                        placeholder="Enter number plate ID"
+                        value={bikeNumber}
+                        onChange={(event) => setBikeNumber(event.target.value)}
+                        style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                      />
+                    </div>
+                  ):(
+                    <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <input
+                        type="text"
+                        id="bikeNumber"
+
+                        className='form-control'
+                        placeholder="Enter number plate ID"
+                        value={bikeNumber}
+                        onChange={(event) => setBikeNumber(event.target.value)}
+                        style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                      />
+                    </div>
+
+                  )}
 
 
 
-                  
-                  
+
+
+
                   {/* =============== */}
                   <div className='col-12 text-center mt-3'>
                     {isEditing ? (
@@ -741,7 +757,7 @@ useEffect(() => {
                         <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
                       </div>
                     ) : (
-                      <button id="tenantAddBtn"  className="btn btn-warning" type="submit">Add Tenant</button>
+                      <button id="tenantAddBtn" className="btn btn-warning" type="submit">Add Tenant</button>
                     )}
                   </div>
                 </form>
@@ -750,39 +766,39 @@ useEffect(() => {
           </div>
         </div>
       </div>
-   
 
-     
 
-      {userDetailsTenantPopup && 
-      <div  id="userDetailsTenantPopupId"  className='userDetailsTenantPopup'>
-        <div className='tenants-dialog-container'>
-          <h1 className="tenants-popup-heading">Tenant Details </h1>
-          <div className='tenants-popup-mainContainer'>
-            <div className='tenants-profile-container'>
-             <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
-             </div>
-             <div className='tenants-popup-detailsContainer'>
-                 <p><strong>Name :</strong> {singleTenantDetails.name}</p>
-                  <p><strong>Mobile No :</strong> {singleTenantDetails.mobile_no}</p>
-                  <p><strong>Proof ID :</strong> {singleTenantDetails.id}</p>
-                  <p><strong>Room/Bed No :</strong> {singleTenantDetails.room_bed_no}</p>
-                  <p><strong>Joining Date :</strong> {singleTenantDetails.joining_date}</p>
-                  <p><strong>Due Date :</strong> {dueDateOfTenant}</p>
-                  <p><strong>ID Proof:</strong>
-                    {singleTenantProofId ? (
-                      <a className='downloadPdfText' href={singleTenantProofId} download> <FaDownload /> Download PDF</a>
-                    ) : (
-                      <span className='NotUploadedText'> Not Uploaded</span>
-                    )}
-                  </p>
-             </div>
-          </div>
-          <div className='popup-tenants-closeBtn'>
-          <button className='btn btn-warning' onClick={tenantPopupClose}>Close</button>
+
+
+      {userDetailsTenantPopup &&
+        <div id="userDetailsTenantPopupId" className='userDetailsTenantPopup'>
+          <div className='tenants-dialog-container'>
+            <h1 className="tenants-popup-heading">Tenant Details </h1>
+            <div className='tenants-popup-mainContainer'>
+              <div className='tenants-profile-container'>
+                <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
+              </div>
+              <div className='tenants-popup-detailsContainer'>
+                <p><strong>Name :</strong> {singleTenantDetails.name}</p>
+                <p><strong>Mobile No :</strong> {singleTenantDetails.mobile_no}</p>
+                <p><strong>Proof ID :</strong> {singleTenantDetails.id}</p>
+                <p><strong>Room/Bed No :</strong> {singleTenantDetails.room_bed_no}</p>
+                <p><strong>Joining Date :</strong> {singleTenantDetails.joining_date}</p>
+                <p><strong>Due Date :</strong> {dueDateOfTenant}</p>
+                <p><strong>ID Proof:</strong>
+                  {singleTenantProofId ? (
+                    <a className='downloadPdfText' href={singleTenantProofId} download> <FaDownload /> Download PDF</a>
+                  ) : (
+                    <span className='NotUploadedText'> Not Uploaded</span>
+                  )}
+                </p>
+              </div>
+            </div>
+            <div className='popup-tenants-closeBtn'>
+              <button className='btn btn-warning' onClick={tenantPopupClose}>Close</button>
+            </div>
           </div>
         </div>
-      </div>
       }
 
 

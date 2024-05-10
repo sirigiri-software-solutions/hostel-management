@@ -406,7 +406,7 @@ Please note that you made your last payment on ${paidDate}.\n`
     'update'
   ];
 
-  // console.log("rents====>",tenantsWithRents)
+ 
   const rentsRows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map((rent) => ({
     roomNumber: rent.roomNumber,
     name: tenant.name,

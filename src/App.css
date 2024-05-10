@@ -50,6 +50,7 @@
 .filterExpense{
   display: flex;
   justify-content: flex-end;
+  margin-top: 10px;
 }
 .filterExpenseField{
   border:2px solid #FF8A00;

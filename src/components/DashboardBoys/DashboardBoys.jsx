@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 // import Table from '../../Elements/Table';
 import { Modal, Button } from 'react-bootstrap';
+import { FaWhatsapp } from "react-icons/fa";
 
 
 const DashboardBoys = () => {
@@ -58,6 +59,58 @@ const DashboardBoys = () => {
   // const onClickCloseBedsPopup = () => {
   //   setPopupOpen(false);
   // };
+
+    // Function to send WhatsApp message
+    const [notify, setNotify] = useState(false);
+    const [notifyUserInfo, setNotifyUserInfo] = useState(null);
+    const sendMessage = (tenant, rentRecord) => {
+      const totalFee = rentRecord.totalFee;
+      const tenantName = tenant.name;
+    const amount = rentRecord.due;
+    const dateOfJoin = tenant.dateOfJoin;
+    const dueDate = rentRecord.dueDate;
+    const paidAmount = rentRecord.paidAmount;
+    const paidDate = rentRecord.paidDate;
+  
+    const message = `Hi ${tenantName},\n
+  Hope you are doing fine.\n
+  Your total fee is ${totalFee}.\n
+  You have paid ${paidAmount} so far.\n
+  Therefore, your remaining due amount is ${amount}.\n
+  You joined on ${dateOfJoin}, and your due date is ${dueDate}.\n
+  Please note that you made your last payment on ${paidDate}.\n`
+  
+      const phoneNumber = tenant.mobileNo; // Replace with the recipient's phone number
+  
+      // Check if the phone number starts with '+91' (India's country code)
+      const formattedPhoneNumber = phoneNumber.startsWith('+91') ? phoneNumber : `+91${phoneNumber}`;
+  
+      const encodedMessage = encodeURIComponent(message);
+  
+  
+      // Use web link for non-mobile devices
+      let whatsappLink = `https://wa.me/${formattedPhoneNumber}?text=${encodedMessage}`;
+  
+  
+      // Open the WhatsApp link
+      window.open(whatsappLink, '_blank');
+    };
+  
+    // Event handler for the notify checkbox
+    const handleNotifyCheckbox = (rentData) => {
+      // Toggle the state of the notify checkbox
+      if (notify && notifyUserInfo) {
+        const { tenant, rentRecord } = notifyUserInfo;
+        console.log(tenant, "InNotify")
+        sendMessage(tenant, rentData); // If checkbox is checked and tenant info is available, send WhatsApp message
+      }
+      setNotify(!notify);
+    };
+
+
+
+
+
 const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('NA');
   const handleCheckboxChange = (e) => {
@@ -70,6 +123,8 @@ const [hasBike, setHasBike] = useState(false);
       setBikeNumber('');
     }
   };
+
+
 
   
   const getCurrentMonth = () => {
@@ -638,6 +693,10 @@ const [hasBike, setHasBike] = useState(false);
           progress: undefined,
         });
         setIsEditing(false); // Reset editing state
+        if (notify) {
+          handleNotifyCheckbox(rentData);
+        }
+        setNotify(false)
       }).catch(error => {
         toast.error("Error updating rent: " + error.message, {
           position: "top-center",
@@ -663,6 +722,10 @@ const [hasBike, setHasBike] = useState(false);
           progress: undefined,
         });
         setIsEditing(false); // Reset editing state
+        if (notify) {
+          handleNotifyCheckbox(rentData);
+        }
+        setNotify(false)
       }).catch(error => {
         toast.error("Error addinging rent: " + error.message, {
           position: "top-center",
@@ -763,6 +826,7 @@ const [hasBike, setHasBike] = useState(false);
     setShowModal(false);
     setHasBike(false);
     setBikeNumber("");
+    setNotify(false)
 
   };
 
@@ -772,6 +836,10 @@ const [hasBike, setHasBike] = useState(false);
     const year = date.getFullYear();
     return `${month}-${year}`;
   };
+
+  const onClickCheckbox = () => {
+    setNotify(!notify)
+  }
 
   const expensesHandleSubmit = (e) => {
     e.preventDefault();
@@ -993,14 +1061,14 @@ const [hasBike, setHasBike] = useState(false);
                         id="notifyCheckbox"
                         className="form-check-input"
                         type="checkbox"
-                        // checked={notify}
-                        // onChange={onClickCheckbox}
+                        checked={notify}
+                        onChange={onClickCheckbox}
                       // Toggle the state on change
                       />
                       <label className="form-check-label" htmlFor="notifyCheckbox">
                         Notify
                       </label>
-                      {/* <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} /> */}
+                      <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
                     </div>
                   </div>
                   <div class="col-12 text-center mt-2">
@@ -1087,7 +1155,7 @@ const [hasBike, setHasBike] = useState(false);
                       <label className="form-check-label" htmlFor="notifyCheckbox">
                         Notify
                       </label>
-                      {/* <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} /> */}
+                      <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
                     </div>
                   </div>
 

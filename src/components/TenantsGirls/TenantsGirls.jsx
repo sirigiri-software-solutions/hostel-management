@@ -60,6 +60,7 @@ const TenantsGirls = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   const [photoUrl, setPhotoUrl] = useState(null);
+  const [idUrl,setIdUrl]=useState(null);
 
   useEffect(() => {
     // Check if the user agent is a mobile device
@@ -93,7 +94,34 @@ const TenantsGirls = () => {
       toast.error("Image not Uploaded");
     }
   };
+  
+  const takeidPicture = async () => {
 
+    if (!isMobile) {
+      console.error("Camera access is not supported on your device.");
+      return;
+  }
+    try {
+      const photo = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri
+      });
+      const response = await fetch(photo.webPath);
+      const blob = await response.blob();
+      const imageRef = storageRef(storage, `Hostel/boys/tenants/images/${new Date().getTime()}`);
+      const snapshot = await uploadBytes(imageRef, blob);
+      const url = await getDownloadURL(snapshot.ref);
+      
+      setIdUrl(url); // Display in UI
+      setTenantIdUrl(url); // Use in form submission
+      // setPhotoUrl(photo.webPath);
+    } catch (error) {
+      console.error("Error accessing the camera", error);
+      toast.error("Id not Uploaded");
+    }
+  };
+  
 
   const tenantImageInputRef = useRef(null);
   const tenantProofIdRef = useRef(null);
@@ -264,7 +292,7 @@ useEffect(() => {
     }
 
     let idUrlToUpdate = tenantIdUrl;
-    if (tenantId) {
+    if (tenantId && !tenantIdUrl) {
       const imageRef = storageRef(storage, `Hostel/girls/tenants/images/tenantId/${tenantId.name}`);
       try {
         const snapshot = await uploadBytes(imageRef, tenantId);
@@ -399,8 +427,12 @@ useEffect(() => {
     setTenantIdUrl('');
     setBikeNumber('');
     setHasBike(false);
-    tenantImageInputRef.current.value = null;
-    tenantProofIdRef.current.value = null;
+    if (tenantImageInputRef.current) {
+      tenantImageInputRef.current.value = null;
+    }
+    if (tenantProofIdRef.current) {
+      tenantProofIdRef.current.value = null;
+    }
   };
 
 
@@ -793,7 +825,18 @@ useEffect(() => {
                         <p>Current Image</p>
                       </div>
                     )}
-                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
+                  <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
+                  {isMobile && (
+                  <div>
+                  <p>or</p>
+                  <div style={{display:'flex',flexDirection:'row'}}>
+                  <p>take photo</p>
+                  <FontAwesomeIcon icon={faCamera} size="2x" onClick={takePicture} style={{marginTop:'-7px',paddingLeft:'30px'}}/>
+                  {photoUrl && <img src={photoUrl} alt="Captured" style={{ marginTop: 50, maxWidth: '100%', height: 'auto' }} />}
+                  </div>
+                  </div>
+                    )}
+
                     {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
                   <div class="col-md-6">
@@ -811,6 +854,16 @@ useEffect(() => {
                       </object>
                     )}
                     <input ref={tenantProofIdRef} id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange}  />
+                    {isMobile && (
+                    <div>
+                    <p>or</p>
+                    <div style={{display:'flex',flexDirection:'row'}}>
+                    <p>take photo</p>
+                    <FontAwesomeIcon icon={faCamera} size="2x" onClick={takeidPicture} style={{marginTop:'-7px',paddingLeft:'30px'}}/>
+                    {idUrl && <img src={idUrl} alt="Captured" style={{ marginTop: 50, maxWidth: '100%', height: 'auto' }} />}
+                    </div>
+                    </div>
+                    )}
 
                   </div>
                   <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>

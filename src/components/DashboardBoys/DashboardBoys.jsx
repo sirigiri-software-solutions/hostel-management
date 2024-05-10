@@ -66,6 +66,7 @@ const DashboardBoys = () => {
   //  for camera icon in mobile device
   const [isMobile, setIsMobile] = useState(false);
   const [photoUrl, setPhotoUrl] = useState(null);
+  const [idUrl,setIdUrl]=useState(null);
   
   useEffect(() => {
     // Check if the user agent is a mobile device
@@ -97,6 +98,33 @@ const DashboardBoys = () => {
     } catch (error) {
       console.error("Error accessing the camera", error);
       toast.error("Image not Uploaded");
+    }
+  };
+
+  const takeIdPicture = async () => {
+
+    if (!isMobile) {
+      console.error("Camera access is not supported on your device.");
+      return;
+  }
+    try {
+      const photo = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri
+      });
+      const response = await fetch(photo.webPath);
+      const blob = await response.blob();
+      const imageRef = storageRef(storage, `Hostel/boys/tenants/images/${new Date().getTime()}`);
+      const snapshot = await uploadBytes(imageRef, blob);
+      const url = await getDownloadURL(snapshot.ref);
+      
+      setPhotoUrl(url); // Display in UI
+      setTenantImageUrl(url); // Use in form submission
+      // setPhotoUrl(photo.webPath);
+    } catch (error) {
+      console.error("Error accessing the camera", error);
+      toast.error("Id not Uploaded");
     }
   };
 
@@ -431,7 +459,7 @@ const handleRoomsIntegerChange = (event) => {
     }
 
     let idUrlToUpdate = tenantIdUrl;
-    if (tenantId) {
+    if (tenantId && !tenantIdUrl) {
       const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantId/${tenantId.name}`);
       try {
         const snapshot = await uploadBytes(imageRef, tenantId);
@@ -1240,11 +1268,23 @@ const handleRoomsIntegerChange = (event) => {
               )}
               <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
 
+              {isMobile && (
+                  <div>
+                  <p>or</p>
+                  <div style={{display:'flex',flexDirection:'row'}}>
+                  <p>take photo</p>
+                  <FontAwesomeIcon icon={faCamera} size="2x" onClick={takeIdPicture} style={{marginTop:'-7px',paddingLeft:'30px'}}/>
+                  {idUrl && <img src={idUrl} alt="Captured" style={{ marginTop: 50, maxWidth: '100%', height: 'auto' }} />}
+                  </div>
+                  </div>
+                    )}
+
+
             </div>
 
 
 
-            <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
+  <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
   <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">Do you have a bike?</label>
   <input
     type="radio"

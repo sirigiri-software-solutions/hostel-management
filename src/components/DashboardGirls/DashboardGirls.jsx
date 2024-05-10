@@ -398,7 +398,7 @@ const handleRoomsIntegerChange = (event) => {
       roomNo: selectedRoom,
       bedNo: selectedBed,
       dateOfJoin,
-      name,
+      name:name.charAt(0).toUpperCase() + name.slice(1),
       mobileNo,
       idNumber,
       emergencyContact,
@@ -753,6 +753,8 @@ const handleRoomsIntegerChange = (event) => {
     setFormLayout('');
     resetForm();
     setShowModal(false);
+    setHasBike(false);
+    setBikeNumber("");
   };
 
 
@@ -843,11 +845,25 @@ const handleRoomsIntegerChange = (event) => {
       // Set errors in state if form is not valid
       setFormErrors(errors);
     }
-
-
   };
 
-
+  useEffect(() => {
+    if (selectedTenant) {
+      const tenant = tenants.find(t => t.id === selectedTenant);
+      if (tenant) {
+        // Set the date of join
+        setDateOfJoin(tenant.dateOfJoin || '');
+  
+        // Calculate the due date (one day less than adding one month)
+        const currentDate = new Date(tenant.dateOfJoin); // Get the join date
+        const dueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate(-1)); // Add one month and subtract one day
+        const formattedDueDate = dueDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+        setDueDate(formattedDueDate);
+      }
+    }
+  }, [selectedTenant, tenants]);
+  
+ 
   const renderFormLayout = () => {
     switch (formLayout) {
       case 'Add Rooms':
@@ -1436,7 +1452,7 @@ const handleRoomsIntegerChange = (event) => {
               </table>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={onClickCloseBedsPopup}>Close</Button>
+              <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseBedsPopup}>Close</Button>
             </Modal.Footer>
           </Modal>
         </div>

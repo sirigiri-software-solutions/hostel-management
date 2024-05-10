@@ -250,6 +250,7 @@
 .modal-90w {
     max-height: 200px;
     margin: 1.75rem auto;
+    text-align: center;
   }
   
 .custom-modal-body{
@@ -283,3 +284,16 @@
     margin-left:5px;
   }
   
+
+.custom-modal-body::-webkit-scrollbar {
+    width: 5px; /* Width of the scrollbar */
+}
+  
+.custom-modal-body::-webkit-scrollbar-thumb {
+    background-color: black; /* Color of the thumb (the draggable part of the scrollbar) */
+    border-radius: 5px; /* Border radius of the thumb */
+}
+  
+.custom-modal-body::-webkit-scrollbar-track {
+    background-color: #f0f0f0; /* Color of the track (the area behind the thumb) */
+}

@@ -37,7 +37,8 @@ const RentPageGirls = () => {
   const [notify, setNotify] = useState(false);
   const [notifyUserInfo, setNotifyUserInfo] = useState(null);
   const [showForm, setShowForm] = useState(true);
-
+ 
+   
 
   // Function to send WhatsApp message
   const sendMessage = (tenant, rentRecord) => {
@@ -99,6 +100,7 @@ Please note that you made your last payment on ${paidDate}.\n`
     
 }, [showModal]);
 
+   
   
 
 
@@ -269,6 +271,23 @@ Please note that you made your last payment on ${paidDate}.\n`
   };
 
 
+  useEffect(() => {
+    if (selectedTenant) {
+      const tenant = tenants.find(t => t.id === selectedTenant);
+      if (tenant) {
+        // Set the date of join
+        setDateOfJoin(tenant.dateOfJoin || '');
+  
+        // Calculate the due date (one day less than adding one month)
+        const currentDate = new Date(tenant.dateOfJoin); // Get the join date
+        const dueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate(-1)); // Add one month and subtract one day
+        const formattedDueDate = dueDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+        setDueDate(formattedDueDate);
+      }
+    }
+  }, [selectedTenant, tenants]);
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -388,19 +407,19 @@ Please note that you made your last payment on ${paidDate}.\n`
 
 
   const columns = [
-    'S. No',
+    'S.No',
     'Room.No',
     'Person Name',
     'Person Mobile',
     'Bed No',
     'Rent',
-    'paid',
-    'due',
+    'Paid',
+    'Due',
     'Joining Date',
     'Due Date',
     'Last Fee',
     'Status',
-    'update'
+    'Update'
   ];
 
   const rentsRows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map((rent) => ({
@@ -437,7 +456,7 @@ Please note that you made your last payment on ${paidDate}.\n`
     onClick={() => loadRentForEditing(rent.tenantId, rent.rentId)}
 
   >
-    update
+    Update
   </button>,
   }));
 
@@ -457,6 +476,8 @@ Please note that you made your last payment on ${paidDate}.\n`
     setNotify(!notify)
   }
 
+   
+
   return (
     <div className='h-100'>
 
@@ -466,7 +487,7 @@ Please note that you made your last payment on ${paidDate}.\n`
             <div className='roomlogo-container'>
               <img src={RentIcon} alt="RoomsIcon" className='roomlogo' />
             </div>
-            <h1 className='fs-5'>Rents Management</h1>
+            <h1 className='management-heading'>Rents Management</h1>
           </div>
           <div className="col-6 col-md-4 search-wrapper">
             <input type="text" placeholder='Search' className='search-input' value={searchQuery}
@@ -493,6 +514,7 @@ Please note that you made your last payment on ${paidDate}.\n`
               </div>
               <div class="modal-body">
                 <div className="container-fluid">
+                  {isEditing ? null :
                   <div className='monthlyDailyButtons'>
                     <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(true)}>
                       <text>Monthly</text>
@@ -501,6 +523,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                       <text>Daily</text>
                     </div>
                   </div>
+}
                   {showForm ?
                     <div className='monthlyAddForm'>
                       <form class="row lg-10" onSubmit={handleSubmit}>

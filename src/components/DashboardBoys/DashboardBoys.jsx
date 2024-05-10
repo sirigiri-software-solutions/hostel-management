@@ -405,7 +405,7 @@ const [hasBike, setHasBike] = useState(false);
       roomNo: selectedRoom,
       bedNo: selectedBed,
       dateOfJoin,
-      name,
+      name:name.charAt(0).toUpperCase() + name.slice(1),
       mobileNo,
       idNumber,
       emergencyContact,
@@ -761,6 +761,8 @@ const [hasBike, setHasBike] = useState(false);
     setFormLayout('');
     resetForm();
     setShowModal(false);
+    setHasBike(false);
+    setBikeNumber("");
 
   };
 
@@ -852,6 +854,23 @@ const [hasBike, setHasBike] = useState(false);
       setFormErrors(errors);
     }
   };
+
+  useEffect(() => {
+    if (selectedTenant) {
+      const tenant = tenants.find(t => t.id === selectedTenant);
+      if (tenant) {
+        // Set the date of join
+        setDateOfJoin(tenant.dateOfJoin || '');
+  
+        // Calculate the due date (one day less than adding one month)
+        const currentDate = new Date(tenant.dateOfJoin); // Get the join date
+        const dueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate(-1)); // Add one month and subtract one day
+        const formattedDueDate = dueDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+        setDueDate(formattedDueDate);
+      }
+    }
+  }, [selectedTenant, tenants]);
+  
 
   const renderFormLayout = () => {
     switch (formLayout) {
@@ -1380,7 +1399,7 @@ const [hasBike, setHasBike] = useState(false);
         {menu.map((item, index) => (
           <div className='cardWithBtnsContainer'>
             <SmallCard key={index} index={index} item={item} handleClick={handleCardClick}/>
-            <button id="mbladdButton" type="button"  onClick={() => { handleClick(item.btntext); setShowForm(true) }}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
+            <button id="mbladdButton" type="button"  onClick={() => { handleClick(item.btntext) }}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
           </div>
         ))}
         {/* <div className='button-container'>
@@ -1434,7 +1453,7 @@ const [hasBike, setHasBike] = useState(false);
               </table>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={onClickCloseBedsPopup}>Close</Button>
+              <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseBedsPopup}>Close</Button>
             </Modal.Footer>
           </Modal>
         </div>

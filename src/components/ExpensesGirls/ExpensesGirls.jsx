@@ -187,17 +187,19 @@ window.addEventListener('keydown',handleOutsideClick);
     'Expense Amount',
     'Created By',
     'Date',
-    'actions'
+    'Actions'
   ];
-
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
   useEffect(() => {
 
     const rows = expenses.map((expense, index) => ({
       s_no: index + 1,
-      expense_name: expense.expenseName,
+      expense_name: capitalizeFirstLetter(expense.expenseName),
       expense_amount: expense.expenseAmount,
-      created_by: expense.createdBy,
+      created_by:capitalizeFirstLetter(expense.createdBy),
       last_updated_by: expense.expenseDate,
       edit_room: <button
         style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
@@ -317,9 +319,27 @@ window.addEventListener('keydown',handleOutsideClick);
     const monthYear = getMonthYearKey(formData.expenseDate);
     const expenseRef = ref(database, `Hostel/girls/expenses/${monthYear}/${editingExpense.id}`);
     remove(expenseRef).then(() => {
+      toast.success("Expense deleted successfully", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       setEditingExpense(null);
       // alert('Expense deleted!');
     }).catch(error => {
+      toast.error("Error deleting Expense" + error.message, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       console.error("Error deleting document: ", error);
       // alert('Error deleting expense!');
     });
@@ -414,7 +434,7 @@ useEffect(() => {
             <div className='roomlogo-container'>
               <img src={ExpenseIcon} alt="RoomsIcon" className='roomlogo' />
             </div>
-            <h1 className='fs-5'>Expenses Management</h1>
+            <h1 className='management-heading'>Expenses Management</h1>
           </div>
           <div className="col-6 col-md-4 search-wrapper">
             <input type="text" placeholder='Search' className='search-input' onChange={handleChange} value={searchTerm} />

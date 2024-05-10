@@ -52,6 +52,9 @@ const TenantsGirls = () => {
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('NA');
 
+  const tenantImageInputRef = useRef(null);
+  const tenantProofIdRef = useRef(null);
+
   const handleCheckboxChange = (e) => {
     setHasBike(e.target.value == 'yes');
     if (e.target.value == 'no') {
@@ -235,7 +238,7 @@ useEffect(() => {
       roomNo: selectedRoom,
       bedNo: selectedBed,
       dateOfJoin,
-      name,
+      name:name.charAt(0).toUpperCase() + name.slice(1),
       mobileNo,
       idNumber,
       emergencyContact,
@@ -278,6 +281,7 @@ useEffect(() => {
           draggable: true,
           progress: undefined,
         });
+        e.target.querySelector('button[type="submit"]').disabled = false;
       }).catch(error => {
         toast.error("Error adding Tenant: " + error.message, {
           position: "top-center",
@@ -296,6 +300,7 @@ useEffect(() => {
     // imageInputRef.current.value = "";
     // idInputRef.current.value = "";
     setErrors({});
+      
   };
 
   const handleEdit = (tenant) => {
@@ -314,6 +319,9 @@ useEffect(() => {
     setTenantIdUrl(tenant.tenantIdUrl || '');
     // console.log(tenant.tenantImageUrl,"Getting")
     console.log(tenant.tenantIdUrl,"Getting")
+    //setBikeNumber();
+   // setBikeNumber({bikeNumber});
+    setHasBike(false);
     setShowModal(true);
     setBikeNumber(tenant.bikeNumber);
     if(tenant.bikeNumber=='NA')
@@ -339,9 +347,9 @@ useEffect(() => {
     setHasBike(false);
   };
 
-  const handleDelete = async (id) => {
-    await remove(ref(database, `Hostel/girls/tenants/${id}`));
-  };
+  // const handleDelete = async (id) => {
+  //   await remove(ref(database, `Hostel/girls/tenants/${id}`));
+  // };
 
   const resetForm = () => {
     setSelectedRoom('');
@@ -359,7 +367,10 @@ useEffect(() => {
     setTenantId(null);
     setTenantImageUrl('');
     setTenantIdUrl('');
-  setBikeNumber('NA');
+    setBikeNumber('NA');
+    
+    tenantImageInputRef.current.value = null;
+    tenantProofIdRef.current.value = null;
   };
 
 
@@ -405,7 +416,7 @@ useEffect(() => {
 
 
   const columns = [
-    'S. No',
+    'S.No',
     'Image',
     'Name',
     'ID',
@@ -414,19 +425,23 @@ useEffect(() => {
     'Joining Date',
     'Bike',
     'Status',
-    'actions'
+    'Actions'
   ]
+
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
   const rows = tenants.map((tenant, index) => ({
     s_no: index + 1,
     image: tenant.tenantImageUrl,
-    name: tenant.name, // Assuming 'name' property exists in the fetched data
+    name: capitalizeFirstLetter(tenant.name), // Assuming 'name' property exists in the fetched data
     id: tenant.idNumber, // Assuming 'id' property exists in the fetched data
     mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
     joining_date: tenant.dateOfJoin, // Assuming 'payment_date' property exists in the fetched data
     bike_number:tenant.bikeNumber,
-    status: tenant.status,
+    status:capitalizeFirstLetter(tenant.status),
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
       onClick={() => handleEdit(tenant)}
@@ -451,6 +466,8 @@ useEffect(() => {
   const handleClosePopUp = () => {
     setShowModal(false);
     setTenantIdUrl('')
+    setHasBike(false);
+    setBikeNumber("");
   }
 
   const handleTentantRow = (tenant) => {
@@ -542,30 +559,77 @@ useEffect(() => {
   };
   useEffect(() => { fetchExTenants() }, []);
 
+
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [tenantIdToDelete, setTenantIdToDelete] = useState(null);
+
+  const handleExTenantDelete = (id,name) => {
+    setShowConfirmation(true);
+    setTenantIdToDelete(id);
+    setName(name);
+  };
+
+  const handleConfirmDelete = async () => {
+    const removeRef = ref(database, `Hostel/girls/extenants/${tenantIdToDelete}`);
+    remove(removeRef)
+      .then(() => {
+        toast.success('Tenant Deleted', {
+          position: 'top-center',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      })
+      .catch((error) => {
+        toast.error('Error Deleting Tenant: ' + error.message, {
+          position: 'top-center',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
+    setShowConfirmation(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmation(false);
+  };
+
+  
   const exTenantRows = exTenants.map((tenant, index) => ({
-    s_no: index + 1,
+    s_no: index + 1, // Assuming `id` is a unique identifier for each tenant
     image: tenant.tenantImageUrl,
-    name: tenant.name,
+    name: capitalizeFirstLetter(tenant.name),
     id: tenant.idNumber,
     mobile_no: tenant.mobileNo,
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
     joining_date: tenant.dateOfJoin,
-    status: 'vaccated',
-    actions: <button
-      style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
-    // onClick={() => handleEdit(tenant)}
-    // data-bs-toggle="modal"
-    // data-bs-target="#exampleModalTenantsBoys"
-    >
-      view
-    </button>
+    status: 'Vacated',
+    actions: (
+      <button
+        style={{
+          backgroundColor: '#ff8a00',
+          padding: '4px',
+          borderRadius: '5px',
+          color: 'white',
+          border: 'none',
+        }}
+        onClick={() => handleExTenantDelete(tenant.id,tenant.name)} // Pass the `id` of the tenant
+      >
+        Delete
+      </button>
+    ),
   }));
 
   const showExTenantsData = () => {
     setShowExTenants(!showExTenants)
   }
-
-
 
 
   return (
@@ -575,7 +639,7 @@ useEffect(() => {
           <div className='roomlogo-container'>
             <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo' />
           </div>
-          <h1 className='fs-5'>Tenants Management</h1>
+          <h1 className='management-heading'>Tenants Management</h1>
         </div>
         <div className="col-5 col-md-4 search-wrapper">
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={onChangeInput} />
@@ -701,7 +765,7 @@ useEffect(() => {
                         <p>Current Image</p>
                       </div>
                     )}
-                    <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
+                    <input ref={tenantImageInputRef} id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
                     {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
                   <div class="col-md-6">
@@ -718,7 +782,7 @@ useEffect(() => {
                       
                       </object>
                     )}
-                    <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange}  />
+                    <input ref={tenantProofIdRef} id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange}  />
 
                   </div>
                   <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
@@ -838,6 +902,19 @@ useEffect(() => {
         </div>
       </div>
       }
+
+      {showConfirmation && (
+        <div className="confirmation-dialog">
+          <div className='confirmation-card'>
+          <p style={{paddingBottom:'0px',marginBottom:'7px',fontSize:'20px'}}>Are you sure you want to delete the tenant with name <span style={{color:'red'}}>{name}</span>?</p>
+          <p style={{color:'red',fontSize:'15px',textAlign:'center'}}>Note : Once you delete he/she from tenant it can't be restored</p>
+          <div className="buttons">
+            <button onClick={handleConfirmDelete}>Yes</button>
+            <button onClick={handleCancelDelete}>No</button>
+          </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

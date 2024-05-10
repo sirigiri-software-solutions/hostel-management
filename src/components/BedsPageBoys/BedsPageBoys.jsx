@@ -15,6 +15,12 @@ const BedsPageBoys = () => {
   const [searchValue,setSearchValue] = useState("");
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedFloor, setSelectedFloor] = useState('');
+  const [selectedRoomNo,setSelectedRoomNo] = useState('');
+  const [roomNumbersToShow,setRoomNumbersToShow] = useState([]);
+  const [floorNumbersToShow,setFloorNumbersToShow] = useState([]);
+
+ 
+
 
 
 
@@ -73,6 +79,21 @@ const BedsPageBoys = () => {
       });
     });
     setBedsData(allBeds);
+    const allFloornumbers = boysRooms.map(each => (
+      each.floorNumber
+    ))
+ 
+    const uniqueFloornumbers = [...new Set(allFloornumbers)];
+    setFloorNumbersToShow(uniqueFloornumbers);
+    console.log(uniqueFloornumbers,"getting")
+
+    return () => {
+      setSelectedStatus('');
+      setSelectedFloor('');
+      setSelectedRoomNo('');
+      setRoomNumbersToShow([]);
+  };
+
   }, [boysRooms, tenants]); // Depend on rooms and tenants data
 
   const columns = [
@@ -85,13 +106,13 @@ const BedsPageBoys = () => {
     'Status'
   ];
 
-  console.log(bedsData,"DataFromBeds")
+  //console.log(bedsData,"DataFromBeds")
 
   const rows = bedsData.map((beds, index) => ({
-    s_no: index + 1,
-    name:beds.name ,
-    bed_number:beds.bedNumber,
-    room_no:beds.roomNumber,
+   s_no: index + 1,
+   name:beds.name ,
+   bed_number:beds.bedNumber,
+   room_no:beds.roomNumber,
    floor:beds.floorNumber,
    rent:beds.rent,
    status:beds.status
@@ -107,21 +128,63 @@ const BedsPageBoys = () => {
 
   const onChangeFloor = (e) => {
     setSelectedFloor(e.target.value);
+    setSelectedRoomNo(''); 
+  
+    const filteredRows = rows.filter((row)=> (
+      row.floor === e.target.value
+    ));
+    const uniqueRoomNumbers = [...new Set(filteredRows.map(row => row.room_no))];
+    setRoomNumbersToShow(uniqueRoomNumbers);
   };
+  
+  const onChangeRoomNo = (e) => {
+    setSelectedRoomNo(e.target.value);
+  }
+  
+  const compareFloor = (floor1, floor2) => {
+    // Check if both floors are purely numeric
+    const isNumericFloor = /^\d+$/.test(floor1) && /^\d+$/.test(floor2);
+  
+    if (isNumericFloor) {
+      // If both floors are numeric, compare them as numbers
+      const numericPart1 = parseInt(floor1);
+      const numericPart2 = parseInt(floor2);
+      return numericPart1 - numericPart2;
+    } else {
+      // If floors are not purely numeric, compare them as alphanumeric identifiers
+      const prefix1 = floor1.charAt(0);
+      const prefix2 = floor2.charAt(0);
+  
+      // Compare alphanumeric identifiers
+      if (prefix1 !== prefix2) {
+        return prefix1.localeCompare(prefix2);
+      }
+  
+      // Compare numeric parts if alphanumeric identifiers are the same
+      const numericPart1 = parseInt(floor1.substring(1));
+      const numericPart2 = parseInt(floor2.substring(1));
+  
+      return numericPart1 - numericPart2;
+    }
+  };
+  
 
-const filteredRows = rows.filter((row) => {
-  return (
-    (selectedStatus === '' || row.status === selectedStatus) &&
-    (selectedFloor === '' || parseInt(row.floor) === parseInt(selectedFloor)) &&
-    Object.values(row).some((value) =>
-      value.toString().toLowerCase().includes(searchValue.toLowerCase())
-    )
-  );
-});
+  const filteredRows = rows.filter((row) => {
+    return (
+      (selectedStatus === '' || row.status === selectedStatus) &&
+      (selectedFloor === '' || compareFloor(row.floor,selectedFloor) === 0) &&
+      (selectedRoomNo === '' || parseInt(row.room_no) === parseInt(selectedRoomNo)) &&
+      Object.values(row).some((value) =>
+        value.toString().toLowerCase().includes(searchValue.toLowerCase())
+      )
+    );
+  });
+
+
 
  
 
- 
+
   return (
     <div className='h-100'> 
     <>
@@ -130,29 +193,42 @@ const filteredRows = rows.filter((row) => {
         <div className='roomlogo-container'>
           <img src={bedIcon} alt="RoomsIcon" className='roomlogo'/>
         </div>
-        <h1 className='fs-5'>Beds Management</h1>
+        <h1 className='management-heading'>Beds Management</h1>
       </div>
-      <div className="col-6 col-md-4 search-wrapper">
+      <div className="col-12 col-md-4 search-wrapper ">
         <input value={searchValue} onChange={onChangeSearch} type="text" placeholder='Search' className='search-input'/>
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
       </div>
 
-      <div className='col-6 col-md-4 d-flex justify-content-end'>
-        <div>
-      <select className="bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
+      <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end '>
+        <div className='d-flex filterDropDownContainer'>
+          <select className="col-4 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
             <option value="">Status</option>
             <option value="Occupied">Occupied</option>
             <option value="Unoccupied">Unoccupied</option>
           </select>
-          <select className='bedPageFilterDropdown' value={selectedFloor} onChange={onChangeFloor}>
+          <select className='col-4 bedPageFilterDropdown' value={selectedFloor} onChange={onChangeFloor}>
             <option value="">Floor number</option>
-            {boysRooms.map((room) => (
-              <option key={room.floorNumber} value={room.floorNumber}>
-                {room.floorNumber}
+           
+            {
+              floorNumbersToShow.map((floor) => (
+                <option key={floor} value={floor}>
+                  {floor}
+                </option>
+              ))
+            }
+          </select> 
+          <select className='col-4 bedPageFilterDropdown' value={selectedRoomNo} onChange={onChangeRoomNo}>
+            <option value="">Room number</option>
+            {roomNumbersToShow.map((room) => (
+              <option key={room} value={room}>
+                {room}
               </option>
             ))}
+            
           </select>
-          </div>
+          
+        </div>
       </div>
     </div>
 
@@ -190,3 +266,6 @@ const filteredRows = rows.filter((row) => {
 }
 
 export default BedsPageBoys;
+
+
+

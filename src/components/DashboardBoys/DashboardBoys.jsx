@@ -53,17 +53,19 @@ const DashboardBoys = () => {
   const [tenantIdUrl, setTenantIdUrl] = useState('');
   const imageInputRef = useRef(null);
   const idInputRef = useRef(null);
-  const [showForm, setShowForm] = useState(true);
+    const [showForm, setShowForm] = useState(true);
   // const { data } = useContext(DataContext);
   // const onClickCloseBedsPopup = () => {
   //   setPopupOpen(false);
   // };
-  const [hasBike, setHasBike] = useState(false);
-  const [bikeNumber, setBikeNumber] = useState('');
+const [hasBike, setHasBike] = useState(false);
+  const [bikeNumber, setBikeNumber] = useState('NA');
   const handleCheckboxChange = (e) => {
-    setHasBike(e.target.value === 'yes');
-    if (e.target.value === 'no') {
-      setBikeNumber('--N/A--');
+    setHasBike(e.target.value == 'yes');
+    if (e.target.value == 'no') {
+      setHasBike(false);
+      setBikeNumber('NA');
+
     } else {
       setBikeNumber('');
     }
@@ -108,11 +110,11 @@ const DashboardBoys = () => {
     
 }, [showModal]);
 
-const handleRoomsIntegerChange = (event) => {
-  const { name, value } = event.target;
+  const handleRoomsIntegerChange = (event) => {
+    const { name, value } = event.target;
   // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
 
-  let sanitizedValue = value;
+    let sanitizedValue = value;
 
   if (name === 'floorNumber' || name === 'roomNumber') {
     // Allow alphanumeric characters and hyphens only
@@ -124,23 +126,23 @@ const handleRoomsIntegerChange = (event) => {
 
   // if (value === '' || re.test(sanitizedValue)) {
       switch(name) {
-          case 'floorNumber':
-              setFloorNumber(sanitizedValue);
-              break;
-          case 'roomNumber':
-              setRoomNumber(sanitizedValue);
-              break;
-          case 'numberOfBeds':
-              setNumberOfBeds(sanitizedValue);
-              break;
-          case 'bedRent':
-              setBedRent(sanitizedValue);
-              break;
-          default:
-              break;
+        case 'floorNumber':
+          setFloorNumber(sanitizedValue);
+          break;
+        case 'roomNumber':
+          setRoomNumber(sanitizedValue);
+          break;
+        case 'numberOfBeds':
+          setNumberOfBeds(sanitizedValue);
+          break;
+        case 'bedRent':
+          setBedRent(sanitizedValue);
+          break;
+        default:
+          break;
       }
-  // }
-};
+    // }
+  };
 
   // expenses related 
   const [formData, setFormData] = useState({
@@ -261,7 +263,7 @@ const handleRoomsIntegerChange = (event) => {
 
   useEffect(() => {
     const formattedMonth = month.slice(0, 3);
-    const expensesRef = ref(database, `Hostel/boys/expenses/${formattedMonth}-${year}`);
+    const expensesRef = ref(database, `Hostel/boys/expenses/${year}-${formattedMonth}`);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
       let total = 0; // Variable to hold the total expenses
@@ -410,6 +412,7 @@ const handleRoomsIntegerChange = (event) => {
       status,
       tenantImageUrl: imageUrlToUpdate,
       tenantIdUrl: idUrlToUpdate,
+      bikeNumber,
       // tenantIdUrl,
     };
 
@@ -1233,22 +1236,36 @@ const handleRoomsIntegerChange = (event) => {
   <label htmlFor='bikeCheck1' className='bike'>No</label>
 </div>
 
-{hasBike && (
-  <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-    <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
-    <input
-      type="text"
-      id="bikeNumber"
-      
-      className='form-control'
-      placeholder="Enter number plate ID"
-      value={bikeNumber}
-      onChange={(event) => setBikeNumber(event.target.value)}
-      style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px',borderHeight:'40px',marginLeft:'8px' }}
-    />
-  </div>
-)}
+{hasBike ? (
+                    <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <input
+                        type="text"
+                        id="bikeNumber"
 
+                        className='form-control'
+                        placeholder="Enter number plate ID"
+                        value={bikeNumber}
+                        onChange={(event) => setBikeNumber(event.target.value)}
+                        style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                      />
+                    </div>
+                  ):(
+                    <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <input
+                        type="text"
+                        id="bikeNumber"
+
+                        className='form-control'
+                        placeholder="Enter number plate ID"
+                        value={bikeNumber}
+                        onChange={(event) => setBikeNumber(event.target.value)}
+                        style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                      />
+                    </div>
+
+                  )}
     
 
 

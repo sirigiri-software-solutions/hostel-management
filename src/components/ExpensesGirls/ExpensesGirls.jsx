@@ -7,6 +7,7 @@ import "../RoomsBoys/RoomsBoys.css"
 import { onValue } from 'firebase/database';
 import { remove, update, set } from 'firebase/database';
 import { toast } from "react-toastify";
+import './ExpensesGirls.css';
 
 const ExpensesGirls = () => {
 
@@ -72,7 +73,7 @@ window.addEventListener('keydown',handleOutsideClick);
     const date = new Date(dateString);
     const month = date.toLocaleString('default', { month: 'short' }).toLowerCase(); // get short month name
     const year = date.getFullYear();
-    return `${month}-${year}`;
+    return `${year}-${month}`;
   };
 
   const handleSubmit = (e) => {
@@ -163,7 +164,7 @@ window.addEventListener('keydown',handleOutsideClick);
 
   useEffect(() => {
     const formattedMonth = month.slice(0, 3);
-    const expensesRef = ref(database, `Hostel/girls/expenses/${formattedMonth}-${year}`);
+    const expensesRef = ref(database, `Hostel/girls/expenses/${year}-${formattedMonth}`);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
       const loadedExpenses = [];
@@ -390,6 +391,39 @@ window.addEventListener('keydown',handleOutsideClick);
     });
   }
 
+  
+// =======  calculate year expenses
+const [totalAnnualExpenses, setTotalAnnualExpenses] = useState(0);
+useEffect(() => {
+  const monthNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+  let total = 0;
+
+  const fetchExpenses = async () => {
+    const promises = monthNames.map(month => {
+      const monthRef = ref(database, `Hostel/girls/expenses/${year}-${month}`);
+      return new Promise((resolve) => {
+        onValue(monthRef, (snapshot) => {
+          const expenses = snapshot.val();
+          if (expenses) {
+            const monthlyTotal = Object.values(expenses).reduce((acc, { expenseAmount }) => acc + parseFloat(expenseAmount), 0);
+            resolve(monthlyTotal);
+          } else {
+            resolve(0);
+          }
+        }, {
+          onlyOnce: true
+        });
+      });
+    });
+
+    const monthlyTotals = await Promise.all(promises);
+    total = monthlyTotals.reduce((acc, curr) => acc + curr, 0);
+    setTotalAnnualExpenses(total);
+  };
+
+  fetchExpenses();
+}, [year, expenses]);
+
 
 
   return (
@@ -412,7 +446,14 @@ window.addEventListener('keydown',handleOutsideClick);
             </button>
           </div>
         </div>
-        <div className='filterExpense'>
+
+        <div className='filterExpense' style={{width:'100%',display:'flex',justifyContent:'space-between'}}>
+        <div style={{display:'flex',justifyContent:'start'}}>
+          <text><strong>{month} month expenses : {total} </strong>
+          <strong>{year}-total expenses :{totalAnnualExpenses} </strong> </text>
+        </div>
+
+          <div style={{display:'flex'}} >
           <div>
             <select className='filterExpenseField' value={year} onChange={e => setYear(e.target.value)}>
               <option value="2022">2022</option>
@@ -422,7 +463,7 @@ window.addEventListener('keydown',handleOutsideClick);
             </select>
           </div>
           <div>
-            <select className='filterExpenseField' value={month} onChange={e => { setMonth(e.target.value) }}>
+            <select style={{width:'70px'}}className='filterExpenseField' value={month} onChange={e => { setMonth(e.target.value) }}>
               <option value="jan">January</option>
               <option value="feb">February</option>
               <option value="mar">March</option>
@@ -437,14 +478,17 @@ window.addEventListener('keydown',handleOutsideClick);
               <option value="dec">December</option>
             </select>
           </div>
+      </div>       
           {/* Additional UI and functionality here */}
-        </div>
+   </div>
+
         <div>
           <Table columns={columns} rows={filteredRows} />
         </div>
-        <div>
-          <text>Total Expenses : {total}</text>
-        </div>
+        {/* <div>
+          <text><strong>{month} month expenses : {total} </strong>
+          <strong>{year},total expenses :{totalAnnualExpenses} </strong> </text>
+        </div> */}
         <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalExpensesGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">

@@ -495,7 +495,7 @@ Please note that you made your last payment on ${paidDate}.\n`
             <img src={SearchIcon} alt="search-icon" className='search-icon' />
           </div>
           <div className="col-6 col-md-4 d-flex justify-content-end">
-            <button type="button" class="add-button" onClick={()=>{handleAddNew(); setShowForm(true)}} >
+            <button id="roomGirlsPageBtn" type="button" class="add-button" onClick={()=>{handleAddNew(); setShowForm(true)}} >
               Add Rents
             </button>
           </div>

@@ -49,6 +49,8 @@ const TenantsGirls = () => {
   const [showExTenants, setShowExTenants] = useState(false);
   const [singleTenantProofId,setSingleTenantProofId] = useState("");
 
+  const [fileName, setFileName] = useState('');
+
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('NA');
   const [selectedStatus, setSelectedStatus] = useState('');
@@ -193,6 +195,9 @@ useEffect(() => {
   };
   const handleTenantIdChange = (e) => {
     if (e.target.files[0]) {
+      const file = e.target.files[0]
+      console.log(file,"filename");
+      setFileName(file.name)
       setTenantId(e.target.files[0]);
     }
   };
@@ -247,6 +252,7 @@ useEffect(() => {
       tenantImageUrl: imageUrlToUpdate,
       tenantIdUrl: idUrlToUpdate,
       bikeNumber,
+      fileName:fileName
     };
 
     if (isEditing) {
@@ -318,10 +324,8 @@ useEffect(() => {
     // setTenantImage(tenant.tenantImageUrl);
     setTenantImageUrl(tenant.tenantImageUrl || ''); // Set the current image URL
     setTenantIdUrl(tenant.tenantIdUrl || '');
-    // console.log(tenant.tenantImageUrl,"Getting")
-    console.log(tenant.tenantIdUrl,"Getting")
-    //setBikeNumber();
-   // setBikeNumber({bikeNumber});
+   setFileName(tenant.fileName|| '');
+   console.log(tenant,"tenantDetails")
     setHasBike(false);
     setShowModal(true);
     setBikeNumber(tenant.bikeNumber);
@@ -416,6 +420,17 @@ useEffect(() => {
   }, [data]);
 
 
+  const columnsEx = [
+    'S.No',
+    'Image',
+    'Name',
+    'ID',
+    'Mobile No',
+    'Room/Bed No',
+    'Joining Date',
+    'Status',
+    'Actions'
+  ]
   const columns = [
     'S.No',
     'Image',
@@ -483,6 +498,7 @@ useEffect(() => {
     setTenantIdUrl('')
     setHasBike(false);
     setBikeNumber("");
+    setFileName('');
   }
 
   const handleTentantRow = (tenant) => {
@@ -685,7 +701,7 @@ useEffect(() => {
       </div>
 
       <div>
-        {showExTenants ? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
+        {showExTenants ? <Table columns={columnsEx} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
       </div>
 
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
@@ -800,14 +816,9 @@ useEffect(() => {
                       Upload Id:
                     </label>
                     {isEditing && tenantIdUrl && (
-                      <object
-                        data={tenantIdUrl}
-                        type="application/pdf"
-                        width="100%"
-                        height="133px"
-                      >
-                      
-                      </object>
+                      <div>
+                      <p>{fileName}</p>
+                    </div>
                     )}
                     <input ref={tenantProofIdRef} id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange}  />
 

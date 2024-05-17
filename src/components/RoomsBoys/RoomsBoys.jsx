@@ -331,7 +331,7 @@ function capitalizeFirstLetter(string) {
     const rows = rooms.map((room, index) => ({
       s_no: index + 1,
       room_no: room.roomNumber,
-      floor: `${room.floorNumber}`,
+      floor:capitalizeFirstLetter(room.floorNumber),
       noofBeds: room.numberOfBeds,
       bedRent: room.bedRent,
       created_by: capitalizeFirstLetter(room.createdBy),
@@ -374,7 +374,7 @@ function capitalizeFirstLetter(string) {
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
-        <button type="button" className="add-button" onClick={handleAddNew}>
+        <button id="roomPageAddBtn" type="button" className="add-button" onClick={handleAddNew}>
              Add Rooms
           </button>
         </div>

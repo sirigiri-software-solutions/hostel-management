@@ -424,7 +424,9 @@ useEffect(() => {
   fetchExpenses();
 }, [year, expenses]);
 
-
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
   return (
     <div className='h-100'>
@@ -441,7 +443,7 @@ useEffect(() => {
             <img src={SearchIcon} alt="search-icon" className='search-icon' />
           </div>
           <div className="col-6 col-md-4 d-flex justify-content-end">
-            <button type="button" class="add-button" onClick={handleAddNew}>
+            <button id="expensePageAddBtn" type="button" class="add-button" onClick={handleAddNew}>
               Add Expenses
             </button>
           </div>
@@ -449,11 +451,11 @@ useEffect(() => {
 
         <div className='filterExpense' style={{width:'100%',display:'flex',justifyContent:'space-between'}}>
         <div style={{display:'flex',justifyContent:'start'}}>
-          <text><strong>{month} month expenses : {total} </strong>
-          <strong>{year}-total expenses :{totalAnnualExpenses} </strong> </text>
+          <text><strong>{capitalizeFirstLetter(month)} Month Expenses : {total} </strong>
+          <strong>Total Expenses of {year} :{totalAnnualExpenses} </strong> </text>
         </div>
 
-          <div style={{display:'flex'}} >
+          <div style={{display:'flex',marginTop:'10px'}} >
           <div>
             <select className='filterExpenseField' value={year} onChange={e => setYear(e.target.value)}>
               <option value="2022">2022</option>

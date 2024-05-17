@@ -15,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // import Table from '../../Elements/Table';
 import { Modal, Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { FaWhatsapp } from "react-icons/fa";
 
 
 const DashboardBoys = () => {
@@ -34,6 +35,7 @@ const DashboardBoys = () => {
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [totalExpenses, setTotalExpenses] = useState(0);
+  const [currentMonthExpenses, setCurrentMonthExpenses] = useState([])
 
   //===============================
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -55,12 +57,64 @@ const DashboardBoys = () => {
   const [tenantIdUrl, setTenantIdUrl] = useState('');
   const imageInputRef = useRef(null);
   const idInputRef = useRef(null);
-    const [showForm, setShowForm] = useState(true);
+  const [showForm, setShowForm] = useState(true);
   // const { data } = useContext(DataContext);
   // const onClickCloseBedsPopup = () => {
   //   setPopupOpen(false);
   // };
-const [hasBike, setHasBike] = useState(false);
+
+  // Function to send WhatsApp message
+  const [notify, setNotify] = useState(false);
+  const [notifyUserInfo, setNotifyUserInfo] = useState(null);
+  const sendMessage = (tenant, rentRecord) => {
+    const totalFee = rentRecord.totalFee;
+    const tenantName = tenant.name;
+    const amount = rentRecord.due;
+    const dateOfJoin = tenant.dateOfJoin;
+    const dueDate = rentRecord.dueDate;
+    const paidAmount = rentRecord.paidAmount;
+    const paidDate = rentRecord.paidDate;
+
+    const message = `Hi ${tenantName},\n
+  Hope you are doing fine.\n
+  Your total fee is ${totalFee}.\n
+  You have paid ${paidAmount} so far.\n
+  Therefore, your remaining due amount is ${amount}.\n
+  You joined on ${dateOfJoin}, and your due date is ${dueDate}.\n
+  Please note that you made your last payment on ${paidDate}.\n`
+
+    const phoneNumber = tenant.mobileNo; // Replace with the recipient's phone number
+
+    // Check if the phone number starts with '+91' (India's country code)
+    const formattedPhoneNumber = phoneNumber.startsWith('+91') ? phoneNumber : `+91${phoneNumber}`;
+
+    const encodedMessage = encodeURIComponent(message);
+
+
+    // Use web link for non-mobile devices
+    let whatsappLink = `https://wa.me/${formattedPhoneNumber}?text=${encodedMessage}`;
+
+
+    // Open the WhatsApp link
+    window.open(whatsappLink, '_blank');
+  };
+
+  // Event handler for the notify checkbox
+  const handleNotifyCheckbox = (rentData) => {
+    // Toggle the state of the notify checkbox
+    if (notify && notifyUserInfo) {
+      const { tenant, rentRecord } = notifyUserInfo;
+      console.log(tenant, "InNotify")
+      sendMessage(tenant, rentData); // If checkbox is checked and tenant info is available, send WhatsApp message
+    }
+    setNotify(!notify);
+  };
+
+
+
+
+
+  const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('NA');
   const handleCheckboxChange = (e) => {
     setHasBike(e.target.value == 'yes');
@@ -73,7 +127,9 @@ const [hasBike, setHasBike] = useState(false);
     }
   };
 
-  
+
+
+
   const getCurrentMonth = () => {
     const monthNames = [
       t('months.jan'),
@@ -92,70 +148,70 @@ const [hasBike, setHasBike] = useState(false);
     const currentMonth = new Date().getMonth(); // getMonth returns month index (0 = January, 11 = December)
     return monthNames[currentMonth];
   };
-  
+
   const getCurrentYear = () => {
     return new Date().getFullYear().toString(); // getFullYear returns the full year (e.g., 2024)
   };
 
   const [year, setYear] = useState(getCurrentYear());
   const [month, setMonth] = useState(getCurrentMonth());
-  
-  useEffect(() => {
-    const handleOutsideClick = (event) => {
-      console.log("Triggering")
-        if (showModal && event.target.id === "exampleModalRoomsBoys") {
-            setShowModal(false);
-        }
-       
-    };
-    window.addEventListener('click', handleOutsideClick);
-    
-}, [showModal]);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && (event.target.id === "exampleModalRoomsBoys" || event.key === "Escape")) {
-            setShowModal(false);
-        }
-       
+      if (showModal && event.target.id === "exampleModalRoomsBoys") {
+        setShowModal(false);
+      }
+
     };
     window.addEventListener('click', handleOutsideClick);
-    window.addEventListener("keydown",handleOutsideClick)
-    
-}, [showModal]);
+
+  }, [showModal]);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+      if (showModal && (event.target.id === "exampleModalRoomsBoys" || event.key === "Escape")) {
+        setShowModal(false);
+      }
+
+    };
+    window.addEventListener('click', handleOutsideClick);
+    window.addEventListener("keydown", handleOutsideClick)
+
+  }, [showModal]);
 
   const handleRoomsIntegerChange = (event) => {
     const { name, value } = event.target;
-  // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
+    // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
 
     let sanitizedValue = value;
 
-  if (name === 'floorNumber' || name === 'roomNumber') {
-    // Allow alphanumeric characters and hyphens only
-    sanitizedValue = value.replace(/[^a-zA-Z0-9-]/g, '');
-  } else if (name === 'numberOfBeds' || name === 'bedRent') {
-    // Allow numbers only
-    sanitizedValue = value.replace(/[^0-9]/g, '');
-  }
+    if (name === 'floorNumber' || name === 'roomNumber') {
+      // Allow alphanumeric characters and hyphens only
+      sanitizedValue = value.replace(/[^a-zA-Z0-9-]/g, '');
+    } else if (name === 'numberOfBeds' || name === 'bedRent') {
+      // Allow numbers only
+      sanitizedValue = value.replace(/[^0-9]/g, '');
+    }
 
-  // if (value === '' || re.test(sanitizedValue)) {
-      switch(name) {
-        case 'floorNumber':
-          setFloorNumber(sanitizedValue);
-          break;
-        case 'roomNumber':
-          setRoomNumber(sanitizedValue);
-          break;
-        case 'numberOfBeds':
-          setNumberOfBeds(sanitizedValue);
-          break;
-        case 'bedRent':
-          setBedRent(sanitizedValue);
-          break;
-        default:
-          break;
-      }
+    // if (value === '' || re.test(sanitizedValue)) {
+    switch (name) {
+      case 'floorNumber':
+        setFloorNumber(sanitizedValue);
+        break;
+      case 'roomNumber':
+        setRoomNumber(sanitizedValue);
+        break;
+      case 'numberOfBeds':
+        setNumberOfBeds(sanitizedValue);
+        break;
+      case 'bedRent':
+        setBedRent(sanitizedValue);
+        break;
+      default:
+        break;
+    }
     // }
   };
 
@@ -181,10 +237,6 @@ const [hasBike, setHasBike] = useState(false);
       [name]: value
     });
   };
-
-
-
-
 
   const handleBoysRoomsSubmit = (e) => {
     e.preventDefault();
@@ -282,6 +334,7 @@ const [hasBike, setHasBike] = useState(false);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
       let total = 0; // Variable to hold the total expenses
+      const expensesArray = [];
       for (const key in data) {
         const expense = {
           id: key,
@@ -289,7 +342,9 @@ const [hasBike, setHasBike] = useState(false);
           expenseDate: formatDate(data[key].expenseDate)
         };
         total += expense.expenseAmount; // Add expense amount to total
+        expensesArray.push(expense);
       }
+      setCurrentMonthExpenses(expensesArray);
       setTotalExpenses(total); // Set total expenses state
     });
   }, []);
@@ -421,7 +476,7 @@ const [hasBike, setHasBike] = useState(false);
       roomNo: selectedRoom,
       bedNo: selectedBed,
       dateOfJoin,
-      name:name.charAt(0).toUpperCase() + name.slice(1),
+      name: name.charAt(0).toUpperCase() + name.slice(1),
       mobileNo,
       idNumber,
       emergencyContact,
@@ -485,7 +540,7 @@ const [hasBike, setHasBike] = useState(false);
 
   };
 
-  
+
   const [selectedTenant, setSelectedTenant] = useState('');
   const [bedNumber, setBedNumber] = useState('');
   const [totalFee, setTotalFee] = useState('');
@@ -653,6 +708,10 @@ const [hasBike, setHasBike] = useState(false);
           progress: undefined,
         });
         setIsEditing(false); // Reset editing state
+        if (notify) {
+          handleNotifyCheckbox(rentData);
+        }
+        setNotify(false)
       }).catch(error => {
         toast.error(t('toastMessages.errorUpdatingRent') + error.message, {
           position: "top-center",
@@ -678,6 +737,10 @@ const [hasBike, setHasBike] = useState(false);
           progress: undefined,
         });
         setIsEditing(false); // Reset editing state
+        if (notify) {
+          handleNotifyCheckbox(rentData);
+        }
+        setNotify(false)
       }).catch(error => {
         toast.error(t('toastMessages.errorAddingRent') + error.message, {
           position: "top-center",
@@ -778,6 +841,7 @@ const [hasBike, setHasBike] = useState(false);
     setShowModal(false);
     setHasBike(false);
     setBikeNumber("");
+    setNotify(false)
 
   };
 
@@ -785,8 +849,12 @@ const [hasBike, setHasBike] = useState(false);
     const date = new Date(dateString);
     const month = date.toLocaleString('default', { month: 'short' }).toLowerCase(); // get short month name
     const year = date.getFullYear();
-    return `${month}-${year}`;
+    return `${year}-${month}`;
   };
+
+  const onClickCheckbox = () => {
+    setNotify(!notify)
+  }
 
   const expensesHandleSubmit = (e) => {
     e.preventDefault();
@@ -876,16 +944,17 @@ const [hasBike, setHasBike] = useState(false);
       if (tenant) {
         // Set the date of join
         setDateOfJoin(tenant.dateOfJoin || '');
-  
+
         // Calculate the due date (one day less than adding one month)
         const currentDate = new Date(tenant.dateOfJoin); // Get the join date
         const dueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate(-1)); // Add one month and subtract one day
         const formattedDueDate = dueDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
         setDueDate(formattedDueDate);
+        
       }
     }
   }, [selectedTenant, tenants]);
-  
+
 
   const renderFormLayout = () => {
     switch (formLayout) {
@@ -1241,16 +1310,16 @@ const [hasBike, setHasBike] = useState(false);
                         type="text"
                         id="bikeNumber"
 
-                        className='form-control'
-                        placeholder="Enter number plate ID"
-                        value={bikeNumber}
-                        onChange={(event) => setBikeNumber(event.target.value)}
-                        style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
-                      />
-                    </div>
+                  className='form-control'
+                  placeholder="Enter number plate ID"
+                  value={bikeNumber}
+                  onChange={(event) => setBikeNumber(event.target.value)}
+                  style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                />
+              </div>
 
-                  )}
-    
+            )}
+
 
 
             {/* ===== */}
@@ -1312,6 +1381,7 @@ const [hasBike, setHasBike] = useState(false);
   }
 
   const [popupOpen, setPopupOpen] = useState(false);
+  const [expensePopupOpen, setExpensePopupOpen] = useState(false);
   const [bedsData, setBedsData] = useState([]);
   const handleCardClick = (item) => {
     if (item.heading === t('dashboard.totalBeds')) {
@@ -1320,20 +1390,23 @@ const [hasBike, setHasBike] = useState(false);
     }
   };
 
- 
+
   const onClickCloseBedsPopup = () => {
     setPopupOpen(false);
   }
-  
+  const onClickCloseExpensePopup = () => {
+    setExpensePopupOpen(false);
+  }
+
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("closed")
-      if(popupOpen && (event.target.id === "example"|| event.key==="Escape")){
+      if (popupOpen && (event.target.id === "example" || event.key === "Escape")) {
         setPopupOpen(false)
       }
     };
     window.addEventListener('click', handleOutsideClick)
-    window.addEventListener('keydown',handleOutsideClick)
+    window.addEventListener('keydown', handleOutsideClick)
   }, [popupOpen])
 
   useEffect(() => {
@@ -1376,14 +1449,24 @@ const [hasBike, setHasBike] = useState(false);
     // 'Status'
   ];
 
+  const expenseColumns = [
+    'Date',
+    'Expense',
+    'Amount',
+  ];
+  const expenseRows = currentMonthExpenses.map((expense, index) => ({
+    date:expense.expenseDate,
+    expense:expense.expenseName,
+    amount:expense.expenseAmount,
+  }));
   return (
     <div className="dashboardboys">
       <h1 className="heading">{t('dashboard.mens')}</h1>
       <div className="menu">
         {menu.map((item, index) => (
           <div className='cardWithBtnsContainer'>
-            <SmallCard key={index} index={index} item={item} handleClick={handleCardClick}/>
-            <button id="mbladdButton" type="button"  onClick={() => { handleClick(item.btntext) }}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
+            <SmallCard key={index} index={index} item={item} handleClick={handleCardClick} />
+            <button id="mbladdButton" type="button" onClick={() => { handleClick(item.btntext) }}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
           </div>
         ))}
         {/* <div className='button-container'>
@@ -1438,6 +1521,42 @@ const [hasBike, setHasBike] = useState(false);
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseBedsPopup}>{t('common.close')}</Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+      }
+       {expensePopupOpen &&
+        <div className="popupBeds" id="example">
+          <Button variant="primary" onClick={() => setExpensePopupOpen(true)}>Open Popup</Button>
+          <Modal show={expensePopupOpen} onHide={onClickCloseExpensePopup} dialogClassName="modal-90w">
+            <Modal.Header closeButton>
+              <Modal.Title>This Month Expenses</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="custom-modal-body">
+              <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                <thead>
+                  <tr>
+                    {expenseColumns.map((column, index) => (
+                      <th key={index} style={{ border: '1px solid black', padding: '8px' }}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {expenseRows.map((row, index) => (
+                    <tr key={index} style={{ border: '1px solid black' }}>
+                      {Object.values(row).map((value, i) => (
+                        <td key={i} style={{ border: '1px solid black', padding: '8px' }}>{value}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Modal.Body>
+            <div>
+             <p>This Month Total Expenses: {totalExpenses}</p>
+            </div>
+            <Modal.Footer>
+              <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseExpensePopup}>Close</Button>
             </Modal.Footer>
           </Modal>
         </div>

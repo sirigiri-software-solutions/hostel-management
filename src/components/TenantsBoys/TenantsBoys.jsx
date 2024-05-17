@@ -41,6 +41,8 @@ const TenantsBoys = () => {
   const [dueDateOfTenant, setDueDateOfTenant] = useState("");
   const [singleTenantProofId, setSingleTenantProofId] = useState("");
 
+  const [fileName, setFileName] = useState('');
+
   const [boysRooms, setBoysRooms] = useState([]);
   const [exTenants, setExTenants] = useState([]);
   const [showExTenants, setShowExTenants] = useState(false);
@@ -227,6 +229,9 @@ useEffect(() => {
   };
   const handleTenantIdChange = (e) => {
     if (e.target.files[0]) {
+      const file = e.target.files[0]
+      console.log(file,"filename");
+      setFileName(file.name)
       setTenantId(e.target.files[0]);
     }
   };
@@ -277,8 +282,9 @@ useEffect(() => {
       emergencyContact,
       status,
       tenantImageUrl: imageUrlToUpdate,
-      tenantIdUrl: idUrlToUpdate,
+      tenantIdUrl:idUrlToUpdate,
       bikeNumber,
+      fileName:fileName
       // tenantIdUrl,
     };
 
@@ -350,12 +356,14 @@ useEffect(() => {
     setTenantIdUrl(tenant.tenantIdUrl || '');
     setBikeNumber("");
     setHasBike(false);
+    setFileName(tenant.fileName|| '');
+
     
  
 
     setShowModal(true);
     setBikeNumber(tenant.bikeNumber);
-    if(tenant.bikeNumber=='NA')
+    if(tenant.bikeNumber==='NA')
     {
       setHasBike(false);
       setBikeNumber(tenant.bikeNumber);
@@ -411,6 +419,17 @@ useEffect(() => {
     setSearchQuery(e.target.value)
   };
 
+  const columnsEx = [
+    'S. No',
+    'Image',
+    'Name',
+    'ID',
+    'Mobile No',
+    'Room/Bed No',
+    'Joining Date',
+    'Status',
+    'Actions'
+  ]
   const columns = [
     'S. No',
     'Image',
@@ -473,6 +492,7 @@ useEffect(() => {
     setHasBike(false);
     setBikeNumber('');
     console.log("popupclosed");
+    setFileName('');
     
 
   }
@@ -651,6 +671,7 @@ useEffect(() => {
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={handleSearchChange} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
+<<<<<<< HEAD
         <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
           <div className='d-flex align-items-center text-center filterDropDownContainer'>
             <select className="col-3 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
@@ -671,10 +692,24 @@ useEffect(() => {
               </button>}
             </div>
           </div>
+=======
+        <div className="col-7 col-md-4 d-flex justify-content-end gap-1">
+          {showExTenants ? '' : <button type="button" id="tenantsPageaddBtn" class="add-button tenantaddBtn" onClick={() => { handleAddNew(); }} >
+            Add Tenants
+          </button>}
+          {showExTenants ? <button type="button"  class="add-button" onClick={showExTenantsData} >
+            Present-Tenants
+          </button> : <button type="button" id="tenantsPageVactedBtns" class="add-button tenantaddBtn" onClick={showExTenantsData} >
+            Vacated
+          </button>}
+>>>>>>> d4092f2eac9db6e38e54bd25863699067c263af1
         </div>
+       
+
+
       </div>
       <div>
-        {showExTenants ? <Table columns={columns} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
+        {showExTenants ? <Table columns={columnsEx} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
       </div>
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalTenantsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}  >
         <div class="modal-dialog">
@@ -783,17 +818,9 @@ useEffect(() => {
                       Upload Id:
                     </label>
                     {isEditing && tenantIdUrl && (
-                      <div>
-                        <object
-                          data={tenantIdUrl}
-                          type="application/pdf"
-                          width="100%"
-                          height="133px"
-                        >
-                          {/* Anchor tag for downloading the PDF */}
-
-                        </object>
-                      </div>
+                     <div>
+                     <p>{fileName}</p>
+                   </div>
                     )}
                     {/* Show input for uploading ID only if not editing or tenantIdUrl doesn't exist */}
                     

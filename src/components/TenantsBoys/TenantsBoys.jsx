@@ -351,7 +351,7 @@ useEffect(() => {
 
     setShowModal(true);
     setBikeNumber(tenant.bikeNumber);
-    if(tenant.bikeNumber=='NA')
+    if(tenant.bikeNumber==='NA')
     {
       setHasBike(false);
       setBikeNumber(tenant.bikeNumber);

@@ -37,6 +37,7 @@ const DashboardGirls = () => {
 
 
   const [totalExpenses, setTotalExpenses] = useState(0);
+  const [currentMonthExpenses, setCurrentMonthExpenses] = useState([])
 
   //=====================================================
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -324,6 +325,7 @@ const handleRoomsIntegerChange = (event) => {
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
       let total = 0; // Variable to hold the total expenses
+      const expensesArray = [];
       for (const key in data) {
         const expense = {
           id: key,
@@ -331,7 +333,9 @@ const handleRoomsIntegerChange = (event) => {
           expenseDate: formatDate(data[key].expenseDate)
         };
         total += expense.expenseAmount; // Add expense amount to total
+        expensesArray.push(expense);
       }
+      setCurrentMonthExpenses(expensesArray);
       setTotalExpenses(total); // Set total expenses state
     });
   }, []);
@@ -1417,17 +1421,24 @@ const handleRoomsIntegerChange = (event) => {
   }
 
   const [popupOpen, setPopupOpen] = useState(false);
+  const [expensePopupOpen, setExpensePopupOpen] = useState(false);
   const [bedsData, setBedsData] = useState([]);
   const handleCardClick = (item) => {
     if (item.heading === 'Total Beds') {
         // Logic to open the popup for "Total Beds" card
         setPopupOpen(true);
     }
+    if (item.heading === 'Total Expenses') {
+      setExpensePopupOpen(true);
+    }
   };
 
  
   const onClickCloseBedsPopup = () => {
     setPopupOpen(false);
+  }
+  const onClickCloseExpensePopup = () => {
+    setExpensePopupOpen(false);
   }
   
   useEffect(() => {
@@ -1473,12 +1484,21 @@ const handleRoomsIntegerChange = (event) => {
   }));
 
   const columns = [
-    // 'S. No',
     'Bed Number',
     'Room No',
     'Floor',
-    // 'Status'
   ];
+
+  const expenseColumns = [
+    'Date',
+    'Expense',
+    'Amount',
+  ];
+  const expenseRows = currentMonthExpenses.map((expense, index) => ({
+    date:expense.expenseDate,
+    expense:expense.expenseName,
+    amount:expense.expenseAmount,
+  }));
 
  
   return (
@@ -1545,6 +1565,43 @@ const handleRoomsIntegerChange = (event) => {
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseBedsPopup}>Close</Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+      }
+
+{expensePopupOpen &&
+        <div className="popupBeds" id="example">
+          <Button variant="primary" onClick={() => setExpensePopupOpen(true)}>Open Popup</Button>
+          <Modal show={expensePopupOpen} onHide={onClickCloseExpensePopup} dialogClassName="modal-90w">
+            <Modal.Header closeButton>
+              <Modal.Title>This Month Expenses</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="custom-modal-body">
+              <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                <thead>
+                  <tr>
+                    {expenseColumns.map((column, index) => (
+                      <th key={index} style={{ border: '1px solid black', padding: '8px' }}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {expenseRows.map((row, index) => (
+                    <tr key={index} style={{ border: '1px solid black' }}>
+                      {Object.values(row).map((value, i) => (
+                        <td key={i} style={{ border: '1px solid black', padding: '8px' }}>{value}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Modal.Body>
+            <div>
+             <p>This Month Total Expenses: {totalExpenses}</p>
+            </div>
+            <Modal.Footer>
+              <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseExpensePopup}>Close</Button>
             </Modal.Footer>
           </Modal>
         </div>

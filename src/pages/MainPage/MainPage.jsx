@@ -110,7 +110,7 @@ const MainPage = () => {
       document.removeEventListener('mousedown', handleClickOutsideModal);
     };
   }, []);
-  
+
 
  
 

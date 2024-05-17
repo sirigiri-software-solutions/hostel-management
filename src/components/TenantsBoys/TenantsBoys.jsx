@@ -48,6 +48,8 @@ const TenantsBoys = () => {
   const [dueDateOfTenant, setDueDateOfTenant] = useState("");
   const [singleTenantProofId, setSingleTenantProofId] = useState("");
 
+  const [fileName, setFileName] = useState('');
+
   const [boysRooms, setBoysRooms] = useState([]);
   const [exTenants, setExTenants] = useState([]);
   const [showExTenants, setShowExTenants] = useState(false);
@@ -306,6 +308,9 @@ useEffect(() => {
   };
   const handleTenantIdChange = (e) => {
     if (e.target.files[0]) {
+      const file = e.target.files[0]
+      console.log(file,"filename");
+      setFileName(file.name)
       setTenantId(e.target.files[0]);
     }
   };
@@ -356,8 +361,9 @@ useEffect(() => {
       emergencyContact,
       status,
       tenantImageUrl: imageUrlToUpdate,
-      tenantIdUrl: idUrlToUpdate,
+      tenantIdUrl:idUrlToUpdate,
       bikeNumber,
+      fileName:fileName
       // tenantIdUrl,
     };
 
@@ -429,12 +435,14 @@ useEffect(() => {
     setTenantIdUrl(tenant.tenantIdUrl || '');
     setBikeNumber("");
     setHasBike(false);
+    setFileName(tenant.fileName|| '');
+
     
  
 
     setShowModal(true);
     setBikeNumber(tenant.bikeNumber);
-    if(tenant.bikeNumber=='NA')
+    if(tenant.bikeNumber==='NA')
     {
       setHasBike(false);
       setBikeNumber(tenant.bikeNumber);
@@ -556,6 +564,7 @@ setBikeNumber('NA');
     setHasBike(false);
     setBikeNumber('');
     console.log("popupclosed");
+    setFileName('');
     
 
   }
@@ -733,16 +742,19 @@ setBikeNumber('NA');
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={handleSearchChange} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
-        <div className="col-7 col-md-4 d-flex justify-content-end gap-2">
-          {showExTenants ? '' : <button type="button" class="add-button tenantaddBtn" onClick={() => { handleAddNew(); }} >
-          {t('tenantsPage.addTenants')}
+        <div className="col-7 col-md-4 d-flex justify-content-end gap-1">
+          {showExTenants ? '' : <button type="button" id="tenantsPageaddBtn" class="add-button tenantaddBtn" onClick={() => { handleAddNew(); }} >
+            Add Tenants
           </button>}
-          {showExTenants ? <button type="button" class="add-button" onClick={showExTenantsData} >
-          {t('tenantsPage.presentTenants')}
-          </button> : <button type="button" class="add-button tenantaddBtn" onClick={showExTenantsData} >
-          {t('tenantsPage.vacated')}
+          {showExTenants ? <button type="button"  class="add-button" onClick={showExTenantsData} >
+            Present-Tenants
+          </button> : <button type="button" id="tenantsPageVactedBtns" class="add-button tenantaddBtn" onClick={showExTenantsData} >
+            Vacated
           </button>}
         </div>
+       
+
+
       </div>
       <div>
         {showExTenants ? <Table columns={columnsEx} rows={exTenantRows} onClickTentantRow={handleTentantRow} /> : <Table columns={columns} rows={filteredRows} onClickTentantRow={handleTentantRow} />}
@@ -864,17 +876,9 @@ setBikeNumber('NA');
                     <label htmlFor='tenantUploadId' className="form-label">
                     {t('tenantsPage.uploadId')}                   </label>
                     {isEditing && tenantIdUrl && (
-                      <div>
-                        <object
-                          data={tenantIdUrl}
-                          type="application/pdf"
-                          width="100%"
-                          height="133px"
-                        >
-                          {/* Anchor tag for downloading the PDF */}
-
-                        </object>
-                      </div>
+                     <div>
+                     <p>{fileName}</p>
+                   </div>
                     )}
                     {/* Show input for uploading ID only if not editing or tenantIdUrl doesn't exist */}
                     

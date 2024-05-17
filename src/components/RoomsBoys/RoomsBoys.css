@@ -197,3 +197,9 @@
   display:flex;
   justify-content:center;
 }
+@media screen and (max-width:768px){
+  #roomPageAddBtn{
+    width:200px;
+    font-size:16px;
+  }
+}

@@ -324,7 +324,7 @@ useEffect(() => {
     setTenantImageUrl(tenant.tenantImageUrl || ''); // Set the current image URL
     setTenantIdUrl(tenant.tenantIdUrl || '');
    setFileName(tenant.fileName|| '');
-   console.log(tenant,"TenantFilename")
+   console.log(tenant,"tenantDetails")
     setHasBike(false);
     setShowModal(true);
     setBikeNumber(tenant.bikeNumber);

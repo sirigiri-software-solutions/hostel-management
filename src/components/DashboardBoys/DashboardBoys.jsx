@@ -935,6 +935,7 @@ const DashboardBoys = () => {
         const dueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate(-1)); // Add one month and subtract one day
         const formattedDueDate = dueDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
         setDueDate(formattedDueDate);
+        
       }
     }
   }, [selectedTenant, tenants]);

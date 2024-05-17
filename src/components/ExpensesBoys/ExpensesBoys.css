@@ -7,3 +7,9 @@
 
 
 }
+@media screen and (max-width:768px){
+    #expenseBoysPageAddBtn{
+      width:250px;
+      font-size:14px;
+    }
+  }

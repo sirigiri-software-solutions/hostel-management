@@ -15,9 +15,11 @@ import { toast } from "react-toastify";
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from 'react-i18next';
 
 
 const TenantsBoys = () => {
+  const { t } = useTranslation();
   const [selectedRoom, setSelectedRoom] = useState('');
   const [bedOptions, setBedOptions] = useState([]);
   const [selectedBed, setSelectedBed] = useState('');
@@ -256,38 +258,38 @@ useEffect(() => {
 
   const validate = () => {
     let tempErrors = {};
-    tempErrors.selectedRoom = selectedRoom ? "" : "Room number is required.";
-    tempErrors.selectedBed = selectedBed ? "" : "Bed number is required.";
-    tempErrors.dateOfJoin = dateOfJoin ? "" : "Date of join is required.";
+    tempErrors.selectedRoom = selectedRoom ? "" : t('errors.roomNumberRequired');
+    tempErrors.selectedBed = selectedBed ? "" : t('errors.bedNumberRequired');
+    tempErrors.dateOfJoin = dateOfJoin ? "" : t('errors.dateOfJoinRequired');
     if (!name) {
-      tempErrors.name = "Name is required.";
+      tempErrors.name = t('errors.nameRequired');
     } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-      tempErrors.name = "Name must contain only letters and spaces.";
+      tempErrors.name = t('errors.nameInvalid');
     }
     // Validate mobile number
     if (!mobileNo) {
-      tempErrors.mobileNo = "Mobile number is required.";
+      tempErrors.mobileNo = t('errors.mobileNumberRequired');
     } else if (!/^\d{10,13}$/.test(mobileNo)) {
-      tempErrors.mobileNo = "Invalid mobile number";
+      tempErrors.mobileNo = t('errors.mobileNumberInvalid');
     }
-    tempErrors.idNumber = idNumber ? "" : "ID number is required.";
+    tempErrors.idNumber = idNumber ? "" :t('errors.idNumberRequired');
     // Validate emergency contact
     if (!emergencyContact) {
-      tempErrors.emergencyContact = "Emergency contact is required.";
+      tempErrors.emergencyContact = t('errors.emergencyContactRequired');
     } else if (!/^\d{10,13}$/.test(emergencyContact)) {
       tempErrors.emergencyContact = "Invalid emergency contact";
     }
 
     // Check if the selected bed is already occupied
     const isBedOccupied = tenants.some(tenant => {
-      return tenant.roomNo === selectedRoom && tenant.bedNo === selectedBed && tenant.status === "occupied" && tenant.id !== currentId;
+      return tenant.roomNo === selectedRoom && tenant.bedNo === selectedBed && tenant.status === t('tenantsPage.occupied') && tenant.id !== currentId;
     });
 
     if (isBedOccupied) {
-      tempErrors.selectedBed = "This bed is already occupied.";
+      tempErrors.selectedBed = t('errors.bedAlreadyOccupied');
     }
     if (!tenantImage && !tenantImageUrl) {
-      tempErrors.tenantImage = "Tenant image is required.";
+      tempErrors.tenantImage = t('errors.tenantImageRequired');
     }
     setErrors(tempErrors);
     return Object.keys(tempErrors).every((key) => tempErrors[key] === "");
@@ -361,7 +363,7 @@ useEffect(() => {
 
     if (isEditing) {
       await update(ref(database, `Hostel/boys/tenants/${currentId}`), tenantData).then(() => {
-        toast.success("Tenant updated successfully.", {
+        toast.success(t('toastMessages.tenantUpdated'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -372,7 +374,7 @@ useEffect(() => {
         });
         
       }).catch(error => {
-        toast.error("Error update Tenant: " + error.message, {
+        toast.error(t('toastMessages.errorUpdatingTenant') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -384,7 +386,7 @@ useEffect(() => {
       });
     } else {
       await push(ref(database, 'Hostel/boys/tenants'), tenantData).then(() => {
-        toast.success("Tenant added successfully.", {
+        toast.success(t('toastMessages.tenantAddedSuccess'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -395,7 +397,7 @@ useEffect(() => {
         });
         e.target.querySelector('button[type="submit"]').disabled = false;
       }).catch(error => {
-        toast.error("Error adding Tenant: " + error.message, {
+        toast.error(t('toastMessages.terrorAddingTenant') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -538,7 +540,7 @@ setBikeNumber('NA');
     // data-bs-toggle="modal"
     // data-bs-target="#exampleModalTenantsBoys"
     >
-      Edit
+      {t('tenantsPage.edit')}
     </button>
   }));
 
@@ -602,7 +604,7 @@ setBikeNumber('NA');
         await set(newTenantRef, data);
         // Remove the data from the original location
         await remove(tenantRef).then(() => {
-          toast.success("Tenant Vacated", {
+          toast.success(t('tenantsPage.tenantVacated'), {
             position: "top-center",
             autoClose: 2000,
             hideProgressBar: false,
@@ -658,7 +660,7 @@ setBikeNumber('NA');
     const removeRef = ref(database, `Hostel/boys/extenants/${tenantIdToDelete}`);
     remove(removeRef)
       .then(() => {
-        toast.success('Tenant Deleted', {
+        toast.success(t('tenantsPage.tenantDeleted'), {
           position: 'top-center',
           autoClose: 2000,
           hideProgressBar: false,
@@ -669,7 +671,7 @@ setBikeNumber('NA');
         });
       })
       .catch((error) => {
-        toast.error('Error Deleting Tenant: ' + error.message, {
+        toast.error(t('tenantsPage.errorDeletingTenant ') + error.message, {
           position: 'top-center',
           autoClose: 2000,
           hideProgressBar: false,
@@ -725,7 +727,7 @@ setBikeNumber('NA');
           <div className='roomlogo-container'>
             <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo' />
           </div>
-          <h1 className='management-heading'>Tenants Management</h1>
+          <h1 className='management-heading'>{t('tenantsPage.tenantsManagement')}</h1>
         </div>
         <div className="col-5 col-md-4 search-wrapper">
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={handleSearchChange} />
@@ -733,12 +735,12 @@ setBikeNumber('NA');
         </div>
         <div className="col-7 col-md-4 d-flex justify-content-end gap-2">
           {showExTenants ? '' : <button type="button" class="add-button tenantaddBtn" onClick={() => { handleAddNew(); }} >
-            Add Tenants
+          {t('tenantsPage.addTenants')}
           </button>}
           {showExTenants ? <button type="button" class="add-button" onClick={showExTenantsData} >
-            Present-Tenants
+          {t('tenantsPage.presentTenants')}
           </button> : <button type="button" class="add-button tenantaddBtn" onClick={showExTenantsData} >
-            Vacated
+          {t('tenantsPage.vacated')}
           </button>}
         </div>
       </div>
@@ -749,7 +751,7 @@ setBikeNumber('NA');
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title fs-5" id="exampleModalLabel">Add Tenants</h5>
+              <h5 class="modal-title fs-5" id="exampleModalLabel">{t('tenantsPage.addTenants')}</h5>
               <button onClick={handleClosePopUp} className="btn-close" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -757,10 +759,10 @@ setBikeNumber('NA');
                 <form class="row lg-10" onSubmit={handleSubmit}>
                   <div class="col-md-6">
                     <label htmlFor='roomNo' class="form-label">
-                      Room No:
+                    {t('tenantsPage.roomNo')}
                     </label>
                     <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
-                      <option value="">Select a Room</option>
+                      <option value="">{t('tenantsPage.selectRoom')}</option>
                       {boysRooms.map((room) => (
                         <option key={room.roomNumber} value={room.roomNumber}>
                           {room.roomNumber}
@@ -773,10 +775,10 @@ setBikeNumber('NA');
 
                   <div class="col-md-6">
                     <label htmlFor='bedNo' class="form-label">
-                      Bed No:
+                    {t('tenantsPage.bedNo')}
                     </label>
                     <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
-                      <option value="">Select a Bed</option>
+                      <option value="">{t('tenantsPage.selectBed')}</option>
                       {bedOptions.map(bedNumber => (
                         <option key={bedNumber} value={bedNumber}>
                           {bedNumber}
@@ -788,7 +790,7 @@ setBikeNumber('NA');
 
                   <div class="col-md-6">
                     <label htmlFor='dataofJoin' class="form-label">
-                      Date of Join:
+                    {t('tenantsPage.dateOfJoin')}                    
                     </label>
                     <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
 
@@ -796,7 +798,7 @@ setBikeNumber('NA');
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantName' class="form-label">
-                      Name:
+                    {t('tenantsPage.name')}
                     </label>
                     <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
 
@@ -805,7 +807,7 @@ setBikeNumber('NA');
 
                   <div class="col-md-6">
                     <label htmlFor='tenantMobileNo' class="form-label">
-                      Mobile No:
+                    {t('tenantsPage.mobileNo')}                    
                     </label>
                     <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
 
@@ -813,44 +815,43 @@ setBikeNumber('NA');
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantIdNum' class="form-label">
-                      ID Number:
+                    {t('tenantsPage.ID Number')}
                     </label>
                     <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
                     {errors.idNumber && <p style={{ color: 'red' }}>{errors.idNumber}</p>}
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantEmergency' class="form-label">
-                      Emergency Contact:
+                    {t('tenantsPage.emergencyContact')}
                     </label>
                     <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
                     {errors.emergencyContact && <p style={{ color: 'red' }}>{errors.emergencyContact}</p>}
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantStatus' class="form-label">
-                      Status:
+                    {t('tenantsPage.status')}
                     </label>
                     <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
-                      <option value="occupied">Occupied</option>
-                      <option value="unoccupied">Unoccupied</option>
+                      <option value="occupied">{t('tenantsPage.occupied')}</option>
+                      <option value="unoccupied">{t('tenantsPage.unoccupied')}</option>
                     </select>
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantUpload' class="form-label">
-                      Upload Image:
-
+                    {t('tenantsPage.uploadImage')}                    
                     </label>
                      {isEditing && tenantImageUrl && (
                       <div>
                         <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
-                        <p>Current Image</p>
+                        <p>{t('tenantsPage.currentImage')}</p>
                       </div>
                     )}
                   <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
                   {isMobile && (
                   <div>
-                  <p>or</p>
+                  <p>{t('tenantsPage.or')}</p>
                   <div style={{display:'flex',flexDirection:'row'}}>
-                  <p>take photo</p>
+                  <p>{t('tenantsPage.takePhoto')}</p>
                   <FontAwesomeIcon icon={faCamera} size="2x" onClick={takePicture} style={{marginTop:'-7px',paddingLeft:'30px'}}/>
                   {photoUrl && <img src={photoUrl} alt="Captured" style={{ marginTop: 50, maxWidth: '100%', height: 'auto' }} />}
                   </div>
@@ -861,8 +862,7 @@ setBikeNumber('NA');
                   </div>
                   <div className="col-md-6">
                     <label htmlFor='tenantUploadId' className="form-label">
-                      Upload Id:
-                    </label>
+                    {t('tenantsPage.uploadId')}                   </label>
                     {isEditing && tenantIdUrl && (
                       <div>
                         <object
@@ -881,9 +881,9 @@ setBikeNumber('NA');
                       <input ref={tenantProofIdRef} id="tenantUploadId" className="form-control" type="file" onChange={handleTenantIdChange} />
                   {isMobile && (
                   <div>
-                  <p>or</p>
+                  <p>{t('tenantsPage.or')}</p>
                   <div style={{display:'flex',flexDirection:'row'}}>
-                  <p>take photo</p>
+                  <p>{t('tenantsPage.takePhoto')}</p>
                   <FontAwesomeIcon icon={faCamera} size="2x" onClick={takeidPicture} style={{marginTop:'-7px',paddingLeft:'30px'}}/>
                   {idUrl && <img src={idUrl} alt="Captured" style={{ marginTop: 50, maxWidth: '100%', height: 'auto' }} />}
                   </div>
@@ -893,7 +893,7 @@ setBikeNumber('NA');
                     
                   </div> 
                   <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
-                    <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">Do you have a bike?</label>
+                    <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">{t('tenantsPage.doYouHaveBike')}</label>
                     <input
                       type="radio"
                       className="Radio"
@@ -903,7 +903,7 @@ setBikeNumber('NA');
                       onClick={handleCheckboxChange}
                       checked={hasBike}
                     />
-                    <label htmlFor='bikeCheck' className='bike'>Yes</label>
+                    <label htmlFor='bikeCheck' className='bike'>{t('tenantsPage.yes')}</label>
                     <input
                       type="radio"
                       id="bikeCheck1"
@@ -913,12 +913,12 @@ setBikeNumber('NA');
                       checked={!hasBike}
                       style={{ marginLeft: '30px' }}
                     />
-                    <label htmlFor='bikeCheck1' className='bike'>No</label>
+                    <label htmlFor='bikeCheck1' className='bike'>{t('tenantsPage.no')}</label>
                   </div>
 
                   {hasBike ? (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <label class="bikenumber" htmlFor="bikeNumber" >{t('tenantsPage.bikeNumber')}</label>
                       <input
                         type="text"
                         id="bikeNumber"
@@ -932,7 +932,7 @@ setBikeNumber('NA');
                     </div>
                   ):(
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <label class="bikenumber" htmlFor="bikeNumber">{t('tenantsPage.bikeNumber')}</label>
                       <input
                         type="text"
                         id="bikeNumber"
@@ -956,11 +956,11 @@ setBikeNumber('NA');
                   <div className='col-12 text-center mt-3'>
                     {isEditing ? (
                       <div className="d-flex justify-content-center gap-2">
-                        <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Tenant</button>
-                        <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
+                        <button type="button" className="btn btn-warning" onClick={handleSubmit}>{t('tenantsPage.updateTenant')}</button>
+                        <button type="button" className="btn btn-warning" onClick={handleVacate}>{t('tenantsPage.vacateTenant')}</button>
                       </div>
                     ) : (
-                      <button id="tenantAddBtn" className="btn btn-warning" type="submit">Add Tenant</button>
+                      <button id="tenantAddBtn" className="btn btn-warning" type="submit">{t('tenantsPage.addTenants')}</button>
                     )}
                   </div>
                 </form>
@@ -976,7 +976,7 @@ setBikeNumber('NA');
       {userDetailsTenantPopup &&
         <div id="userDetailsTenantPopupId" className='userDetailsTenantPopup'>
           <div className='tenants-dialog-container'>
-            <h1 className="tenants-popup-heading">Tenant Details </h1>
+            <h1 className="tenants-popup-heading">{t('tenantsPage.tenantDetails')} </h1>
             <div className='tenants-popup-mainContainer'>
               <div className='tenants-profile-container'>
                 <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
@@ -1006,11 +1006,11 @@ setBikeNumber('NA');
       {showConfirmation && (
         <div className="confirmation-dialog">
           <div className='confirmation-card'>
-          <p style={{paddingBottom:'0px',marginBottom:'7px',fontSize:'20px'}}>Are you sure you want to delete the tenant with name <span style={{color:'red'}}>{name}</span>?</p>
-          <p style={{color:'red',fontSize:'15px',textAlign:'center'}}>Note : Once you delete he/she from tenant it can't be restored</p>
+          <p style={{paddingBottom:'0px',marginBottom:'7px',fontSize:'20px'}}>t('tenantsPage.confirmationMessage') <span style={{color:'red'}}>{name}</span>?</p>
+          <p style={{color:'red',fontSize:'15px',textAlign:'center'}}>t('tenantsPage.note')</p>
           <div className="buttons">
-            <button onClick={handleConfirmDelete}>Yes</button>
-            <button onClick={handleCancelDelete}>No</button>
+            <button onClick={handleConfirmDelete}>{t('tenantsPage.yes')}</button>
+            <button onClick={handleCancelDelete}>{t('tenantsPage.no')}</button>
           </div>
           </div>
         </div>

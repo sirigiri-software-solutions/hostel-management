@@ -9,21 +9,27 @@ import { FetchData } from './ApiData/FetchData'
 import { DataProvider } from './ApiData/ContextProvider'
 import ProtectedRoute from './ProtectedRoute'
 
+
 const App = () => {
+
   return (
-    <BrowserRouter>
+    <div style={{fontSize:"16px"}}>
+    <BrowserRouter >
       <DataProvider>
         <ToastContainer />
         <Routes>
           <Route index element={<Login />} />
           <Route path="/mainPage" element={
-            <ProtectedRoute>
+            <div style={{fontSize:"16px !important"}}>
+            <ProtectedRoute >
               <MainPage />
-            </ProtectedRoute>} />
+            </ProtectedRoute></div>} />
           <Route path="/signUp" element={<SignUp />} />
         </Routes>
       </DataProvider>
     </BrowserRouter>
+    
+    </div>
   )
 }
 export default App

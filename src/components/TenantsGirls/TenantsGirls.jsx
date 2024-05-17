@@ -14,10 +14,10 @@ import { toast } from "react-toastify";
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
-
+import { useTranslation } from 'react-i18next';
 
 const TenantsGirls = () => {
-
+  const { t } = useTranslation();
   const { data } = useContext(DataContext);
   const [girlsTenants, setGirlsTenants] = useState([]);
 
@@ -725,7 +725,7 @@ setBikeNumber('NA');
           <div className='roomlogo-container'>
             <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo' />
           </div>
-          <h1 className='management-heading'>Tenants Management</h1>
+          <h1 className='management-heading'>{t('tenantsPage.tenantsManagement')}</h1>
         </div>
         <div className="col-5 col-md-4 search-wrapper">
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={onChangeInput} />
@@ -733,14 +733,14 @@ setBikeNumber('NA');
         </div>
         <div className="col-7 col-md-4 d-flex justify-content-end gap-2">
           {showExTenants ? '' : <button type="button" class="add-button tenantaddBtn" onClick={() => { handleAddNew() }} >
-            Add Tenants
+          {t('tenantsPage.addTenants')}
           </button>}
-          {showExTenants ? <button type="button" class="add-button " onClick={showExTenantsData} >
-            Present-Tenants
+          {showExTenants ? <button type="button" class="add-button" onClick={showExTenantsData} >
+          {t('tenantsPage.presentTenants')}
           </button> : <button type="button" class="add-button tenantaddBtn" onClick={showExTenantsData} >
-            Vacated
-          </button>}
-        </div>
+          {t('tenantsPage.vacated')}
+          </button>}        
+          </div>
       </div>
 
       <div>
@@ -751,8 +751,8 @@ setBikeNumber('NA');
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">Add Tenants</h1>
-              <button onClick={handleClosePopUp} type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h5 class="modal-title fs-5" id="exampleModalLabel">{t('tenantsPage.addTenants')}</h5>
+            <button onClick={handleClosePopUp} type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
               <div className="container-fluid">
@@ -760,10 +760,10 @@ setBikeNumber('NA');
                 <form class="row lg-10" onSubmit={handleSubmit}>
                   <div class="col-md-6">
                     <label htmlFor='roomNo' class="form-label">
-                      Room No:
+                    {t('tenantsPage.roomNo')}
                     </label>
                     <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
-                      <option value="">Select a Room</option>
+                      <option value="">{t('tenantsPage.selectRoom')}</option>                   
                       {girlsRooms.map((room) => (
                         <option key={room.roomNumber} value={room.roomNumber}>
                           {room.roomNumber}
@@ -776,11 +776,11 @@ setBikeNumber('NA');
 
                   <div class="col-md-6">
                     <label htmlFor='bedNo' class="form-label">
-                      Bed No:
+                    {t('tenantsPage.bedNo')}
                     </label>
                     <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
-                      <option value="">Select a Bed</option>
-                      {bedOptions.map(bedNumber => (
+                      <option value="">{t('tenantsPage.selectBed')}</option>
+                     {bedOptions.map(bedNumber => (
                         <option key={bedNumber} value={bedNumber}>
                           {bedNumber}
                         </option>
@@ -792,7 +792,7 @@ setBikeNumber('NA');
 
                   <div class="col-md-6">
                     <label htmlFor='dataofJoin' class="form-label">
-                      Date of Join:
+                    {t('tenantsPage.dateOfJoin')}                    
                     </label>
                     <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
 
@@ -800,7 +800,8 @@ setBikeNumber('NA');
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantName' class="form-label">
-                      Name:
+                    {t('tenantsPage.name')}
+                    
                     </label>
                     <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
 
@@ -809,7 +810,7 @@ setBikeNumber('NA');
 
                   <div class="col-md-6">
                     <label htmlFor='tenantMobileNo' class="form-label">
-                      Mobile No:
+                    {t('tenantsPage.mobileNo')}                    
                     </label>
                     <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
 
@@ -817,7 +818,8 @@ setBikeNumber('NA');
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantIdNum' class="form-label">
-                      ID Number:
+                    {t('tenantsPage.ID Number')}
+                   
                     </label>
                     <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
 
@@ -825,31 +827,30 @@ setBikeNumber('NA');
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantEmergency' class="form-label">
-                      Emergency Contact:
+                    {t('tenantsPage.emergencyContact')}
                     </label>
                     <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
-
                     {errors.emergencyContact && <p style={{ color: 'red' }}>{errors.emergencyContact}</p>}
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantStatus' class="form-label">
-                      Status:
+                    {t('tenantsPage.status')}
                     </label>
                     <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
-                      <option value="occupied">Occupied</option>
-                      <option value="unoccupied">Unoccupied</option>
+                    <option value="occupied">{t('tenantsPage.occupied')}</option>
+                    <option value="unoccupied">{t('tenantsPage.unoccupied')}</option>
                     </select>
 
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantUpload' class="form-label">
-                      Upload Image:
+                    {t('tenantsPage.uploadImage')}                    
                     </label>
-                    {isEditing && tenantImageUrl && (
+                     {isEditing && tenantImageUrl && (
                       <div>
                         <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
-                        <p>Current Image</p>
-                      </div>
+                        <p>{t('tenantsPage.currentImage')}</p>
+                    </div>
                     )}
                   <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
                   {isMobile && (

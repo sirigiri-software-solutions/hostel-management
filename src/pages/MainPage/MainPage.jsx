@@ -70,6 +70,12 @@ const MainPage = () => {
       name: "Expenses",
       icon: ExpensesImage
     },
+    {
+      id: 7,
+      path: "/Settings",
+      name: "Settings",
+      icon: SettingsImage
+    },
 
   ]
   const [isModalOpen, setIsModalOpen] = useState(false);

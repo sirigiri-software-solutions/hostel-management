@@ -5,9 +5,12 @@ import SearchIcon from '../../images/Icons (9).png'
 import { database, push, ref } from "../../firebase"; 
 import { onValue } from 'firebase/database';
 import "../BedsPageBoys/BedsPageBoys.css"
+import { useTranslation } from 'react-i18next';
+
 
 const BedsPageBoys = () => {
 
+  const { t } = useTranslation(['bedsPage','common']);
   const [boysRooms, setBoysRooms]= useState([])
   const [bedsData, setBedsData] = useState([]);
   const [tenants, setTenants] = useState([]);
@@ -193,7 +196,7 @@ const BedsPageBoys = () => {
         <div className='roomlogo-container'>
           <img src={bedIcon} alt="RoomsIcon" className='roomlogo'/>
         </div>
-        <h1 className='management-heading'>Beds Management</h1>
+        <h1 className='management-heading'>{t('bedsPage.bedsManagement')}</h1>
       </div>
       <div className="col-12 col-md-4 search-wrapper ">
         <input value={searchValue} onChange={onChangeSearch} type="text" placeholder='Search' className='search-input'/>
@@ -203,12 +206,12 @@ const BedsPageBoys = () => {
       <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end '>
         <div className='d-flex filterDropDownContainer'>
           <select className="col-4 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
-            <option value="">Status</option>
-            <option value="Occupied">Occupied</option>
-            <option value="Unoccupied">Unoccupied</option>
+            <option value="">{t('bedsPage.status')}</option>
+            <option value="Occupied">{t('bedsPage.occupied')}</option>
+              <option value="Unoccupied">{t('bedsPage.unoccupied')}</option>
           </select>
           <select className='col-4 bedPageFilterDropdown' value={selectedFloor} onChange={onChangeFloor}>
-            <option value="">Floor number</option>
+            <option value="">{t('bedsPage.floorNumber')}</option>
            
             {
               floorNumbersToShow.map((floor) => (
@@ -219,7 +222,7 @@ const BedsPageBoys = () => {
             }
           </select> 
           <select className='col-4 bedPageFilterDropdown' value={selectedRoomNo} onChange={onChangeRoomNo}>
-            <option value="">Room number</option>
+            <option value="">{t('bedsPage.roomNumber')}</option>
             {roomNumbersToShow.map((room) => (
               <option key={room} value={room}>
                 {room}
@@ -242,19 +245,19 @@ const BedsPageBoys = () => {
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title'</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div className="container-fluid">
               <h1 className='text-center mb-2 fs-5'>
-                Create Beds
+                {t('bedsPage.createBeds')}
               </h1>
             </div>
           </div>
           <div className="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{('Close')}</button>
+            <button type="button" class="btn btn-primary">{t('bedsPage.saveChanges')}</button>
           </div>
         </div>
       </div>

@@ -18,9 +18,10 @@ import { Modal, Button } from 'react-bootstrap';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
-
+import { useTranslation } from 'react-i18next';
  
 const DashboardGirls = () => {
+  const {t}=useTranslation(['dashboard','common'])
   const [modelText, setModelText] = useState('');
   const [formLayout, setFormLayout] = useState('');
   const [floorNumber, setFloorNumber] = useState('');
@@ -940,35 +941,35 @@ const handleRoomsIntegerChange = (event) => {
 
           <form className="row g-3" onSubmit={handleGirlsRoomsSubmit}>
             <div className="col-md-6">
-              <label htmlFor="inputNumber" className="form-label">Floor Number</label>
+              <label htmlFor="inputNumber" className="form-label">{t('Floor Number')}</label>
               <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange} />
               {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRent" className="form-label">Room Number</label>
+              <label htmlFor="inputRent" className="form-label">{t('Room Number')}</label>
               <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} />
               {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
+              <label htmlFor="inputRooms" className="form-label">{t('Number of Beds')}</label>
               <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} />
               {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
+              <label htmlFor="inputStatus" className="form-label">{t('Bed Rent')}</label>
               <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} />
               {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRole" className="form-label">Created By</label>
+              <label htmlFor="inputRole" className="form-label">{t('Created By')}</label>
               <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
 
-                <option value="admin">Admin</option>
-                <option value="sub-admin">Sub-admin</option>
+                <option value="admin">{t('Admin')}</option>
+                <option value="sub-admin">{t('Sub-admin')}</option>
               </select>
             </div>
             <div className="col-12 text-center">
-              <button type="submit" className="btn btn-warning" onClick={handleGirlsRoomsSubmit}>Create Room</button>
+              <button type="submit" className="btn btn-warning" onClick={handleGirlsRoomsSubmit}>{t('Create Room')}</button>
             </div>
           </form>
         )
@@ -977,10 +978,10 @@ const handleRoomsIntegerChange = (event) => {
           <div >
             <div className='monthlyDailyButtons'>
               <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(true)}>
-                <text>Monthly</text>
+                <text>{t('Monthly')}</text>
               </div>
               <div className={!showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(false)}>
-                <text>Daily</text>
+                <text>{t('Daily')}</text>
               </div>
             </div>
             {showForm ?
@@ -988,7 +989,7 @@ const handleRoomsIntegerChange = (event) => {
                 <form class="row lg-10" onSubmit={handleRentSubmit}>
                   <div class='col-12 mb-3'>
                     <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
-                      <option value="">Select a Tenant *</option>
+                      <option value="">{t('Select a Tenant *')}</option>
                       {/* {availableTenants.map(tenant => (
                   <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
                 ))} */}
@@ -1006,33 +1007,33 @@ const handleRoomsIntegerChange = (event) => {
                     {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                    <label htmlFor='roomNo' class="form-label">{t('Room Number:')}</label>
                     <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                    <label htmlFor='BedNumber' class="form-label">{t('Bed Number:')}</label>
                     <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                    <label htmlFor='TotalFee' class="form-label">{t('Total Fee:')}</label>
                     <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                    <label htmlFor="PaidAmount" class="form-label">{t('Paid Amount:')}</label>
                     <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                     {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="Due" class="form-label">Due:</label>
+                    <label htmlFor="Due" class="form-label">{t('Due:')}</label>
                     <input id="Due" class="form-control" type="number" value={due} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                    <label htmlFor='DateOfJoin' class="form-label">{t('Date of Join:')}</label>
                     <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
                     />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                    <label htmlFor='PaidDate' class="form-label">{t('Paid Date:')}</label>
                     <input
                       id="PaidDate"
                       class="form-control"
@@ -1043,7 +1044,7 @@ const handleRoomsIntegerChange = (event) => {
                     {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                    <label htmlFor="DueDate" class="form-label">{t('Due Date:')}</label>
                     <input
                       id="DueDate"
                       class="form-control"
@@ -1063,7 +1064,7 @@ const handleRoomsIntegerChange = (event) => {
                       // onChange={onClickCheckbox} // Toggle the state on change
                       />
                       <label className="form-check-label" htmlFor="notifyCheckbox">
-                        Notify
+                        {t('Notify')}
                       </label>
                       {/* <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} /> */}
                     </div>
@@ -1077,7 +1078,7 @@ const handleRoomsIntegerChange = (event) => {
                 <form class="row lg-10" onSubmit={handleRentSubmit}>
                   <div class='col-12 mb-3'>
                     <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
-                      <option value="">Select a Tenant *</option>
+                      <option value="">{t('Select a Tenant *')}</option>
                       {/* {availableTenants.map(tenant => (
                                     <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
                                   ))} */}
@@ -1095,33 +1096,33 @@ const handleRoomsIntegerChange = (event) => {
                     {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                    <label htmlFor='roomNo' class="form-label">{t('Room Number:')}</label>
                     <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                    <label htmlFor='BedNumber' class="form-label">{t('Bed Number:')}</label>
                     <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                    <label htmlFor='TotalFee' class="form-label">{t('Total Fee:')}</label>
                     <input id="TotalFee" class="form-control" type="number" value={totalFee} onChange={e => setTotalFee(e.target.value)} />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                    <label htmlFor="PaidAmount" class="form-label">{t('Paid Amount:')}</label>
                     <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                     {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="Due" class="form-label">Due:</label>
+                    <label htmlFor="Due" class="form-label">{t('Due:')}</label>
                     <input id="Due" class="form-control" type="number" value={due} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                    <label htmlFor='DateOfJoin' class="form-label">{t('Date of Join:')}</label>
                     <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
                     />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                    <label htmlFor='PaidDate' class="form-label">{t('Paid Date:')}</label>
                     <input
                       id="PaidDate"
                       class="form-control"
@@ -1132,7 +1133,7 @@ const handleRoomsIntegerChange = (event) => {
                     {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                    <label htmlFor="DueDate" class="form-label">{t('Due Date:')}</label>
                     <input
                       id="DueDate"
                       class="form-control"
@@ -1152,7 +1153,7 @@ const handleRoomsIntegerChange = (event) => {
                       // onChange={onClickCheckbox} // Toggle the state on change
                       />
                       <label className="form-check-label" htmlFor="notifyCheckbox">
-                        Notify
+                        {t('Notify')}
                       </label>
                       {/* <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} /> */}
                     </div>
@@ -1169,9 +1170,9 @@ const handleRoomsIntegerChange = (event) => {
         return (
           <form class="row lg-10" onSubmit={handleTenantSubmit}>
             <div class="col-md-6">
-              <label htmlFor='roomNo' class="form-label">Room No:</label>
+              <label htmlFor='roomNo' class="form-label">{t('Room No:')}</label>
               <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
-                <option value="">Select a Room</option>
+                <option value="">{t('Select a Room')}</option>
                 {girlsRooms.map((room) => (
                   <option key={room.roomNumber} value={room.roomNumber}>
                     {room.roomNumber}
@@ -1184,10 +1185,10 @@ const handleRoomsIntegerChange = (event) => {
 
             <div class="col-md-6">
               <label htmlFor='bedNo' class="form-label">
-                Bed No:
+                {t('Bed No:')}
               </label>
               <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
-                <option value="">Select a Bed</option>
+                <option value="">{t('Select a Bed')}</option>
                 {bedOptions.map(bedNumber => (
                   <option key={bedNumber} value={bedNumber}>
                     {bedNumber}
@@ -1199,7 +1200,7 @@ const handleRoomsIntegerChange = (event) => {
             </div>
             <div class="col-md-6">
               <label htmlFor='dataofJoin' class="form-label">
-                Date of Join:
+                {t('Date of Join:')}
               </label>
               <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
 
@@ -1207,7 +1208,7 @@ const handleRoomsIntegerChange = (event) => {
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantName' class="form-label">
-                Name:
+                {t('Name:')}
               </label>
               <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
 
@@ -1215,7 +1216,7 @@ const handleRoomsIntegerChange = (event) => {
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantMobileNo' class="form-label">
-                Mobile No:
+                {t('Mobile No:')}
               </label>
               <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
 
@@ -1223,7 +1224,7 @@ const handleRoomsIntegerChange = (event) => {
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantIdNum' class="form-label">
-                ID Number:
+                {t('ID Number:')}
               </label>
               <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
 
@@ -1231,7 +1232,7 @@ const handleRoomsIntegerChange = (event) => {
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantEmergency' class="form-label">
-                Emergency Contact:
+                {t('Emergency Contact:')}
               </label>
               <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
 
@@ -1239,17 +1240,17 @@ const handleRoomsIntegerChange = (event) => {
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantStatus' class="form-label">
-                Status:
+                {t('Status:')}
               </label>
               <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
-                <option value="occupied">Occupied</option>
-                <option value="unoccupied">Unoccupied</option>
+                <option value="occupied">{t('Occupied')}</option>
+                <option value="unoccupied">{t('Unoccupied')}</option>
               </select>
 
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantUpload' class="form-label">
-                Upload Image:
+                {t('Upload Image:')}
               </label>
               {isEditing && tenantImageUrl && (
                 <div>

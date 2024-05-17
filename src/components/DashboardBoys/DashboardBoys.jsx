@@ -18,10 +18,10 @@ import { Camera, CameraResultType } from '@capacitor/camera';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { FaWhatsapp } from "react-icons/fa";
-
+import { useTranslation } from 'react-i18next';
 
 const DashboardBoys = () => {
-
+  const {t}=useTranslation(['dashboard','common'])
   const [modelText, setModelText] = useState('');
   const [formLayout, setFormLayout] = useState('');
 
@@ -1016,34 +1016,34 @@ const [hasBike, setHasBike] = useState(false);
         return (
           <form className="row g-3" onSubmit={handleBoysRoomsSubmit}>
             <div className="col-md-6">
-              <label htmlFor="inputNumber" className="form-label">Floor Number</label>
+              <label htmlFor="inputNumber" className="form-label">{t('dashboard.floorNumber')}</label>
               <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange}  />
               {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRent" className="form-label">Room Number</label>
+              <label htmlFor="inputRent" className="form-label">{t('dashboard.roomNumber')}</label>
               <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange}  />
               {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
+              <label htmlFor="inputRooms" className="form-label">{t('dashboard.numberOfBeds')}</label>
               <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange}  />
               {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
+              <label htmlFor="inputStatus" className="form-label">{t('dashboard.bedRent')}</label>
               <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange}  />
               {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRole" className="form-label">Created By</label>
+              <label htmlFor="inputRole" className="form-label">{t('dashboard.createdBy')}</label>
               <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
-                <option value="admin">Admin</option>
-                <option value="sub-admin">Sub-admin</option>
+                <option value="admin">{t('dasboard.admin')}</option>
+                <option value="sub-admin">{t('dashboard.subAdmin')}</option>
               </select>
             </div>
             <div className="col-12 text-center">
-              <button type="submit" className="btn btn-warning" onClick={handleBoysRoomsSubmit}>Create Room</button>
+              <button type="submit" className="btn btn-warning" onClick={handleBoysRoomsSubmit}>{t('dashboard.createRoom')}</button>
             </div>
           </form>
         )
@@ -1052,10 +1052,10 @@ const [hasBike, setHasBike] = useState(false);
           <div>
             <div className='monthlyDailyButtons'>
               <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(true)}>
-                <text>Monthly</text>
+                <text>{t('dashboard.monthly')}</text>
               </div>
               <div className={!showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(false)}>
-                <text>Daily</text>
+                <text>{t('dashboard.daily')}</text>
               </div>
             </div>
             {showForm ?
@@ -1063,7 +1063,7 @@ const [hasBike, setHasBike] = useState(false);
                 <form class="row lg-10" onSubmit={handleRentSubmit}>
                   <div class='col-12 mb-3'>
                     <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
-                      <option value="">Select a Tenant *</option>
+                      <option value="">{t('dashboard.selectTenant *')}</option>
                       {/* {availableTenants.map(tenant => (
                           <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
                         ))} */}
@@ -1078,33 +1078,33 @@ const [hasBike, setHasBike] = useState(false);
                     {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                    <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNumber')}</label>
                     <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                    <label htmlFor='BedNumber' class="form-label">{t('dashboard.bedNumber')}</label>
                     <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                    <label htmlFor='TotalFee' class="form-label">{t('dashboard.totalFee')}</label>
                     <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                    <label htmlFor="PaidAmount" class="form-label">{t('dahboard.paidAmount')}</label>
                     <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                     {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="Due" class="form-label">Due:</label>
+                    <label htmlFor="Due" class="form-label">{t('dashboard.due')}</label>
                     <input id="Due" class="form-control" type="number" value={due} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                    <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}</label>
                     <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
                     />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                    <label htmlFor='PaidDate' class="form-label">{t('dashboard.paidDate')}</label>
                     <input
                       id="PaidDate"
                       class="form-control"
@@ -1115,7 +1115,7 @@ const [hasBike, setHasBike] = useState(false);
                     {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                    <label htmlFor="DueDate" class="form-label">{t('dashboard.dueDate')}</label>
                     <input
                       id="DueDate"
                       class="form-control"
@@ -1136,7 +1136,7 @@ const [hasBike, setHasBike] = useState(false);
                       // Toggle the state on change
                       />
                       <label className="form-check-label" htmlFor="notifyCheckbox">
-                        Notify
+                        {t('dahboard.notify')}
                       </label>
                       <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
                     </div>
@@ -1150,7 +1150,7 @@ const [hasBike, setHasBike] = useState(false);
                 <form class="row lg-10" onSubmit={handleRentSubmit}>
                   <div class='col-12 mb-3'>
                     <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
-                      <option value="">Select a Tenant *</option>
+                      <option value="">{t('dashboard.selectTenant')}</option>
                       {/* {availableTenants.map(tenant => (
                           <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
                         ))} */}
@@ -1165,33 +1165,33 @@ const [hasBike, setHasBike] = useState(false);
                     {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                    <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNumber')}</label>
                     <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                    <label htmlFor='BedNumber' class="form-label">{t('dashboard.bedNumber')}</label>
                     <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                    <label htmlFor='TotalFee' class="form-label">{t('dashboard.totalFee')}</label>
                     <input id="TotalFee" class="form-control" type="number" value={totalFee} onChange={e => setTotalFee(e.target.value)} />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                    <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}</label>
                     <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                     {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="Due" class="form-label">Due:</label>
+                    <label htmlFor="Due" class="form-label">{t('dashboard.due:')}</label>
                     <input id="Due" class="form-control" type="number" value={due} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                    <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}</label>
                     <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
                     />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                    <label htmlFor='PaidDate' class="form-label">{t('dashboard.paidDate')}</label>
                     <input
                       id="PaidDate"
                       class="form-control"
@@ -1202,7 +1202,7 @@ const [hasBike, setHasBike] = useState(false);
                     {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                    <label htmlFor="DueDate" class="form-label">{t('Due Date:')}</label>
                     <input
                       id="DueDate"
                       class="form-control"
@@ -1223,7 +1223,7 @@ const [hasBike, setHasBike] = useState(false);
                       // Toggle the state on change
                       />
                       <label className="form-check-label" htmlFor="notifyCheckbox">
-                        Notify
+                        {t('Notify')}
                       </label>
                       <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
                     </div>
@@ -1240,9 +1240,9 @@ const [hasBike, setHasBike] = useState(false);
         return (
           <form class="row lg-10" onSubmit={handleTenantSubmit}>
             <div class="col-md-6">
-              <label htmlFor='roomNo' class="form-label">Room No:</label>
+              <label htmlFor='roomNo' class="form-label">{t('Room No:')}</label>
               <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
-                <option value="">Select a Room</option>
+                <option value="">{t('Select a Room')}</option>
                 {boysRooms.map((room) => (
                   <option key={room.roomNumber} value={room.roomNumber}>
                     {room.roomNumber}
@@ -1254,10 +1254,10 @@ const [hasBike, setHasBike] = useState(false);
 
             <div class="col-md-6">
               <label htmlFor='bedNo' class="form-label">
-                Bed No:
+                {t('Bed No:')}
               </label>
               <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
-                <option value="">Select a Bed</option>
+                <option value="">{t('Select a Bed')}</option>
                 {bedOptions.map(bedNumber => (
                   <option key={bedNumber} value={bedNumber}>
                     {bedNumber}
@@ -1269,7 +1269,7 @@ const [hasBike, setHasBike] = useState(false);
             </div>
             <div class="col-md-6">
               <label htmlFor='dataofJoin' class="form-label">
-                Date of Join:
+                {t('Date of Join:')}
               </label>
               <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
 
@@ -1277,7 +1277,7 @@ const [hasBike, setHasBike] = useState(false);
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantName' class="form-label">
-                Name:
+               {t(' Name:')}
               </label>
               <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
 
@@ -1285,7 +1285,7 @@ const [hasBike, setHasBike] = useState(false);
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantMobileNo' class="form-label">
-                Mobile No:
+                {t('Mobile No:')}
               </label>
               <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
 
@@ -1293,7 +1293,7 @@ const [hasBike, setHasBike] = useState(false);
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantIdNum' class="form-label">
-                ID Number:
+                {t('ID Number:')}
               </label>
               <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
 
@@ -1301,7 +1301,7 @@ const [hasBike, setHasBike] = useState(false);
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantEmergency' class="form-label">
-                Emergency Contact:
+                {t('Emergency Contact:')}
               </label>
               <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
 
@@ -1309,30 +1309,30 @@ const [hasBike, setHasBike] = useState(false);
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantStatus' class="form-label">
-                Status:
+                {t('Status:')}
               </label>
               <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
-                <option value="occupied">Occupied</option>
-                <option value="unoccupied">Unoccupied</option>
+                <option value="occupied">{t('Occupied')}</option>
+                <option value="unoccupied">{t('Unoccupied')}</option>
               </select>
 
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantUpload' class="form-label">
-                Upload Image:
+                {t('Upload Image:')}
               </label>
               {isEditing && tenantImageUrl && (
                 <div>
                   <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
-                  <p>Current Image</p>
+                  <p>{t('Current Image')}</p>
                 </div>
               )}
               <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required />
               {isMobile && (
                   <div>
-                  <p>or</p>
+                  <p>{t('or')}</p>
                   <div style={{display:'flex',flexDirection:'row'}}>
-                  <p>take photo</p>
+                  <p>{t('take photo')}</p>
                   <FontAwesomeIcon icon={faCamera} size="2x" onClick={takePicture} style={{marginTop:'-7px',paddingLeft:'30px'}}/>
                   {photoUrl && <img src={photoUrl} alt="Captured" style={{ marginTop: 50, maxWidth: '100%', height: 'auto' }} />}
                   </div>
@@ -1342,7 +1342,7 @@ const [hasBike, setHasBike] = useState(false);
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantUploadId' class="form-label">
-                Upload Id:
+                {t('Upload Id:')}
               </label>
               {isEditing && tenantIdUrl && (
                 <object
@@ -1351,7 +1351,7 @@ const [hasBike, setHasBike] = useState(false);
                   width="50%"
                   height="200px"
                 >
-                  <a href={tenantIdUrl}>Download PDF</a>
+                  <a href={tenantIdUrl}>{t('Download PDF')}</a>
                 </object>
               )}
               <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
@@ -1373,7 +1373,7 @@ const [hasBike, setHasBike] = useState(false);
 
 
   <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
-  <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">Do you have a bike?</label>
+  <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">{t('Do you have a bike?')}</label>
   <input
     type="radio"
     className="Radio"
@@ -1383,7 +1383,7 @@ const [hasBike, setHasBike] = useState(false);
     onClick={handleCheckboxChange}
     checked={hasBike}
   />
-  <label htmlFor='bikeCheck' className='bike'>Yes</label>
+  <label htmlFor='bikeCheck' className='bike'>{t('Yes')}</label>
   <input
     type="radio"
     id="bikeCheck1"
@@ -1393,12 +1393,12 @@ const [hasBike, setHasBike] = useState(false);
     checked={!hasBike}
     style={{ marginLeft: '30px' }}
   />
-  <label htmlFor='bikeCheck1' className='bike'>No</label>
+  <label htmlFor='bikeCheck1' className='bike'>{t('No')}</label>
 </div>
 
 {hasBike ? (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <label class="bikenumber" htmlFor="bikeNumber" >{t('Bike Number:')}</label>
                       <input
                         type="text"
                         id="bikeNumber"
@@ -1412,7 +1412,7 @@ const [hasBike, setHasBike] = useState(false);
                     </div>
                   ):(
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <label class="bikenumber" htmlFor="bikeNumber" >{t('Bike Number:')}</label>
                       <input
                         type="text"
                         id="bikeNumber"
@@ -1441,9 +1441,9 @@ const [hasBike, setHasBike] = useState(false);
             {/* =============== */}
             <div className='col-12 text-center'>
               {isEditing ? (
-                <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>Update Tenant</button>
+                <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>{t('Update Tenant')}</button>
               ) : (
-                <button className='btn btn-warning' type="submit">Add Tenant</button>
+                <button className='btn btn-warning' type="submit">{t('Add Tenant')}</button>
               )}
             </div>
           </form>
@@ -1453,30 +1453,30 @@ const [hasBike, setHasBike] = useState(false);
         return (
           <form className="row 1g-10" onSubmit={expensesHandleSubmit}>
             <div className="col-md-6">
-              <label htmlFor="inputExpenseName" className="form-label">Expense Name</label>
+              <label htmlFor="inputExpenseName" className="form-label">{t('Expense Name')}</label>
               <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} />
               {formErrors.expenseName && <div className="text-danger">{formErrors.expenseName}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRent" className="form-label">Expense amount</label>
+              <label htmlFor="inputRent" className="form-label">{t('Expense amount')}</label>
               <input type="number" className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} />
               {formErrors.expenseAmount && <div className="text-danger">{formErrors.expenseAmount}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRole" className="form-label">Created By</label>
+              <label htmlFor="inputRole" className="form-label">{t('Created By')}</label>
               <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
-                <option value="admin">Admin</option>
-                <option value="sub-admin">Sub-admin</option>
+                <option value="admin">{t('Admin')}</option>
+                <option value="sub-admin">{t('Sub-admin')}</option>
               </select>
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputDate" className="form-label">Expense Date</label>
+              <label htmlFor="inputDate" className="form-label">{t('Expense Date')}</label>
               <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
               {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
             </div>
 
             <div className="col-12 text-center mt-3">
-              <button type="submit" className="btn btn-warning">Create</button>
+              <button type="submit" className="btn btn-warning">{t('Create')}</button>
             </div>
           </form>
 
@@ -1554,7 +1554,7 @@ const [hasBike, setHasBike] = useState(false);
 
   return (
     <div className="dashboardboys">
-      <h1 className="heading">Men's</h1>
+      <h1 className="heading">{t("Men's")}</h1>
       <div className="menu">
         {menu.map((item, index) => (
           <div className='cardWithBtnsContainer'>
@@ -1587,10 +1587,10 @@ const [hasBike, setHasBike] = useState(false);
 
       {popupOpen &&
         <div className="popupBeds" id="example">
-          <Button variant="primary" onClick={() => setPopupOpen(true)}>Open Popup</Button>
+          <Button variant="primary" onClick={() => setPopupOpen(true)}>{t('Open Popup')}</Button>
           <Modal show={popupOpen} onHide={onClickCloseBedsPopup} dialogClassName="modal-90w">
             <Modal.Header closeButton>
-              <Modal.Title>Unoccupied Beds</Modal.Title>
+              <Modal.Title>{t('Unoccupied Beds')}</Modal.Title>
             </Modal.Header>
             <Modal.Body className="custom-modal-body">
               <table style={{ borderCollapse: 'collapse', width: '100%' }}>

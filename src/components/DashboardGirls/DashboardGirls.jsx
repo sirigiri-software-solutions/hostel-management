@@ -15,12 +15,8 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 // import Table from '../../Elements/Table'
 import { Modal, Button } from 'react-bootstrap';
-<<<<<<< HEAD
 import { useTranslation } from 'react-i18next';
  
-=======
-
->>>>>>> d4092f2eac9db6e38e54bd25863699067c263af1
 const DashboardGirls = () => {
   const { t } = useTranslation();
 
@@ -1385,17 +1381,11 @@ const handleRoomsIntegerChange = (event) => {
   }));
 
   const columns = [
-<<<<<<< HEAD
     // 'S. No',
     t('table.bedNumber'),
     t('table.roomNo'),
     t('table.floor'),
     // 'Status'
-=======
-    'Bed Number',
-    'Room No',
-    'Floor',
->>>>>>> d4092f2eac9db6e38e54bd25863699067c263af1
   ];
 
   const expenseColumns = [

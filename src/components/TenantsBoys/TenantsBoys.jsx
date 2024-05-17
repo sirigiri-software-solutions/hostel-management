@@ -671,7 +671,6 @@ useEffect(() => {
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={handleSearchChange} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
-<<<<<<< HEAD
         <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
           <div className='d-flex align-items-center text-center filterDropDownContainer'>
             <select className="col-3 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
@@ -692,17 +691,6 @@ useEffect(() => {
               </button>}
             </div>
           </div>
-=======
-        <div className="col-7 col-md-4 d-flex justify-content-end gap-1">
-          {showExTenants ? '' : <button type="button" id="tenantsPageaddBtn" class="add-button tenantaddBtn" onClick={() => { handleAddNew(); }} >
-            Add Tenants
-          </button>}
-          {showExTenants ? <button type="button"  class="add-button" onClick={showExTenantsData} >
-            Present-Tenants
-          </button> : <button type="button" id="tenantsPageVactedBtns" class="add-button tenantaddBtn" onClick={showExTenantsData} >
-            Vacated
-          </button>}
->>>>>>> d4092f2eac9db6e38e54bd25863699067c263af1
         </div>
        
 

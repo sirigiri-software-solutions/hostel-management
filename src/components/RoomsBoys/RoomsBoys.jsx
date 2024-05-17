@@ -374,7 +374,7 @@ function capitalizeFirstLetter(string) {
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
-        <button type="button" className="add-button" onClick={handleAddNew}>
+        <button id="roomPageAddBtn" type="button" className="add-button" onClick={handleAddNew}>
              Add Rooms
           </button>
         </div>

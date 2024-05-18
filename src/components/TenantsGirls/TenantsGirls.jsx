@@ -57,6 +57,7 @@ const TenantsGirls = () => {
 
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('NA');
+  const [selectedStatus, setSelectedStatus] = useState('');
 
   // for camera icon
   const [isMobile, setIsMobile] = useState(false);
@@ -547,11 +548,25 @@ setBikeNumber('NA');
     setSearchQuery(e.target.value);
   }
 
-  const filteredRows = rows.filter(row => {
-    return Object.values(row).some(value =>
+  const onChangeStatus = (e) => {
+    setSelectedStatus(e.target.value);
+  };
+
+
+  const filteredRows = rows.filter((row) => {
+    const hasSearchQueryMatch = Object.values(row).some((value) =>
       value.toString().toLowerCase().includes(searchQuery.toLowerCase())
     );
+  
+    if (selectedStatus === 'Yes') {
+      return row.bike_number !== 'NA' && hasSearchQueryMatch;
+    } else if (selectedStatus === 'NA') {
+      return row.bike_number === 'NA' && hasSearchQueryMatch;
+    } else {
+      return hasSearchQueryMatch;
+    }
   });
+
 
   const handleClosePopUp = () => {
     setShowModal(false);
@@ -701,6 +716,7 @@ setBikeNumber('NA');
     mobile_no: tenant.mobileNo,
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
     joining_date: tenant.dateOfJoin,
+    bike_number:tenant.bikeNumber ? tenant.bikeNumber : '-',
     status: 'Vacated',
     actions: (
       <button
@@ -736,16 +752,27 @@ setBikeNumber('NA');
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={onChangeInput} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
-        <div className="col-7 col-md-4 d-flex justify-content-end gap-2">
-          {showExTenants ? '' : <button type="button" class="add-button tenantaddBtn" onClick={() => { handleAddNew() }} >
-          {t('tenantsPage.addTenants')}
-          </button>}
-          {showExTenants ? <button type="button" class="add-button" onClick={showExTenantsData} >
-          {t('tenantsPage.presentTenants')}
-          </button> : <button type="button" class="add-button tenantaddBtn" onClick={showExTenantsData} >
-          {t('tenantsPage.vacated')}
-          </button>}        
+        <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
+          <div className='d-flex align-items-center text-center filterDropDownContainer'>
+            <select className="col-3 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
+                <option value="">has bike</option>
+                <option value="NA">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+            <div className="col-5 bedPageFilterDropdown">
+              {showExTenants ? '' : <button type="button" class="add-button" onClick={() => { handleAddNew(); }} >
+                Add Tenants
+              </button>}
+            </div>
+            <div className="col-4 bedPageFilterDropdown">
+              {showExTenants ? <button type="button" class="add-button text-center" onClick={showExTenantsData} >
+                Present-Tenants
+              </button> : <button type="button" class="add-button" onClick={showExTenantsData} >
+                Vacated
+              </button>}
+            </div>
           </div>
+        </div>
       </div>
 
       <div>

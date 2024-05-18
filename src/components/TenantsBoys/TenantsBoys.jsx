@@ -122,6 +122,7 @@ const [bikeNumber, setBikeNumber] = useState('NA');
 
   
   const[bikeOption,setBikeOption]=useState('no');
+  const [selectedStatus, setSelectedStatus] = useState('');
 
   const tenantImageInputRef = useRef(null);
   const tenantProofIdRef = useRef(null);
@@ -203,6 +204,7 @@ useEffect(() => {
       setBoysRooms(loadedRooms);
     });
     // Fetch tenants
+    
   }, []);
 
   useEffect(() => {
@@ -215,6 +217,7 @@ useEffect(() => {
     } else {
       setBedOptions([]);
     }
+    
   }, [selectedRoom, boysRooms]);
 
 
@@ -256,6 +259,7 @@ useEffect(() => {
       }
     };
     fetchDataFromAPI();
+  
   }, [data]);
 
   const validate = () => {
@@ -540,7 +544,7 @@ setBikeNumber('NA');
     mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
     joining_date: tenant.dateOfJoin,
-    bike_number:tenant.bikeNumber,
+    bike_number:tenant.bikeNumber ? tenant.bikeNumber : '-',
     status:capitalizeFirstLetter(tenant.status),
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
@@ -552,10 +556,22 @@ setBikeNumber('NA');
     </button>
   }));
 
-  const filteredRows = rows.filter(row => {
-    return Object.values(row).some(value =>
+  const onChangeStatus = (e) => {
+    setSelectedStatus(e.target.value);
+  };
+
+  const filteredRows = rows.filter((row) => {
+    const hasSearchQueryMatch = Object.values(row).some((value) =>
       value.toString().toLowerCase().includes(searchQuery.toLowerCase())
     );
+  
+    if (selectedStatus === 'Yes') {
+      return row.bike_number !== 'NA' && hasSearchQueryMatch;
+    } else if (selectedStatus === 'NA') {
+      return row.bike_number === 'NA' && hasSearchQueryMatch;
+    } else {
+      return hasSearchQueryMatch;
+    }
   });
 
   const handleClosePopUp = () => {
@@ -706,6 +722,7 @@ setBikeNumber('NA');
     mobile_no: tenant.mobileNo,
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
     joining_date: tenant.dateOfJoin,
+    bike_number:tenant.bikeNumber,
     status: 'Vacated',
     actions: (
       <button
@@ -738,19 +755,30 @@ setBikeNumber('NA');
           </div>
           <h1 className='management-heading'>{t('tenantsPage.tenantsManagement')}</h1>
         </div>
-        <div className="col-5 col-md-4 search-wrapper">
+        <div className="col-12 col-md-4 search-wrapper">
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={handleSearchChange} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
-        <div className="col-7 col-md-4 d-flex justify-content-end gap-1">
-          {showExTenants ? '' : <button type="button" id="tenantsPageaddBtn" class="add-button tenantaddBtn" onClick={() => { handleAddNew(); }} >
-            Add Tenants
-          </button>}
-          {showExTenants ? <button type="button"  class="add-button" onClick={showExTenantsData} >
-            Present-Tenants
-          </button> : <button type="button" id="tenantsPageVactedBtns" class="add-button tenantaddBtn" onClick={showExTenantsData} >
-            Vacated
-          </button>}
+        <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
+          <div className='d-flex align-items-center text-center filterDropDownContainer'>
+            <select className="col-3 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
+                <option value="">has bike</option>
+                <option value="NA">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+            <div className={showExTenants ? "col-1 bedPageFilterDropdown" : "col-5 bedPageFilterDropdown"}>
+              {showExTenants ? '' : <button type="button" class="add-button" onClick={() => { handleAddNew(); }} >
+                Add Tenants
+              </button>}
+            </div>
+            <div className={showExTenants ? "col-8 bedPageFilterDropdown" : "col-4 bedPageFilterDropdown"}>
+              {showExTenants ? <button type="button" class="add-button text-center" onClick={showExTenantsData} >
+                Present-Tenants
+              </button> : <button type="button" class="add-button" onClick={showExTenantsData} >
+                Vacated
+              </button>}
+            </div>
+          </div>
         </div>
        
 

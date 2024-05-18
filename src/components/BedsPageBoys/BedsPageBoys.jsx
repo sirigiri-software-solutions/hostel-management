@@ -7,10 +7,8 @@ import { onValue } from 'firebase/database';
 import "../BedsPageBoys/BedsPageBoys.css"
 import { useTranslation } from 'react-i18next';
 
-
 const BedsPageBoys = () => {
-
-  const { t } = useTranslation(['bedsPage','common']);
+  const { t } = useTranslation();
   const [boysRooms, setBoysRooms]= useState([])
   const [bedsData, setBedsData] = useState([]);
   const [tenants, setTenants] = useState([]);
@@ -21,11 +19,6 @@ const BedsPageBoys = () => {
   const [selectedRoomNo,setSelectedRoomNo] = useState('');
   const [roomNumbersToShow,setRoomNumbersToShow] = useState([]);
   const [floorNumbersToShow,setFloorNumbersToShow] = useState([]);
-
- 
-
-
-
 
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');

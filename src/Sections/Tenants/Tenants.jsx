@@ -1,25 +1,25 @@
-
 import React, { useState } from 'react';
-import Adminlogo from '../../images/Icons.png';
 import { Tab, Tabs } from 'react-bootstrap';
 import TenantsBoys from '../../components/TenantsBoys/TenantsBoys';
 import TenantsGirls from '../../components/TenantsGirls/TenantsGirls';
  
 function Tenants() {
     const [activeTab, setActiveTab] = useState('boys');
+    const [key, setKey] = useState('boys');
  
     const handleTabSelect = (tab) => {
         setActiveTab(tab);
+        setKey(tab);
     };
  
     return (
         <div className="container">
             <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
                 <Tab eventKey="boys" title="Men's">
-                    <TenantsBoys/>
+                    <TenantsBoys key={key}/>
                 </Tab>
                 <Tab eventKey="girls" title="Women's">
-                    <TenantsGirls/>
+                    <TenantsGirls key={key}/>
                 </Tab>
             </Tabs>
         </div>

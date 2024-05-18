@@ -5,8 +5,10 @@ import SearchIcon from '../../images/Icons (9).png'
 import { database, push, ref } from "../../firebase"; 
 import { onValue } from 'firebase/database';
 import "../BedsPageBoys/BedsPageBoys.css"
+import { useTranslation } from 'react-i18next';
 
 const BedsPageBoys = () => {
+  const { t } = useTranslation();
 
   const [boysRooms, setBoysRooms]= useState([])
   const [bedsData, setBedsData] = useState([]);
@@ -18,11 +20,6 @@ const BedsPageBoys = () => {
   const [selectedRoomNo,setSelectedRoomNo] = useState('');
   const [roomNumbersToShow,setRoomNumbersToShow] = useState([]);
   const [floorNumbersToShow,setFloorNumbersToShow] = useState([]);
-
- 
-
-
-
 
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
@@ -193,7 +190,7 @@ const BedsPageBoys = () => {
         <div className='roomlogo-container'>
           <img src={bedIcon} alt="RoomsIcon" className='roomlogo'/>
         </div>
-        <h1 className='management-heading'>Beds Management</h1>
+        <h1 className='management-heading'>{t('bedsPage.bedsManagement')}</h1>
       </div>
       <div className="col-12 col-md-4 search-wrapper ">
         <input value={searchValue} onChange={onChangeSearch} type="text" placeholder='Search' className='search-input'/>

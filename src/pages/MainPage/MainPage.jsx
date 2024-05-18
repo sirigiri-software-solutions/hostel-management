@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import DashboardImage from '../../images/Icons (11).png'
+import DashboardImage from '../../images/Icons (1).png'
 import RoomsImage from '../../images/Icons (2).png'
 import BedsImage from '../../images/Icons (3).png'
 import TenantsImage from '../../images/Icons (4).png'
@@ -7,7 +7,7 @@ import Admin from '../../images/Icons.png';
 import ExpensesImage from '../../images/Icons (5).png'
 import RentImage from '../../images/Icons (6).png'
 import SettingsImage from '../../images/Icons (7).png'
-import logo from "../../images/image.png"
+import logo from '../../images/Kiran Reddy Boys Hostel 1.png'
 import './MainPage.css'
 import '../../Sections/Dashboard/Dashboard.css'
 import Dashboard from '../../Sections/Dashboard/Dashboard'
@@ -22,7 +22,6 @@ import Popup from 'reactjs-popup'
 import { AiOutlineClose } from 'react-icons/ai'
 import { DataContext } from '../../ApiData/ContextProvider'
 import { useNavigate } from 'react-router-dom'
-import { RiLogoutCircleRLine } from "react-icons/ri";
 const MainPage = () => {
   const name = localStorage.getItem("username");
   // Refer here for fetched Api Data use like this in all pages don't fetch api url
@@ -32,7 +31,6 @@ const MainPage = () => {
     console.log(data && data);
   }
   console.log("end");
-
   const menuItems = [
     {
       id: 1,
@@ -70,19 +68,13 @@ const MainPage = () => {
       name: "Expenses",
       icon: ExpensesImage
     },
-    {
-      id: 7,
-      path: "/Settings",
-      name: "Settings",
-      icon: SettingsImage
-    },
-
+    // {
+    //   id: 7,
+    //   path: "/Settings",
+    //   name: "Settings",
+    //   icon: SettingsImage
+    // },
   ]
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
 
   const Components = [<Dashboard />, <Rooms />, <Beds />, <Rents />, <Tenants />, <Expenses />, <Settings />]
 
@@ -92,27 +84,12 @@ const MainPage = () => {
     setFlag(value);
   }
 
-  useEffect(() => {
-    // Add event listener to handle clicks outside the popup
-    const handleClickOutsideModal = (event) => {
-      const popup = document.getElementById('poplogoutbtn');
-      if (popup && !popup.contains(event.target)) {
-        // Clicked outside the popup, close the modal
-        setIsModalOpen(false);
-      }
-    };
-
-    // Attach the event listener
-    document.addEventListener('mousedown', handleClickOutsideModal);
-
-    // Cleanup: remove event listener on component unmount
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideModal);
-    };
-  }, []);
+  // console.log(data, 'fetchApiData')
 
 
- 
+
+
+  // by using resize
 
   useEffect(() => {
     const handleResize = () => {
@@ -142,7 +119,7 @@ const MainPage = () => {
 
     // Cleanup the event listener
     return () => window.removeEventListener('resize', handleResize);
-  }, []); 
+  }, []); // Empty dependency array ensures that the effect only runs once after component mount
 
 
 
@@ -158,6 +135,36 @@ const MainPage = () => {
   const handleHamburgerMenu = () => {
     setHamburgerMenuItems(!hamburgerMenuItems)
   }
+  // CSS
+
+  // const [mainBackgroundContainerStyle, setMainBackgroundContainerStyle] = useState({
+  //   display: 'flex',
+  //   width: '100%',
+  //   margin: '0px',
+  //   flexDirection: 'row',
+  // });
+
+  // const [sidebarStyle, setSidebarStyle] = useState({
+  //   width: '21%',
+  //   backgroundColor: '#ECECEC',
+  //   padding: '20px',
+  //   borderRadius: '0px 65px 65px 0px',
+  //   display:'flex',
+  //   flexDirection:'column',
+  // });
+
+  // const [sidebarItems,setSidebarItems] = useState({
+  //   display:'flex',
+  //   flexDirection:'column',
+  //   gap:'15px'
+  // })
+
+
+  // const [rightSectionMainContainer,setrightSectionMainContainer] = useState({
+  //   width:'80%',
+  //   padding:'16px 20px'
+
+  // })
 
 
   const handleSidebarItemClick = (itemId, close) => {
@@ -165,11 +172,11 @@ const MainPage = () => {
     close(); // Close the popup modal
   }
 
-  // const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // const toggleModal = () => {
-  //   setIsModalOpen(!isModalOpen);
-  // };
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
 
   const navigate = useNavigate();
 
@@ -184,16 +191,13 @@ const MainPage = () => {
   return (
     <div className='bg-container' style={mainBackgroundContainerStyle}>
       <div className='sidebar' style={sidebarStyle}>
-        <div className='top-section' >
+        <div className='top-section'>
           <img src={logo} alt="logo" className='logo' />
         </div>
-        <div className='nav-div' >
-          <img src={Admin} alt="admin" className='mbl-dashboard-icon' />
-          <h1 className='mb-dashboard-name'>{name}</h1>
-          <div className='logoutButton' onClick={toggleModal}>
-              <RiLogoutCircleRLine />
-            </div>
-        </div>    
+        <div className='nav-div'  onClick={toggleModal}>
+          <img src={Admin} alt="admin" className='dashboard-icon' />
+          <h1 className='dashboard-heading'>{name}</h1>
+        </div>
         <div style={sidebarItems}>
           {
             menuItems.map((item, index) => (
@@ -204,6 +208,17 @@ const MainPage = () => {
             ))
           }
         </div>
+
+
+        {/* Hamberger icon */}
+        {/* <GiHamburgerMenu style={hamburgerMenu} onClick={handleHamburgerMenu} /> */}
+        {/* {
+              hamburgerMenuItems && menuItems.map((item, index) => (
+                <label key={index}>{item.name}</label>
+              ))
+            } */}
+
+        {/*another approach popup model */}
 
 
         <Popup modal
@@ -243,31 +258,37 @@ const MainPage = () => {
           )}
         </Popup>
       </div>
-      
+      {/* <div style={mobileMenuItems}>
+        {
+              hamburgerMenu && (
+                hamburgerMenuItems && menuItems.map((item, index) => (
+                  <div key={index} className="link" style={flag === item.id ? {backgroundColor: 'hsla(30, 100%, 50%, 0.41)',  borderRadius: '10px'} : {borderRadius:'10px'} } onClick={() => handlesideBar(item.id)}>
+                    <label className='link-text'>{item.name}</label>
+                    </div>
+                ))
+              )
+            }
+            </div> */}
 
       <div style={rightSectionMainContainer} >
-      <div>
-      <div className='top-div'>
-        <img src={Admin} alt="admin" className='dashboard-icon' />
-        <h1 className='dashboard-heading'>{name}</h1>
-        <div className='logoutButton' onClick={toggleModal}>
-          <RiLogoutCircleRLine />
-        </div>
-      </div>
-      {isModalOpen && (
-        <div id="poplogoutbtn" className="popup">
-          <div>
-            <p>Manage your account</p>
+        <div>
+          <div className='top-div' onClick={toggleModal}>
+            <img src={Admin} alt="admin" className='dashboard-icon' />
+            <h1 className='dashboard-heading'>{name}</h1>
           </div>
-          <p>Are you sure you want to logout?</p>
-          <button onClick={logout} className="logout-button">Logout</button>
-          
-          <button className='logout-closeBtn' onClick={toggleModal}>Close</button>
+          {isModalOpen && (
+            <div className="popup">
+              <div>
+                <p>Manage your account</p>
+              </div>
+              <p>Are you sure you want to logout?</p>
+              <button onClick={logout} className="logout-button">Logout</button>
+              <br/><br/>
+              <button onClick={toggleModal}>Close</button>
+            </div>
+          )}
         </div>
-      )}
-    </div>
-        {Components && Components.map((item, index) =>
-         <div key={index} style={flag === index + 1 ? { display: 'block' } : { display: 'none' }}>
+        {Components && Components.map((item, index) => <div key={index} style={flag === index + 1 ? { display: 'block' } : { display: 'none' }}>
           {item}
         </div>)}
 

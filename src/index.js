@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
  import { defineCustomElements } from '@ionic/pwa-elements/loader'
 //  import { FontSizeProvider } from './FontSizeContext';
-import './i18n';
+
 const startApp=()=>{
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

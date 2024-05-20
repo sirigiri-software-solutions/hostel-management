@@ -1,6 +1,6 @@
 {
   "common": {
-    "search": "శోధన",
+    "search": "శోధన...",
     "close": "మూసివేయి",
     "saveChanges": "మార్పులను సేవ్ చేయండి",
     "submit": "సమర్పించండి",
@@ -82,7 +82,15 @@
     "create": "సృష్టించండి"
   },
   "roomsPage": {
-    "roomsManagement": "గది నిర్వహణ",
+    "S.No": "క్రమ సంఖ్య",
+    "Room.No": "గది సంఖ్య",
+    "Floor": "అంతస్తు",
+    "No.of Beds": "మంచెల సంఖ్య",
+    "Bed Rent": "మంచె అద్దె",
+    "Created By": "సృష్టించబడింది",
+    "Last Updated Date": "చివరి నవీకరణ తేదీ",
+    "Edit": "సవరించు",
+    "RoomsManagement": "గదుల నిర్వహణ",
     "addRooms": "గదులు చేర్చండి",
     "createRooms": "గదులు సృష్టించండి",
     "floorNumber": "అంతస్తు సంఖ్య",
@@ -101,7 +109,16 @@
     "yes": "అవును",
     "no": "కాదు",
     "roomDeleted": "గది విజయవంతంగా తొలగించబడింది.",
-    "errorDeletingRoom": "గదిని తొలగించడంలో లోపం:"
+    "errorDeletingRoom": "గదిని తొలగించడంలో లోపం:",
+    "Update Room": "గదిని నవీకరించు",
+    "Delete Room": "గదిని తొలగించు",
+    "Create Room": "గదిని సృష్టించు",
+    "LastUpdated:": "చివరి నవీకరణ:",
+      "CreateRooms": "గదులు సృష్టించు",
+      "Are you sure you want to delete the room with number": "నమోదు నంబరుతో గదిని తొలగించాలని మీరు ఖచ్చితంగా భావిస్తున్నారా",
+      "Once you delete the room it will not be restored": "గమనిక: మీరు గదిని తొలగించిన తర్వాత ఇది పునరుద్ధరించబడదు",
+      "Yes": "అవును",
+      "No": "కాదు"
   },
   "bedsPage": {
     "bedsManagement": "బెడ్స్ మేనేజ్‌మెంట్",

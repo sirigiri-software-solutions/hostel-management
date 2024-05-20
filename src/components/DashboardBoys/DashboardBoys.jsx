@@ -146,6 +146,8 @@ const DashboardBoys = () => {
       console.log("Triggering")
       if (showModal && event.target.id === "exampleModalRoomsBoys") {
         setShowModal(false);
+        setHasBike(false);
+        setBikeNumber('NA');
       }
 
     };
@@ -158,6 +160,8 @@ const DashboardBoys = () => {
       console.log("Triggering")
       if (showModal && (event.target.id === "exampleModalRoomsBoys" || event.key === "Escape")) {
         setShowModal(false);
+        setHasBike(false);
+        setBikeNumber('NA');
       }
 
     };
@@ -1422,6 +1426,8 @@ const DashboardBoys = () => {
       console.log("closed")
       if (popupOpen && (event.target.id === "example" || event.key === "Escape")) {
         setPopupOpen(false)
+        setHasBike(false);
+        setBikeNumber('NA');
       }
     };
     window.addEventListener('click', handleOutsideClick)

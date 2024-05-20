@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 // import Table from '../../Elements/Table'
 import { Modal, Button } from 'react-bootstrap';
+import { FaWhatsapp } from "react-icons/fa";
 import { useTranslation } from 'react-i18next';
  
 const DashboardGirls = () => {
@@ -66,6 +67,75 @@ const DashboardGirls = () => {
 
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('NA');
+  const [selectedTenant, setSelectedTenant] = useState('');
+  const [notify, setNotify] = useState(false);
+  const [notifyUserInfo, setNotifyUserInfo] = useState(null);
+  const [totalTenantsData,setTotalTenantData] = useState({});
+
+  useEffect(()=>{
+    const tenantsRef = ref(database, 'Hostel/girls/tenants');
+    onValue(tenantsRef, (snapshot) => {
+      const data = snapshot.val();
+      const loadedTenants = data ? Object.keys(data).map(key => ({
+        id: key,
+        ...data[key],
+      })) : [];
+      setTotalTenantData(loadedTenants)
+    })
+   
+    
+  },[selectedTenant])
+
+  const sendMessage = (tenant, rentRecord) => {
+
+    console.log(tenant,"sendMessages")
+    console.log(tenant,"sendMessages")
+
+
+    const totalFee = rentRecord.totalFee;
+    const tenantName = tenant.name;
+  const amount = rentRecord.due;
+  const dateOfJoin = tenant.dateOfJoin;
+  const dueDate = rentRecord.dueDate;
+  const paidAmount = rentRecord.paidAmount;
+  const paidDate = rentRecord.paidDate;
+
+  const message = `Hi ${tenantName},\n
+Hope you are doing fine.\n
+Your total fee is ${totalFee}.\n
+You have paid ${paidAmount} so far.\n
+Therefore, your remaining due amount is ${amount}.\n
+You joined on ${dateOfJoin}, and your due date is ${dueDate}.\n
+Please note that you made your last payment on ${paidDate}.\n`
+
+    const phoneNumber = tenant.mobileNo; // Replace with the recipient's phone number
+
+    // Check if the phone number starts with '+91' (India's country code)
+    const formattedPhoneNumber = phoneNumber.startsWith('+91') ? phoneNumber : `+91${phoneNumber}`;
+
+    const encodedMessage = encodeURIComponent(message);
+
+
+    // Use web link for non-mobile devices
+    let whatsappLink = `https://wa.me/${formattedPhoneNumber}?text=${encodedMessage}`;
+
+
+    // Open the WhatsApp link
+    window.open(whatsappLink, '_blank');
+  };
+
+  // Event handler for the notify checkbox
+  const handleNotifyCheckbox = (rentData) => {
+    // Toggle the state of the notify checkbox
+
+    console.log(notify,notifyUserInfo,"addedToNotify")
+    if (notify && notifyUserInfo) {
+      // const { tenant, rentRecord } = notifyUserInfo;
+      // console.log(tenant, "InNotify")
+      sendMessage(notifyUserInfo, rentData); // If checkbox is checked and tenant info is available, send WhatsApp message
+    }
+    setNotify(!notify);
+  };
 
    
   const getCurrentMonth = () => {
@@ -180,13 +250,13 @@ const handleRoomsIntegerChange = (event) => {
     // Initialize an object to collect errors
     const newErrors = {};
     // Validation checks
-    if (!floorNumber.trim()) newErrors.floorNumber = 'Floor number is required';
-    if (!roomNumber.trim()) newErrors.roomNumber = 'Room number is required';
+    if (!floorNumber.trim()) newErrors.floorNumber = t('errors.floorNumberRequired');
+    if (!roomNumber.trim()) newErrors.roomNumber =  t('errors.roomNumberRequired');
     else if (rooms.some(room => room.roomNumber === roomNumber && room.id !== currentId)) {
-      newErrors.roomNumber = 'Room number already exists';
+      newErrors.roomNumber = t('errors.roomNumberExists') ;
     }
-    if (!numberOfBeds) newErrors.numberOfBeds = 'Number of beds is required';
-    if (!bedRent) newErrors.bedRent = 'Bed rent is required';
+    if (!numberOfBeds) newErrors.numberOfBeds = t('errors.numberOfBedsRequired') ;
+    if (!bedRent) newErrors.bedRent =t('errors.bedRentRequired');
 
     // Check if there are any errors
     if (Object.keys(newErrors).length > 0) {
@@ -203,7 +273,7 @@ const handleRoomsIntegerChange = (event) => {
       createdBy,
       updateDate: now
     }).then(() => {
-      toast.success(t('toastMessages.Room added successfully'), {
+      toast.success(t('toastMessages.roomAddedSuccessfully'), {
         position: "top-center",
         autoClose: 2000,
         hideProgressBar: false,
@@ -213,7 +283,7 @@ const handleRoomsIntegerChange = (event) => {
         progress: undefined,
       });
     }).catch(error => {
-      toast.error(t('toastMessages.Error adding room:') + error.message, {
+      toast.error(t('toastMessages.errorAddingRoom') + error.message, {
         position: "top-center",
         autoClose: 2000,
         hideProgressBar: false,
@@ -266,7 +336,7 @@ const handleRoomsIntegerChange = (event) => {
   };
 
   useEffect(() => {
-    const formattedMonth = month.slice(0, 3);
+    const formattedMonth = month.slice(0, 3).toLowerCase();
     const expensesRef = ref(database, `Hostel/girls/expenses/${year}-${formattedMonth}`);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
@@ -485,7 +555,7 @@ const handleRoomsIntegerChange = (event) => {
 
   //handle add rent==============================================
 
-  const [selectedTenant, setSelectedTenant] = useState('');
+ 
   const [bedNumber, setBedNumber] = useState('');
   const [totalFee, setTotalFee] = useState('');
   const [paidAmount, setPaidAmount] = useState('');
@@ -654,6 +724,10 @@ const handleRoomsIntegerChange = (event) => {
           progress: undefined,
         });
         setIsEditing(false); // Reset editing state
+        if (notify) {
+          handleNotifyCheckbox(rentData);
+        }
+        setNotify(false)
       }).catch(error => {
         toast.error(t('toastMessages.errorUpdatingRent') + error.message, {
           position: "top-center",
@@ -679,6 +753,10 @@ const handleRoomsIntegerChange = (event) => {
           progress: undefined,
         });
         setIsEditing(false); // Reset editing state
+        if (notify) {
+          handleNotifyCheckbox(rentData);
+        }
+        setNotify(false)
       }).catch(error => {
         toast.error(t('toastMessages.errorAddingRent') + error.message, {
           position: "top-center",
@@ -719,7 +797,7 @@ const handleRoomsIntegerChange = (event) => {
     setNumberOfBeds('');
     setBedRent('');
     setCreatedBy('admin');
-
+    setTenantErrors({});
     setSelectedTenant('');
     setRoomNumber('');
     setBedNumber('');
@@ -731,6 +809,12 @@ const handleRoomsIntegerChange = (event) => {
     setDueDate('');
     setErrors({});
     setIsEditing(false);
+    setFormErrors({
+      number: '',
+      rent: '',
+      rooms: '',
+      status: ''
+    });
   };
 
   const menu = [
@@ -793,29 +877,29 @@ const handleRoomsIntegerChange = (event) => {
     let formIsValid = true;
 
     if (!formData.expenseName.match(/^[a-zA-Z\s]+$/)) {
-      errors.expenseName = 'Expense name should contain only alphabets and spaces';
+      errors.expenseName = t('errors.expenseNameAlphabetsAndSpaces');
       formIsValid = false;
     }
 
 
     if (!formData.expenseAmount.match(/^\d+(\.\d{1,2})?$/)) {
-      errors.expenseAmount = 'Expense amount should be a valid number';
+      errors.expenseAmount =t('errors.expenseAmountValidNumber');
       formIsValid = false;
     }
 
 
     if (!formData.expenseName) {
-      errors.expenseName = 'Expense name is required';
+      errors.expenseName =  t('errors.expenseNameRequired');
       formIsValid = false;
     }
 
     if (!formData.expenseAmount) {
-      errors.expenseAmount = 'Expense amount is required';
+      errors.expenseAmount = t('errors.expenseAmountRequired');
       formIsValid = false;
     }
 
     if (!formData.expenseDate) {
-      errors.expenseDate = 'Expense date is required';
+      errors.expenseDate =t('errors.expenseDateRequired');
       formIsValid = false;
     }
 
@@ -828,7 +912,7 @@ const handleRoomsIntegerChange = (event) => {
         expenseAmount: parseFloat(formData.expenseAmount),
         expenseDate: new Date(formData.expenseDate).toISOString() // Proper ISO formatting
       }).then(() => {
-        toast.success("Expense added successfully.", {
+        toast.success(t('toastMessages.expenseAddedSuccessfully'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -839,7 +923,7 @@ const handleRoomsIntegerChange = (event) => {
         });
         // setIsEditing(false); // Reset editing state
       }).catch(error => {
-        toast.error("Error adding expense: " + error.message, {
+        toast.error(t('toastMessages.errorAddingExpense') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -883,6 +967,17 @@ const handleRoomsIntegerChange = (event) => {
       }
     }
   }, [selectedTenant, tenants]);
+
+  const onClickCheckbox = () => {
+    setNotify(!notify)
+    const singleTenant = totalTenantsData.filter(tenant =>
+      tenant.id === selectedTenant 
+    );
+    const singleTenantData = singleTenant[0];
+    console.log(singleTenantData,"addedToNotify")
+    setNotifyUserInfo(singleTenantData)
+    
+  }
   
  
   const renderFormLayout = () => {
@@ -958,33 +1053,33 @@ const handleRoomsIntegerChange = (event) => {
                     {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNumber')}</label>
+                    <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNumber')}:</label>
                     <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='BedNumber' class="form-label">{t('dashboard.bedNumber')}</label>
+                    <label htmlFor='BedNumber' class="form-label">{t('dashboard.bedNumber')}:</label>
                     <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='TotalFee' class="form-label">{t('dashboard.totalFee')}</label>
+                    <label htmlFor='TotalFee' class="form-label">{t('dashboard.totalFee')}:</label>
                     <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}</label>
+                    <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}:</label>
                     <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                     {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="Due" class="form-label">{t('dashboard.due')}</label>
+                    <label htmlFor="Due" class="form-label">{t('dashboard.due')}:</label>
                     <input id="Due" class="form-control" type="number" value={due} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}</label>
+                    <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}:</label>
                     <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
                     />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='PaidDate' class="form-label">{t('dashboard.paidDate')}</label>
+                    <label htmlFor='PaidDate' class="form-label">{t('dashboard.paidDate')}:</label>
                     <input
                       id="PaidDate"
                       class="form-control"
@@ -1005,7 +1100,21 @@ const handleRoomsIntegerChange = (event) => {
                     />
                     {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
                   </div>
-                  
+                  <div className="col-12 mb-3" >
+                    <div className="form-check">
+                      <input
+                        id="notifyCheckbox"
+                        className="form-check-input"
+                        type="checkbox"
+                      checked={notify}
+                      onChange={onClickCheckbox} // Toggle the state on change
+                      />
+                      <label className="form-check-label" htmlFor="notifyCheckbox">
+                      {t('dashboard.notify')}
+                      </label>
+                      <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
+                    </div>
+                  </div>
                   <div class="col-12 text-center mt-2">
                     <button type="submit" className="btn btn-warning">{isEditing ? t('dashboard.updateRent') : t('dashboard.submitRentDetails')}</button>
                   </div>
@@ -1079,6 +1188,21 @@ const handleRoomsIntegerChange = (event) => {
                       onChange={e => setDueDate(e.target.value)}
                     />
                     {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
+                  </div>
+                  <div className="col-12 mb-3" >
+                    <div className="form-check">
+                      <input
+                        id="notifyCheckbox"
+                        className="form-check-input"
+                        type="checkbox"
+                      checked={notify}
+                      onChange={onClickCheckbox} // Toggle the state on change
+                      />
+                      <label className="form-check-label" htmlFor="notifyCheckbox">
+                      {t('dashboard.notify')}
+                      </label>
+                      <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
+                    </div>
                   </div>
                   
                   <div class="col-12 text-center mt-2">

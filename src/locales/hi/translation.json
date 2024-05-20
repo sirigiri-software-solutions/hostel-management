@@ -46,7 +46,6 @@
       "due": "बकाया",
       "paidDate": "भुगतान की तारीख",
       "dueDate": "बकाया तिथि",
-      "notify": "सूचित करें",
       "updateRent": "किराया अपडेट करें",
       "submit": "जमा करें",
       "mobileNumber": "मोबाइल नंबर",
@@ -79,24 +78,45 @@
       "admin": "प्रशासक",
       "subAdmin": "उप-प्रशासक",
       "expenseDate": "व्यय तिथि",
-      "create": "बनाएँ"
+      "create": "बनाएँ",
+      "notify": "सूचित करें"
     },
     "roomsPage": {
         
     },
     "bedsPage": {
         "bedsManagement": "बिस्तर प्रबंधन",
-        "status": "स्थिति",
         "occupied": "व्यस्त",
         "unoccupied": "खाली",
         "floorNumber": "मंजिल संख्या",
         "roomNumber": "कमरा संख्या",
         "createBeds": "बिस्तर बनाएं",
-        "modalTitle": "मॉडल शीर्षक"
+        "modalTitle": "मॉडल शीर्षक",
+        "sNo": "क्रम संख्या",
+        "name": "नाम",
+        "bedNumber": "बिस्तर संख्या",
+        "roomNo": "कमरा नंबर",
+        "floor": "मंज़िल",
+        "rent": "किराया",
+        "status": "स्थिति"
     },
-    "rentPage": {
-        "paid": "भुगतान हो गया",
-        "unpaid": "अभुगतान"
+    "rentsPage": {
+      "rentsManagement": "किराया प्रबंधन",
+      "addRent": "किराया जोड़ें",
+        "unpaid": "अभुगतान",
+        "sNo": "क्रम संख्या",
+  "roomNo": "कमरा नंबर",
+  "personName": "व्यक्ति का नाम",
+  "personMobile": "व्यक्ति का मोबाइल",
+  "bedNo": "बिस्तर संख्या",
+  "rent": "किराया",
+  "paid": "भुगतान किया",
+  "due": "देय",
+  "joiningDate": "शामिल होने की तारीख",
+  "dueDate": "नियत तारीख",
+  "lastFee": "अंतिम शुल्क",
+  "status": "स्थिति",
+  "update": "अद्यतन करें"
     },
     "tenantsPage": {
         
@@ -158,7 +178,14 @@
         "selectedTenantRequired": "किरायेदार का चयन करना आवश्यक है।",
         "paidAmountRequired": "भुगतान की राशि आवश्यक है।",
         "paidDateRequired": "भुगतान की तारीख आवश्यक है।",
-        "dueDateRequired": "निर्धारित तारीख आवश्यक है।"
+        "dueDateRequired": "निर्धारित तारीख आवश्यक है।",
+          "expenseNameAlphabetsAndSpaces": "व्यय नाम में केवल वर्णमाला और रिक्त स्थान होने चाहिए",
+          "expenseAmountValidNumber": "व्यय राशि को मान्य संख्या होना चाहिए",
+          "expenseNameRequired": "व्यय नाम आवश्यक है",
+          "expenseAmountRequired": "व्यय राशि आवश्यक है",
+          "expenseDateRequired": "व्यय तिथि आवश्यक है"
+
+        
       },
       "toastMessages": {
         "success": "कमरा सफलतापूर्वक जोड़ा गया।",
@@ -170,6 +197,10 @@
         "rentUpdatedSuccess": "किराया सफलतापूर्वक अपडेट किया गया।",
         "errorUpdatingRent": "किराया अपडेट करते समय त्रुटि: ",
         "rentAddedSuccess": "किराया सफलतापूर्वक जोड़ा गया।",
-        "errorAddingRent": "किराया जोड़ने में त्रुटि: "
+        "errorAddingRent": "किराया जोड़ने में त्रुटि: ",
+        "roomAddedSuccessfully": "कमरा सफलतापूर्वक जोड़ा गया।",
+        "errorAddingRoom": "कमरे जोड़ने में त्रुटि",
+        "expenseAddedSuccessfully": "व्यय सफलतापूर्वक जोड़ा गया।",
+        "errorAddingExpense": "व्यय जोड़ते समय त्रुटि: "
       }
 }

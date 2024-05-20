@@ -41,13 +41,13 @@
       "submit": "Submit",
       "mobileNumber": "Mobile Number",
       "createExpense": "Create Expense",
-      "roomNumber": "Room Number:",
-      "bedNumber": "Bed Number:",
-      "totalFee": "Total Fee:",
-      "paidAmount": "Paid Amount:",
-      "due": "Due:",
-      "paidDate": "Paid Date:",
-      "dueDate": "Due Date:",
+      "roomNumber": "Room Number",
+      "bedNumber": "Bed Number",
+      "totalFee": "Total Fee",
+      "paidAmount": "Paid Amount",
+      "due": "Due",
+      "paidDate": "Paid Date",
+      "dueDate": "Due Date",
       "notify": "Notify",
       "updateRent": "Update Rent",
       "submitRentDetails": "Submit Rent Details",
@@ -55,7 +55,7 @@
       "selectRoom": "Select a Room",
       "bedNo": "Bed No:",
       "selectBed": "Select a Bed",
-      "dateOfJoin": "Date of Join:",
+      "dateOfJoin": "Date of Join",
       "name": "Name:",
       "mobileNo": "Mobile No:",
       "idNumber": "ID Number:",
@@ -86,17 +86,37 @@
     },
     "bedsPage": {
         "bedsManagement": "Beds Management",
-        "status": "Status",
         "occupied": "Occupied",
         "unoccupied": "Unoccupied",
         "floorNumber": "Floor number",
         "roomNumber": "Room number",
         "createBeds": "Create Beds",
-        "modalTitle": "Modal title"
+        "modalTitle": "Modal title",
+        "sNo": "S. No",
+        "name": "Name",
+        "bedNumber": "Bed Number",
+        "roomNo": "Room No",
+        "floor": "Floor",
+        "rent": "Rent",
+        "status": "Status"
     },
-    "rentPage": {
+    "rentsPage": {
+        "rentsManagement": "Rents Management",
+        "addRent": "Add Rent",
+        "unpaid": "Unpaid",
+        "sNo": "S.No",
+        "roomNo": "Room.No",
+        "personName": "Person Name",
+        "personMobile": "Person Mobile",
+        "bedNo": "Bed No",
+        "rent": "Rent",
         "paid": "Paid",
-        "unpaid": "Unpaid"
+        "due": "Due",
+        "joiningDate": "Joining Date",
+        "dueDate": "Due Date",
+        "lastFee": "Last Fee",
+        "status": "Status",
+        "update": "Update"
     },
     "tenantsPage": {
         
@@ -158,11 +178,18 @@
         "selectedTenantRequired": "Selecting a tenant is required.",
         "paidAmountRequired": "Paid amount is required.",
         "paidDateRequired": "Paid date is required.",
-        "dueDateRequired": "Due date is required."
+        "dueDateRequired": "Due date is required.",
+        "expenseNameAlphabetsAndSpaces": "Expense name should contain only alphabets and spaces",
+        "expenseAmountValidNumber": "Expense amount should be a valid number",
+        "expenseNameRequired": "Expense name is required",
+        "expenseAmountRequired": "Expense amount is required",
+        "expenseDateRequired": "Expense date is required"
+          
+          
     },
     "toastMessages": {
-        "Room added successfully": "Room added successfully.",
-        "Error adding room:": "Error adding room: ",
+        "roomAddedSuccessfully": "Room added successfully.",
+        "errorAddingRoom": "Error adding room",
         "tenantUpdated": "Tenant updated successfully.",
         "errorUpdatingTenant": "Error updating Tenant: ",
         "tenantAddedSuccess": "Tenant added successfully.",
@@ -170,6 +197,8 @@
         "rentUpdatedSuccess": "Rent updated successfully.",
         "errorUpdatingRent": "Error updating rent: ",
         "rentAddedSuccess": "Rent added successfully.",
-        "errorAddingRent": "Error adding rent: "
+        "errorAddingRent": "Error adding rent: ",
+        "expenseAddedSuccessfully": "Expense added successfully.",
+        "errorAddingExpense": "Error adding expense: "
     }
   }

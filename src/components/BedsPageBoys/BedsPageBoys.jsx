@@ -94,14 +94,14 @@ const BedsPageBoys = () => {
   }, [boysRooms, tenants]); // Depend on rooms and tenants data
 
   const columns = [
-    'S. No',
-    'Name',
-    'Bed Number',
-    'Room No',
-    'Floor',
-    'Rent',
-    'Status'
-  ];
+    t('bedsPage.sNo'),
+    t('bedsPage.name'),
+    t('bedsPage.bedNumber'),
+    t('bedsPage.roomNo'),
+    t('bedsPage.floor'),
+    t('bedsPage.rent'),
+    t('bedsPage.status')
+  ]
 
   //console.log(bedsData,"DataFromBeds")
 
@@ -200,12 +200,12 @@ const BedsPageBoys = () => {
       <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end '>
         <div className='d-flex filterDropDownContainer'>
           <select className="col-4 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
-            <option value="">Status</option>
-            <option value="Occupied">Occupied</option>
-            <option value="Unoccupied">Unoccupied</option>
+            <option value="">{t('bedsPage.status')}</option>
+            <option value="Occupied">{t('bedsPage.occupied')}</option>
+            <option value="Unoccupied">{t('bedsPage.unoccupied')}</option>
           </select>
           <select className='col-4 bedPageFilterDropdown' value={selectedFloor} onChange={onChangeFloor}>
-            <option value="">Floor number</option>
+            <option value="">{t('bedsPage.floorNumber')}</option>
            
             {
               floorNumbersToShow.map((floor) => (
@@ -216,7 +216,7 @@ const BedsPageBoys = () => {
             }
           </select> 
           <select className='col-4 bedPageFilterDropdown' value={selectedRoomNo} onChange={onChangeRoomNo}>
-            <option value="">Room number</option>
+            <option value="">{t('bedsPage.roomNumber')}</option>
             {roomNumbersToShow.map((room) => (
               <option key={room} value={room}>
                 {room}

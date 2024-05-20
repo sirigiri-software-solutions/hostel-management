@@ -12,7 +12,7 @@
     "rooms": "గదులు",
     "beds": "మంచాలు",
     "rent": "అద్దె",
-    "tenants": "భాట్లు",
+    "tenants": "నివాసులు",
     "expenses": "ఖర్చులు",
     "settings": "సెట్టింగులు"
   },
@@ -46,7 +46,6 @@
     "due": "బకాయి",
     "paidDate": "చెల్లించిన తేది",
     "dueDate": "బకాయి తేది",
-    "notify": "నోటిఫై",
     "updateRent": "అద్దె అప్డేట్ చేయండి",
     "submit": "సమర్పించండి",
     "mobileNumber": "మొబైల్ నంబర్",
@@ -55,7 +54,7 @@
     "selectRoom": "గదిని ఎంచుకోండి",
     "bedNo": "మంచం సంఖ్య:",
     "selectBed": "మంచం ఎంచుకోండి",
-    "dateOfJoin": "చేరిన తేదీ:",
+    "dateOfJoin": "చేరిన తేదీ",
     "name": "పేరు:",
     "mobileNo": "మొబైల్ నంబర్:",
     "idNumber": "ఐడి నంబర్:",
@@ -79,7 +78,8 @@
     "admin": "అడ్మిన్",
     "subAdmin": "ఉప-అడ్మిన్",
     "expenseDate": "ఖర్చు తేదీ",
-    "create": "సృష్టించండి"
+    "create": "సృష్టించండి",
+    "notify": "తెలియజేయండి"
   },
   "roomsPage": {
     "S.No": "క్రమ సంఖ్య",
@@ -122,15 +122,36 @@
   },
   "bedsPage": {
     "bedsManagement": "బెడ్స్ మేనేజ్‌మెంట్",
-    "status": "స్థితి",
     "occupied": "పూర్తిగా",
     "unoccupied": "ఖాళీ",
     "floorNumber": "అంతస్తు సంఖ్య",
     "roomNumber": "గది నంబర్",
     "createBeds": "బెడ్స్ సృష్టించండి",
-    "modalTitle": "మోడల్ శీర్షిక"
+    "modalTitle": "మోడల్ శీర్షిక",
+    "sNo": "సీరియల్ నం",
+  "name": "పేరు",
+  "bedNumber": "పడక నంబర్",
+  "roomNo": "గది నం",
+  "floor": "అంతస్తు",
+  "rent": "కిరాయా",
+  "status": "స్థితి"
   },
   "rentsPage": {
+    "rentsManagement": "కిరాయాల నిర్వహణ",
+    "addRent": "కిరాయా జోడించండి",
+    "sNo": "సీరియల్ నం",
+  "roomNo": "గది నం",
+  "personName": "పేరు",
+  "personMobile": "మొబైల్",
+  "bedNo": "పడక నం",
+  "rent": "కిరాయా",
+  "paid": "చెల్లించబడింది",
+  "due": "బకాయి",
+  "joiningDate": "చేరిన తేదీ",
+  "dueDate": "గడువు తేదీ",
+  "lastFee": "చివరి రుసుము",
+  "status": "స్థితి",
+  "update": "నవీకరించండి"
     
   },
   "tenantsPage": {
@@ -164,7 +185,12 @@
     "selectedTenantRequired": "ఉద్యోగి ఎంపిక చేయడం అవసరం.",
     "paidAmountRequired": "చెల్లింపు మొత్తం అవసరం.",
     "paidDateRequired": "చెల్లింపు తేదీ అవసరం.",
-    "dueDateRequired": "అవధి తేదీ అవసరం."
+    "dueDateRequired": "అవధి తేదీ అవసరం.",
+    "expenseNameAlphabetsAndSpaces": "ఖర్చు పేరు కేవలం అక్షరాలు మరియు ఖాళీ స్థానాలు ఉండాలి",
+  "expenseAmountValidNumber": "ఖర్చు మొత్తం ఒక చిరునంబర అయి ఉండాలి",
+  "expenseNameRequired": "ఖర్చు పేరు అవసరం",
+  "expenseAmountRequired": "ఖర్చు మొత్తం అవసరం",
+  "expenseDateRequired": "ఖర్చు తేదీ అవసరం"
   },
   "toastMessages": {
     "success": "గది విజయవంతంగా జోడించబడింది.",
@@ -176,6 +202,10 @@
     "rentUpdatedSuccess": "లాగు యాక్సెస్ విజయవంతంగా అప్‌డేట్ చేయబడింది.",
     "errorUpdatingRent": "లాగు యాక్సెస్ నవీకరణలో లోపం: ",
     "rentAddedSuccess": "లాగు యాక్సెస్ విజయవంతంగా చేర్చబడింది.",
-    "errorAddingRent": "లాగు యాక్సెస్ చేర్చడంలో లోపం: "
+    "errorAddingRent": "లాగు యాక్సెస్ చేర్చడంలో లోపం: ",
+    "roomAddedSuccessfully":"గది యశస్విగా జోడించబడింది.",
+    "errorAddingRoom": "గది జోడించడంలో పొరపాటు",
+    "expenseAddedSuccessfully": "ఖర్చు విజయవంతంగా జోడబడింది.",
+    "errorAddingExpense": "ఖర్చు జోడించడంలో లోపం: "
   }
 }

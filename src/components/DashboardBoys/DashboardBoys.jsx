@@ -20,10 +20,10 @@ import { FaWhatsapp } from "react-icons/fa";
 
 const DashboardBoys = () => {
   const { t } = useTranslation();
-
+ 
   const [modelText, setModelText] = useState('');
   const [formLayout, setFormLayout] = useState('');
-
+ 
   const [floorNumber, setFloorNumber] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
   const [numberOfBeds, setNumberOfBeds] = useState('');
@@ -36,7 +36,7 @@ const DashboardBoys = () => {
   const [showModal, setShowModal] = useState(false);
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [currentMonthExpenses, setCurrentMonthExpenses] = useState([])
-
+ 
   //===============================
   const [selectedRoom, setSelectedRoom] = useState('');
   const [bedOptions, setBedOptions] = useState([]);
@@ -62,10 +62,27 @@ const DashboardBoys = () => {
   // const onClickCloseBedsPopup = () => {
   //   setPopupOpen(false);
   // };
-
+ 
   // Function to send WhatsApp message
   const [notify, setNotify] = useState(false);
   const [notifyUserInfo, setNotifyUserInfo] = useState(null);
+  const [totalTenantsData,setTotalTenantData] = useState({});
+  const [selectedTenant, setSelectedTenant] = useState('');
+
+  useEffect(()=>{
+    const tenantsRef = ref(database, 'Hostel/boys/tenants');
+    onValue(tenantsRef, (snapshot) => {
+      const data = snapshot.val();
+      const loadedTenants = data ? Object.keys(data).map(key => ({
+        id: key,
+        ...data[key],
+      })) : [];
+      setTotalTenantData(loadedTenants)
+    })
+        
+  },[selectedTenant])
+   
+
   const sendMessage = (tenant, rentRecord) => {
     const totalFee = rentRecord.totalFee;
     const tenantName = tenant.name;
@@ -74,7 +91,7 @@ const DashboardBoys = () => {
     const dueDate = rentRecord.dueDate;
     const paidAmount = rentRecord.paidAmount;
     const paidDate = rentRecord.paidDate;
-
+ 
     const message = `Hi ${tenantName},\n
   Hope you are doing fine.\n
   Your total fee is ${totalFee}.\n
@@ -82,38 +99,39 @@ const DashboardBoys = () => {
   Therefore, your remaining due amount is ${amount}.\n
   You joined on ${dateOfJoin}, and your due date is ${dueDate}.\n
   Please note that you made your last payment on ${paidDate}.\n`
-
+ 
     const phoneNumber = tenant.mobileNo; // Replace with the recipient's phone number
-
+ 
     // Check if the phone number starts with '+91' (India's country code)
     const formattedPhoneNumber = phoneNumber.startsWith('+91') ? phoneNumber : `+91${phoneNumber}`;
-
+ 
     const encodedMessage = encodeURIComponent(message);
-
-
+ 
+ 
     // Use web link for non-mobile devices
     let whatsappLink = `https://wa.me/${formattedPhoneNumber}?text=${encodedMessage}`;
-
-
+ 
+ 
     // Open the WhatsApp link
     window.open(whatsappLink, '_blank');
   };
-
+ 
   // Event handler for the notify checkbox
   const handleNotifyCheckbox = (rentData) => {
     // Toggle the state of the notify checkbox
+
+    console.log(notify,notifyUserInfo,"addedToNotify")
     if (notify && notifyUserInfo) {
-      const { tenant, rentRecord } = notifyUserInfo;
-      console.log(tenant, "InNotify")
-      sendMessage(tenant, rentData); // If checkbox is checked and tenant info is available, send WhatsApp message
+      // const { tenant, rentRecord } = notifyUserInfo;
+      // console.log(tenant, "InNotify")
+      sendMessage(notifyUserInfo, rentData); // If checkbox is checked and tenant info is available, send WhatsApp message
     }
     setNotify(!notify);
   };
-
-
-
-
-
+ 
+ 
+ 
+ 
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('NA');
   const handleCheckboxChange = (e) => {
@@ -121,15 +139,15 @@ const DashboardBoys = () => {
     if (e.target.value == 'no') {
       setHasBike(false);
       setBikeNumber('NA');
-
+ 
     } else {
       setBikeNumber('');
     }
   };
-
-
-
-
+ 
+ 
+ 
+ 
   const getCurrentMonth = () => {
     const monthNames = [
       t('months.jan'),
@@ -148,14 +166,14 @@ const DashboardBoys = () => {
     const currentMonth = new Date().getMonth(); // getMonth returns month index (0 = January, 11 = December)
     return monthNames[currentMonth];
   };
-
+ 
   const getCurrentYear = () => {
     return new Date().getFullYear().toString(); // getFullYear returns the full year (e.g., 2024)
   };
-
+ 
   const [year, setYear] = useState(getCurrentYear());
   const [month, setMonth] = useState(getCurrentMonth());
-
+ 
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
@@ -164,12 +182,12 @@ const DashboardBoys = () => {
         setHasBike(false);
         setBikeNumber('NA');
       }
-
+ 
     };
     window.addEventListener('click', handleOutsideClick);
-
+ 
   }, [showModal]);
-
+ 
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
@@ -178,19 +196,19 @@ const DashboardBoys = () => {
         setHasBike(false);
         setBikeNumber('NA');
       }
-
+ 
     };
     window.addEventListener('click', handleOutsideClick);
     window.addEventListener("keydown", handleOutsideClick)
-
+ 
   }, [showModal]);
-
+ 
   const handleRoomsIntegerChange = (event) => {
     const { name, value } = event.target;
     // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
-
+ 
     let sanitizedValue = value;
-
+ 
     if (name === 'floorNumber' || name === 'roomNumber') {
       // Allow alphanumeric characters and hyphens only
       sanitizedValue = value.replace(/[^a-zA-Z0-9-]/g, '');
@@ -198,7 +216,7 @@ const DashboardBoys = () => {
       // Allow numbers only
       sanitizedValue = value.replace(/[^0-9]/g, '');
     }
-
+ 
     // if (value === '' || re.test(sanitizedValue)) {
     switch (name) {
       case 'floorNumber':
@@ -218,22 +236,22 @@ const DashboardBoys = () => {
     }
     // }
   };
-
-  // expenses related 
+ 
+  // expenses related
   const [formData, setFormData] = useState({
     expenseName: '',
     expenseAmount: '',
     expenseDate: '',
     createdBy: 'admin'
   });
-
+ 
   const [formErrors, setFormErrors] = useState({
     number: '',
     rent: '',
     rooms: '',
     status: ''
   });
-
+ 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -241,27 +259,27 @@ const DashboardBoys = () => {
       [name]: value
     });
   };
-
+ 
   const handleBoysRoomsSubmit = (e) => {
     e.preventDefault();
     const now = new Date().toISOString();  // Get current date-time in ISO format
     // Initialize an object to collect errors
     const newErrors = {};
     // Validation checks
-    if (!floorNumber.trim()) newErrors.floorNumber = 'Floor number is required';
-    if (!roomNumber.trim()) newErrors.roomNumber = 'Room number is required';
+    if (!floorNumber.trim()) newErrors.floorNumber =t('errors.floorNumberRequired');
+    if (!roomNumber.trim()) newErrors.roomNumber = t('errors.roomNumberRequired');
     else if (rooms.some(room => room.roomNumber === roomNumber && room.id !== currentId)) {
-      newErrors.roomNumber = 'Room number already exists';
+      newErrors.roomNumber =t('errors.roomNumberExists') ;
     }
-    if (!numberOfBeds) newErrors.numberOfBeds = 'Number of beds is required';
-    if (!bedRent) newErrors.bedRent = 'Bed rent is required';
-
+    if (!numberOfBeds) newErrors.numberOfBeds = t('errors.numberOfBedsRequired') ;
+    if (!bedRent) newErrors.bedRent = t('errors.bedRentRequired') ;
+ 
     // Check if there are any errors
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return; // Prevent form submission if there are errors
     }
-
+ 
     const roomsRef = ref(database, 'Hostel/boys/rooms');
     push(roomsRef, {
       floorNumber,
@@ -271,7 +289,7 @@ const DashboardBoys = () => {
       createdBy,
       updateDate: now
     }).then(() => {
-      toast.success(t('toastMessages.Room added successfully'), {
+      toast.success(t('toastMessages.roomAddedSuccessfully'), {
         position: "top-center",
         autoClose: 2000,
         hideProgressBar: false,
@@ -281,7 +299,7 @@ const DashboardBoys = () => {
         progress: undefined,
       });
     }).catch(error => {
-      toast.error(t('toastMessages.Error adding room:')+ error.message, {
+      toast.error(t('toastMessages.errorAddingRoom')+ error.message, {
         position: "top-center",
         autoClose: 2000,
         hideProgressBar: false,
@@ -291,9 +309,9 @@ const DashboardBoys = () => {
         progress: undefined,
       });
     });
-
+ 
     // }(
-
+ 
     // Reset form
     setFloorNumber('');
     setRoomNumber('');
@@ -304,7 +322,7 @@ const DashboardBoys = () => {
     setErrors({}); // Clear errors
     setShowModal(false);
   };
-
+ 
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
     onValue(roomsRef, (snapshot) => {
@@ -321,9 +339,9 @@ const DashboardBoys = () => {
   }, []);
   // Calculate the total number of beds
   const totalBeds = rooms.reduce((acc, room) => acc + Number(room.numberOfBeds), 0);
-
+ 
   //==============================================================
-
+ 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = ('0' + date.getDate()).slice(-2);
@@ -331,12 +349,12 @@ const DashboardBoys = () => {
     const year = date.getFullYear();
     return `${year}-${month}-${day}`;
   };
-
+ 
   useEffect(() => {
-    const formattedMonth = month.slice(0, 3);
+    const formattedMonth = month.slice(0, 3).toLowerCase();
     const expensesRef = ref(database, `Hostel/boys/expenses/${year}-${formattedMonth}`);
-    onValue(expensesRef, (snapshot) => {
-      const data = snapshot.val();
+    onValue(expensesRef, snapshot => {
+      const data = snapshot.val() || {};
       let total = 0; // Variable to hold the total expenses
       const expensesArray = [];
       for (const key in data) {
@@ -345,15 +363,34 @@ const DashboardBoys = () => {
           ...data[key],
           expenseDate: formatDate(data[key].expenseDate)
         };
+        console.log(expense,"totalFee");
         total += expense.expenseAmount; // Add expense amount to total
         expensesArray.push(expense);
       }
+      console.log(expensesArray,year,formattedMonth,"expenses")
       setCurrentMonthExpenses(expensesArray);
       setTotalExpenses(total); // Set total expenses state
     });
   }, []);
 
-
+  // useEffect(() => {
+  //   const totalData  = ref(database,'Hostel/boys/expenses/2023-jul');
+  //   onValue(totalData,snapshot => {
+  //     const data = snapshot.val() || {};
+  //     const loadedTenants = Object.entries(data).map(([key, value]) => ({
+  //       id: key,
+  //       ...value,
+  //     }));
+  //     let total = 0;
+  //     for (const tenant of loadedTenants) {
+  //       total += tenant.expenseAmount;
+  //     }
+  //     console.log(total,month,"totalData")
+      
+  //   })
+  // })
+ 
+ 
   useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/boys/tenants');
     onValue(tenantsRef, snapshot => {
@@ -365,7 +402,7 @@ const DashboardBoys = () => {
       setTenants(loadedTenants);
     });
   }, []);
-
+ 
   const [boysRooms, setBoysRooms] = useState([]);
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
@@ -382,7 +419,7 @@ const DashboardBoys = () => {
     });
     // Fetch tenants
   }, []);
-
+ 
   useEffect(() => {
     if (selectedRoom) {
       const room = boysRooms.find(room => room.roomNumber === selectedRoom);
@@ -394,9 +431,9 @@ const DashboardBoys = () => {
       setBedOptions([]);
     }
   }, [selectedRoom, boysRooms]);
-
+ 
   const validate = () => {
-    
+   
     let tempErrors = {};
   tempErrors.selectedRoom = selectedRoom ? "" : t('errors.roomNumberRequired');
   tempErrors.selectedBed = selectedBed ? "" : t('errors.bedNumberRequired');
@@ -423,7 +460,7 @@ const DashboardBoys = () => {
   const isBedOccupied = tenants.some(tenant => {
     return tenant.roomNo === selectedRoom && tenant.bedNo === selectedBed && tenant.status === "occupied" && tenant.id !== currentTenantId;
   });
-
+ 
   if (isBedOccupied) {
     tempErrors.selectedBed = t('errors.bedAlreadyOccupied');
   }
@@ -433,7 +470,7 @@ const DashboardBoys = () => {
     setTenantErrors(tempErrors);
     return Object.keys(tempErrors).every((key) => tempErrors[key] === "");
   };
-
+ 
   const handleTenantImageChange = (e) => {
     if (e.target.files[0]) {
       setTenantImage(e.target.files[0]);
@@ -444,7 +481,7 @@ const DashboardBoys = () => {
       setTenantId(e.target.files[0]);
     }
   };
-
+ 
   const handleTenantSubmit = async (e) => {
     e.preventDefault();
     // if (!validate()) return;
@@ -453,7 +490,7 @@ const DashboardBoys = () => {
       e.target.querySelector('button[type="submit"]').disabled = false;
       return
     };
-
+ 
     let imageUrlToUpdate = tenantImageUrl;
     if (tenantImage) {
       const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantImage/${tenantImage.name}`);
@@ -464,7 +501,7 @@ const DashboardBoys = () => {
         console.error("Error uploading tenant image:", error);
       }
     }
-
+ 
     let idUrlToUpdate = tenantIdUrl;
     if (tenantId) {
       const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantId/${tenantId.name}`);
@@ -475,7 +512,7 @@ const DashboardBoys = () => {
         console.error("Error uploading tenant image:", error);
       }
     }
-
+ 
     const tenantData = {
       roomNo: selectedRoom,
       bedNo: selectedBed,
@@ -490,7 +527,7 @@ const DashboardBoys = () => {
       bikeNumber,
       // tenantIdUrl,
     };
-
+ 
     if (isEditing) {
       await update(ref(database, `Hostel/boys/tenants/${currentTenantId}`), tenantData).then(() => {
         toast.success(t('toastMessages.tenantUpdated'), {
@@ -541,11 +578,11 @@ const DashboardBoys = () => {
     resetForm();
     imageInputRef.current.value = "";
     idInputRef.current.value = "";
-
+ 
   };
+ 
+ 
 
-
-  const [selectedTenant, setSelectedTenant] = useState('');
   const [bedNumber, setBedNumber] = useState('');
   const [totalFee, setTotalFee] = useState('');
   const [paidAmount, setPaidAmount] = useState('');
@@ -555,14 +592,14 @@ const DashboardBoys = () => {
   const [dueDate, setDueDate] = useState('');
   const [editingRentId, setEditingRentId] = useState(null);
   const [availableTenants, setAvailableTenants] = useState([]);
-
+ 
   useEffect(() => {
     const updateTotalFeeFromRoom = () => {
       // Convert the rooms object into an array of its values
       const roomsArray = Object.values(rooms);
       // Find the room that matches the roomNumber
       const matchingRoom = roomsArray.find(room => room.roomNumber === roomNumber);
-
+ 
       if (matchingRoom && matchingRoom.bedRent) {
         setTotalFee(matchingRoom.bedRent.toString());
       } else {
@@ -574,8 +611,8 @@ const DashboardBoys = () => {
       updateTotalFeeFromRoom();
     }
   }, [roomNumber, rooms]);
-
-
+ 
+ 
   useEffect(() => {
     if (selectedTenant) {
       const tenant = tenants.find(t => t.id === selectedTenant);
@@ -594,35 +631,35 @@ const DashboardBoys = () => {
       setDueDate('');
     }
   }, [selectedTenant, tenants]);
-
+ 
   useEffect(() => {
     // Assuming tenantsWithRents already populated
     const tenantIdsWithRents = tenantsWithRents.flatMap(tenant =>
       tenant.rents.length > 0 ? [tenant.id] : []
     );
-
+ 
     const availableTenants = tenants.filter(
       tenant => !tenantIdsWithRents.includes(tenant.id)
     );
-
+ 
     // Optionally, you can store availableTenants in a state if you need to use it elsewhere
     setAvailableTenants(availableTenants);
   }, [tenants, tenantsWithRents]);
-
-
+ 
+ 
   useEffect(() => {
     // Recalculate due when paid amount changes
     const calculatedDue = Math.max(parseFloat(totalFee) - parseFloat(paidAmount), 0).toString();
     setDue(calculatedDue);
   }, [paidAmount, totalFee]);
-
+ 
   useEffect(() => {
     // Fetch tenants data once when component mounts
     const tenantsRef = ref(database, 'Hostel/boys/tenants');
     onValue(tenantsRef, (snapshot) => {
       const tenantsData = snapshot.val();
       const tenantIds = tenantsData ? Object.keys(tenantsData) : [];
-
+ 
       // Initialize an array to hold promises for fetching each tenant's rents
       const rentsPromises = tenantIds.map(tenantId => {
         return new Promise((resolve) => {
@@ -638,54 +675,54 @@ const DashboardBoys = () => {
           });
         });
       });
-
+ 
       // Wait for all promises to resolve and then set the state
       Promise.all(rentsPromises).then(tenantsWithTheirRents => {
         setTenantsWithRents(tenantsWithTheirRents);
       });
     });
   }, []);
-
+ 
   const validateRentForm = () => {
     let formIsValid = true;
     let errors = {};
-
-    
+ 
+   
     if (!selectedTenant) {
       formIsValid = false;
       errors["selectedTenant"] = t('errors.selectedTenantRequired');
     }
-  
+ 
     if (!paidAmount) {
       formIsValid = false;
       errors["paidAmount"] = t('errors.paidAmountRequired');
     }
-  
+ 
     if (!paidDate) {
       formIsValid = false;
       errors["paidDate"] = t('errors.paidDateRequired');
     }
-  
+ 
     if (!dueDate) {
       formIsValid = false;
       errors["dueDate"] = t('errors.dueDateRequired');
     }
-  
-
+ 
+ 
     setErrors(errors);
     return formIsValid;
   };
-
-
+ 
+ 
   const handleRentSubmit = async (e) => {
     e.preventDefault();
-
+ 
     // Validate form before proceeding
     if (!validateRentForm()) {
       // If validation fails, stop form submission
       return;
     }
-
+ 
     const rentData = {
       roomNumber,
       bedNumber,
@@ -697,7 +734,7 @@ const DashboardBoys = () => {
       dueDate,
       status: parseFloat(due) <= 0 ? t('rentPage.paid') : t('rentPage.unpaid'),
     };
-
+ 
     if (isEditing) {
       // Update the existing rent record
       const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents/${editingRentId}`);
@@ -758,11 +795,11 @@ const DashboardBoys = () => {
       });
     }
     setShowModal(false);
-
+ 
     resetForm();
-
+ 
   };
-
+ 
   //-------------------------------------------------------------------------------------------------
   const resetForm = () => {
     setSelectedRoom('');
@@ -797,11 +834,17 @@ const DashboardBoys = () => {
     setDueDate('');
     setErrors({});
     setIsEditing(false);
+    setFormErrors({
+      number: '',
+      rent: '',
+      rooms: '',
+      status: ''
+    });
   };
-
-
-
-
+ 
+ 
+ 
+ 
   const menu = [
     {
       image: Rooms,
@@ -809,7 +852,7 @@ const DashboardBoys = () => {
       number: `${rooms.length}`,
       btntext: t('dashboard.addRooms'),
     },
-
+ 
     {
       image: Tenants,
       heading: t('dashboard.totalTenants'),
@@ -829,15 +872,15 @@ const DashboardBoys = () => {
       btntext: t('dashboard.addExpenses'),
     },
   ];
-
+ 
   const Buttons = ['Add Rooms', 'Add Tenants', 'Add Rent', 'Add Expenses'];
-
+ 
   const handleClick = (text) => {
     setModelText(text);
     setFormLayout(text);
     setShowModal(true);
   };
-
+ 
   const handleCloseModal = () => {
     setModelText('');
     setFormLayout('');
@@ -846,54 +889,59 @@ const DashboardBoys = () => {
     setHasBike(false);
     setBikeNumber("");
     setNotify(false)
-
+    
+ 
   };
-
+ 
   const getMonthYearKey = (dateString) => {
     const date = new Date(dateString);
     const month = date.toLocaleString('default', { month: 'short' }).toLowerCase(); // get short month name
     const year = date.getFullYear();
     return `${year}-${month}`;
   };
-
+ 
   const onClickCheckbox = () => {
     setNotify(!notify)
+    const singleTenant = totalTenantsData.filter(tenant =>
+      tenant.id === selectedTenant 
+    );
+    const singleTenantData = singleTenant[0];
+    console.log(singleTenantData,"addedToNotify")
+    setNotifyUserInfo(singleTenantData)
   }
-
+ 
   const expensesHandleSubmit = (e) => {
     e.preventDefault();
     // Validate the necessary fields
     let errors = {};
     let formIsValid = true;
-
+ 
     if (!formData.expenseName.match(/^[a-zA-Z\s]+$/)) {
-      errors.expenseName = 'Expense name should contain only alphabets and spaces';
+      errors.expenseName = t('errors.expenseNameAlphabetsAndSpaces')
       formIsValid = false;
     }
-
-
+ 
+ 
     if (!formData.expenseAmount.match(/^\d+(\.\d{1,2})?$/)) {
-      errors.expenseAmount = 'Expense amount should be a valid number';
+      errors.expenseAmount = t('errors.expenseAmountValidNumber');
       formIsValid = false;
     }
-
-
+ 
+ 
     if (!formData.expenseName) {
-      errors.expenseName = 'Expense name is required';
+      errors.expenseName = t('errors.expenseNameRequired');
       formIsValid = false;
     }
-
+ 
     if (!formData.expenseAmount) {
-      errors.expenseAmount = 'Expense amount is required';
+      errors.expenseAmount = t('errors.expenseAmountRequired');
       formIsValid = false;
     }
-
+ 
     if (!formData.expenseDate) {
-      errors.expenseDate = 'Expense date is required';
+      errors.expenseDate =  t('errors.expenseDateRequired');
       formIsValid = false;
     }
-
-    // Only proceed if form is valid
     if (formIsValid) {
       const monthYear = getMonthYearKey(formData.expenseDate);
       const expensesRef = ref(database, `Hostel/boys/expenses/${monthYear}`);
@@ -902,7 +950,7 @@ const DashboardBoys = () => {
         expenseAmount: parseFloat(formData.expenseAmount),
         expenseDate: new Date(formData.expenseDate).toISOString() // Proper ISO formatting
       }).then(() => {
-        toast.success("Expense added successfully.", {
+        toast.success(t('toastMessages.expenseAddedSuccessfully'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -913,7 +961,7 @@ const DashboardBoys = () => {
         });
         // setIsEditing(false); // Reset editing state
       }).catch(error => {
-        toast.error("Error adding expense: " + error.message, {
+        toast.error(t('toastMessages.errorAddingExpense') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -941,25 +989,25 @@ const DashboardBoys = () => {
       setFormErrors(errors);
     }
   };
-
+ 
   useEffect(() => {
     if (selectedTenant) {
       const tenant = tenants.find(t => t.id === selectedTenant);
       if (tenant) {
         // Set the date of join
         setDateOfJoin(tenant.dateOfJoin || '');
-
+ 
         // Calculate the due date (one day less than adding one month)
         const currentDate = new Date(tenant.dateOfJoin); // Get the join date
         const dueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate(-1)); // Add one month and subtract one day
         const formattedDueDate = dueDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
         setDueDate(formattedDueDate);
-        
+       
       }
     }
   }, [selectedTenant, tenants]);
-
-
+ 
+ 
   const renderFormLayout = () => {
     switch (formLayout) {
       case t('dashboard.addRooms'):
@@ -1028,33 +1076,33 @@ const DashboardBoys = () => {
                     {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNumber')}</label>
+                    <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNumber')}:</label>
                     <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='BedNumber' class="form-label">{t('dashboard.bedNumber')}</label>
+                    <label htmlFor='BedNumber' class="form-label">{t('dashboard.bedNumber')}:</label>
                     <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='TotalFee' class="form-label">{t('dashboard.totalFee')}</label>
+                    <label htmlFor='TotalFee' class="form-label">{t('dashboard.totalFee')}:</label>
                     <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}</label>
+                    <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}:</label>
                     <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                     {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="Due" class="form-label">{t('dashboard.due')}</label>
+                    <label htmlFor="Due" class="form-label">{t('dashboard.due')}:</label>
                     <input id="Due" class="form-control" type="number" value={due} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}</label>
-                    <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
+                    <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}:</label>
+                    <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated
                     />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='PaidDate' class="form-label">{t('dashboard.paidDate')}</label>
+                    <label htmlFor='PaidDate' class="form-label">{t('dashboard.paidDate')}:</label>
                     <input
                       id="PaidDate"
                       class="form-control"
@@ -1065,7 +1113,7 @@ const DashboardBoys = () => {
                     {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="DueDate" class="form-label">{t('dashboard.dueDate')}</label>
+                    <label htmlFor="DueDate" class="form-label">{t('dashboard.dueDate')}:</label>
                     <input
                       id="DueDate"
                       class="form-control"
@@ -1075,7 +1123,22 @@ const DashboardBoys = () => {
                     />
                     {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
                   </div>
-                  
+                  <div className="col-12 mb-3" >
+                    <div className="form-check">
+                      <input
+                        id="notifyCheckbox"
+                        className="form-check-input"
+                        type="checkbox"
+                      checked={notify}
+                      onChange={onClickCheckbox} // Toggle the state on change
+                      />
+                      <label className="form-check-label" htmlFor="notifyCheckbox">
+                      {t('dashboard.notify')}
+                      </label>
+                      <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
+                    </div>
+                  </div>
+                 
                   <div class="col-12 text-center mt-2">
                     <button type="submit" className="btn btn-warning">{isEditing ? t('dashboard.updateRent') : t('dashboard.submitRentDetails')}</button>
                   </div>
@@ -1122,7 +1185,7 @@ const DashboardBoys = () => {
                   </div>
                   <div class="col-md-6 mb-3">
                     <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}</label>
-                    <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
+                    <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated
                     />
                   </div>
                   <div class="col-md-6 mb-3">
@@ -1148,6 +1211,23 @@ const DashboardBoys = () => {
                     {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
                   </div>
 
+                  <div className="col-12 mb-3" >
+                    <div className="form-check">
+                      <input
+                        id="notifyCheckbox"
+                        className="form-check-input"
+                        type="checkbox"
+                      checked={notify}
+                      onChange={onClickCheckbox} // Toggle the state on change
+                      />
+                      <label className="form-check-label" htmlFor="notifyCheckbox">
+                      {t('dashboard.notify')}
+                      </label>
+                      <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
+                    </div>
+                  </div>
+                 
+ 
                   <div class="col-12 text-center mt-2">
                     <button type="submit" className="btn btn-warning">{isEditing ? t('dashboard.updateRent') : t('dashboard.submitRentDetails')}</button>
                   </div>
@@ -1170,7 +1250,7 @@ const DashboardBoys = () => {
               </select>
               {tenatErrors.selectedRoom && <p style={{ color: 'red' }}>{tenatErrors.selectedRoom}</p>}
             </div>
-
+ 
             <div class="col-md-6">
               <label htmlFor='bedNo' class="form-label">
               {t('dashboard.bedNo')}
@@ -1183,7 +1263,7 @@ const DashboardBoys = () => {
                   </option>
                 ))}
               </select>
-
+ 
               {tenatErrors.selectedBed && <p style={{ color: 'red' }}>{tenatErrors.selectedBed}</p>}
             </div>
             <div class="col-md-6">
@@ -1191,7 +1271,7 @@ const DashboardBoys = () => {
               {t('dashboard.dateOfJoin')}
               </label>
               <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
-
+ 
               {tenatErrors.dateOfJoin && <p style={{ color: 'red' }}>{tenatErrors.dateOfJoin}</p>}
             </div>
             <div class="col-md-6">
@@ -1199,7 +1279,7 @@ const DashboardBoys = () => {
               {t('dashboard.name')}
               </label>
               <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
-
+ 
               {tenatErrors.name && <p style={{ color: 'red' }}>{tenatErrors.name}</p>}
             </div>
             <div class="col-md-6">
@@ -1207,7 +1287,7 @@ const DashboardBoys = () => {
               {t('dashboard.mobileNo')}
               </label>
               <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
-
+ 
               {tenatErrors.mobileNo && <p style={{ color: 'red' }}>{tenatErrors.mobileNo}</p>}
             </div>
             <div class="col-md-6">
@@ -1215,7 +1295,7 @@ const DashboardBoys = () => {
               {t('dashboard.idNumber')}
               </label>
               <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
-
+ 
               {tenatErrors.idNumber && <p style={{ color: 'red' }}>{tenatErrors.idNumber}</p>}
             </div>
             <div class="col-md-6">
@@ -1223,7 +1303,7 @@ const DashboardBoys = () => {
               {t('dashboard.emergencyContact')}
               </label>
               <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
-
+ 
               {tenatErrors.emergencyContact && <p style={{ color: 'red' }}>{tenatErrors.emergencyContact}</p>}
             </div>
             <div class="col-md-6">
@@ -1234,7 +1314,7 @@ const DashboardBoys = () => {
                 <option value="occupied">{t('dashboard.occupied')}</option>
                 <option value="unoccupied">{t('dashboard.unoccupied')}</option>
               </select>
-
+ 
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantUpload' class="form-label">
@@ -1264,11 +1344,11 @@ const DashboardBoys = () => {
                 </object>
               )}
               <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
-
+ 
             </div>
-
-
-
+ 
+ 
+ 
             <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
               <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">{t('dashboard.doYouHaveBike')}</label>
               <input
@@ -1292,14 +1372,14 @@ const DashboardBoys = () => {
               />
               <label htmlFor='bikeCheck1' className='bike'>{t('dashboard.no')}</label>
             </div>
-
+ 
             {hasBike ? (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
                       <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
                         type="text"
                         id="bikeNumber"
-
+ 
                         className='form-control'
                         placeholder="Enter number plate ID"
                         value={bikeNumber}
@@ -1313,7 +1393,7 @@ const DashboardBoys = () => {
                       <input
                         type="text"
                         id="bikeNumber"
-
+ 
                   className='form-control'
                   placeholder="Enter number plate ID"
                   value={bikeNumber}
@@ -1321,11 +1401,11 @@ const DashboardBoys = () => {
                   style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
                 />
               </div>
-
+ 
             )}
-
-
-
+ 
+ 
+ 
             {/* ===== */}
             <div class="col-md-6">
               <label htmlFor='tenantIdInput' for="file-upload" class="custom-file-upload form-label">
@@ -1334,7 +1414,7 @@ const DashboardBoys = () => {
               </label>
               <input class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
             </div>
-
+ 
             {/* =============== */}
             <div className='col-12 text-center'>
               {isEditing ? (
@@ -1345,7 +1425,7 @@ const DashboardBoys = () => {
             </div>
           </form>
         )
-
+ 
       case t('dashboard.addExpenses'):
         return (
           <form className="row 1g-10" onSubmit={expensesHandleSubmit}>
@@ -1371,19 +1451,19 @@ const DashboardBoys = () => {
               <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
               {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
             </div>
-
+ 
             <div className="col-12 text-center mt-3">
               <button type="submit" className="btn btn-warning">{t('dashboard.create')}</button>
             </div>
           </form>
-
+ 
         )
-
+ 
       default:
         return null
     }
   }
-
+ 
   const [popupOpen, setPopupOpen] = useState(false);
   const [expensePopupOpen, setExpensePopupOpen] = useState(false);
   const [bedsData, setBedsData] = useState([]);
@@ -1393,15 +1473,15 @@ const DashboardBoys = () => {
         setPopupOpen(true);
     }
   };
-
-
+ 
+ 
   const onClickCloseBedsPopup = () => {
     setPopupOpen(false);
   }
   const onClickCloseExpensePopup = () => {
     setExpensePopupOpen(false);
   }
-
+ 
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("closed")
@@ -1414,14 +1494,14 @@ const DashboardBoys = () => {
     window.addEventListener('click', handleOutsideClick)
     window.addEventListener('keydown', handleOutsideClick)
   }, [popupOpen])
-
+ 
   useEffect(() => {
     if (!boysRooms || boysRooms.length === 0) {
       // If rooms are not defined or the array is empty, clear bedsData and exit early
       setBedsData([]);
       return;
     }
-
+ 
     const allBeds = boysRooms.flatMap(room => {
       return Array.from({ length: room.numberOfBeds }, (_, i) => {
         const bedNumber = i + 1;
@@ -1438,7 +1518,7 @@ const DashboardBoys = () => {
     });
     setBedsData(allBeds);
   }, [boysRooms, tenants]); // Depend on rooms and tenants data
-
+ 
   const rows = bedsData.filter((bed) => bed.status === 'Unoccupied').map((bed, index) => ({
     //s_no: index + 1,
     bed_number: bed.bedNumber,
@@ -1446,7 +1526,7 @@ const DashboardBoys = () => {
     floor: bed.floorNumber,
     //status: bed.status
   }));
-
+ 
   const columns = [
     // 'S. No',
     t('table.bedNumber'),
@@ -1454,7 +1534,7 @@ const DashboardBoys = () => {
     t('table.floor'),
     // 'Status'
   ];
-
+ 
   const expenseColumns = [
     'Date',
     'Expense',
@@ -1497,7 +1577,7 @@ const DashboardBoys = () => {
           </div>
         </div>
       </div>
-
+ 
       {popupOpen &&
         <div className="popupBeds" id="example">
           <Button variant="primary" onClick={() => setPopupOpen(true)}>Open Popup</Button>
@@ -1567,11 +1647,10 @@ const DashboardBoys = () => {
           </Modal>
         </div>
       }
-
+ 
     </div>
-
+ 
   );
 };
-
+ 
 export default DashboardBoys;
-

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Admin from '../../images/Icons.png';
 import DashboardBoys from '../../components/DashboardBoys/DashboardBoys';
-import DashboardGirls from '../../components/DashboardGirls/DashboardGirls';
+//import DashboardGirls from '../../components/DashboardGirls/DashboardGirls';
 import { Tab, Tabs } from 'react-bootstrap';
 import './Dashboard.css';
 import { useTranslation } from 'react-i18next';
+import DashboardGirls from '../../components/DashboardGirls/DashboardGirls'
 
 const Dashboard = () => {
   const {t} = useTranslation()

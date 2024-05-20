@@ -200,6 +200,8 @@ Please note that you made your last payment on ${paidDate}.\n`
       console.log("Triggering")
         if (showModal && (event.target.id === "exampleModalRoomsGirls" || event.key === "Escape")) {
             setShowModal(false);
+            setHasBike(false);
+            setBikeNumber('NA');
         }
        
     };
@@ -1467,6 +1469,8 @@ const handleRoomsIntegerChange = (event) => {
       console.log("closed")
       if(popupOpen && event.target.id === "example"){
         setPopupOpen(false)
+        setHasBike(false);
+            setBikeNumber('NA');
       }
     };
     window.addEventListener('click', handleOutsideClick)

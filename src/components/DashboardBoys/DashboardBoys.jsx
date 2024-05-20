@@ -14,14 +14,16 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 // import Table from '../../Elements/Table';
 import { Modal, Button } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { FaWhatsapp } from "react-icons/fa";
 
 
 const DashboardBoys = () => {
-
+  const { t } = useTranslation();
+ 
   const [modelText, setModelText] = useState('');
   const [formLayout, setFormLayout] = useState('');
-
+ 
   const [floorNumber, setFloorNumber] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
   const [numberOfBeds, setNumberOfBeds] = useState('');
@@ -33,7 +35,8 @@ const DashboardBoys = () => {
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [totalExpenses, setTotalExpenses] = useState(0);
-
+  const [currentMonthExpenses, setCurrentMonthExpenses] = useState([])
+ 
   //===============================
   const [selectedRoom, setSelectedRoom] = useState('');
   const [bedOptions, setBedOptions] = useState([]);
@@ -54,27 +57,41 @@ const DashboardBoys = () => {
   const [tenantIdUrl, setTenantIdUrl] = useState('');
   const imageInputRef = useRef(null);
   const idInputRef = useRef(null);
-    const [showForm, setShowForm] = useState(true);
+  const [showForm, setShowForm] = useState(true);
   // const { data } = useContext(DataContext);
   // const onClickCloseBedsPopup = () => {
   //   setPopupOpen(false);
   // };
+ 
+  // Function to send WhatsApp message
+  const [notify, setNotify] = useState(false);
+  const [notifyUserInfo, setNotifyUserInfo] = useState(null);
+  const [totalTenantsData,setTotalTenantData] = useState({});
+  const [selectedTenant, setSelectedTenant] = useState('');
 
-    // Function to send WhatsApp message
-    const [notify, setNotify] = useState(false);
-    const [notifyUserInfo, setNotifyUserInfo] = useState(null);
-    const sendMessage = (tenant, rentRecord) => {
+  useEffect(()=>{
+    const tenantsRef = ref(database, 'Hostel/boys/tenants');
+    onValue(tenantsRef, (snapshot) => {
+      const data = snapshot.val();
+      const loadedTenants = data ? Object.keys(data).map(key => ({
+        id: key,
+        ...data[key],
+      })) : [];
+      setTotalTenantData(loadedTenants)
+    })
+        
+  },[selectedTenant])
+   
 
-      console.log(tenant.name,tenant.dateOfJoin,tenant.mobileNo,"addedToNotify")
-
-      const totalFee = rentRecord.totalFee;
-      const tenantName = tenant.name;
+  const sendMessage = (tenant, rentRecord) => {
+    const totalFee = rentRecord.totalFee;
+    const tenantName = tenant.name;
     const amount = rentRecord.due;
     const dateOfJoin = tenant.dateOfJoin;
     const dueDate = rentRecord.dueDate;
     const paidAmount = rentRecord.paidAmount;
     const paidDate = rentRecord.paidDate;
-  
+ 
     const message = `Hi ${tenantName},\n
   Hope you are doing fine.\n
   Your total fee is ${totalFee}.\n
@@ -82,144 +99,159 @@ const DashboardBoys = () => {
   Therefore, your remaining due amount is ${amount}.\n
   You joined on ${dateOfJoin}, and your due date is ${dueDate}.\n
   Please note that you made your last payment on ${paidDate}.\n`
-  
-      const phoneNumber = tenant.mobileNo; // Replace with the recipient's phone number
-  
-      // Check if the phone number starts with '+91' (India's country code)
-      const formattedPhoneNumber = phoneNumber.startsWith('+91') ? phoneNumber : `+91${phoneNumber}`;
-  
-      const encodedMessage = encodeURIComponent(message);
-  
-  
-      // Use web link for non-mobile devices
-      let whatsappLink = `https://wa.me/${formattedPhoneNumber}?text=${encodedMessage}`;
-  
-  
-      // Open the WhatsApp link
-      window.open(whatsappLink, '_blank');
-    };
-  
-    // Event handler for the notify checkbox
-    const handleNotifyCheckbox = (rentData) => {
-      // Toggle the state of the notify checkbox
+ 
+    const phoneNumber = tenant.mobileNo; // Replace with the recipient's phone number
+ 
+    // Check if the phone number starts with '+91' (India's country code)
+    const formattedPhoneNumber = phoneNumber.startsWith('+91') ? phoneNumber : `+91${phoneNumber}`;
+ 
+    const encodedMessage = encodeURIComponent(message);
+ 
+ 
+    // Use web link for non-mobile devices
+    let whatsappLink = `https://wa.me/${formattedPhoneNumber}?text=${encodedMessage}`;
+ 
+ 
+    // Open the WhatsApp link
+    window.open(whatsappLink, '_blank');
+  };
+ 
+  // Event handler for the notify checkbox
+  const handleNotifyCheckbox = (rentData) => {
+    // Toggle the state of the notify checkbox
 
-     
-      if (notify && notifyUserInfo) {
-        // const { tenant, rentRecord } = notifyUserInfo;
-        // console.log(tenant, "InNotify")
-        console.log(notify,notifyUserInfo,"addedToNotify")
-        sendMessage(notifyUserInfo, rentData); // If checkbox is checked and tenant info is available, send WhatsApp message
-      }
-      setNotify(!notify);
-    };
-
-
-
-
-
-const [hasBike, setHasBike] = useState(false);
+    console.log(notify,notifyUserInfo,"addedToNotify")
+    if (notify && notifyUserInfo) {
+      // const { tenant, rentRecord } = notifyUserInfo;
+      // console.log(tenant, "InNotify")
+      sendMessage(notifyUserInfo, rentData); // If checkbox is checked and tenant info is available, send WhatsApp message
+    }
+    setNotify(!notify);
+  };
+ 
+ 
+ 
+ 
+  const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('NA');
   const handleCheckboxChange = (e) => {
     setHasBike(e.target.value == 'yes');
     if (e.target.value == 'no') {
       setHasBike(false);
       setBikeNumber('NA');
-
+ 
     } else {
       setBikeNumber('');
     }
   };
-
-
-
-  
+ 
+ 
+ 
+ 
   const getCurrentMonth = () => {
-    const monthNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+    const monthNames = [
+      t('months.jan'),
+      t('months.feb'),
+      t('months.mar'),
+      t('months.apr'),
+      t('months.may'),
+      t('months.jun'),
+      t('months.jul'),
+      t('months.aug'),
+      t('months.sep'),
+      t('months.oct'),
+      t('months.nov'),
+      t('months.dec')
+    ];
     const currentMonth = new Date().getMonth(); // getMonth returns month index (0 = January, 11 = December)
     return monthNames[currentMonth];
   };
-  
+ 
   const getCurrentYear = () => {
     return new Date().getFullYear().toString(); // getFullYear returns the full year (e.g., 2024)
   };
-
+ 
   const [year, setYear] = useState(getCurrentYear());
   const [month, setMonth] = useState(getCurrentMonth());
-  
+ 
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && event.target.id === "exampleModalRoomsBoys") {
-            setShowModal(false);
-        }
-       
+      if (showModal && event.target.id === "exampleModalRoomsBoys") {
+        setShowModal(false);
+        setHasBike(false);
+        setBikeNumber('NA');
+      }
+ 
     };
     window.addEventListener('click', handleOutsideClick);
-    
-}, [showModal]);
-
+ 
+  }, [showModal]);
+ 
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && (event.target.id === "exampleModalRoomsBoys" || event.key === "Escape")) {
-            setShowModal(false);
-        }
-       
+      if (showModal && (event.target.id === "exampleModalRoomsBoys" || event.key === "Escape")) {
+        setShowModal(false);
+        setHasBike(false);
+        setBikeNumber('NA');
+      }
+ 
     };
     window.addEventListener('click', handleOutsideClick);
-    window.addEventListener("keydown",handleOutsideClick)
-    
-}, [showModal]);
-
+    window.addEventListener("keydown", handleOutsideClick)
+ 
+  }, [showModal]);
+ 
   const handleRoomsIntegerChange = (event) => {
     const { name, value } = event.target;
-  // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
-
+    // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
+ 
     let sanitizedValue = value;
-
-  if (name === 'floorNumber' || name === 'roomNumber') {
-    // Allow alphanumeric characters and hyphens only
-    sanitizedValue = value.replace(/[^a-zA-Z0-9-]/g, '');
-  } else if (name === 'numberOfBeds' || name === 'bedRent') {
-    // Allow numbers only
-    sanitizedValue = value.replace(/[^0-9]/g, '');
-  }
-
-  // if (value === '' || re.test(sanitizedValue)) {
-      switch(name) {
-        case 'floorNumber':
-          setFloorNumber(sanitizedValue);
-          break;
-        case 'roomNumber':
-          setRoomNumber(sanitizedValue);
-          break;
-        case 'numberOfBeds':
-          setNumberOfBeds(sanitizedValue);
-          break;
-        case 'bedRent':
-          setBedRent(sanitizedValue);
-          break;
-        default:
-          break;
-      }
+ 
+    if (name === 'floorNumber' || name === 'roomNumber') {
+      // Allow alphanumeric characters and hyphens only
+      sanitizedValue = value.replace(/[^a-zA-Z0-9-]/g, '');
+    } else if (name === 'numberOfBeds' || name === 'bedRent') {
+      // Allow numbers only
+      sanitizedValue = value.replace(/[^0-9]/g, '');
+    }
+ 
+    // if (value === '' || re.test(sanitizedValue)) {
+    switch (name) {
+      case 'floorNumber':
+        setFloorNumber(sanitizedValue);
+        break;
+      case 'roomNumber':
+        setRoomNumber(sanitizedValue);
+        break;
+      case 'numberOfBeds':
+        setNumberOfBeds(sanitizedValue);
+        break;
+      case 'bedRent':
+        setBedRent(sanitizedValue);
+        break;
+      default:
+        break;
+    }
     // }
   };
-
-  // expenses related 
+ 
+  // expenses related
   const [formData, setFormData] = useState({
     expenseName: '',
     expenseAmount: '',
     expenseDate: '',
     createdBy: 'admin'
   });
-
+ 
   const [formErrors, setFormErrors] = useState({
     number: '',
     rent: '',
     rooms: '',
     status: ''
   });
-
+ 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -227,31 +259,27 @@ const [hasBike, setHasBike] = useState(false);
       [name]: value
     });
   };
-
-
-
-
-
+ 
   const handleBoysRoomsSubmit = (e) => {
     e.preventDefault();
     const now = new Date().toISOString();  // Get current date-time in ISO format
     // Initialize an object to collect errors
     const newErrors = {};
     // Validation checks
-    if (!floorNumber.trim()) newErrors.floorNumber = 'Floor number is required';
-    if (!roomNumber.trim()) newErrors.roomNumber = 'Room number is required';
+    if (!floorNumber.trim()) newErrors.floorNumber =t('errors.floorNumberRequired');
+    if (!roomNumber.trim()) newErrors.roomNumber = t('errors.roomNumberRequired');
     else if (rooms.some(room => room.roomNumber === roomNumber && room.id !== currentId)) {
-      newErrors.roomNumber = 'Room number already exists';
+      newErrors.roomNumber =t('errors.roomNumberExists') ;
     }
-    if (!numberOfBeds) newErrors.numberOfBeds = 'Number of beds is required';
-    if (!bedRent) newErrors.bedRent = 'Bed rent is required';
-
+    if (!numberOfBeds) newErrors.numberOfBeds = t('errors.numberOfBedsRequired') ;
+    if (!bedRent) newErrors.bedRent = t('errors.bedRentRequired') ;
+ 
     // Check if there are any errors
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return; // Prevent form submission if there are errors
     }
-
+ 
     const roomsRef = ref(database, 'Hostel/boys/rooms');
     push(roomsRef, {
       floorNumber,
@@ -261,7 +289,7 @@ const [hasBike, setHasBike] = useState(false);
       createdBy,
       updateDate: now
     }).then(() => {
-      toast.success("Room added successfully.", {
+      toast.success(t('toastMessages.roomAddedSuccessfully'), {
         position: "top-center",
         autoClose: 2000,
         hideProgressBar: false,
@@ -271,7 +299,7 @@ const [hasBike, setHasBike] = useState(false);
         progress: undefined,
       });
     }).catch(error => {
-      toast.error("Error adding room: " + error.message, {
+      toast.error(t('toastMessages.errorAddingRoom')+ error.message, {
         position: "top-center",
         autoClose: 2000,
         hideProgressBar: false,
@@ -281,9 +309,9 @@ const [hasBike, setHasBike] = useState(false);
         progress: undefined,
       });
     });
-
+ 
     // }(
-
+ 
     // Reset form
     setFloorNumber('');
     setRoomNumber('');
@@ -294,7 +322,7 @@ const [hasBike, setHasBike] = useState(false);
     setErrors({}); // Clear errors
     setShowModal(false);
   };
-
+ 
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
     onValue(roomsRef, (snapshot) => {
@@ -311,9 +339,9 @@ const [hasBike, setHasBike] = useState(false);
   }, []);
   // Calculate the total number of beds
   const totalBeds = rooms.reduce((acc, room) => acc + Number(room.numberOfBeds), 0);
-
+ 
   //==============================================================
-
+ 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = ('0' + date.getDate()).slice(-2);
@@ -321,26 +349,48 @@ const [hasBike, setHasBike] = useState(false);
     const year = date.getFullYear();
     return `${year}-${month}-${day}`;
   };
-
+ 
   useEffect(() => {
-    const formattedMonth = month.slice(0, 3);
+    const formattedMonth = month.slice(0, 3).toLowerCase();
     const expensesRef = ref(database, `Hostel/boys/expenses/${year}-${formattedMonth}`);
-    onValue(expensesRef, (snapshot) => {
-      const data = snapshot.val();
+    onValue(expensesRef, snapshot => {
+      const data = snapshot.val() || {};
       let total = 0; // Variable to hold the total expenses
+      const expensesArray = [];
       for (const key in data) {
         const expense = {
           id: key,
           ...data[key],
           expenseDate: formatDate(data[key].expenseDate)
         };
+        console.log(expense,"totalFee");
         total += expense.expenseAmount; // Add expense amount to total
+        expensesArray.push(expense);
       }
+      console.log(expensesArray,year,formattedMonth,"expenses")
+      setCurrentMonthExpenses(expensesArray);
       setTotalExpenses(total); // Set total expenses state
     });
   }, []);
 
-
+  // useEffect(() => {
+  //   const totalData  = ref(database,'Hostel/boys/expenses/2023-jul');
+  //   onValue(totalData,snapshot => {
+  //     const data = snapshot.val() || {};
+  //     const loadedTenants = Object.entries(data).map(([key, value]) => ({
+  //       id: key,
+  //       ...value,
+  //     }));
+  //     let total = 0;
+  //     for (const tenant of loadedTenants) {
+  //       total += tenant.expenseAmount;
+  //     }
+  //     console.log(total,month,"totalData")
+      
+  //   })
+  // })
+ 
+ 
   useEffect(() => {
     const tenantsRef = ref(database, 'Hostel/boys/tenants');
     onValue(tenantsRef, snapshot => {
@@ -352,7 +402,7 @@ const [hasBike, setHasBike] = useState(false);
       setTenants(loadedTenants);
     });
   }, []);
-
+ 
   const [boysRooms, setBoysRooms] = useState([]);
   useEffect(() => {
     const roomsRef = ref(database, 'Hostel/boys/rooms');
@@ -369,7 +419,7 @@ const [hasBike, setHasBike] = useState(false);
     });
     // Fetch tenants
   }, []);
-
+ 
   useEffect(() => {
     if (selectedRoom) {
       const room = boysRooms.find(room => room.roomNumber === selectedRoom);
@@ -381,45 +431,46 @@ const [hasBike, setHasBike] = useState(false);
       setBedOptions([]);
     }
   }, [selectedRoom, boysRooms]);
-
+ 
   const validate = () => {
+   
     let tempErrors = {};
-    tempErrors.selectedRoom = selectedRoom ? "" : "Room number is required.";
-    tempErrors.selectedBed = selectedBed ? "" : "Bed number is required.";
-    tempErrors.dateOfJoin = dateOfJoin ? "" : "Date of join is required.";
-    if (!name) {
-      tempErrors.name = "Name is required.";
-    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-      tempErrors.name = "Name must contain only letters and spaces.";
-    }
-    // Validate mobile number
-    if (!mobileNo) {
-      tempErrors.mobileNo = "Mobile number is required.";
-    } else if (!/^\d{10,13}$/.test(mobileNo)) {
-      tempErrors.mobileNo = "Invalid mobile number";
-    }
-    tempErrors.idNumber = idNumber ? "" : "ID number is required.";
-    // Validate emergency contact
-    if (!emergencyContact) {
-      tempErrors.emergencyContact = "Emergency contact is required.";
-    } else if (!/^\d{10,13}$/.test(emergencyContact)) {
-      tempErrors.emergencyContact = "Invalid emergency contact";
-    }
-    // Check if the selected bed is already occupied
-    const isBedOccupied = tenants.some(tenant => {
-      return tenant.roomNo === selectedRoom && tenant.bedNo === selectedBed && tenant.status === "occupied" && tenant.id !== currentTenantId;
-    });
-
-    if (isBedOccupied) {
-      tempErrors.selectedBed = "This bed is already occupied.";
-    }
-    if (!tenantImage && !tenantImageUrl) {
-      tempErrors.tenantImage = "Tenant image is required.";
-    }
+  tempErrors.selectedRoom = selectedRoom ? "" : t('errors.roomNumberRequired');
+  tempErrors.selectedBed = selectedBed ? "" : t('errors.bedNumberRequired');
+  tempErrors.dateOfJoin = dateOfJoin ? "" : t('errors.dateOfJoinRequired');
+  if (!name) {
+    tempErrors.name = t('errors.nameRequired');
+  } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+    tempErrors.name = t('errors.nameInvalid');
+  }
+  // Validate mobile number
+  if (!mobileNo) {
+    tempErrors.mobileNo = t('errors.mobileNumberRequired');
+  } else if (!/^\d{10,13}$/.test(mobileNo)) {
+    tempErrors.mobileNo = t('errors.mobileNumberInvalid');
+  }
+  tempErrors.idNumber = idNumber ? "" : t('errors.idNumberRequired');
+  // Validate emergency contact
+  if (!emergencyContact) {
+    tempErrors.emergencyContact = t('errors.emergencyContactRequired');
+  } else if (!/^\d{10,13}$/.test(emergencyContact)) {
+    tempErrors.emergencyContact = t('errors.emergencyContactInvalid');
+  }
+  // Check if the selected bed is already occupied
+  const isBedOccupied = tenants.some(tenant => {
+    return tenant.roomNo === selectedRoom && tenant.bedNo === selectedBed && tenant.status === "occupied" && tenant.id !== currentTenantId;
+  });
+ 
+  if (isBedOccupied) {
+    tempErrors.selectedBed = t('errors.bedAlreadyOccupied');
+  }
+  if (!tenantImage && !tenantImageUrl) {
+    tempErrors.tenantImage = t('errors.tenantImageRequired');
+  }
     setTenantErrors(tempErrors);
     return Object.keys(tempErrors).every((key) => tempErrors[key] === "");
   };
-
+ 
   const handleTenantImageChange = (e) => {
     if (e.target.files[0]) {
       setTenantImage(e.target.files[0]);
@@ -430,7 +481,7 @@ const [hasBike, setHasBike] = useState(false);
       setTenantId(e.target.files[0]);
     }
   };
-
+ 
   const handleTenantSubmit = async (e) => {
     e.preventDefault();
     // if (!validate()) return;
@@ -439,7 +490,7 @@ const [hasBike, setHasBike] = useState(false);
       e.target.querySelector('button[type="submit"]').disabled = false;
       return
     };
-
+ 
     let imageUrlToUpdate = tenantImageUrl;
     if (tenantImage) {
       const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantImage/${tenantImage.name}`);
@@ -450,7 +501,7 @@ const [hasBike, setHasBike] = useState(false);
         console.error("Error uploading tenant image:", error);
       }
     }
-
+ 
     let idUrlToUpdate = tenantIdUrl;
     if (tenantId) {
       const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantId/${tenantId.name}`);
@@ -461,12 +512,12 @@ const [hasBike, setHasBike] = useState(false);
         console.error("Error uploading tenant image:", error);
       }
     }
-
+ 
     const tenantData = {
       roomNo: selectedRoom,
       bedNo: selectedBed,
       dateOfJoin,
-      name:name.charAt(0).toUpperCase() + name.slice(1),
+      name: name.charAt(0).toUpperCase() + name.slice(1),
       mobileNo,
       idNumber,
       emergencyContact,
@@ -476,10 +527,10 @@ const [hasBike, setHasBike] = useState(false);
       bikeNumber,
       // tenantIdUrl,
     };
-
+ 
     if (isEditing) {
       await update(ref(database, `Hostel/boys/tenants/${currentTenantId}`), tenantData).then(() => {
-        toast.success("Tenant updated successfully.", {
+        toast.success(t('toastMessages.tenantUpdated'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -489,7 +540,7 @@ const [hasBike, setHasBike] = useState(false);
           progress: undefined,
         });
       }).catch(error => {
-        toast.error("Error updating Tenant: " + error.message, {
+        toast.error(t('toastMessages.errorUpdatingTenant') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -501,7 +552,7 @@ const [hasBike, setHasBike] = useState(false);
       });
     } else {
       await push(ref(database, 'Hostel/boys/tenants'), tenantData).then(() => {
-        toast.success("Tenant added successfully.", {
+        toast.success(t('toastMessages.tenantAddedSuccess'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -511,7 +562,7 @@ const [hasBike, setHasBike] = useState(false);
           progress: undefined,
         });
       }).catch(error => {
-        toast.error("Error adding Tenant: " + error.message, {
+        toast.error(t('toastMessages.errorAddingTenant') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -527,11 +578,11 @@ const [hasBike, setHasBike] = useState(false);
     resetForm();
     imageInputRef.current.value = "";
     idInputRef.current.value = "";
-
+ 
   };
+ 
+ 
 
-  
-  const [selectedTenant, setSelectedTenant] = useState('');
   const [bedNumber, setBedNumber] = useState('');
   const [totalFee, setTotalFee] = useState('');
   const [paidAmount, setPaidAmount] = useState('');
@@ -541,29 +592,14 @@ const [hasBike, setHasBike] = useState(false);
   const [dueDate, setDueDate] = useState('');
   const [editingRentId, setEditingRentId] = useState(null);
   const [availableTenants, setAvailableTenants] = useState([]);
-  const [totalTenantsData,setTotalTenantData] = useState({});
-
-  useEffect(()=>{
-    const tenantsRef = ref(database, 'Hostel/boys/tenants');
-    onValue(tenantsRef, (snapshot) => {
-      const data = snapshot.val();
-      const loadedTenants = data ? Object.keys(data).map(key => ({
-        id: key,
-        ...data[key],
-      })) : [];
-      setTotalTenantData(loadedTenants)
-    })
-   
-    
-  },[selectedTenant])
-
+ 
   useEffect(() => {
     const updateTotalFeeFromRoom = () => {
       // Convert the rooms object into an array of its values
       const roomsArray = Object.values(rooms);
       // Find the room that matches the roomNumber
       const matchingRoom = roomsArray.find(room => room.roomNumber === roomNumber);
-
+ 
       if (matchingRoom && matchingRoom.bedRent) {
         setTotalFee(matchingRoom.bedRent.toString());
       } else {
@@ -575,8 +611,8 @@ const [hasBike, setHasBike] = useState(false);
       updateTotalFeeFromRoom();
     }
   }, [roomNumber, rooms]);
-
-
+ 
+ 
   useEffect(() => {
     if (selectedTenant) {
       const tenant = tenants.find(t => t.id === selectedTenant);
@@ -595,35 +631,35 @@ const [hasBike, setHasBike] = useState(false);
       setDueDate('');
     }
   }, [selectedTenant, tenants]);
-
+ 
   useEffect(() => {
     // Assuming tenantsWithRents already populated
     const tenantIdsWithRents = tenantsWithRents.flatMap(tenant =>
       tenant.rents.length > 0 ? [tenant.id] : []
     );
-
+ 
     const availableTenants = tenants.filter(
       tenant => !tenantIdsWithRents.includes(tenant.id)
     );
-
+ 
     // Optionally, you can store availableTenants in a state if you need to use it elsewhere
     setAvailableTenants(availableTenants);
   }, [tenants, tenantsWithRents]);
-
-
+ 
+ 
   useEffect(() => {
     // Recalculate due when paid amount changes
     const calculatedDue = Math.max(parseFloat(totalFee) - parseFloat(paidAmount), 0).toString();
     setDue(calculatedDue);
   }, [paidAmount, totalFee]);
-
+ 
   useEffect(() => {
     // Fetch tenants data once when component mounts
     const tenantsRef = ref(database, 'Hostel/boys/tenants');
     onValue(tenantsRef, (snapshot) => {
       const tenantsData = snapshot.val();
       const tenantIds = tenantsData ? Object.keys(tenantsData) : [];
-
+ 
       // Initialize an array to hold promises for fetching each tenant's rents
       const rentsPromises = tenantIds.map(tenantId => {
         return new Promise((resolve) => {
@@ -639,59 +675,54 @@ const [hasBike, setHasBike] = useState(false);
           });
         });
       });
-
+ 
       // Wait for all promises to resolve and then set the state
       Promise.all(rentsPromises).then(tenantsWithTheirRents => {
         setTenantsWithRents(tenantsWithTheirRents);
       });
     });
   }, []);
-
+ 
   const validateRentForm = () => {
     let formIsValid = true;
     let errors = {};
-
+ 
+   
     if (!selectedTenant) {
       formIsValid = false;
-      errors["selectedTenant"] = "Selecting a tenant is required.";
+      errors["selectedTenant"] = t('errors.selectedTenantRequired');
     }
-
-    // Paid Amount
+ 
     if (!paidAmount) {
       formIsValid = false;
-      errors["paidAmount"] = "Paid amount is required.";
+      errors["paidAmount"] = t('errors.paidAmountRequired');
     }
-
-    // Paid Date
+ 
     if (!paidDate) {
       formIsValid = false;
-      errors["paidDate"] = "Paid date is required.";
+      errors["paidDate"] = t('errors.paidDateRequired');
     }
-
-    // Due Date
+ 
     if (!dueDate) {
       formIsValid = false;
-      errors["dueDate"] = "Due date is required.";
+      errors["dueDate"] = t('errors.dueDateRequired');
     }
-
+ 
+ 
     setErrors(errors);
     return formIsValid;
   };
-
-  useEffect(()=>{
-    
-  })
-
-
+ 
+ 
   const handleRentSubmit = async (e) => {
     e.preventDefault();
-
+ 
     // Validate form before proceeding
     if (!validateRentForm()) {
       // If validation fails, stop form submission
       return;
     }
-
+ 
     const rentData = {
       roomNumber,
       bedNumber,
@@ -701,18 +732,14 @@ const [hasBike, setHasBike] = useState(false);
       dateOfJoin,
       paidDate,
       dueDate,
-      status: parseFloat(due) <= 0 ? 'Paid' : 'Unpaid',
+      status: parseFloat(due) <= 0 ? t('rentPage.paid') : t('rentPage.unpaid'),
     };
-    
-   
-
-    
-
+ 
     if (isEditing) {
       // Update the existing rent record
       const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents/${editingRentId}`);
       await update(rentRef, rentData).then(() => {
-        toast.success("Rent updated successfully.", {
+        toast.success(t('toastMessages.rentUpdatedSuccess'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -726,9 +753,8 @@ const [hasBike, setHasBike] = useState(false);
           handleNotifyCheckbox(rentData);
         }
         setNotify(false)
-        setSelectedTenant('')
       }).catch(error => {
-        toast.error("Error updating rent: " + error.message, {
+        toast.error(t('toastMessages.errorUpdatingRent') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -742,7 +768,7 @@ const [hasBike, setHasBike] = useState(false);
       // Create a new rent record
       const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents`);
       await push(rentRef, rentData).then(() => {
-        toast.success("Rent adding successfully.", {
+        toast.success(t('toastMessages.rentAddedSuccess'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -756,9 +782,8 @@ const [hasBike, setHasBike] = useState(false);
           handleNotifyCheckbox(rentData);
         }
         setNotify(false)
-        setSelectedTenant('')
       }).catch(error => {
-        toast.error("Error addinging rent: " + error.message, {
+        toast.error(t('toastMessages.errorAddingRent') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -770,11 +795,11 @@ const [hasBike, setHasBike] = useState(false);
       });
     }
     setShowModal(false);
-
+ 
     resetForm();
-
+ 
   };
-
+ 
   //-------------------------------------------------------------------------------------------------
   const resetForm = () => {
     setSelectedRoom('');
@@ -797,7 +822,7 @@ const [hasBike, setHasBike] = useState(false);
     setNumberOfBeds('');
     setBedRent('');
     setCreatedBy('admin');
-
+    setTenantErrors({});
     setSelectedTenant('');
     setRoomNumber('');
     setBedNumber('');
@@ -809,47 +834,53 @@ const [hasBike, setHasBike] = useState(false);
     setDueDate('');
     setErrors({});
     setIsEditing(false);
+    setFormErrors({
+      number: '',
+      rent: '',
+      rooms: '',
+      status: ''
+    });
   };
-
-
-
-
+ 
+ 
+ 
+ 
   const menu = [
     {
       image: Rooms,
-      heading: 'Total Rooms',
+      heading: t('dashboard.totalRooms'),
       number: `${rooms.length}`,
-      btntext: 'Add Rooms',
+      btntext: t('dashboard.addRooms'),
     },
-
+ 
     {
       image: Tenants,
-      heading: 'Total Tenants',
+      heading: t('dashboard.totalTenants'),
       number: `${tenants.length}`,
-      btntext: 'Add Tenants',
+      btntext: t('dashboard.addTenants'),
     },
     {
       image: Beds,
-      heading: 'Total Beds',
+      heading: t('dashboard.totalBeds'),
       number: `${totalBeds}/${totalBeds-tenants.length}`,
-      btntext: 'Add Rent',
+      btntext: t('dashboard.addRent'),
     },
     {
       image: Expenses,
-      heading: 'Total Expenses',
+      heading: t('dashboard.totalExpenses'),
       number: `${totalExpenses}`,
-      btntext: 'Add Expenses',
+      btntext: t('dashboard.addExpenses'),
     },
   ];
-
+ 
   const Buttons = ['Add Rooms', 'Add Tenants', 'Add Rent', 'Add Expenses'];
-
+ 
   const handleClick = (text) => {
     setModelText(text);
     setFormLayout(text);
     setShowModal(true);
   };
-
+ 
   const handleCloseModal = () => {
     setModelText('');
     setFormLayout('');
@@ -858,16 +889,17 @@ const [hasBike, setHasBike] = useState(false);
     setHasBike(false);
     setBikeNumber("");
     setNotify(false)
-
+    
+ 
   };
-
+ 
   const getMonthYearKey = (dateString) => {
     const date = new Date(dateString);
     const month = date.toLocaleString('default', { month: 'short' }).toLowerCase(); // get short month name
     const year = date.getFullYear();
-    return `${month}-${year}`;
+    return `${year}-${month}`;
   };
-
+ 
   const onClickCheckbox = () => {
     setNotify(!notify)
     const singleTenant = totalTenantsData.filter(tenant =>
@@ -876,45 +908,40 @@ const [hasBike, setHasBike] = useState(false);
     const singleTenantData = singleTenant[0];
     console.log(singleTenantData,"addedToNotify")
     setNotifyUserInfo(singleTenantData)
-
-    // console.log("clicking","addedToNotify")
-    
   }
-
+ 
   const expensesHandleSubmit = (e) => {
     e.preventDefault();
     // Validate the necessary fields
     let errors = {};
     let formIsValid = true;
-
+ 
     if (!formData.expenseName.match(/^[a-zA-Z\s]+$/)) {
-      errors.expenseName = 'Expense name should contain only alphabets and spaces';
+      errors.expenseName = t('errors.expenseNameAlphabetsAndSpaces')
       formIsValid = false;
     }
-
-
+ 
+ 
     if (!formData.expenseAmount.match(/^\d+(\.\d{1,2})?$/)) {
-      errors.expenseAmount = 'Expense amount should be a valid number';
+      errors.expenseAmount = t('errors.expenseAmountValidNumber');
       formIsValid = false;
     }
-
-
+ 
+ 
     if (!formData.expenseName) {
-      errors.expenseName = 'Expense name is required';
+      errors.expenseName = t('errors.expenseNameRequired');
       formIsValid = false;
     }
-
+ 
     if (!formData.expenseAmount) {
-      errors.expenseAmount = 'Expense amount is required';
+      errors.expenseAmount = t('errors.expenseAmountRequired');
       formIsValid = false;
     }
-
+ 
     if (!formData.expenseDate) {
-      errors.expenseDate = 'Expense date is required';
+      errors.expenseDate =  t('errors.expenseDateRequired');
       formIsValid = false;
     }
-
-    // Only proceed if form is valid
     if (formIsValid) {
       const monthYear = getMonthYearKey(formData.expenseDate);
       const expensesRef = ref(database, `Hostel/boys/expenses/${monthYear}`);
@@ -923,7 +950,7 @@ const [hasBike, setHasBike] = useState(false);
         expenseAmount: parseFloat(formData.expenseAmount),
         expenseDate: new Date(formData.expenseDate).toISOString() // Proper ISO formatting
       }).then(() => {
-        toast.success("Expense added successfully.", {
+        toast.success(t('toastMessages.expenseAddedSuccessfully'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -934,7 +961,7 @@ const [hasBike, setHasBike] = useState(false);
         });
         // setIsEditing(false); // Reset editing state
       }).catch(error => {
-        toast.error("Error adding expense: " + error.message, {
+        toast.error(t('toastMessages.errorAddingExpense') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -962,71 +989,71 @@ const [hasBike, setHasBike] = useState(false);
       setFormErrors(errors);
     }
   };
-
+ 
   useEffect(() => {
     if (selectedTenant) {
       const tenant = tenants.find(t => t.id === selectedTenant);
       if (tenant) {
         // Set the date of join
         setDateOfJoin(tenant.dateOfJoin || '');
-  
+ 
         // Calculate the due date (one day less than adding one month)
         const currentDate = new Date(tenant.dateOfJoin); // Get the join date
         const dueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate(-1)); // Add one month and subtract one day
         const formattedDueDate = dueDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
         setDueDate(formattedDueDate);
-        
+       
       }
     }
   }, [selectedTenant, tenants]);
-  
-
+ 
+ 
   const renderFormLayout = () => {
     switch (formLayout) {
-      case 'Add Rooms':
+      case t('dashboard.addRooms'):
         return (
           <form className="row g-3" onSubmit={handleBoysRoomsSubmit}>
             <div className="col-md-6">
-              <label htmlFor="inputNumber" className="form-label">Floor Number</label>
+              <label htmlFor="inputNumber" className="form-label">{t('dashboard.floorNumber')}</label>
               <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange}  />
               {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRent" className="form-label">Room Number</label>
+              <label htmlFor="inputRent" className="form-label">{t('dashboard.roomNumber')}</label>
               <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange}  />
               {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
+              <label htmlFor="inputRooms" className="form-label">{t('dashboard.numberOfBeds')}</label>
               <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange}  />
               {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
+              <label htmlFor="inputStatus" className="form-label">{t('dashboard.bedRent')}</label>
               <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange}  />
               {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRole" className="form-label">Created By</label>
+              <label htmlFor="inputRole" className="form-label">{t('dashboard.createdBy')}</label>
               <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
-                <option value="admin">Admin</option>
-                <option value="sub-admin">Sub-admin</option>
+                <option value="admin">{t('dashboard.admin')}</option>
+                <option value="sub-admin">{t('dashboard.subAdmin')}</option>
               </select>
             </div>
             <div className="col-12 text-center">
-              <button type="submit" className="btn btn-warning" onClick={handleBoysRoomsSubmit}>Create Room</button>
+              <button type="submit" className="btn btn-warning" onClick={handleBoysRoomsSubmit}>{t('dashboard.createRoom')}</button>
             </div>
           </form>
         )
-      case 'Add Rent':
+      case t('dashboard.addRent'):
         return (
           <div>
             <div className='monthlyDailyButtons'>
               <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(true)}>
-                <text>Monthly</text>
+                <text>{t('dashboard.monthly')}</text>
               </div>
               <div className={!showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(false)}>
-                <text>Daily</text>
+                <text>{t('dashboard.daily')}</text>
               </div>
             </div>
             {showForm ?
@@ -1034,7 +1061,7 @@ const [hasBike, setHasBike] = useState(false);
                 <form class="row lg-10" onSubmit={handleRentSubmit}>
                   <div class='col-12 mb-3'>
                     <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
-                      <option value="">Select a Tenant *</option>
+                      <option value="">{t('dashboard.selectTenant')} *</option>
                       {/* {availableTenants.map(tenant => (
                           <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
                         ))} */}
@@ -1049,33 +1076,33 @@ const [hasBike, setHasBike] = useState(false);
                     {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                    <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNumber')}:</label>
                     <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                    <label htmlFor='BedNumber' class="form-label">{t('dashboard.bedNumber')}:</label>
                     <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                    <label htmlFor='TotalFee' class="form-label">{t('dashboard.totalFee')}:</label>
                     <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                    <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}:</label>
                     <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                     {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="Due" class="form-label">Due:</label>
+                    <label htmlFor="Due" class="form-label">{t('dashboard.due')}:</label>
                     <input id="Due" class="form-control" type="number" value={due} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
-                    <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
+                    <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}:</label>
+                    <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated
                     />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                    <label htmlFor='PaidDate' class="form-label">{t('dashboard.paidDate')}:</label>
                     <input
                       id="PaidDate"
                       class="form-control"
@@ -1086,7 +1113,7 @@ const [hasBike, setHasBike] = useState(false);
                     {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                    <label htmlFor="DueDate" class="form-label">{t('dashboard.dueDate')}:</label>
                     <input
                       id="DueDate"
                       class="form-control"
@@ -1096,24 +1123,24 @@ const [hasBike, setHasBike] = useState(false);
                     />
                     {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
                   </div>
-                  <div className="col-12 mb-3">
+                  <div className="col-12 mb-3" >
                     <div className="form-check">
                       <input
                         id="notifyCheckbox"
                         className="form-check-input"
                         type="checkbox"
-                        checked={notify}
-                        onChange={onClickCheckbox}
-                      // Toggle the state on change
+                      checked={notify}
+                      onChange={onClickCheckbox} // Toggle the state on change
                       />
                       <label className="form-check-label" htmlFor="notifyCheckbox">
-                        Notify
+                      {t('dashboard.notify')}
                       </label>
                       <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
                     </div>
                   </div>
+                 
                   <div class="col-12 text-center mt-2">
-                    <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                    <button type="submit" className="btn btn-warning">{isEditing ? t('dashboard.updateRent') : t('dashboard.submitRentDetails')}</button>
                   </div>
                 </form>
               </div> :
@@ -1121,7 +1148,7 @@ const [hasBike, setHasBike] = useState(false);
                 <form class="row lg-10" onSubmit={handleRentSubmit}>
                   <div class='col-12 mb-3'>
                     <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
-                      <option value="">Select a Tenant *</option>
+                      <option value="">{t('dashboard.selectTenant')} *</option>
                       {/* {availableTenants.map(tenant => (
                           <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
                         ))} */}
@@ -1136,33 +1163,33 @@ const [hasBike, setHasBike] = useState(false);
                     {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                    <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNumber')}</label>
                     <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                    <label htmlFor='BedNumber' class="form-label">{t('dashboard.bedNumber')}</label>
                     <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                    <label htmlFor='TotalFee' class="form-label">{t('dashboard.totalFee')}</label>
                     <input id="TotalFee" class="form-control" type="number" value={totalFee} onChange={e => setTotalFee(e.target.value)} />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                    <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}</label>
                     <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                     {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="Due" class="form-label">Due:</label>
+                    <label htmlFor="Due" class="form-label">{t('dashboard.due')}</label>
                     <input id="Due" class="form-control" type="number" value={due} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
-                    <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
+                    <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}</label>
+                    <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated
                     />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                    <label htmlFor='PaidDate' class="form-label">{t('dashboard.paidDate')}</label>
                     <input
                       id="PaidDate"
                       class="form-control"
@@ -1173,7 +1200,7 @@ const [hasBike, setHasBike] = useState(false);
                     {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                    <label htmlFor="DueDate" class="form-label">{t('dashboard.dueDate')}</label>
                     <input
                       id="DueDate"
                       class="form-control"
@@ -1183,37 +1210,38 @@ const [hasBike, setHasBike] = useState(false);
                     />
                     {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
                   </div>
-                  <div className="col-12 mb-3">
+
+                  <div className="col-12 mb-3" >
                     <div className="form-check">
                       <input
                         id="notifyCheckbox"
                         className="form-check-input"
                         type="checkbox"
-                        // checked={notify}
-                        // onChange={onClickCheckbox}
-                      // Toggle the state on change
+                      checked={notify}
+                      onChange={onClickCheckbox} // Toggle the state on change
                       />
                       <label className="form-check-label" htmlFor="notifyCheckbox">
-                        Notify
+                      {t('dashboard.notify')}
                       </label>
                       <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
                     </div>
                   </div>
-
+                 
+ 
                   <div class="col-12 text-center mt-2">
-                    <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                    <button type="submit" className="btn btn-warning">{isEditing ? t('dashboard.updateRent') : t('dashboard.submitRentDetails')}</button>
                   </div>
                 </form>
               </div>}
           </div>
         )
-      case 'Add Tenants':
+      case t('dashboard.addTenants'):
         return (
           <form class="row lg-10" onSubmit={handleTenantSubmit}>
             <div class="col-md-6">
-              <label htmlFor='roomNo' class="form-label">Room No:</label>
+              <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNo')}</label>
               <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
-                <option value="">Select a Room</option>
+                <option value="">{t('dashboard.selectRoom')}</option>
                 {boysRooms.map((room) => (
                   <option key={room.roomNumber} value={room.roomNumber}>
                     {room.roomNumber}
@@ -1222,80 +1250,80 @@ const [hasBike, setHasBike] = useState(false);
               </select>
               {tenatErrors.selectedRoom && <p style={{ color: 'red' }}>{tenatErrors.selectedRoom}</p>}
             </div>
-
+ 
             <div class="col-md-6">
               <label htmlFor='bedNo' class="form-label">
-                Bed No:
+              {t('dashboard.bedNo')}
               </label>
               <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
-                <option value="">Select a Bed</option>
+                <option value="">{t('dashboard.selectBed')}</option>
                 {bedOptions.map(bedNumber => (
                   <option key={bedNumber} value={bedNumber}>
                     {bedNumber}
                   </option>
                 ))}
               </select>
-
+ 
               {tenatErrors.selectedBed && <p style={{ color: 'red' }}>{tenatErrors.selectedBed}</p>}
             </div>
             <div class="col-md-6">
               <label htmlFor='dataofJoin' class="form-label">
-                Date of Join:
+              {t('dashboard.dateOfJoin')}
               </label>
               <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
-
+ 
               {tenatErrors.dateOfJoin && <p style={{ color: 'red' }}>{tenatErrors.dateOfJoin}</p>}
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantName' class="form-label">
-                Name:
+              {t('dashboard.name')}
               </label>
               <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
-
+ 
               {tenatErrors.name && <p style={{ color: 'red' }}>{tenatErrors.name}</p>}
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantMobileNo' class="form-label">
-                Mobile No:
+              {t('dashboard.mobileNo')}
               </label>
               <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
-
+ 
               {tenatErrors.mobileNo && <p style={{ color: 'red' }}>{tenatErrors.mobileNo}</p>}
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantIdNum' class="form-label">
-                ID Number:
+              {t('dashboard.idNumber')}
               </label>
               <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
-
+ 
               {tenatErrors.idNumber && <p style={{ color: 'red' }}>{tenatErrors.idNumber}</p>}
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantEmergency' class="form-label">
-                Emergency Contact:
+              {t('dashboard.emergencyContact')}
               </label>
               <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
-
+ 
               {tenatErrors.emergencyContact && <p style={{ color: 'red' }}>{tenatErrors.emergencyContact}</p>}
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantStatus' class="form-label">
-                Status:
+              {t('dashboard.status')}
               </label>
               <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
-                <option value="occupied">Occupied</option>
-                <option value="unoccupied">Unoccupied</option>
+                <option value="occupied">{t('dashboard.occupied')}</option>
+                <option value="unoccupied">{t('dashboard.unoccupied')}</option>
               </select>
-
+ 
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantUpload' class="form-label">
-                Upload Image:
+              {t('dashboard.uploadImage')}
               </label>
               {isEditing && tenantImageUrl && (
                 <div>
                   <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
-                  <p>Current Image</p>
+                  <p>{t('dashboard.currentImage')}</p>
                 </div>
               )}
               <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required />
@@ -1303,7 +1331,7 @@ const [hasBike, setHasBike] = useState(false);
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantUploadId' class="form-label">
-                Upload Id:
+              {t('dashboard.uploadId')}:
               </label>
               {isEditing && tenantIdUrl && (
                 <object
@@ -1312,46 +1340,46 @@ const [hasBike, setHasBike] = useState(false);
                   width="50%"
                   height="200px"
                 >
-                  <a href={tenantIdUrl}>Download PDF</a>
+                  <a href={tenantIdUrl}>{t('dashboard.downloadPdf')}</a>
                 </object>
               )}
               <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
-
+ 
             </div>
-
-
-
+ 
+ 
+ 
             <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
-  <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">Do you have a bike?</label>
-  <input
-    type="radio"
-    className="Radio"
-    id="bikeCheck"
-    name="bike"
-    value="yes"
-    onClick={handleCheckboxChange}
-    checked={hasBike}
-  />
-  <label htmlFor='bikeCheck' className='bike'>Yes</label>
-  <input
-    type="radio"
-    id="bikeCheck1"
-    name="bike"
-    value="no"
-    onClick={handleCheckboxChange}
-    checked={!hasBike}
-    style={{ marginLeft: '30px' }}
-  />
-  <label htmlFor='bikeCheck1' className='bike'>No</label>
-</div>
-
-{hasBike ? (
+              <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">{t('dashboard.doYouHaveBike')}</label>
+              <input
+                type="radio"
+                className="Radio"
+                id="bikeCheck"
+                name="bike"
+                value="yes"
+                onClick={handleCheckboxChange}
+                checked={hasBike}
+              />
+              <label htmlFor='bikeCheck' className='bike'>{t('dashboard.yes')}</label>
+              <input
+                type="radio"
+                id="bikeCheck1"
+                name="bike"
+                value="no"
+                onClick={handleCheckboxChange}
+                checked={!hasBike}
+                style={{ marginLeft: '30px' }}
+              />
+              <label htmlFor='bikeCheck1' className='bike'>{t('dashboard.no')}</label>
+            </div>
+ 
+            {hasBike ? (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
                         type="text"
                         id="bikeNumber"
-
+ 
                         className='form-control'
                         placeholder="Enter number plate ID"
                         value={bikeNumber}
@@ -1361,23 +1389,23 @@ const [hasBike, setHasBike] = useState(false);
                     </div>
                   ):(
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
                         type="text"
                         id="bikeNumber"
-
-                        className='form-control'
-                        placeholder="Enter number plate ID"
-                        value={bikeNumber}
-                        onChange={(event) => setBikeNumber(event.target.value)}
-                        style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
-                      />
-                    </div>
-
-                  )}
-    
-
-
+ 
+                  className='form-control'
+                  placeholder="Enter number plate ID"
+                  value={bikeNumber}
+                  onChange={(event) => setBikeNumber(event.target.value)}
+                  style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                />
+              </div>
+ 
+            )}
+ 
+ 
+ 
             {/* ===== */}
             <div class="col-md-6">
               <label htmlFor='tenantIdInput' for="file-upload" class="custom-file-upload form-label">
@@ -1386,88 +1414,94 @@ const [hasBike, setHasBike] = useState(false);
               </label>
               <input class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
             </div>
-
+ 
             {/* =============== */}
             <div className='col-12 text-center'>
               {isEditing ? (
-                <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>Update Tenant</button>
+                <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>{t('dashboard.updateTenant')}</button>
               ) : (
-                <button className='btn btn-warning' type="submit">Add Tenant</button>
+                <button className='btn btn-warning' type="submit">{t('dashboard.addTenants')}</button>
               )}
             </div>
           </form>
         )
-
-      case "Add Expenses":
+ 
+      case t('dashboard.addExpenses'):
         return (
           <form className="row 1g-10" onSubmit={expensesHandleSubmit}>
             <div className="col-md-6">
-              <label htmlFor="inputExpenseName" className="form-label">Expense Name</label>
+              <label htmlFor="inputExpenseName" className="form-label">{t('dashboard.expenseName')}</label>
               <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} />
               {formErrors.expenseName && <div className="text-danger">{formErrors.expenseName}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRent" className="form-label">Expense amount</label>
+              <label htmlFor="inputRent" className="form-label">{t('dashboard.expenseAmount')}</label>
               <input type="number" className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} />
               {formErrors.expenseAmount && <div className="text-danger">{formErrors.expenseAmount}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRole" className="form-label">Created By</label>
+              <label htmlFor="inputRole" className="form-label">{t('dashboard.createdBy')}</label>
               <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
-                <option value="admin">Admin</option>
-                <option value="sub-admin">Sub-admin</option>
+                <option value="admin">{t('dashboard.admin')}</option>
+                <option value="sub-admin">{t('dashboard.subAdmin')}</option>
               </select>
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputDate" className="form-label">Expense Date</label>
+              <label htmlFor="inputDate" className="form-label">{t('dashboard.expenseDate')}</label>
               <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
               {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
             </div>
-
+ 
             <div className="col-12 text-center mt-3">
-              <button type="submit" className="btn btn-warning">Create</button>
+              <button type="submit" className="btn btn-warning">{t('dashboard.create')}</button>
             </div>
           </form>
-
+ 
         )
-
+ 
       default:
         return null
     }
   }
-
+ 
   const [popupOpen, setPopupOpen] = useState(false);
+  const [expensePopupOpen, setExpensePopupOpen] = useState(false);
   const [bedsData, setBedsData] = useState([]);
   const handleCardClick = (item) => {
-    if (item.heading === 'Total Beds') {
+    if (item.heading === t('dashboard.totalBeds')) {
         // Logic to open the popup for "Total Beds" card
         setPopupOpen(true);
     }
   };
-
+ 
  
   const onClickCloseBedsPopup = () => {
     setPopupOpen(false);
   }
-  
+  const onClickCloseExpensePopup = () => {
+    setExpensePopupOpen(false);
+  }
+ 
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("closed")
-      if(popupOpen && (event.target.id === "example"|| event.key==="Escape")){
+      if (popupOpen && (event.target.id === "example" || event.key === "Escape")) {
         setPopupOpen(false)
+        setHasBike(false);
+        setBikeNumber('NA');
       }
     };
     window.addEventListener('click', handleOutsideClick)
-    window.addEventListener('keydown',handleOutsideClick)
+    window.addEventListener('keydown', handleOutsideClick)
   }, [popupOpen])
-
+ 
   useEffect(() => {
     if (!boysRooms || boysRooms.length === 0) {
       // If rooms are not defined or the array is empty, clear bedsData and exit early
       setBedsData([]);
       return;
     }
-
+ 
     const allBeds = boysRooms.flatMap(room => {
       return Array.from({ length: room.numberOfBeds }, (_, i) => {
         const bedNumber = i + 1;
@@ -1484,7 +1518,7 @@ const [hasBike, setHasBike] = useState(false);
     });
     setBedsData(allBeds);
   }, [boysRooms, tenants]); // Depend on rooms and tenants data
-
+ 
   const rows = bedsData.filter((bed) => bed.status === 'Unoccupied').map((bed, index) => ({
     //s_no: index + 1,
     bed_number: bed.bedNumber,
@@ -1492,23 +1526,33 @@ const [hasBike, setHasBike] = useState(false);
     floor: bed.floorNumber,
     //status: bed.status
   }));
-
+ 
   const columns = [
-    //'S. No',
-    'Bed Number',
-    'Room No',
-    'Floor',
-    //'Status'
+    // 'S. No',
+    t('table.bedNumber'),
+    t('table.roomNo'),
+    t('table.floor'),
+    // 'Status'
   ];
-
+ 
+  const expenseColumns = [
+    'Date',
+    'Expense',
+    'Amount',
+  ];
+  const expenseRows = currentMonthExpenses.map((expense, index) => ({
+    date:expense.expenseDate,
+    expense:expense.expenseName,
+    amount:expense.expenseAmount,
+  }));
   return (
     <div className="dashboardboys">
-      <h1 className="heading">Men's</h1>
+      <h1 className="heading">{t('dashboard.mens')}</h1>
       <div className="menu">
         {menu.map((item, index) => (
           <div className='cardWithBtnsContainer'>
-            <SmallCard key={index} index={index} item={item} handleClick={handleCardClick}/>
-            <button id="mbladdButton" type="button"  onClick={() => { handleClick(item.btntext) }}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
+            <SmallCard key={index} index={index} item={item} handleClick={handleCardClick} />
+            <button id="mbladdButton" type="button" onClick={() => { handleClick(item.btntext) }}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
           </div>
         ))}
         {/* <div className='button-container'>
@@ -1533,13 +1577,13 @@ const [hasBike, setHasBike] = useState(false);
           </div>
         </div>
       </div>
-
+ 
       {popupOpen &&
         <div className="popupBeds" id="example">
           <Button variant="primary" onClick={() => setPopupOpen(true)}>Open Popup</Button>
           <Modal show={popupOpen} onHide={onClickCloseBedsPopup} dialogClassName="modal-90w">
             <Modal.Header closeButton>
-              <Modal.Title>Unoccupied Beds</Modal.Title>
+              <Modal.Title>{t('dashboard.unoccupiedBeds')}</Modal.Title>
             </Modal.Header>
             <Modal.Body className="custom-modal-body">
               <table style={{ borderCollapse: 'collapse', width: '100%' }}>
@@ -1562,16 +1606,51 @@ const [hasBike, setHasBike] = useState(false);
               </table>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseBedsPopup}>Close</Button>
+              <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseBedsPopup}>{t('common.close')}</Button>
             </Modal.Footer>
           </Modal>
         </div>
       }
-
+       {expensePopupOpen &&
+        <div className="popupBeds" id="example">
+          <Button variant="primary" onClick={() => setExpensePopupOpen(true)}>Open Popup</Button>
+          <Modal show={expensePopupOpen} onHide={onClickCloseExpensePopup} dialogClassName="modal-90w">
+            <Modal.Header closeButton>
+              <Modal.Title>This Month Expenses</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="custom-modal-body">
+              <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                <thead>
+                  <tr>
+                    {expenseColumns.map((column, index) => (
+                      <th key={index} style={{ border: '1px solid black', padding: '8px' }}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {expenseRows.map((row, index) => (
+                    <tr key={index} style={{ border: '1px solid black' }}>
+                      {Object.values(row).map((value, i) => (
+                        <td key={i} style={{ border: '1px solid black', padding: '8px' }}>{value}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Modal.Body>
+            <div>
+             <p>This Month Total Expenses: {totalExpenses}</p>
+            </div>
+            <Modal.Footer>
+              <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseExpensePopup}>Close</Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+      }
+ 
     </div>
-
+ 
   );
 };
-
+ 
 export default DashboardBoys;
-

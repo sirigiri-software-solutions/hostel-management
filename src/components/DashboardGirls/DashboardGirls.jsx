@@ -16,8 +16,11 @@ import 'react-toastify/dist/ReactToastify.css';
 // import Table from '../../Elements/Table'
 import { Modal, Button } from 'react-bootstrap';
 import { FaWhatsapp } from "react-icons/fa";
+import { useTranslation } from 'react-i18next';
  
 const DashboardGirls = () => {
+  const { t } = useTranslation();
+
   const [modelText, setModelText] = useState('');
   const [formLayout, setFormLayout] = useState('');
   const [floorNumber, setFloorNumber] = useState('');
@@ -33,6 +36,7 @@ const DashboardGirls = () => {
 
 
   const [totalExpenses, setTotalExpenses] = useState(0);
+  const [currentMonthExpenses, setCurrentMonthExpenses] = useState([])
 
   //=====================================================
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -135,7 +139,20 @@ Please note that you made your last payment on ${paidDate}.\n`
 
    
   const getCurrentMonth = () => {
-    const monthNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+    const monthNames = [
+      t('months.jan'),
+      t('months.feb'),
+      t('months.mar'),
+      t('months.apr'),
+      t('months.may'),
+      t('months.jun'),
+      t('months.jul'),
+      t('months.aug'),
+      t('months.sep'),
+      t('months.oct'),
+      t('months.nov'),
+      t('months.dec')
+    ];
     const currentMonth = new Date().getMonth(); // getMonth returns month index (0 = January, 11 = December)
     return monthNames[currentMonth];
   };
@@ -233,13 +250,13 @@ const handleRoomsIntegerChange = (event) => {
     // Initialize an object to collect errors
     const newErrors = {};
     // Validation checks
-    if (!floorNumber.trim()) newErrors.floorNumber = 'Floor number is required';
-    if (!roomNumber.trim()) newErrors.roomNumber = 'Room number is required';
+    if (!floorNumber.trim()) newErrors.floorNumber = t('errors.floorNumberRequired');
+    if (!roomNumber.trim()) newErrors.roomNumber =  t('errors.roomNumberRequired');
     else if (rooms.some(room => room.roomNumber === roomNumber && room.id !== currentId)) {
-      newErrors.roomNumber = 'Room number already exists';
+      newErrors.roomNumber = t('errors.roomNumberExists') ;
     }
-    if (!numberOfBeds) newErrors.numberOfBeds = 'Number of beds is required';
-    if (!bedRent) newErrors.bedRent = 'Bed rent is required';
+    if (!numberOfBeds) newErrors.numberOfBeds = t('errors.numberOfBedsRequired') ;
+    if (!bedRent) newErrors.bedRent =t('errors.bedRentRequired');
 
     // Check if there are any errors
     if (Object.keys(newErrors).length > 0) {
@@ -256,7 +273,7 @@ const handleRoomsIntegerChange = (event) => {
       createdBy,
       updateDate: now
     }).then(() => {
-      toast.success("Room added successfully.", {
+      toast.success(t('toastMessages.roomAddedSuccessfully'), {
         position: "top-center",
         autoClose: 2000,
         hideProgressBar: false,
@@ -266,7 +283,7 @@ const handleRoomsIntegerChange = (event) => {
         progress: undefined,
       });
     }).catch(error => {
-      toast.error("Error adding room: " + error.message, {
+      toast.error(t('toastMessages.errorAddingRoom') + error.message, {
         position: "top-center",
         autoClose: 2000,
         hideProgressBar: false,
@@ -319,11 +336,12 @@ const handleRoomsIntegerChange = (event) => {
   };
 
   useEffect(() => {
-    const formattedMonth = month.slice(0, 3);
+    const formattedMonth = month.slice(0, 3).toLowerCase();
     const expensesRef = ref(database, `Hostel/girls/expenses/${year}-${formattedMonth}`);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
       let total = 0; // Variable to hold the total expenses
+      const expensesArray = [];
       for (const key in data) {
         const expense = {
           id: key,
@@ -331,7 +349,9 @@ const handleRoomsIntegerChange = (event) => {
           expenseDate: formatDate(data[key].expenseDate)
         };
         total += expense.expenseAmount; // Add expense amount to total
+        expensesArray.push(expense);
       }
+      setCurrentMonthExpenses(expensesArray);
       setTotalExpenses(total); // Set total expenses state
     });
   }, []);
@@ -384,26 +404,26 @@ const handleRoomsIntegerChange = (event) => {
  
   const validate = () => {
     let tempErrors = {};
-    tempErrors.selectedRoom = selectedRoom ? "" : "Room number is required.";
-    tempErrors.selectedBed = selectedBed ? "" : "Bed number is required.";
-    tempErrors.dateOfJoin = dateOfJoin ? "" : "Date of join is required.";
+    tempErrors.selectedRoom = selectedRoom ? "" : t('errors.roomNumberRequired');
+    tempErrors.selectedBed = selectedBed ? "" : t('errors.bedNumberRequired');
+    tempErrors.dateOfJoin = dateOfJoin ? "" : t('errors.dateOfJoinRequired');
     if (!name) {
-      tempErrors.name = "Name is required.";
+      tempErrors.name = t('errors.nameRequired');
     } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-      tempErrors.name = "Name must contain only letters and spaces.";
+      tempErrors.name = t('errors.nameInvalid');
     }
     // Validate mobile number
     if (!mobileNo) {
-      tempErrors.mobileNo = "Mobile number is required.";
+      tempErrors.mobileNo = t('errors.mobileNumberRequired');
     } else if (!/^\d{10,13}$/.test(mobileNo)) {
-      tempErrors.mobileNo = "Invalid mobile number";
+      tempErrors.mobileNo = t('errors.mobileNumberInvalid');
     }
-    tempErrors.idNumber = idNumber ? "" : "ID number is required.";
+    tempErrors.idNumber = idNumber ? "" : t('errors.idNumberRequired');
     // Validate emergency contact
     if (!emergencyContact) {
-      tempErrors.emergencyContact = "Emergency contact is required.";
+      tempErrors.emergencyContact = t('errors.emergencyContactRequired');
     } else if (!/^\d{10,13}$/.test(emergencyContact)) {
-      tempErrors.emergencyContact = "Invalid emergency contact";
+      tempErrors.emergencyContact = t('errors.emergencyContactInvalid');
     }
     // Check if the selected bed is already occupied
     const isBedOccupied = tenants.some(tenant => {
@@ -411,10 +431,10 @@ const handleRoomsIntegerChange = (event) => {
     });
 
     if (isBedOccupied) {
-      tempErrors.selectedBed = "This bed is already occupied.";
+      tempErrors.selectedBed = t('errors.bedAlreadyOccupied');
     }
     if (!tenantImage && !tenantImageUrl) {
-      tempErrors.tenantImage = "Tenant image is required.";
+      tempErrors.tenantImage = t('errors.tenantImageRequired');
     }
     setTenantErrors(tempErrors);
     return Object.keys(tempErrors).every((key) => tempErrors[key] === "");
@@ -481,7 +501,7 @@ const handleRoomsIntegerChange = (event) => {
 
     if (isEditing) {
       await update(ref(database, `Hostel/girls/tenants/${currentTenantId}`), tenantData).then(() => {
-        toast.success("Tenant updated successfully.", {
+        toast.success(t('toastMessages.tenantUpdated'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -491,7 +511,7 @@ const handleRoomsIntegerChange = (event) => {
           progress: undefined,
         });
       }).catch(error => {
-        toast.error("Error updating Tenant: " + error.message, {
+        toast.error(t('toastMessages.errorUpdatingTenant') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -503,7 +523,7 @@ const handleRoomsIntegerChange = (event) => {
       });
     } else {
       await push(ref(database, 'Hostel/girls/tenants'), tenantData).then(() => {
-        toast.success("Tenant added successfully.", {
+        toast.success(t('toastMessages.tenantAddedSuccess'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -513,7 +533,7 @@ const handleRoomsIntegerChange = (event) => {
           progress: undefined,
         });
       }).catch(error => {
-        toast.error("Error adding Tenant: " + error.message, {
+        toast.error(t('toastMessages.errorAddingTenant') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -643,25 +663,25 @@ const handleRoomsIntegerChange = (event) => {
 
     if (!selectedTenant) {
       formIsValid = false;
-      errors["selectedTenant"] = "Selecting a tenant is required.";
+      errors["selectedTenant"] = t('errors.selectedTenantRequired');
     }
 
     // Paid Amount
     if (!paidAmount) {
       formIsValid = false;
-      errors["paidAmount"] = "Paid amount is required.";
+      errors["paidAmount"] = t('errors.paidAmountRequired');
     }
 
     // Paid Date
     if (!paidDate) {
       formIsValid = false;
-      errors["paidDate"] = "Paid date is required.";
+      errors["paidDate"] = t('errors.paidDateRequired');
     }
 
     // Due Date
     if (!dueDate) {
       formIsValid = false;
-      errors["dueDate"] = "Due date is required.";
+      errors["dueDate"] = t('errors.dueDateRequired');
     }
 
     setErrors(errors);
@@ -687,14 +707,14 @@ const handleRoomsIntegerChange = (event) => {
       dateOfJoin,
       paidDate,
       dueDate,
-      status: parseFloat(due) <= 0 ? 'Paid' : 'Unpaid',
+      status: parseFloat(due) <= 0 ? t('rentPage.paid') : t('rentPage.unpaid'),
     };
 
     if (isEditing) {
       // Update the existing rent record
       const rentRef = ref(database, `Hostel/girls/tenants/${selectedTenant}/rents/${editingRentId}`);
       await update(rentRef, rentData).then(() => {
-        toast.success("Rent updated successfully.", {
+        toast.success(t('toastMessages.rentUpdatedSuccess'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -709,7 +729,7 @@ const handleRoomsIntegerChange = (event) => {
         }
         setNotify(false)
       }).catch(error => {
-        toast.error("Error updating rent: " + error.message, {
+        toast.error(t('toastMessages.errorUpdatingRent') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -723,7 +743,7 @@ const handleRoomsIntegerChange = (event) => {
       // Create a new rent record
       const rentRef = ref(database, `Hostel/girls/tenants/${selectedTenant}/rents`);
       await push(rentRef, rentData).then(() => {
-        toast.success("Rent added successfully.", {
+        toast.success(t('toastMessages.rentAddedSuccess'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -738,7 +758,7 @@ const handleRoomsIntegerChange = (event) => {
         }
         setNotify(false)
       }).catch(error => {
-        toast.error("Error adding rent: " + error.message, {
+        toast.error(t('toastMessages.errorAddingRent') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -777,7 +797,7 @@ const handleRoomsIntegerChange = (event) => {
     setNumberOfBeds('');
     setBedRent('');
     setCreatedBy('admin');
-
+    setTenantErrors({});
     setSelectedTenant('');
     setRoomNumber('');
     setBedNumber('');
@@ -789,35 +809,42 @@ const handleRoomsIntegerChange = (event) => {
     setDueDate('');
     setErrors({});
     setIsEditing(false);
+    setFormErrors({
+      number: '',
+      rent: '',
+      rooms: '',
+      status: ''
+    });
   };
-
 
   const menu = [
     {
       image: Rooms,
-      heading: 'Total Rooms',
+      heading: t('dashboard.totalRooms'),
       number: `${rooms.length}`,
-      btntext: 'Add Rooms',
+      btntext: t('dashboard.addRooms'),
     },
+
     {
       image: Tenants,
-      heading: 'Total Tenants',
+      heading: t('dashboard.totalTenants'),
       number: `${tenants.length}`,
-      btntext: 'Add Tenants',
+      btntext: t('dashboard.addTenants'),
     },
     {
       image: Beds,
-      heading: 'Total Beds',
+      heading: t('dashboard.totalBeds'),
       number: `${totalBeds}/${totalBeds-tenants.length}`,
-      btntext: 'Add Rent',
+      btntext: t('dashboard.addRent'),
     },
     {
       image: Expenses,
-      heading: 'Total Expenses',
+      heading: t('dashboard.totalExpenses'),
       number: `${totalExpenses}`,
-      btntext: 'Add Expenses',
+      btntext: t('dashboard.addExpenses'),
     },
   ];
+  
   const Buttons = ['Add Rooms', 'Add Tenants', 'Add Rent', 'Add Expenses'];
 
   const handleClick = (text) => {
@@ -850,29 +877,29 @@ const handleRoomsIntegerChange = (event) => {
     let formIsValid = true;
 
     if (!formData.expenseName.match(/^[a-zA-Z\s]+$/)) {
-      errors.expenseName = 'Expense name should contain only alphabets and spaces';
+      errors.expenseName = t('errors.expenseNameAlphabetsAndSpaces');
       formIsValid = false;
     }
 
 
     if (!formData.expenseAmount.match(/^\d+(\.\d{1,2})?$/)) {
-      errors.expenseAmount = 'Expense amount should be a valid number';
+      errors.expenseAmount =t('errors.expenseAmountValidNumber');
       formIsValid = false;
     }
 
 
     if (!formData.expenseName) {
-      errors.expenseName = 'Expense name is required';
+      errors.expenseName =  t('errors.expenseNameRequired');
       formIsValid = false;
     }
 
     if (!formData.expenseAmount) {
-      errors.expenseAmount = 'Expense amount is required';
+      errors.expenseAmount = t('errors.expenseAmountRequired');
       formIsValid = false;
     }
 
     if (!formData.expenseDate) {
-      errors.expenseDate = 'Expense date is required';
+      errors.expenseDate =t('errors.expenseDateRequired');
       formIsValid = false;
     }
 
@@ -885,7 +912,7 @@ const handleRoomsIntegerChange = (event) => {
         expenseAmount: parseFloat(formData.expenseAmount),
         expenseDate: new Date(formData.expenseDate).toISOString() // Proper ISO formatting
       }).then(() => {
-        toast.success("Expense added successfully.", {
+        toast.success(t('toastMessages.expenseAddedSuccessfully'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -896,7 +923,7 @@ const handleRoomsIntegerChange = (event) => {
         });
         // setIsEditing(false); // Reset editing state
       }).catch(error => {
-        toast.error("Error adding expense: " + error.message, {
+        toast.error(t('toastMessages.errorAddingExpense') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -955,52 +982,52 @@ const handleRoomsIntegerChange = (event) => {
  
   const renderFormLayout = () => {
     switch (formLayout) {
-      case 'Add Rooms':
+      case t('dashboard.addRooms'):
         return (
 
           <form className="row g-3" onSubmit={handleGirlsRoomsSubmit}>
             <div className="col-md-6">
-              <label htmlFor="inputNumber" className="form-label">Floor Number</label>
+              <label htmlFor="inputNumber" className="form-label">{t('dashboard.floorNumber')}</label>
               <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange} />
               {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRent" className="form-label">Room Number</label>
+              <label htmlFor="inputRent" className="form-label">{t('dashboard.roomNumber')}</label>
               <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} />
               {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
+              <label htmlFor="inputRooms" className="form-label">{t('dashboard.numberOfBeds')}</label>
               <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} />
               {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
+              <label htmlFor="inputStatus" className="form-label">{t('dashboard.bedRent')}</label>
               <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} />
               {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRole" className="form-label">Created By</label>
+              <label htmlFor="inputRole" className="form-label">{t('dashboard.createdBy')}</label>
               <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
 
-                <option value="admin">Admin</option>
-                <option value="sub-admin">Sub-admin</option>
+                <option value="admin">{t('dashboard.admin')}</option>
+                <option value="sub-admin">{t('dashboard.subAdmin')}</option>
               </select>
             </div>
             <div className="col-12 text-center">
-              <button type="submit" className="btn btn-warning" onClick={handleGirlsRoomsSubmit}>Create Room</button>
+              <button type="submit" className="btn btn-warning" onClick={handleGirlsRoomsSubmit}>{t('dashboard.createRoom')}</button>
             </div>
           </form>
         )
-      case 'Add Rent':
+      case t('dashboard.addRent'):
         return (
           <div >
             <div className='monthlyDailyButtons'>
               <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(true)}>
-                <text>Monthly</text>
+                <text>{t('dashboard.monthly')}</text>
               </div>
               <div className={!showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(false)}>
-                <text>Daily</text>
+                <text>{t('dashboard.daily')}</text>
               </div>
             </div>
             {showForm ?
@@ -1008,7 +1035,7 @@ const handleRoomsIntegerChange = (event) => {
                 <form class="row lg-10" onSubmit={handleRentSubmit}>
                   <div class='col-12 mb-3'>
                     <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
-                      <option value="">Select a Tenant *</option>
+                      <option value="">{t('dashboard.selectTenant')} *</option>
                       {/* {availableTenants.map(tenant => (
                   <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
                 ))} */}
@@ -1026,33 +1053,33 @@ const handleRoomsIntegerChange = (event) => {
                     {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                    <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNumber')}:</label>
                     <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                    <label htmlFor='BedNumber' class="form-label">{t('dashboard.bedNumber')}:</label>
                     <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                    <label htmlFor='TotalFee' class="form-label">{t('dashboard.totalFee')}:</label>
                     <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                    <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}:</label>
                     <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                     {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="Due" class="form-label">Due:</label>
+                    <label htmlFor="Due" class="form-label">{t('dashboard.due')}:</label>
                     <input id="Due" class="form-control" type="number" value={due} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                    <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}:</label>
                     <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
                     />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                    <label htmlFor='PaidDate' class="form-label">{t('dashboard.paidDate')}:</label>
                     <input
                       id="PaidDate"
                       class="form-control"
@@ -1063,7 +1090,7 @@ const handleRoomsIntegerChange = (event) => {
                     {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                    <label htmlFor="DueDate" class="form-label">{t('dashboard.dueDate')}</label>
                     <input
                       id="DueDate"
                       class="form-control"
@@ -1083,13 +1110,13 @@ const handleRoomsIntegerChange = (event) => {
                       onChange={onClickCheckbox} // Toggle the state on change
                       />
                       <label className="form-check-label" htmlFor="notifyCheckbox">
-                        Notify
+                      {t('dashboard.notify')}
                       </label>
                       <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
                     </div>
                   </div>
                   <div class="col-12 text-center mt-2">
-                    <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                    <button type="submit" className="btn btn-warning">{isEditing ? t('dashboard.updateRent') : t('dashboard.submitRentDetails')}</button>
                   </div>
                 </form>
               </div> :
@@ -1097,7 +1124,7 @@ const handleRoomsIntegerChange = (event) => {
                 <form class="row lg-10" onSubmit={handleRentSubmit}>
                   <div class='col-12 mb-3'>
                     <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
-                      <option value="">Select a Tenant *</option>
+                      <option value="">{t('dashboard.selectTenant')} *</option>
                       {/* {availableTenants.map(tenant => (
                                     <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
                                   ))} */}
@@ -1115,33 +1142,33 @@ const handleRoomsIntegerChange = (event) => {
                     {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                    <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNumber')}</label>
                     <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                    <label htmlFor='BedNumber' class="form-label">{t('dashboard.bedNumber')}</label>
                     <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                    <label htmlFor='TotalFee' class="form-label">{t('dashboard.totalFee')}</label>
                     <input id="TotalFee" class="form-control" type="number" value={totalFee} onChange={e => setTotalFee(e.target.value)} />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                    <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}</label>
                     <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                     {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="Due" class="form-label">Due:</label>
+                    <label htmlFor="Due" class="form-label">{t('dashboard.due')}</label>
                     <input id="Due" class="form-control" type="number" value={due} readOnly />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                    <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}</label>
                     <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
                     />
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                    <label htmlFor='PaidDate' class="form-label">{t('dashboard.paidDate')}</label>
                     <input
                       id="PaidDate"
                       class="form-control"
@@ -1152,7 +1179,7 @@ const handleRoomsIntegerChange = (event) => {
                     {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                    <label htmlFor="DueDate" class="form-label">{t('dashboard.dueDate')}</label>
                     <input
                       id="DueDate"
                       class="form-control"
@@ -1168,30 +1195,31 @@ const handleRoomsIntegerChange = (event) => {
                         id="notifyCheckbox"
                         className="form-check-input"
                         type="checkbox"
-                      // checked={notify}
-                      // onChange={onClickCheckbox} // Toggle the state on change
+                      checked={notify}
+                      onChange={onClickCheckbox} // Toggle the state on change
                       />
                       <label className="form-check-label" htmlFor="notifyCheckbox">
-                        Notify
+                      {t('dashboard.notify')}
                       </label>
-                      {/* <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} /> */}
+                      <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
                     </div>
                   </div>
+                  
                   <div class="col-12 text-center mt-2">
-                    <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                    <button type="submit" className="btn btn-warning">{isEditing ? t('dashboard.updateRent') : t('dashboard.submitRentDetails')}</button>
                   </div>
                 </form>
               </div>
             }
           </div>
         )
-      case 'Add Tenants':
+      case t('dashboard.addTenants'):
         return (
           <form class="row lg-10" onSubmit={handleTenantSubmit}>
             <div class="col-md-6">
-              <label htmlFor='roomNo' class="form-label">Room No:</label>
+              <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNo')}</label>
               <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
-                <option value="">Select a Room</option>
+                <option value="">{t('dashboard.selectRoom')}</option>
                 {girlsRooms.map((room) => (
                   <option key={room.roomNumber} value={room.roomNumber}>
                     {room.roomNumber}
@@ -1204,10 +1232,10 @@ const handleRoomsIntegerChange = (event) => {
 
             <div class="col-md-6">
               <label htmlFor='bedNo' class="form-label">
-                Bed No:
+              {t('dashboard.bedNo')}
               </label>
               <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
-                <option value="">Select a Bed</option>
+                <option value="">{t('dashboard.selectBed')}</option>
                 {bedOptions.map(bedNumber => (
                   <option key={bedNumber} value={bedNumber}>
                     {bedNumber}
@@ -1219,7 +1247,7 @@ const handleRoomsIntegerChange = (event) => {
             </div>
             <div class="col-md-6">
               <label htmlFor='dataofJoin' class="form-label">
-                Date of Join:
+              {t('dashboard.dateOfJoin')}
               </label>
               <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
 
@@ -1227,7 +1255,7 @@ const handleRoomsIntegerChange = (event) => {
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantName' class="form-label">
-                Name:
+              {t('dashboard.name')}
               </label>
               <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
 
@@ -1235,7 +1263,7 @@ const handleRoomsIntegerChange = (event) => {
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantMobileNo' class="form-label">
-                Mobile No:
+              {t('dashboard.mobileNo')}
               </label>
               <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
 
@@ -1243,7 +1271,7 @@ const handleRoomsIntegerChange = (event) => {
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantIdNum' class="form-label">
-                ID Number:
+              {t('dashboard.idNumber')}
               </label>
               <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
 
@@ -1251,7 +1279,7 @@ const handleRoomsIntegerChange = (event) => {
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantEmergency' class="form-label">
-                Emergency Contact:
+              {t('dashboard.emergencyContact')}
               </label>
               <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
 
@@ -1259,22 +1287,22 @@ const handleRoomsIntegerChange = (event) => {
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantStatus' class="form-label">
-                Status:
+              {t('dashboard.status')}
               </label>
               <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
-                <option value="occupied">Occupied</option>
-                <option value="unoccupied">Unoccupied</option>
+                <option value="occupied">{t('dashboard.occupied')}</option>
+                <option value="unoccupied">{t('dashboard.unoccupied')}</option>
               </select>
 
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantUpload' class="form-label">
-                Upload Image:
+              {t('dashboard.uploadImage')}
               </label>
               {isEditing && tenantImageUrl && (
                 <div>
                   <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
-                  <p>Current Image</p>
+                  <p>{t('dashboard.currentImage')}</p>
                 </div>
               )}
               <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required />
@@ -1282,7 +1310,7 @@ const handleRoomsIntegerChange = (event) => {
             </div>
             <div class="col-md-6">
               <label htmlFor='tenantUploadId' class="form-label">
-                Upload Id:
+              {t('dashboard.uploadId')}:
               </label>
               {isEditing && tenantIdUrl && (
                 <object
@@ -1291,39 +1319,39 @@ const handleRoomsIntegerChange = (event) => {
                   width="50%"
                   height="200px"
                 >
-                  <a href={tenantIdUrl}>Download PDF</a>
+                  <a href={tenantIdUrl}>{t('dashboard.downloadPdf')}</a>
                 </object>
               )}
               <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />   
           </div>
 
           <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
-  <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">Do you have a bike?</label>
-  <input
-    type="radio"
-    className="Radio"
-    id="bikeCheck"
-    name="bike"
-    value="yes"
-    onClick={handleCheckboxChange}
-    checked={hasBike}
-  />
-  <label htmlFor='bikeCheck' className='bike'>Yes</label>
-  <input
-    type="radio"
-    id="bikeCheck1"
-    name="bike"
-    value="no"
-    onClick={handleCheckboxChange}
-    checked={!hasBike}
-    style={{ marginLeft: '30px' }}
-  />
-  <label htmlFor='bikeCheck1' className='bike'>No</label>
-</div>
+            <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">{t('dashboard.doYouHaveBike')}</label>
+            <input
+              type="radio"
+              className="Radio"
+              id="bikeCheck"
+              name="bike"
+              value="yes"
+              onClick={handleCheckboxChange}
+              checked={hasBike}
+            />
+            <label htmlFor='bikeCheck' className='bike'>{t('dashboard.yes')}</label>
+            <input
+              type="radio"
+              id="bikeCheck1"
+              name="bike"
+              value="no"
+              onClick={handleCheckboxChange}
+              checked={!hasBike} 
+              style={{ marginLeft: '30px' }}
+            />
+            <label htmlFor='bikeCheck1' className='bike'>{t('dashboard.no')}</label>
+          </div>
 
-{hasBike ? (
+                  {hasBike ? (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
                         type="text"
                         id="bikeNumber"
@@ -1337,7 +1365,7 @@ const handleRoomsIntegerChange = (event) => {
                     </div>
                   ):(
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
                         type="text"
                         id="bikeNumber"
@@ -1367,42 +1395,42 @@ const handleRoomsIntegerChange = (event) => {
             {isEditing ? (
               <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>Update Tenant</button>
             ) : (
-              <button className='btn btn-warning' type="submit">Add Tenant</button>
+              <button className='btn btn-warning' type="submit">{t('dashboard.addTenants')}</button>
             )}
           </div>
         </form>
  
         )
 
-      case "Add Expenses":
+      case t('dashboard.addExpenses'):
         return (
           <form className="row lg-10" onSubmit={expensesHandleSubmit}>
             <div className="col-md-6">
-              <label htmlFor="inputExpenseName" className="form-label">Expense Name</label>
+              <label htmlFor="inputExpenseName" className="form-label">{t('dashboard.expenseName')}</label>
               <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} />
               {formErrors.expenseName && <div className="text-danger">{formErrors.expenseName}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRent" className="form-label">Expense amount</label>
+              <label htmlFor="inputRent" className="form-label">{t('dashboard.expenseAmount')}</label>
               <input type="number" className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} />
               {formErrors.expenseAmount && <div className="text-danger">{formErrors.expenseAmount}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputRole" className="form-label">Created By</label>
+              <label htmlFor="inputRole" className="form-label">{t('dashboard.createdBy')}</label>
               <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
-                <option value="admin">Admin</option>
-                <option value="sub-admin">Sub-admin</option>
+                <option value="admin">{t('dashboard.admin')}</option>
+                <option value="sub-admin">{t('dashboard.subAdmin')}</option>
               </select>
             </div>
             <div className="col-md-6">
-              <label htmlFor="inputDate" className="form-label">Expense Date</label>
+              <label htmlFor="inputDate" className="form-label">{t('dashboard.expenseDate')}</label>
               <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
               {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
             </div>
 
             <div className="col-12 text-center mt-3">
 
-              <button type="submit" className="btn btn-warning">Create</button>
+              <button type="submit" className="btn btn-warning">{t('dashboard.create')}</button>
 
 
             </div>
@@ -1414,17 +1442,24 @@ const handleRoomsIntegerChange = (event) => {
   }
 
   const [popupOpen, setPopupOpen] = useState(false);
+  const [expensePopupOpen, setExpensePopupOpen] = useState(false);
   const [bedsData, setBedsData] = useState([]);
   const handleCardClick = (item) => {
-    if (item.heading === 'Total Beds') {
+    if (item.heading === t('dashboard.totalBeds')) {
         // Logic to open the popup for "Total Beds" card
         setPopupOpen(true);
+    }
+    if (item.heading === 'Total Expenses') {
+      setExpensePopupOpen(true);
     }
   };
 
  
   const onClickCloseBedsPopup = () => {
     setPopupOpen(false);
+  }
+  const onClickCloseExpensePopup = () => {
+    setExpensePopupOpen(false);
   }
   
   useEffect(() => {
@@ -1471,16 +1506,27 @@ const handleRoomsIntegerChange = (event) => {
 
   const columns = [
     // 'S. No',
-    'Bed Number',
-    'Room No',
-    'Floor',
+    t('table.bedNumber'),
+    t('table.roomNo'),
+    t('table.floor'),
     // 'Status'
   ];
+
+  const expenseColumns = [
+    'Date',
+    'Expense',
+    'Amount',
+  ];
+  const expenseRows = currentMonthExpenses.map((expense, index) => ({
+    date:expense.expenseDate,
+    expense:expense.expenseName,
+    amount:expense.expenseAmount,
+  }));
 
  
   return (
     <div className="dashboardgirls">
-      <h1 className="heading">Women's</h1>
+      <h1 className="heading">{t('dashboard.women')}</h1>
       <br />
       <div className="menu">
         {menu.map((item, index) => (
@@ -1518,7 +1564,7 @@ const handleRoomsIntegerChange = (event) => {
           <Button variant="primary" onClick={() => setPopupOpen(true)}>Open Popup</Button>
           <Modal show={popupOpen} onHide={onClickCloseBedsPopup} dialogClassName="modal-90w">
             <Modal.Header closeButton>
-              <Modal.Title>Unoccupied Beds</Modal.Title>
+              <Modal.Title>{t('dashboard.unoccupiedBeds')}</Modal.Title>
             </Modal.Header>
             <Modal.Body className='custom-modal-body'>
               <table style={{ borderCollapse: 'collapse', width: '100%' }}>
@@ -1541,7 +1587,44 @@ const handleRoomsIntegerChange = (event) => {
               </table>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseBedsPopup}>Close</Button>
+              <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseBedsPopup}>{t('common.close')}</Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+      }
+
+{expensePopupOpen &&
+        <div className="popupBeds" id="example">
+          <Button variant="primary" onClick={() => setExpensePopupOpen(true)}>Open Popup</Button>
+          <Modal show={expensePopupOpen} onHide={onClickCloseExpensePopup} dialogClassName="modal-90w">
+            <Modal.Header closeButton>
+              <Modal.Title>This Month Expenses</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="custom-modal-body">
+              <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                <thead>
+                  <tr>
+                    {expenseColumns.map((column, index) => (
+                      <th key={index} style={{ border: '1px solid black', padding: '8px' }}>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {expenseRows.map((row, index) => (
+                    <tr key={index} style={{ border: '1px solid black' }}>
+                      {Object.values(row).map((value, i) => (
+                        <td key={i} style={{ border: '1px solid black', padding: '8px' }}>{value}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Modal.Body>
+            <div>
+             <p>This Month Total Expenses: {totalExpenses}</p>
+            </div>
+            <Modal.Footer>
+              <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseExpensePopup}>Close</Button>
             </Modal.Footer>
           </Modal>
         </div>

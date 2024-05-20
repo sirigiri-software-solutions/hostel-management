@@ -64,6 +64,9 @@ const DashboardBoys = () => {
     const [notify, setNotify] = useState(false);
     const [notifyUserInfo, setNotifyUserInfo] = useState(null);
     const sendMessage = (tenant, rentRecord) => {
+
+      console.log(tenant.name,tenant.dateOfJoin,tenant.mobileNo,"addedToNotify")
+
       const totalFee = rentRecord.totalFee;
       const tenantName = tenant.name;
     const amount = rentRecord.due;
@@ -99,10 +102,13 @@ const DashboardBoys = () => {
     // Event handler for the notify checkbox
     const handleNotifyCheckbox = (rentData) => {
       // Toggle the state of the notify checkbox
+
+     
       if (notify && notifyUserInfo) {
-        const { tenant, rentRecord } = notifyUserInfo;
-        console.log(tenant, "InNotify")
-        sendMessage(tenant, rentData); // If checkbox is checked and tenant info is available, send WhatsApp message
+        // const { tenant, rentRecord } = notifyUserInfo;
+        // console.log(tenant, "InNotify")
+        console.log(notify,notifyUserInfo,"addedToNotify")
+        sendMessage(notifyUserInfo, rentData); // If checkbox is checked and tenant info is available, send WhatsApp message
       }
       setNotify(!notify);
     };
@@ -535,6 +541,21 @@ const [hasBike, setHasBike] = useState(false);
   const [dueDate, setDueDate] = useState('');
   const [editingRentId, setEditingRentId] = useState(null);
   const [availableTenants, setAvailableTenants] = useState([]);
+  const [totalTenantsData,setTotalTenantData] = useState({});
+
+  useEffect(()=>{
+    const tenantsRef = ref(database, 'Hostel/boys/tenants');
+    onValue(tenantsRef, (snapshot) => {
+      const data = snapshot.val();
+      const loadedTenants = data ? Object.keys(data).map(key => ({
+        id: key,
+        ...data[key],
+      })) : [];
+      setTotalTenantData(loadedTenants)
+    })
+   
+    
+  },[selectedTenant])
 
   useEffect(() => {
     const updateTotalFeeFromRoom = () => {
@@ -657,6 +678,10 @@ const [hasBike, setHasBike] = useState(false);
     return formIsValid;
   };
 
+  useEffect(()=>{
+    
+  })
+
 
   const handleRentSubmit = async (e) => {
     e.preventDefault();
@@ -678,6 +703,10 @@ const [hasBike, setHasBike] = useState(false);
       dueDate,
       status: parseFloat(due) <= 0 ? 'Paid' : 'Unpaid',
     };
+    
+   
+
+    
 
     if (isEditing) {
       // Update the existing rent record
@@ -697,6 +726,7 @@ const [hasBike, setHasBike] = useState(false);
           handleNotifyCheckbox(rentData);
         }
         setNotify(false)
+        setSelectedTenant('')
       }).catch(error => {
         toast.error("Error updating rent: " + error.message, {
           position: "top-center",
@@ -726,6 +756,7 @@ const [hasBike, setHasBike] = useState(false);
           handleNotifyCheckbox(rentData);
         }
         setNotify(false)
+        setSelectedTenant('')
       }).catch(error => {
         toast.error("Error addinging rent: " + error.message, {
           position: "top-center",
@@ -839,6 +870,15 @@ const [hasBike, setHasBike] = useState(false);
 
   const onClickCheckbox = () => {
     setNotify(!notify)
+    const singleTenant = totalTenantsData.filter(tenant =>
+      tenant.id === selectedTenant 
+    );
+    const singleTenantData = singleTenant[0];
+    console.log(singleTenantData,"addedToNotify")
+    setNotifyUserInfo(singleTenantData)
+
+    // console.log("clicking","addedToNotify")
+    
   }
 
   const expensesHandleSubmit = (e) => {

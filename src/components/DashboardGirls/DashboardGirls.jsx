@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 // import Table from '../../Elements/Table'
 import { Modal, Button } from 'react-bootstrap';
+import { FaWhatsapp } from "react-icons/fa";
  
 const DashboardGirls = () => {
   const [modelText, setModelText] = useState('');
@@ -62,6 +63,75 @@ const DashboardGirls = () => {
 
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('NA');
+  const [selectedTenant, setSelectedTenant] = useState('');
+  const [notify, setNotify] = useState(false);
+  const [notifyUserInfo, setNotifyUserInfo] = useState(null);
+  const [totalTenantsData,setTotalTenantData] = useState({});
+
+  useEffect(()=>{
+    const tenantsRef = ref(database, 'Hostel/girls/tenants');
+    onValue(tenantsRef, (snapshot) => {
+      const data = snapshot.val();
+      const loadedTenants = data ? Object.keys(data).map(key => ({
+        id: key,
+        ...data[key],
+      })) : [];
+      setTotalTenantData(loadedTenants)
+    })
+   
+    
+  },[selectedTenant])
+
+  const sendMessage = (tenant, rentRecord) => {
+
+    console.log(tenant,"sendMessages")
+    console.log(tenant,"sendMessages")
+
+
+    const totalFee = rentRecord.totalFee;
+    const tenantName = tenant.name;
+  const amount = rentRecord.due;
+  const dateOfJoin = tenant.dateOfJoin;
+  const dueDate = rentRecord.dueDate;
+  const paidAmount = rentRecord.paidAmount;
+  const paidDate = rentRecord.paidDate;
+
+  const message = `Hi ${tenantName},\n
+Hope you are doing fine.\n
+Your total fee is ${totalFee}.\n
+You have paid ${paidAmount} so far.\n
+Therefore, your remaining due amount is ${amount}.\n
+You joined on ${dateOfJoin}, and your due date is ${dueDate}.\n
+Please note that you made your last payment on ${paidDate}.\n`
+
+    const phoneNumber = tenant.mobileNo; // Replace with the recipient's phone number
+
+    // Check if the phone number starts with '+91' (India's country code)
+    const formattedPhoneNumber = phoneNumber.startsWith('+91') ? phoneNumber : `+91${phoneNumber}`;
+
+    const encodedMessage = encodeURIComponent(message);
+
+
+    // Use web link for non-mobile devices
+    let whatsappLink = `https://wa.me/${formattedPhoneNumber}?text=${encodedMessage}`;
+
+
+    // Open the WhatsApp link
+    window.open(whatsappLink, '_blank');
+  };
+
+  // Event handler for the notify checkbox
+  const handleNotifyCheckbox = (rentData) => {
+    // Toggle the state of the notify checkbox
+
+    console.log(notify,notifyUserInfo,"addedToNotify")
+    if (notify && notifyUserInfo) {
+      // const { tenant, rentRecord } = notifyUserInfo;
+      // console.log(tenant, "InNotify")
+      sendMessage(notifyUserInfo, rentData); // If checkbox is checked and tenant info is available, send WhatsApp message
+    }
+    setNotify(!notify);
+  };
 
    
   const getCurrentMonth = () => {
@@ -465,7 +535,7 @@ const handleRoomsIntegerChange = (event) => {
 
   //handle add rent==============================================
 
-  const [selectedTenant, setSelectedTenant] = useState('');
+ 
   const [bedNumber, setBedNumber] = useState('');
   const [totalFee, setTotalFee] = useState('');
   const [paidAmount, setPaidAmount] = useState('');
@@ -634,6 +704,10 @@ const handleRoomsIntegerChange = (event) => {
           progress: undefined,
         });
         setIsEditing(false); // Reset editing state
+        if (notify) {
+          handleNotifyCheckbox(rentData);
+        }
+        setNotify(false)
       }).catch(error => {
         toast.error("Error updating rent: " + error.message, {
           position: "top-center",
@@ -659,6 +733,10 @@ const handleRoomsIntegerChange = (event) => {
           progress: undefined,
         });
         setIsEditing(false); // Reset editing state
+        if (notify) {
+          handleNotifyCheckbox(rentData);
+        }
+        setNotify(false)
       }).catch(error => {
         toast.error("Error adding rent: " + error.message, {
           position: "top-center",
@@ -862,6 +940,17 @@ const handleRoomsIntegerChange = (event) => {
       }
     }
   }, [selectedTenant, tenants]);
+
+  const onClickCheckbox = () => {
+    setNotify(!notify)
+    const singleTenant = totalTenantsData.filter(tenant =>
+      tenant.id === selectedTenant 
+    );
+    const singleTenantData = singleTenant[0];
+    console.log(singleTenantData,"addedToNotify")
+    setNotifyUserInfo(singleTenantData)
+    
+  }
   
  
   const renderFormLayout = () => {
@@ -990,13 +1079,13 @@ const handleRoomsIntegerChange = (event) => {
                         id="notifyCheckbox"
                         className="form-check-input"
                         type="checkbox"
-                      // checked={notify}
-                      // onChange={onClickCheckbox} // Toggle the state on change
+                      checked={notify}
+                      onChange={onClickCheckbox} // Toggle the state on change
                       />
                       <label className="form-check-label" htmlFor="notifyCheckbox">
                         Notify
                       </label>
-                      {/* <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} /> */}
+                      <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
                     </div>
                   </div>
                   <div class="col-12 text-center mt-2">

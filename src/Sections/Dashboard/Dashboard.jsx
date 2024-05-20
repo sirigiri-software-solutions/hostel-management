@@ -4,8 +4,11 @@ import DashboardBoys from '../../components/DashboardBoys/DashboardBoys';
 import DashboardGirls from '../../components/DashboardGirls/DashboardGirls';
 import { Tab, Tabs } from 'react-bootstrap';
 import './Dashboard.css';
+import { useTranslation } from 'react-i18next';
 
 const Dashboard = () => {
+  const {t} = useTranslation()
+
   const [activeTab, setActiveTab] = useState('boys');
   const name = localStorage.getItem("username")
 
@@ -17,7 +20,7 @@ const Dashboard = () => {
 
   return (
     <div className='container_main'>
-      <h1 className='dashboard-welcome'>Welcome</h1>
+      <h1 className='dashboard-welcome'>{t('dashboard.welcome')}</h1>
      <div className='mobile-layout'>
       <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
         <Tab eventKey="boys" title="Men's">

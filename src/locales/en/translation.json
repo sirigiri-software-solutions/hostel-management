@@ -119,6 +119,33 @@
         "update": "Update"
     },
     "tenantsPage": {
+        "tenantsManagement": "Tenants Management",
+        "bike": "Bike",
+        "yes": "Yes",
+        "no": "No",
+        "presentTenants": "Present-Tenants",
+        "vacated": "Vacated",
+        "updateTenant": "Update Tenant",
+        "vacateTenant": "Vacate Tenant",
+        "tenantDetails": "Tenant Details",
+        "confirmationMessage": "Are you sure you want to delete the tenant with name ",
+        "note": "Note: Once you delete a tenant it can't be restored.",
+        "name": "Name",
+        "mobileNo": "Mobile Number",
+        "proofID": "Proof ID",
+        "roomBedNo": "Room/Bed No",
+        "joiningDate": "Joining Date",
+        "dueDate":"Due Date",
+        "idProof":"ID Proof",
+        "downloadPdf":"Download PDF",
+        "notUploaded":"Not Uploaded",
+         "close":"Close",
+         "sNo":"S.No",
+         "image":"Image",
+         "id":"ID",
+         "status":"Status",
+         "actions":"Actions"
+
         
     },
     "expensesPage": {
@@ -137,7 +164,11 @@
         "deleteExpense": "Delete Expense",
         "expenseDeleted": "Expense deleted successfully",
         "errorDeletingExpense": "Error deleting expense",
-        "total": "Total"
+        "total": "Total",
+        "sNo":"S.No",
+        "date":"Date",
+        "actions":"Actions"
+
     },
     "table":{
         "bedNumber": "Bed Number",
@@ -191,14 +222,54 @@
         "roomAddedSuccessfully": "Room added successfully.",
         "errorAddingRoom": "Error adding room",
         "tenantUpdated": "Tenant updated successfully.",
-        "errorUpdatingTenant": "Error updating Tenant: ",
+        "errorUpdatingTenant": "Error updating Tenant ",
         "tenantAddedSuccess": "Tenant added successfully.",
         "errorAddingTenant": "Error adding Tenant: ",
         "rentUpdatedSuccess": "Rent updated successfully.",
-        "errorUpdatingRent": "Error updating rent: ",
+        "errorUpdatingRent": "Error updating rent ",
         "rentAddedSuccess": "Rent added successfully.",
         "errorAddingRent": "Error adding rent: ",
         "expenseAddedSuccessfully": "Expense added successfully.",
-        "errorAddingExpense": "Error adding expense: "
+        "errorAddingExpense": "Error adding expense ",
+        "expensesUpdatedSuccessfully":"Expense updated successfully.",
+        "errorUpdatinExpense":"Error updating Expense",
+        "expenseDeteledSuccessfully":"Expense deleted successfully",
+        "errorDeletingExpense":"Error deleting Expense"
+    },
+    "mobileTable":{
+
+            "serialNumber": "S.No",
+            "image": "Image",
+            "name": "Name",
+            "id": "ID",
+            "mobileNumber": "Mobile Number",
+            "roomBedNumber": "Room/Bed Number",
+            "bedNumber": "Bed Number",
+            "roomNumber": "Room Number",
+            "personName": "Person Name",
+            "personMobile": "Person Mobile",
+            "floor": "Floor",
+            "numberOfBeds": "Number of Beds",
+            "bedRent": "Bed Rent",
+            "monthYear": "Month/Year",
+            "rent": "Rent",
+            "paid": "Paid",
+            "due": "Due",
+            "joiningDate": "Joining Date",
+            "bikeNumber": "Bike Number",
+            "dueDate": "Due Date",
+            "lastFee": "Last Fee",
+            "createdOn": "Created On",
+            "expenseName": "Expense Name",
+            "expenseAmount": "Expense Amount",
+            "createdBy": "Created By",
+            "lastUpdatedDate": "Last Updated Date",
+            "paymentDate": "Payment Date",
+            "status": "Status",
+            "edit": "Edit",
+            "actions": "Actions",
+            "delete": "Delete"
+        
+        
     }
   }

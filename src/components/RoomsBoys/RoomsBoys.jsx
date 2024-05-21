@@ -8,12 +8,12 @@ import { DataContext } from "../../ApiData/ContextProvider"
 import { onValue, remove, update } from 'firebase/database';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { useData } from '../../ApiData/ContextProvider';
 import { useTranslation } from 'react-i18next';
-
 
 const RoomsBoys = () => {
   const { t }=useTranslation();
-
+  const { activeBoysHostel } = useData();
   const [floorNumber, setFloorNumber] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
   const [numberOfBeds, setNumberOfBeds] = useState('');
@@ -29,17 +29,14 @@ const RoomsBoys = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && (event.target.id === "exampleModalRoomsBoys" || event.key === "Escape")) {
-            setShowModal(false);
-        }
+      if (showModal && (event.target.id === "exampleModalRoomsBoys" || event.key === "Escape")) {
+        setShowModal(false);
+      }
     };
     window.addEventListener('click', handleOutsideClick);
-    window.addEventListener("keydown",handleOutsideClick)
-    
-}, [showModal]);
+    window.addEventListener("keydown", handleOutsideClick)
 
-
-
+  }, [showModal]);
 
   const handleRoomsIntegerChange = (event) => {
     const { name, value } = event.target;
@@ -56,30 +53,30 @@ const RoomsBoys = () => {
     }
 
     // if (value === '' || re.test(sanitizedValue)) {
-        switch(name) {
-            case 'floorNumber':
-                setFloorNumber(sanitizedValue);
-                break;
-            case 'roomNumber':
-                setRoomNumber(sanitizedValue);
-                break;
-            case 'numberOfBeds':
-                setNumberOfBeds(sanitizedValue);
-                break;
-            case 'bedRent':
-                setBedRent(sanitizedValue);
-                break;
-            default:
-                break;
-        }
+    switch (name) {
+      case 'floorNumber':
+        setFloorNumber(sanitizedValue);
+        break;
+      case 'roomNumber':
+        setRoomNumber(sanitizedValue);
+        break;
+      case 'numberOfBeds':
+        setNumberOfBeds(sanitizedValue);
+        break;
+      case 'bedRent':
+        setBedRent(sanitizedValue);
+        break;
+      default:
+        break;
+    }
     // }
-};
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const now = new Date().toISOString();  // Get current date-time in ISO format
 
-    
+
     const newErrors = {};
 
     // Validation checks
@@ -98,7 +95,7 @@ const RoomsBoys = () => {
     }
     // -----------------------------------------------
     if (isEditing) {
-      const roomRef = ref(database, `Hostel/boys/rooms/${currentId}`);
+      const roomRef = ref(database, `Hostel/boys${activeBoysHostel}/rooms/${currentId}`);
       update(roomRef, {
         floorNumber,
         roomNumber,
@@ -129,7 +126,7 @@ const RoomsBoys = () => {
         });
       });
     } else {
-      const roomsRef = ref(database, 'Hostel/boys/rooms');
+      const roomsRef = ref(database, `Hostel/boys/${activeBoysHostel}/rooms`);
       push(roomsRef, {
         floorNumber,
         roomNumber,
@@ -159,8 +156,8 @@ const RoomsBoys = () => {
         });
       });
     }
-  
-    
+
+
 
     // Close the modal
     setShowModal(false);
@@ -176,7 +173,7 @@ const RoomsBoys = () => {
   //   // remove(roomRef);
   // };
 
-  const [showConfirmationPopUp,setShowConfirmationPopUp] = useState(false);
+  const [showConfirmationPopUp, setShowConfirmationPopUp] = useState(false);
 
   const handleDeleteRoom = () => {
     // const roomRef = ref(database, `Hostel/boys/rooms/${id}`);
@@ -206,7 +203,7 @@ const RoomsBoys = () => {
   };
 
   const confirmDeleteYes = () => {
-    const roomRef = ref(database, `Hostel/boys/rooms/${currentId}`);
+    const roomRef = ref(database, `Hostel/boys/${activeBoysHostel}/rooms/${currentId}`);
     remove(roomRef).then(() => {
       toast.success("Room deleted successfully.", {
         position: "top-center",
@@ -235,7 +232,7 @@ const RoomsBoys = () => {
   const confirmDeleteNo = () => {
     setShowConfirmationPopUp(false);
   }
-  
+
 
   const handleEdit = (room) => {
     setFloorNumber(room.floorNumber);
@@ -259,21 +256,21 @@ const RoomsBoys = () => {
     setShowModal(true);
   };
 
-  const  closePopupModal = () => {
+  const closePopupModal = () => {
     setShowModal(false);
   }
-  
-const resetForm = () => {
-  setFloorNumber('');
-  setRoomNumber('');
-  setNumberOfBeds('');
-  setBedRent('');
-  setCurrentId('');
-  setErrors({});
-};
+
+  const resetForm = () => {
+    setFloorNumber('');
+    setRoomNumber('');
+    setNumberOfBeds('');
+    setBedRent('');
+    setCurrentId('');
+    setErrors({});
+  };
 
   useEffect(() => {
-    const roomsRef = ref(database, 'Hostel/boys/rooms');
+    const roomsRef = ref(database, `Hostel/boys/${activeBoysHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRooms = [];
@@ -285,7 +282,7 @@ const resetForm = () => {
       }
       setRooms(loadedRooms);
     });
-  }, []);
+  }, [activeBoysHostel]);
 
   //--------------------------------==================================
   let roomsData = []
@@ -297,8 +294,8 @@ const resetForm = () => {
     const RoomsBoysData = data.boys.rooms;
     roomsData = Object.values(RoomsBoysData);
   }
-  
-  
+
+
 
 
   const columns = [
@@ -322,11 +319,11 @@ const resetForm = () => {
     const month = ('0' + (date.getMonth() + 1)).slice(-2); // Add leading zero if needed
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
-}
+  }
 
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 
 
   useEffect(() => {
@@ -334,7 +331,7 @@ function capitalizeFirstLetter(string) {
     const rows = rooms.map((room, index) => ({
       s_no: index + 1,
       room_no: room.roomNumber,
-      floor:capitalizeFirstLetter(room.floorNumber),
+      floor: capitalizeFirstLetter(room.floorNumber),
       noofBeds: room.numberOfBeds,
       bedRent: room.bedRent,
       created_by: capitalizeFirstLetter(room.createdBy),
@@ -348,7 +345,7 @@ function capitalizeFirstLetter(string) {
     }));
     setInitialRows(rows);
     // }
-  }, [rooms]);
+  }, [rooms, activeBoysHostel]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [initialRows, setInitialRows] = useState([]);
@@ -362,6 +359,8 @@ function capitalizeFirstLetter(string) {
       value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
+
+  console.log("active roooom", rooms)
   return (
     <div className='h-100'>
       <>
@@ -377,11 +376,10 @@ function capitalizeFirstLetter(string) {
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
-        <button id="roomPageAddBtn" type="button" className="add-button" onClick={handleAddNew}>
-        {t('dashboard.addRooms')}
-          </button>
+          <button id="roomPageAddBtn" type="button" className="add-button" onClick={handleAddNew}>
+          {t('dashboard.addRooms')}
+            </button>
         </div>
-        
       </div>
       <div>
         <Table columns={columns} rows={filteredRows} />
@@ -447,8 +445,6 @@ function capitalizeFirstLetter(string) {
           </div>
         </div>
       </div>
-
-
       {showConfirmationPopUp && (
          <div className="confirmation-dialog">
          <div className='confirmation-card'>

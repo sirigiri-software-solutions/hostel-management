@@ -24,10 +24,10 @@ import { DataContext } from '../../ApiData/ContextProvider'
 import { useNavigate } from 'react-router-dom'
 import { RiLogoutCircleRLine } from "react-icons/ri";
 import { useTranslation } from 'react-i18next'
-
+import { useData } from '../../ApiData/ContextProvider';
 const MainPage = () => {
   const { t } = useTranslation()
-
+  const { activeHostel } = useData();
   const name = localStorage.getItem("username");
   // Refer here for fetched Api Data use like this in all pages don't fetch api url
   const { data } = useContext(DataContext);
@@ -115,8 +115,6 @@ const MainPage = () => {
     };
   }, []);
 
-
- 
 
   useEffect(() => {
     const handleResize = () => {

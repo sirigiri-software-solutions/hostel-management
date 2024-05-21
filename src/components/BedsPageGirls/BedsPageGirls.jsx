@@ -5,11 +5,12 @@ import SearchIcon from '../../images/Icons (9).png'
 import {database, ref, push} from '../../firebase'
 import { onValue } from 'firebase/database'
 import "../BedsPageBoys/BedsPageBoys.css"
+import { useData } from '../../ApiData/ContextProvider';
 import { useTranslation } from 'react-i18next';
 
 const BedsPageGirls = () => {
   const { t } = useTranslation();
-
+  const { activeGirlsHostel } = useData();
   const [girlsRooms, setGirlsRooms]= useState([])
   const [bedsData, setBedsData] = useState([]);
   const [tenants, setTenants] = useState([]);
@@ -21,7 +22,7 @@ const BedsPageGirls = () => {
   const [floorNumbersToShow,setFloorNumbersToShow] = useState([]);
 
   useEffect(() => {
-    const roomsRef = ref(database, 'Hostel/girls/rooms');
+    const roomsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRooms = [];
@@ -33,10 +34,10 @@ const BedsPageGirls = () => {
       }
       setGirlsRooms(loadedRooms);
     })
-  }, []);
+  }, [activeGirlsHostel]);
   // Fetch tenants data
   useEffect(() => {
-    const tenantsRef = ref(database, 'Hostel/girls/tenants');
+    const tenantsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants`);
     onValue(tenantsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedTenants = [];
@@ -48,7 +49,7 @@ const BedsPageGirls = () => {
       }
       setTenants(loadedTenants);
     });
-  }, []);
+  }, [activeGirlsHostel]);
 
   // Construct beds data based on rooms and tenants
   useEffect(() => {
@@ -90,7 +91,7 @@ const BedsPageGirls = () => {
   };
 
 
-  }, [girlsRooms, tenants]); // Depend on rooms and tenants data
+  }, [girlsRooms, tenants, activeGirlsHostel]); // Depend on rooms and tenants data
 
 
   const columns = [

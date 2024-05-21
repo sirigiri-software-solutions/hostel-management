@@ -9,10 +9,11 @@ import { onValue, remove, update } from 'firebase/database';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { useTranslation } from 'react-i18next';
+import { useData } from '../../ApiData/ContextProvider';
 
 const RoomsGirls = () => {
   const { t }=useTranslation();
-
+  const { activeGirlsHostel } = useData();
   const [floorNumber, setFloorNumber] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
   const [numberOfBeds, setNumberOfBeds] = useState('');
@@ -95,7 +96,7 @@ const handleRoomsIntegerChange = (event) => {
     }
     // ---------------------------------------
     if (isEditing) {
-      const roomRef = ref(database, `Hostel/girls/rooms/${currentId}`);
+      const roomRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms/${currentId}`);
       update(roomRef, {
         floorNumber,
         roomNumber,
@@ -126,7 +127,7 @@ const handleRoomsIntegerChange = (event) => {
         });
       });
     } else {
-      const roomsRef = ref(database, 'Hostel/girls/rooms');
+      const roomsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms`);
       push(roomsRef, {
         floorNumber,
         roomNumber,
@@ -195,7 +196,7 @@ const handleRoomsIntegerChange = (event) => {
   };
 
   const confirmDeleteYes = () => {
-    const roomRef = ref(database, `Hostel/girls/rooms/${currentId}`);
+    const roomRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms/${currentId}`);
     remove(roomRef).then(() => {
       toast.success("Room deleted successfully.", {
         position: "top-center",
@@ -258,7 +259,7 @@ const handleRoomsIntegerChange = (event) => {
   };
 
   useEffect(() => {
-    const roomsRef = ref(database, 'Hostel/girls/rooms');
+    const roomsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRooms = [];
@@ -270,7 +271,7 @@ const handleRoomsIntegerChange = (event) => {
       }
       setRooms(loadedRooms);
     });
-  }, []);
+  }, [activeGirlsHostel]);
 
   const columns = [
     t('roomsPage.S.No'),
@@ -317,7 +318,7 @@ function capitalizeFirstLetter(string) {
       </button>
     }));
     setInitialRows(rows);
-  }, [rooms]);
+  }, [rooms, activeGirlsHostel]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [initialRows, setInitialRows] = useState([]);

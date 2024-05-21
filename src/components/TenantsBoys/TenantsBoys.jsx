@@ -12,8 +12,10 @@ import { onValue, remove, set, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { FaDownload } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useData } from '../../ApiData/ContextProvider';
 
 const TenantsBoys = () => {
+  const { activeBoysHostel } = useData();
   const [selectedRoom, setSelectedRoom] = useState('');
   const [bedOptions, setBedOptions] = useState([]);
   const [selectedBed, setSelectedBed] = useState('');
@@ -107,7 +109,7 @@ useEffect(() => {
   
 
   useEffect(() => {
-    const roomsRef = ref(database, 'Hostel/boys/rooms');
+    const roomsRef = ref(database, `Hostel/boys/${activeBoysHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRooms = [];
@@ -120,7 +122,7 @@ useEffect(() => {
       setBoysRooms(loadedRooms);
     });
     // Fetch tenants
-  }, []);
+  }, [activeBoysHostel]);
 
   useEffect(() => {
     if (selectedRoom) {
@@ -146,7 +148,7 @@ useEffect(() => {
   }
 
   useEffect(() => {
-    const tenantsRef = ref(database, 'Hostel/boys/tenants');
+    const tenantsRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants`);
     onValue(tenantsRef, snapshot => {
       const data = snapshot.val() || {};
       const loadedTenants = Object.entries(data).map(([key, value]) => ({
@@ -155,7 +157,8 @@ useEffect(() => {
       }));
       setTenants(loadedTenants);
     });
-  }, []);
+  }, [activeBoysHostel]);
+ 
 
   useEffect(() => {
     const fetchDataFromAPI = async () => {
@@ -247,7 +250,7 @@ useEffect(() => {
     let imageUrlToUpdate = tenantImageUrl;
 
     if (tenantImage) {
-      const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantImage/${tenantImage.name}`);
+      const imageRef = storageRef(storage, `Hostel/boys/${activeBoysHostel}/tenants/images/tenantImage/${tenantImage.name}`);
       try {
         const snapshot = await uploadBytes(imageRef, tenantImage);
         imageUrlToUpdate = await getDownloadURL(snapshot.ref);
@@ -259,7 +262,7 @@ useEffect(() => {
 
     let idUrlToUpdate = tenantIdUrl;
     if (tenantId) {
-      const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantId/${tenantId.name}`);
+      const imageRef = storageRef(storage, `Hostel/boys/${activeBoysHostel}/tenants/images/tenantId/${tenantId.name}`);
       try {
         const snapshot = await uploadBytes(imageRef, tenantId);
         idUrlToUpdate = await getDownloadURL(snapshot.ref);
@@ -285,7 +288,7 @@ useEffect(() => {
     };
 
     if (isEditing) {
-      await update(ref(database, `Hostel/boys/tenants/${currentId}`), tenantData).then(() => {
+      await update(ref(database, `Hostel/boys/${activeBoysHostel}/tenants/${currentId}`), tenantData).then(() => {
         toast.success("Tenant updated successfully.", {
           position: "top-center",
           autoClose: 2000,
@@ -308,7 +311,7 @@ useEffect(() => {
         });
       });
     } else {
-      await push(ref(database, 'Hostel/boys/tenants'), tenantData).then(() => {
+      await push(ref(database, `Hostel/boys/${activeBoysHostel}/tenants`), tenantData).then(() => {
         toast.success("Tenant added successfully.", {
           position: "top-center",
           autoClose: 2000,
@@ -353,10 +356,6 @@ useEffect(() => {
     setBikeNumber("");
     setHasBike(false);
     setFileName(tenant.fileName|| '');
-
-    
- 
-
     setShowModal(true);
     setBikeNumber(tenant.bikeNumber);
     if(tenant.bikeNumber==='NA')
@@ -385,8 +384,6 @@ useEffect(() => {
     setHasBike(false);
 
   };
-
-
 
   const resetForm = () => {
     setSelectedRoom('');
@@ -477,8 +474,6 @@ useEffect(() => {
     setBikeNumber('');
     console.log("popupclosed");
     setFileName('');
-    
-
   }
 
 
@@ -487,8 +482,6 @@ useEffect(() => {
     setUserDetailsTenantsPopup(true);
     setShowModal(false);
     setSingleTenantDetails(tenant);
-
-
 
     const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
 
@@ -510,13 +503,12 @@ useEffect(() => {
     setUserDetailsTenantsPopup(false);
     setDueDateOfTenant("")
     setSingleTenantProofId("");
-
   }
 
   //=====Vacate tenant ===========
   const handleVacate = async (id) => {
-    const tenantRef = ref(database, `Hostel/boys/tenants/${currentId}`);
-    const newTenantRef = ref(database, `Hostel/boys/extenants/${currentId}`);
+    const tenantRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants/${currentId}`);
+    const newTenantRef = ref(database, `Hostel/boys/${activeBoysHostel}/extenants/${currentId}`);
     // Retrieve the data from the original location
     onValue(tenantRef, async (snapshot) => {
       const data = snapshot.val();
@@ -558,7 +550,7 @@ useEffect(() => {
     // idInputRef.current.value = "";
   };
   const fetchExTenants = () => {
-    const exTenantsRef = ref(database, 'Hostel/boys/extenants');
+    const exTenantsRef = ref(database, `Hostel/boys/${activeBoysHostel}/extenants`);
     onValue(exTenantsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedExTenants = data ? Object.entries(data).map(([key, value]) => ({ id: key, ...value })) : [];
@@ -578,7 +570,7 @@ useEffect(() => {
   };
 
   const handleConfirmDelete = async () => {
-    const removeRef = ref(database, `Hostel/boys/extenants/${tenantIdToDelete}`);
+    const removeRef = ref(database, `Hostel/boys/${activeBoysHostel}/extenants/${tenantIdToDelete}`);
     remove(removeRef)
       .then(() => {
         toast.success('Tenant Deleted', {
@@ -609,7 +601,6 @@ useEffect(() => {
     setShowConfirmation(false);
   };
 
-  
   const exTenantRows = exTenants.map((tenant, index) => ({
     s_no: index + 1, // Assuming `id` is a unique identifier for each tenant
     image: tenant.tenantImageUrl,
@@ -635,7 +626,6 @@ useEffect(() => {
     ),
   }));
   
-
   const showExTenantsData = () => {
     setShowExTenants(!showExTenants)
   }

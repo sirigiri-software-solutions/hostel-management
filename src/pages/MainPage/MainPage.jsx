@@ -23,7 +23,10 @@ import { AiOutlineClose } from 'react-icons/ai'
 import { DataContext } from '../../ApiData/ContextProvider'
 import { useNavigate } from 'react-router-dom'
 import { RiLogoutCircleRLine } from "react-icons/ri";
+import { useData } from '../../ApiData/ContextProvider';
 const MainPage = () => {
+
+  const { activeHostel } = useData();
   const name = localStorage.getItem("username");
   // Refer here for fetched Api Data use like this in all pages don't fetch api url
   const { data } = useContext(DataContext);
@@ -70,6 +73,12 @@ const MainPage = () => {
       name: "Expenses",
       icon: ExpensesImage
     },
+    {
+      id: 7,
+      path: "/expenses",
+      name: "Settings",
+      icon: SettingsImage
+    },
 
   ]
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -105,8 +114,6 @@ const MainPage = () => {
     };
   }, []);
 
-
- 
 
   useEffect(() => {
     const handleResize = () => {

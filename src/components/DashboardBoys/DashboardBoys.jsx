@@ -15,13 +15,13 @@ import 'react-toastify/dist/ReactToastify.css';
 // import Table from '../../Elements/Table';
 import { Modal, Button } from 'react-bootstrap';
 import { FaWhatsapp } from "react-icons/fa";
-
+import { useData } from '../../ApiData/ContextProvider';
 
 const DashboardBoys = () => {
 
+  const { activeBoysHostel, setActiveBoysHostel, activeBoysHostelButtons } = useData();
   const [modelText, setModelText] = useState('');
   const [formLayout, setFormLayout] = useState('');
-
   const [floorNumber, setFloorNumber] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
   const [numberOfBeds, setNumberOfBeds] = useState('');
@@ -107,10 +107,6 @@ const DashboardBoys = () => {
     }
     setNotify(!notify);
   };
-
-
-
-
 
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('NA');
@@ -243,7 +239,7 @@ const DashboardBoys = () => {
       return; // Prevent form submission if there are errors
     }
 
-    const roomsRef = ref(database, 'Hostel/boys/rooms');
+    const roomsRef = ref(database, `Hostel/boys/${activeBoysHostel}/rooms`);
     push(roomsRef, {
       floorNumber,
       roomNumber,
@@ -287,7 +283,7 @@ const DashboardBoys = () => {
   };
 
   useEffect(() => {
-    const roomsRef = ref(database, 'Hostel/boys/rooms');
+    const roomsRef = ref(database, `Hostel/boys/${activeBoysHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRooms = [];
@@ -299,7 +295,7 @@ const DashboardBoys = () => {
       }
       setRooms(loadedRooms);
     });
-  }, []);
+  }, [activeBoysHostel]);
   // Calculate the total number of beds
   const totalBeds = rooms.reduce((acc, room) => acc + Number(room.numberOfBeds), 0);
 
@@ -315,7 +311,7 @@ const DashboardBoys = () => {
 
   useEffect(() => {
     const formattedMonth = month.slice(0, 3);
-    const expensesRef = ref(database, `Hostel/boys/expenses/${year}-${formattedMonth}`);
+    const expensesRef = ref(database, `Hostel/boys/${activeBoysHostel}/expenses/${year}-${formattedMonth}`);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
       let total = 0; // Variable to hold the total expenses
@@ -332,11 +328,11 @@ const DashboardBoys = () => {
       setCurrentMonthExpenses(expensesArray);
       setTotalExpenses(total); // Set total expenses state
     });
-  }, []);
+  }, [activeBoysHostel]);
 
 
   useEffect(() => {
-    const tenantsRef = ref(database, 'Hostel/boys/tenants');
+    const tenantsRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants`);
     onValue(tenantsRef, snapshot => {
       const data = snapshot.val() || {};
       const loadedTenants = Object.entries(data).map(([key, value]) => ({
@@ -345,11 +341,11 @@ const DashboardBoys = () => {
       }));
       setTenants(loadedTenants);
     });
-  }, []);
+  }, [activeBoysHostel]);
 
   const [boysRooms, setBoysRooms] = useState([]);
   useEffect(() => {
-    const roomsRef = ref(database, 'Hostel/boys/rooms');
+    const roomsRef = ref(database, `Hostel/boys/${activeBoysHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRooms = [];
@@ -362,7 +358,7 @@ const DashboardBoys = () => {
       setBoysRooms(loadedRooms);
     });
     // Fetch tenants
-  }, []);
+  }, [activeBoysHostel]);
 
   useEffect(() => {
     if (selectedRoom) {
@@ -374,7 +370,7 @@ const DashboardBoys = () => {
     } else {
       setBedOptions([]);
     }
-  }, [selectedRoom, boysRooms]);
+  }, [selectedRoom, boysRooms, activeBoysHostel]);
 
   const validate = () => {
     let tempErrors = {};
@@ -436,7 +432,7 @@ const DashboardBoys = () => {
 
     let imageUrlToUpdate = tenantImageUrl;
     if (tenantImage) {
-      const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantImage/${tenantImage.name}`);
+      const imageRef = storageRef(storage, `Hostel/boys/${activeBoysHostel}/tenants/images/tenantImage/${tenantImage.name}`);
       try {
         const snapshot = await uploadBytes(imageRef, tenantImage);
         imageUrlToUpdate = await getDownloadURL(snapshot.ref);
@@ -447,7 +443,7 @@ const DashboardBoys = () => {
 
     let idUrlToUpdate = tenantIdUrl;
     if (tenantId) {
-      const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantId/${tenantId.name}`);
+      const imageRef = storageRef(storage, `Hostel/boys/${activeBoysHostel}/tenants/images/tenantId/${tenantId.name}`);
       try {
         const snapshot = await uploadBytes(imageRef, tenantId);
         idUrlToUpdate = await getDownloadURL(snapshot.ref);
@@ -472,7 +468,7 @@ const DashboardBoys = () => {
     };
 
     if (isEditing) {
-      await update(ref(database, `Hostel/boys/tenants/${currentTenantId}`), tenantData).then(() => {
+      await update(ref(database, `Hostel/boys/${activeBoysHostel}/tenants/${currentTenantId}`), tenantData).then(() => {
         toast.success("Tenant updated successfully.", {
           position: "top-center",
           autoClose: 2000,
@@ -494,7 +490,7 @@ const DashboardBoys = () => {
         });
       });
     } else {
-      await push(ref(database, 'Hostel/boys/tenants'), tenantData).then(() => {
+      await push(ref(database, `Hostel/boys/${activeBoysHostel}/tenants`), tenantData).then(() => {
         toast.success("Tenant added successfully.", {
           position: "top-center",
           autoClose: 2000,
@@ -573,7 +569,7 @@ const DashboardBoys = () => {
       setDateOfJoin('');
       setDueDate('');
     }
-  }, [selectedTenant, tenants]);
+  }, [selectedTenant, tenants, activeBoysHostel]);
 
   useEffect(() => {
     // Assuming tenantsWithRents already populated
@@ -587,7 +583,7 @@ const DashboardBoys = () => {
 
     // Optionally, you can store availableTenants in a state if you need to use it elsewhere
     setAvailableTenants(availableTenants);
-  }, [tenants, tenantsWithRents]);
+  }, [tenants, tenantsWithRents, activeBoysHostel]);
 
 
   useEffect(() => {
@@ -598,7 +594,7 @@ const DashboardBoys = () => {
 
   useEffect(() => {
     // Fetch tenants data once when component mounts
-    const tenantsRef = ref(database, 'Hostel/boys/tenants');
+    const tenantsRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants`);
     onValue(tenantsRef, (snapshot) => {
       const tenantsData = snapshot.val();
       const tenantIds = tenantsData ? Object.keys(tenantsData) : [];
@@ -606,7 +602,7 @@ const DashboardBoys = () => {
       // Initialize an array to hold promises for fetching each tenant's rents
       const rentsPromises = tenantIds.map(tenantId => {
         return new Promise((resolve) => {
-          const rentsRef = ref(database, `Hostel/boys/tenants/${tenantId}/rents`);
+          const rentsRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants/${tenantId}/rents`);
           onValue(rentsRef, (rentSnapshot) => {
             const rents = rentSnapshot.val() ? Object.keys(rentSnapshot.val()).map(key => ({
               id: key,
@@ -681,7 +677,7 @@ const DashboardBoys = () => {
 
     if (isEditing) {
       // Update the existing rent record
-      const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents/${editingRentId}`);
+      const rentRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants/${selectedTenant}/rents/${editingRentId}`);
       await update(rentRef, rentData).then(() => {
         toast.success("Rent updated successfully.", {
           position: "top-center",
@@ -710,7 +706,7 @@ const DashboardBoys = () => {
       });
     } else {
       // Create a new rent record
-      const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents`);
+      const rentRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants/${selectedTenant}/rents`);
       await push(rentRef, rentData).then(() => {
         toast.success("Rent adding successfully.", {
           position: "top-center",
@@ -766,7 +762,6 @@ const DashboardBoys = () => {
     setNumberOfBeds('');
     setBedRent('');
     setCreatedBy('admin');
-
     setSelectedTenant('');
     setRoomNumber('');
     setBedNumber('');
@@ -877,7 +872,7 @@ const DashboardBoys = () => {
     // Only proceed if form is valid
     if (formIsValid) {
       const monthYear = getMonthYearKey(formData.expenseDate);
-      const expensesRef = ref(database, `Hostel/boys/expenses/${monthYear}`);
+      const expensesRef = ref(database, `Hostel/boys/${activeBoysHostel}/expenses/${monthYear}`);
       push(expensesRef, {
         ...formData,
         expenseAmount: parseFloat(formData.expenseAmount),
@@ -935,7 +930,7 @@ const DashboardBoys = () => {
         const dueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate(-1)); // Add one month and subtract one day
         const formattedDueDate = dueDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
         setDueDate(formattedDueDate);
-        
+
       }
     }
   }, [selectedTenant, tenants]);
@@ -1472,13 +1467,29 @@ const DashboardBoys = () => {
     'Amount',
   ];
   const expenseRows = currentMonthExpenses.map((expense, index) => ({
-    date:expense.expenseDate,
-    expense:expense.expenseName,
-    amount:expense.expenseAmount,
+    date: expense.expenseDate,
+    expense: expense.expenseName,
+    amount: expense.expenseAmount,
   }));
+
+
   return (
     <div className="dashboardboys">
       <h1 className="heading">Men's</h1>
+      {activeBoysHostelButtons.length > 0 ? (
+        <div className={"flex"}>
+          {activeBoysHostelButtons.map((button, index) => (
+            <button className={`btn m-2 ${activeBoysHostel === `${button}` ? 'active-button' : 'inactive-button'}`} onClick={() => setActiveBoysHostel(button)} key={index} style={{
+              backgroundColor: activeBoysHostel === button ? '#FF8A00' : '#fac38c', // Example colors
+              color: activeBoysHostel === button ? 'white' : '#333333' // Set text color (optional)
+            }}
+            >{button}</button>
+          ))}
+        </div>
+      ) : (
+        <p>No active hostels found.</p>
+      )}
+
       <div className="menu">
         {menu.map((item, index) => (
           <div className='cardWithBtnsContainer'>
@@ -1542,7 +1553,7 @@ const DashboardBoys = () => {
           </Modal>
         </div>
       }
-       {expensePopupOpen &&
+      {expensePopupOpen &&
         <div className="popupBeds" id="example">
           <Button variant="primary" onClick={() => setExpensePopupOpen(true)}>Open Popup</Button>
           <Modal show={expensePopupOpen} onHide={onClickCloseExpensePopup} dialogClassName="modal-90w">
@@ -1570,7 +1581,7 @@ const DashboardBoys = () => {
               </table>
             </Modal.Body>
             <div>
-             <p>This Month Total Expenses: {totalExpenses}</p>
+              <p>This Month Total Expenses: {totalExpenses}</p>
             </div>
             <Modal.Footer>
               <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseExpensePopup}>Close</Button>

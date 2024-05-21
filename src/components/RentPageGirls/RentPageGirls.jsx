@@ -10,11 +10,12 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FaWhatsapp } from "react-icons/fa";
 import "../../App.css"
-const RentPageGirls = () => {
-  const { data } = useContext(DataContext);
-  // console.log(data && data, 'rentsBoysApi')
-  const [searchQuery, setSearchQuery] = useState('');
+import { useData } from '../../ApiData/ContextProvider';
 
+const RentPageGirls = () => {
+
+  const { activeGirlsHostel } = useData();
+  const [searchQuery, setSearchQuery] = useState('');
   const [tenants, setTenants] = useState([]);
   const [rooms, setRooms] = useState({});
   const [selectedTenant, setSelectedTenant] = useState('');
@@ -106,7 +107,7 @@ Please note that you made your last payment on ${paidDate}.\n`
 
   useEffect(() => {
     // Fetch tenants data once when component mounts
-    const tenantsRef = ref(database, 'Hostel/girls/tenants');
+    const tenantsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants`);
     onValue(tenantsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedTenants = data ? Object.keys(data).map(key => ({
@@ -117,12 +118,12 @@ Please note that you made your last payment on ${paidDate}.\n`
     });
 
     // Fetch room data once when component mounts
-    const roomsRef = ref(database, 'Hostel/girls/rooms');
+    const roomsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val() || {};
       setRooms(data);
     });
-  }, []);
+  }, [activeGirlsHostel]);
 
 
   useEffect(() => {
@@ -177,7 +178,7 @@ Please note that you made your last payment on ${paidDate}.\n`
 
     // Optionally, you can store availableTenants in a state if you need to use it elsewhere
     setAvailableTenants(availableTenants);
-  }, [tenants, tenantsWithRents]);
+  }, [tenants, tenantsWithRents, activeGirlsHostel]);
 
 
   useEffect(() => {
@@ -186,11 +187,9 @@ Please note that you made your last payment on ${paidDate}.\n`
     setDue(calculatedDue);
   }, [paidAmount, totalFee]);
 
-
-
   useEffect(() => {
     // Fetch tenants data once when component mounts
-    const tenantsRef = ref(database, 'Hostel/girls/tenants');
+    const tenantsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants`);
     onValue(tenantsRef, (snapshot) => {
       const tenantsData = snapshot.val();
       const tenantIds = tenantsData ? Object.keys(tenantsData) : [];
@@ -198,7 +197,7 @@ Please note that you made your last payment on ${paidDate}.\n`
       // Initialize an array to hold promises for fetching each tenant's rents
       const rentsPromises = tenantIds.map(tenantId => {
         return new Promise((resolve) => {
-          const rentsRef = ref(database, `Hostel/girls/tenants/${tenantId}/rents`);
+          const rentsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants/${tenantId}/rents`);
           onValue(rentsRef, (rentSnapshot) => {
             const rents = rentSnapshot.val() ? Object.keys(rentSnapshot.val()).map(key => ({
               id: key,
@@ -216,7 +215,7 @@ Please note that you made your last payment on ${paidDate}.\n`
         setTenantsWithRents(tenantsWithTheirRents);
       });
     });
-  }, []);
+  }, [activeGirlsHostel]);
 
   // edit======================
   const loadRentForEditing = (tenantId, rentId) => {
@@ -311,7 +310,7 @@ Please note that you made your last payment on ${paidDate}.\n`
 
     if (isEditing) {
       // Update the existing rent record
-      const rentRef = ref(database, `Hostel/girls/tenants/${selectedTenant}/rents/${editingRentId}`);
+      const rentRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants/${selectedTenant}/rents/${editingRentId}`);
       await update(rentRef, rentData).then(() => {
         toast.success("Rent updated successfully.", {
           position: "top-center",
@@ -339,7 +338,7 @@ Please note that you made your last payment on ${paidDate}.\n`
       });
     } else {
       // Create a new rent record
-      const rentRef = ref(database, `Hostel/girls/tenants/${selectedTenant}/rents`);
+      const rentRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants/${selectedTenant}/rents`);
       await push(rentRef, rentData).then(() => {
         toast.success("Rent added successfully.", {
           position: "top-center",

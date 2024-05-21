@@ -7,9 +7,11 @@ import { onValue } from 'firebase/database';
 import { remove, update, set } from 'firebase/database';
 import { toast } from "react-toastify";
 import './ExpensesBoys.css';
+import { useData } from '../../ApiData/ContextProvider';
 
 const ExpensesBoys = () => {
 
+  const { activeBoysHostel } = useData();
   const [searchTerm, setSearchTerm] = useState('');
   const [initialRows, setInitialRows] = useState([]);
   const [expenses, setExpenses] = useState([]);
@@ -109,7 +111,7 @@ const ExpensesBoys = () => {
     // Only proceed if form is valid
     if (formIsValid) {
       const monthYear = getMonthYearKey(formData.expenseDate);
-      const expensesRef = ref(database, `Hostel/boys/expenses/${monthYear}`);
+      const expensesRef = ref(database, `Hostel/boys/${activeBoysHostel}/expenses/${monthYear}`);
       push(expensesRef, {
         ...formData,
         expenseAmount: parseFloat(formData.expenseAmount),
@@ -160,7 +162,7 @@ const ExpensesBoys = () => {
 
   useEffect(() => {
     const formattedMonth = month.slice(0, 3);
-    const expensesRef = ref(database, `Hostel/boys/expenses/${year}-${formattedMonth}`);
+    const expensesRef = ref(database, `Hostel/boys/${activeBoysHostel}/expenses/${year}-${formattedMonth}`);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
       const loadedExpenses = [];
@@ -175,7 +177,7 @@ const ExpensesBoys = () => {
       const totalExpenses = loadedExpenses.reduce((acc, current) => acc + current.expenseAmount, 0);
       setTotal(totalExpenses);
     });
-  }, [month, year]);
+  }, [month, year, activeBoysHostel]);
 
   const columns = [
     'S. No',
@@ -273,7 +275,7 @@ const ExpensesBoys = () => {
       };
 
       const monthYear = getMonthYearKey(formData.expenseDate);
-      const expenseRef = ref(database, `Hostel/boys/expenses/${monthYear}/${editingExpense.id}`);
+      const expenseRef = ref(database, `Hostel/boys/${activeBoysHostel}/expenses/${monthYear}/${editingExpense.id}`);
       set(expenseRef, updatedFormData)
         .then(() => {
           toast.success("Expense updated successfully.", {
@@ -315,7 +317,7 @@ const ExpensesBoys = () => {
   const handleDelete = () => {
     if (!editingExpense) return;
     const monthYear = getMonthYearKey(formData.expenseDate);
-    const expenseRef = ref(database, `Hostel/boys/expenses/${monthYear}/${editingExpense.id}`);
+    const expenseRef = ref(database, `Hostel/boys/${activeBoysHostel}/expenses/${monthYear}/${editingExpense.id}`);
     remove(expenseRef).then(() => {
       toast.success("Expense deleted successfully", {
         position: "top-center",
@@ -395,7 +397,7 @@ const ExpensesBoys = () => {
 
     const fetchExpenses = async () => {
       const promises = monthNames.map(month => {
-        const monthRef = ref(database, `Hostel/boys/expenses/${year}-${month}`);
+        const monthRef = ref(database, `Hostel/boys/${activeBoysHostel}/expenses/${year}-${month}`);
         return new Promise((resolve) => {
           onValue(monthRef, (snapshot) => {
             const expenses = snapshot.val();
@@ -417,7 +419,7 @@ const ExpensesBoys = () => {
     };
 
     fetchExpenses();
-  }, [year, expenses]);
+  }, [year, expenses, activeBoysHostel]);
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);

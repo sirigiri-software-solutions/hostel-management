@@ -160,6 +160,32 @@
   "update": "अद्यतन करें"
     },
     "tenantsPage": {
+      "tenantsManagement": "किरायेदार प्रबंधन",
+      "bike": "बाइक",
+      "yes": "हां",
+      "no": "नहीं",
+      "presentTenants": "वर्तमान-किरायेदार",
+      "vacated": "खाली",
+      "updateTenant": "किरायेदार अपडेट करें",
+      "vacateTenant": "किरायेदार को खाली करें",
+      "tenantDetails": "किरायेदार विवरण",
+      "confirmationMessage": "क्या आप वाकई नाम वाले किरायेदार को हटाना चाहते हैं ",
+      "note": "नोट: एक बार जब आप किरायेदार को हटा देते हैं, तो इसे पुनःस्थापित नहीं किया जा सकता है।",
+      "name": "नाम",
+      "mobileNo": "मोबाइल नंबर",
+      "proofID": "प्रूफ आईडी",
+      "roomBedNo": "कक्ष/बिस्तर संख्या",
+      "joiningDate": "शामिल होने की तिथि",
+      "dueDate": "नियत तिथि",
+      "idProof": "आईडी प्रूफ",
+      "downloadPdf": "पीडीएफ डाउनलोड करें",
+    "notUploaded": "अपलोड नहीं किया गया",
+    "close": "बंद करें",
+    "sNo": "क्रमांक",
+    "image": "चित्र",
+    "id": "आईडी",
+    "status": "स्थिति",
+    "actions": "क्रियाएँ"
         
     },
     "expensesPage": {
@@ -178,7 +204,10 @@
         "deleteExpense": "खर्च हटाएं",
         "expenseDeleted": "खर्च सफलतापूर्वक हटाया गया",
         "errorDeletingExpense": "खर्च हटाने में त्रुटि",
-        "total": "कुल"
+        "total": "कुल",
+        "sNo": "क्रमिक संख्या",
+        "date": "तारीख",
+        "actions": "क्रियाएँ"
     },
     "months": {
         "jan": "जनवरी",
@@ -242,6 +271,44 @@
         "roomAddedSuccessfully": "कमरा सफलतापूर्वक जोड़ा गया।",
         "errorAddingRoom": "कमरे जोड़ने में त्रुटि",
         "expenseAddedSuccessfully": "व्यय सफलतापूर्वक जोड़ा गया।",
-        "errorAddingExpense": "व्यय जोड़ते समय त्रुटि: "
-      }
+        "errorAddingExpense": "व्यय जोड़ते समय त्रुटि: ",
+        "expensesUpdatedSuccessfully": "खर्च सफलतापूर्वक अपडेट किया गया।",
+        "errorUpdatinExpense": "खर्च अपडेट करने में त्रुटि।",
+        "expenseDeteledSuccessfully": "खर्च सफलतापूर्वक हटा दिया गया।",
+    "errorDeletingExpense": "खर्च हटाने में त्रुटि।"
+      },
+      "mobileTable":{
+        "serialNumber": "क्रमांक",
+        "image": "चित्र",
+        "name": "नाम",
+        "id": "आईडी",
+        "mobileNumber": "मोबाइल नंबर",
+        "roomBedNumber": "कक्ष/बिस्तर संख्या",
+        "bedNumber": "बिस्तर संख्या",
+        "roomNumber": "कक्ष संख्या",
+        "personName": "व्यक्ति का नाम",
+        "personMobile": "व्यक्ति का मोबाइल",
+        "floor": "मंज़िल",
+        "numberOfBeds": "बिस्तरों की संख्या",
+        "bedRent": "बिस्तर किराया",
+        "monthYear": "महीना/वर्ष",
+        "rent": "किराया",
+        "paid": "भुगतान किया गया",
+        "due": "बकाया",
+        "joiningDate": "शामिल होने की तिथि",
+        "bikeNumber": "बाइक संख्या",
+        "dueDate": "बकाया तिथि",
+        "lastFee": "अंतिम शुल्क",
+        "createdOn": "निर्मित तिथि",
+        "expenseName": "व्यय का नाम",
+        "expenseAmount": "व्यय राशि",
+        "createdBy": "द्वारा निर्मित",
+        "lastUpdatedDate": "अंतिम अद्यतन तिथि",
+        "paymentDate": "भुगतान तिथि",
+        "status": "स्थिति",
+        "edit": "संपादित करें",
+        "actions": "क्रियाएँ",
+        "delete": "हटाएं"
+    }
+    
 }

@@ -339,7 +339,7 @@ Please note that you made your last payment on ${paidDate}.\n`
   };
 
   useEffect(() => {
-    const formattedMonth = month.slice(0, 3);
+    const formattedMonth = month.slice(0, 3).toLowerCase();
     const expensesRef = ref(database, `Hostel/girls/${activeGirlsHostel}/expenses/${year}-${formattedMonth}`);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();

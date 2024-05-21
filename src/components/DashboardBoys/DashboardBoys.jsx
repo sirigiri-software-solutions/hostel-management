@@ -347,7 +347,7 @@ const DashboardBoys = () => {
   };
  
   useEffect(() => {
-    const formattedMonth = month.slice(0, 3);
+    const formattedMonth = month.slice(0, 3).toLowerCase();
     const expensesRef = ref(database, `Hostel/boys/${activeBoysHostel}/expenses/${year}-${formattedMonth}`);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();

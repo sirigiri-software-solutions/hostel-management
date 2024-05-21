@@ -10,10 +10,11 @@ import { toast } from "react-toastify";
 import './ExpensesGirls.css';
 import { useTranslation } from 'react-i18next';
 
+import { useData } from '../../ApiData/ContextProvider';
+
 const ExpensesGirls = () => {
-
   const { t } = useTranslation();
-
+  const { activeGirlsHostel } = useData();
   const [searchTerm, setSearchTerm] = useState('');
   const [initialRows, setInitialRows] = useState([]);
 
@@ -114,7 +115,7 @@ window.addEventListener('keydown',handleOutsideClick);
     // Only proceed if form is valid
     if (formIsValid) {
       const monthYear = getMonthYearKey(formData.expenseDate);
-      const expensesRef = ref(database, `Hostel/girls/expenses/${monthYear}`);
+      const expensesRef = ref(database, `Hostel/girls/${activeGirlsHostel}/expenses/${monthYear}`);
       push(expensesRef, {
         ...formData,
         expenseAmount: parseFloat(formData.expenseAmount),
@@ -167,7 +168,7 @@ window.addEventListener('keydown',handleOutsideClick);
 
   useEffect(() => {
     const formattedMonth = month.slice(0, 3);
-    const expensesRef = ref(database, `Hostel/girls/expenses/${year}-${formattedMonth}`);
+    const expensesRef = ref(database, `Hostel/girls/${activeGirlsHostel}/expenses/${year}-${formattedMonth}`);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
       const loadedExpenses = [];
@@ -182,7 +183,7 @@ window.addEventListener('keydown',handleOutsideClick);
       const totalExpenses = loadedExpenses.reduce((acc, current) => acc + current.expenseAmount, 0);
       setTotal(totalExpenses);
     });
-  }, [month, year]);
+  }, [month, year, activeGirlsHostel]);
 
   const columns = [
     t('expensesPage.sNo'),
@@ -280,7 +281,7 @@ window.addEventListener('keydown',handleOutsideClick);
       };
 
       const monthYear = getMonthYearKey(formData.expenseDate);
-      const expenseRef = ref(database, `Hostel/girls/expenses/${monthYear}/${editingExpense.id}`);
+      const expenseRef = ref(database, `Hostel/girls/${activeGirlsHostel}/expenses/${monthYear}/${editingExpense.id}`);
       set(expenseRef, updatedFormData)
         .then(() => {
           toast.success(t('toastMessages.expensesUpdatedSuccessfully'), {
@@ -321,7 +322,7 @@ window.addEventListener('keydown',handleOutsideClick);
   const handleDelete = () => {
     if (!editingExpense) return;
     const monthYear = getMonthYearKey(formData.expenseDate);
-    const expenseRef = ref(database, `Hostel/girls/expenses/${monthYear}/${editingExpense.id}`);
+    const expenseRef = ref(database, `Hostel/girls/${activeGirlsHostel}/expenses/${monthYear}/${editingExpense.id}`);
     remove(expenseRef).then(() => {
       toast.success(t('toastMessages.expenseDeteledSuccessfully'), {
         position: "top-center",
@@ -404,7 +405,7 @@ useEffect(() => {
 
   const fetchExpenses = async () => {
     const promises = monthNames.map(month => {
-      const monthRef = ref(database, `Hostel/girls/expenses/${year}-${month}`);
+      const monthRef = ref(database, `Hostel/girls/${activeGirlsHostel}/expenses/${year}-${month}`);
       return new Promise((resolve) => {
         onValue(monthRef, (snapshot) => {
           const expenses = snapshot.val();
@@ -426,7 +427,7 @@ useEffect(() => {
   };
 
   fetchExpenses();
-}, [year, expenses]);
+}, [year, expenses, activeGirlsHostel]);
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);

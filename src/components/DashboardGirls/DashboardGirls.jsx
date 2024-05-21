@@ -15,12 +15,13 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 // import Table from '../../Elements/Table'
 import { Modal, Button } from 'react-bootstrap';
+import { useData } from '../../ApiData/ContextProvider';
 import { FaWhatsapp } from "react-icons/fa";
 import { useTranslation } from 'react-i18next';
- 
+
 const DashboardGirls = () => {
   const { t } = useTranslation();
-
+  const { activeGirlsHostel, setActiveGirlsHostel, activeGirlsHostelButtons } = useData();
   const [modelText, setModelText] = useState('');
   const [formLayout, setFormLayout] = useState('');
   const [floorNumber, setFloorNumber] = useState('');
@@ -137,7 +138,7 @@ Please note that you made your last payment on ${paidDate}.\n`
     setNotify(!notify);
   };
 
-   
+
   const getCurrentMonth = () => {
     const monthNames = [
       t('months.jan'),
@@ -156,7 +157,7 @@ Please note that you made your last payment on ${paidDate}.\n`
     const currentMonth = new Date().getMonth(); // getMonth returns month index (0 = January, 11 = December)
     return monthNames[currentMonth];
   };
-  
+
   const getCurrentYear = () => {
     return new Date().getFullYear().toString(); // getFullYear returns the full year (e.g., 2024)
   };
@@ -200,50 +201,52 @@ Please note that you made your last payment on ${paidDate}.\n`
       console.log("Triggering")
         if (showModal && (event.target.id === "exampleModalRoomsGirls" || event.key === "Escape")) {
             setShowModal(false);
+            setHasBike(false);
+            setBikeNumber('NA');
         }
        
     };
     window.addEventListener('click', handleOutsideClick);
-    window.addEventListener('keydown',handleOutsideClick)
-    
-}, [showModal]);
+    window.addEventListener('keydown', handleOutsideClick)
+
+  }, [showModal]);
 
 
- 
 
-const handleRoomsIntegerChange = (event) => {
-  const { name, value } = event.target;
-  // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
 
-  let sanitizedValue = value;
+  const handleRoomsIntegerChange = (event) => {
+    const { name, value } = event.target;
+    // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
 
-  if (name === 'floorNumber' || name === 'roomNumber') {
-    // Allow alphanumeric characters and hyphens only
-    sanitizedValue = value.replace(/[^a-zA-Z0-9-]/g, '');
-  } else if (name === 'numberOfBeds' || name === 'bedRent') {
-    // Allow numbers only
-    sanitizedValue = value.replace(/[^0-9]/g, '');
-  }
+    let sanitizedValue = value;
 
-  // if (value === '' || re.test(sanitizedValue)) {
-      switch(name) {
-          case 'floorNumber':
-              setFloorNumber(sanitizedValue);
-              break;
-          case 'roomNumber':
-              setRoomNumber(sanitizedValue);
-              break;
-          case 'numberOfBeds':
-              setNumberOfBeds(sanitizedValue);
-              break;
-          case 'bedRent':
-              setBedRent(sanitizedValue);
-              break;
-          default:
-              break;
-      }
-  // }
-};
+    if (name === 'floorNumber' || name === 'roomNumber') {
+      // Allow alphanumeric characters and hyphens only
+      sanitizedValue = value.replace(/[^a-zA-Z0-9-]/g, '');
+    } else if (name === 'numberOfBeds' || name === 'bedRent') {
+      // Allow numbers only
+      sanitizedValue = value.replace(/[^0-9]/g, '');
+    }
+
+    // if (value === '' || re.test(sanitizedValue)) {
+    switch (name) {
+      case 'floorNumber':
+        setFloorNumber(sanitizedValue);
+        break;
+      case 'roomNumber':
+        setRoomNumber(sanitizedValue);
+        break;
+      case 'numberOfBeds':
+        setNumberOfBeds(sanitizedValue);
+        break;
+      case 'bedRent':
+        setBedRent(sanitizedValue);
+        break;
+      default:
+        break;
+    }
+    // }
+  };
   const handleGirlsRoomsSubmit = (e) => {
     e.preventDefault();
     const now = new Date().toISOString();  // Get current date-time in ISO format
@@ -264,7 +267,7 @@ const handleRoomsIntegerChange = (event) => {
       return; // Prevent form submission if there are errors
     }
 
-    const roomsRef = ref(database, 'Hostel/girls/rooms');
+    const roomsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms`);
     push(roomsRef, {
       floorNumber,
       roomNumber,
@@ -308,7 +311,7 @@ const handleRoomsIntegerChange = (event) => {
   };
 
   useEffect(() => {
-    const roomsRef = ref(database, 'Hostel/girls/rooms');
+    const roomsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRooms = [];
@@ -320,7 +323,7 @@ const handleRoomsIntegerChange = (event) => {
       }
       setRooms(loadedRooms);
     });
-  }, []);
+  }, [activeGirlsHostel]);
   // Calculate the total number of beds
   const totalBeds = rooms.reduce((acc, room) => acc + Number(room.numberOfBeds), 0);
 
@@ -337,7 +340,7 @@ const handleRoomsIntegerChange = (event) => {
 
   useEffect(() => {
     const formattedMonth = month.slice(0, 3).toLowerCase();
-    const expensesRef = ref(database, `Hostel/girls/expenses/${year}-${formattedMonth}`);
+    const expensesRef = ref(database, `Hostel/girls/${activeGirlsHostel}/expenses/${year}-${formattedMonth}`);
     onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
       let total = 0; // Variable to hold the total expenses
@@ -354,11 +357,11 @@ const handleRoomsIntegerChange = (event) => {
       setCurrentMonthExpenses(expensesArray);
       setTotalExpenses(total); // Set total expenses state
     });
-  }, []);
+  }, [activeGirlsHostel]);
 
 
   useEffect(() => {
-    const tenantsRef = ref(database, 'Hostel/girls/tenants');
+    const tenantsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants`);
     onValue(tenantsRef, snapshot => {
       const data = snapshot.val() || {};
       const loadedTenants = Object.entries(data).map(([key, value]) => ({
@@ -367,12 +370,12 @@ const handleRoomsIntegerChange = (event) => {
       }));
       setTenants(loadedTenants);
     });
-  }, []);
+  }, [activeGirlsHostel]);
 
 
   const [girlsRooms, setGirlsRooms] = useState([]);
   useEffect(() => {
-    const roomsRef = ref(database, 'Hostel/girls/rooms');
+    const roomsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRooms = [];
@@ -385,7 +388,7 @@ const handleRoomsIntegerChange = (event) => {
       setGirlsRooms(loadedRooms);
     });
     // Fetch tenants
-  }, []);
+  }, [activeGirlsHostel]);
 
 
 
@@ -399,9 +402,9 @@ const handleRoomsIntegerChange = (event) => {
     } else {
       setBedOptions([]);
     }
-  }, [selectedRoom, girlsRooms]);
+  }, [selectedRoom, girlsRooms, activeGirlsHostel]);
 
- 
+
   const validate = () => {
     let tempErrors = {};
     tempErrors.selectedRoom = selectedRoom ? "" : t('errors.roomNumberRequired');
@@ -463,7 +466,7 @@ const handleRoomsIntegerChange = (event) => {
     let imageUrlToUpdate = tenantImageUrl;
 
     if (tenantImage) {
-      const imageRef = storageRef(storage, `Hostel/girls/tenants/images/tenantImage/${tenantImage.name}`);
+      const imageRef = storageRef(storage, `Hostel/girls/${activeGirlsHostel}/tenants/images/tenantImage/${tenantImage.name}`);
       try {
         const snapshot = await uploadBytes(imageRef, tenantImage);
         imageUrlToUpdate = await getDownloadURL(snapshot.ref);
@@ -475,7 +478,7 @@ const handleRoomsIntegerChange = (event) => {
 
     let idUrlToUpdate = tenantIdUrl;
     if (tenantId) {
-      const imageRef = storageRef(storage, `Hostel/girls/tenants/images/tenantId/${tenantId.name}`);
+      const imageRef = storageRef(storage, `Hostel/girls/${activeGirlsHostel}/tenants/images/tenantId/${tenantId.name}`);
       try {
         const snapshot = await uploadBytes(imageRef, tenantId);
         idUrlToUpdate = await getDownloadURL(snapshot.ref);
@@ -488,7 +491,7 @@ const handleRoomsIntegerChange = (event) => {
       roomNo: selectedRoom,
       bedNo: selectedBed,
       dateOfJoin,
-      name:name.charAt(0).toUpperCase() + name.slice(1),
+      name: name.charAt(0).toUpperCase() + name.slice(1),
       mobileNo,
       idNumber,
       emergencyContact,
@@ -500,7 +503,7 @@ const handleRoomsIntegerChange = (event) => {
     };
 
     if (isEditing) {
-      await update(ref(database, `Hostel/girls/tenants/${currentTenantId}`), tenantData).then(() => {
+      await update(ref(database, `Hostel/girls/${activeGirlsHostel}/tenants/${currentTenantId}`), tenantData).then(() => {
         toast.success(t('toastMessages.tenantUpdated'), {
           position: "top-center",
           autoClose: 2000,
@@ -522,7 +525,7 @@ const handleRoomsIntegerChange = (event) => {
         });
       });
     } else {
-      await push(ref(database, 'Hostel/girls/tenants'), tenantData).then(() => {
+      await push(ref(database, `Hostel/girls/${activeGirlsHostel}/tenants`), tenantData).then(() => {
         toast.success(t('toastMessages.tenantAddedSuccess'), {
           position: "top-center",
           autoClose: 2000,
@@ -604,7 +607,7 @@ const handleRoomsIntegerChange = (event) => {
       setDateOfJoin('');
       setDueDate('');
     }
-  }, [selectedTenant, tenants]);
+  }, [selectedTenant, tenants, activeGirlsHostel]);
 
   useEffect(() => {
     // Assuming tenantsWithRents already populated
@@ -618,7 +621,7 @@ const handleRoomsIntegerChange = (event) => {
 
     // Optionally, you can store availableTenants in a state if you need to use it elsewhere
     setAvailableTenants(availableTenants);
-  }, [tenants, tenantsWithRents]);
+  }, [tenants, tenantsWithRents, activeGirlsHostel]);
 
 
   useEffect(() => {
@@ -629,7 +632,7 @@ const handleRoomsIntegerChange = (event) => {
 
   useEffect(() => {
     // Fetch tenants data once when component mounts
-    const tenantsRef = ref(database, 'Hostel/girls/tenants');
+    const tenantsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants`);
     onValue(tenantsRef, (snapshot) => {
       const tenantsData = snapshot.val();
       const tenantIds = tenantsData ? Object.keys(tenantsData) : [];
@@ -637,7 +640,7 @@ const handleRoomsIntegerChange = (event) => {
       // Initialize an array to hold promises for fetching each tenant's rents
       const rentsPromises = tenantIds.map(tenantId => {
         return new Promise((resolve) => {
-          const rentsRef = ref(database, `Hostel/girls/tenants/${tenantId}/rents`);
+          const rentsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants/${tenantId}/rents`);
           onValue(rentsRef, (rentSnapshot) => {
             const rents = rentSnapshot.val() ? Object.keys(rentSnapshot.val()).map(key => ({
               id: key,
@@ -712,7 +715,7 @@ const handleRoomsIntegerChange = (event) => {
 
     if (isEditing) {
       // Update the existing rent record
-      const rentRef = ref(database, `Hostel/girls/tenants/${selectedTenant}/rents/${editingRentId}`);
+      const rentRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants/${selectedTenant}/rents/${editingRentId}`);
       await update(rentRef, rentData).then(() => {
         toast.success(t('toastMessages.rentUpdatedSuccess'), {
           position: "top-center",
@@ -741,7 +744,7 @@ const handleRoomsIntegerChange = (event) => {
       });
     } else {
       // Create a new rent record
-      const rentRef = ref(database, `Hostel/girls/tenants/${selectedTenant}/rents`);
+      const rentRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants/${selectedTenant}/rents`);
       await push(rentRef, rentData).then(() => {
         toast.success(t('toastMessages.rentAddedSuccess'), {
           position: "top-center",
@@ -906,7 +909,7 @@ const handleRoomsIntegerChange = (event) => {
     // Only proceed if form is valid
     if (formIsValid) {
       const monthYear = getMonthYearKey(formData.expenseDate);
-      const expensesRef = ref(database, `Hostel/girls/expenses/${monthYear}`);
+      const expensesRef = ref(database, `Hostel/girls/${activeGirlsHostel}/expenses/${monthYear}`);
       push(expensesRef, {
         ...formData,
         expenseAmount: parseFloat(formData.expenseAmount),
@@ -958,7 +961,7 @@ const handleRoomsIntegerChange = (event) => {
       if (tenant) {
         // Set the date of join
         setDateOfJoin(tenant.dateOfJoin || '');
-  
+
         // Calculate the due date (one day less than adding one month)
         const currentDate = new Date(tenant.dateOfJoin); // Get the join date
         const dueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate(-1)); // Add one month and subtract one day
@@ -1047,8 +1050,6 @@ const handleRoomsIntegerChange = (event) => {
                           <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
                         ))
                       )}
-
-
                     </select>
                     {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                   </div>
@@ -1226,7 +1227,6 @@ const handleRoomsIntegerChange = (event) => {
                   </option>
                 ))}
               </select>
-
               {tenatErrors.selectedRoom && <p style={{ color: 'red' }}>{tenatErrors.selectedRoom}</p>}
             </div>
 
@@ -1322,86 +1322,100 @@ const handleRoomsIntegerChange = (event) => {
                   <a href={tenantIdUrl}>{t('dashboard.downloadPdf')}</a>
                 </object>
               )}
-              <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />   
-          </div>
+              <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
+            </div>
+            <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
+              <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">{t('dashboard.doYouHaveBike')}</label>
+              <input
+                type="radio"
+                className="Radio"
+                id="bikeCheck"
+                name="bike"
+                value="yes"
+                onClick={handleCheckboxChange}
+                checked={hasBike}
+              />
+              <label htmlFor='bikeCheck' className='bike'>{t('dashboard.yes')}</label>
+              <input
+                type="radio"
+                id="bikeCheck1"
+                name="bike"
+                value="no"
+                onClick={handleCheckboxChange}
+                checked={!hasBike} 
+                style={{ marginLeft: '30px' }}
+              />
+              <label htmlFor='bikeCheck1' className='bike'>{t('dashboard.no')}</label>
+            </div>
+            {hasBike ? (
+              <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+                <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
+                <input
+                  type="text"
+                  id="bikeNumber"
 
-          <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
-            <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">{t('dashboard.doYouHaveBike')}</label>
-            <input
-              type="radio"
-              className="Radio"
-              id="bikeCheck"
-              name="bike"
-              value="yes"
-              onClick={handleCheckboxChange}
-              checked={hasBike}
-            />
-            <label htmlFor='bikeCheck' className='bike'>{t('dashboard.yes')}</label>
-            <input
-              type="radio"
-              id="bikeCheck1"
-              name="bike"
-              value="no"
-              onClick={handleCheckboxChange}
-              checked={!hasBike} 
-              style={{ marginLeft: '30px' }}
-            />
-            <label htmlFor='bikeCheck1' className='bike'>{t('dashboard.no')}</label>
-          </div>
+                  className='form-control'
+                  placeholder="Enter number plate ID"
+                  value={bikeNumber}
+                  onChange={(event) => setBikeNumber(event.target.value)}
+                  style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                />
+              </div>
+            ):(
+              <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+                <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
+                <input
+                  type="text"
+                  id="bikeNumber"
 
-                  {hasBike ? (
-                    <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
-                      <input
-                        type="text"
-                        id="bikeNumber"
-
-                        className='form-control'
-                        placeholder="Enter number plate ID"
-                        value={bikeNumber}
-                        onChange={(event) => setBikeNumber(event.target.value)}
-                        style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
-                      />
-                    </div>
-                  ):(
-                    <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
-                      <input
-                        type="text"
-                        id="bikeNumber"
-
-                        className='form-control'
-                        placeholder="Enter number plate ID"
-                        value={bikeNumber}
-                        onChange={(event) => setBikeNumber(event.target.value)}
-                        style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
-                      />
-                    </div>
-
-                  )}
+                  className='form-control'
+                  placeholder="Enter number plate ID"
+                  value={bikeNumber}
+                  onChange={(event) => setBikeNumber(event.target.value)}
+                  style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                />
+              </div>
+            )}
     
 
-          {/* ===== */}
-          <div class="col-md-6">
-            <label htmlFor='tenantIdInput'  for="file-upload" class="custom-file-upload form-label">
-              {/* <i class="fa fa-cloud-upload"></i> */}
-              {/* <MdUploadFile /> */}
-            </label>
-            <input  class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
-          </div>
+            {/* ===== */}
+            <div class="col-md-6">
+              <label htmlFor='tenantIdInput'  for="file-upload" class="custom-file-upload form-label">
+                {/* <i class="fa fa-cloud-upload"></i> */}
+                {/* <MdUploadFile /> */}
+              </label>
+              <input  class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
+            </div>
  
-          {/* =============== */}
+            {/* =============== */}
           <div className='col-12 text-center'>
             {isEditing ? (
               <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>Update Tenant</button>
             ) : (
               <button className='btn btn-warning' type="submit">{t('dashboard.addTenants')}</button>
             )}
+
+
+            {/* ===== */}
+            <div class="col-md-6">
+              <label htmlFor='tenantIdInput' for="file-upload" class="custom-file-upload form-label">
+                {/* <i class="fa fa-cloud-upload"></i> */}
+                {/* <MdUploadFile /> */}
+              </label>
+              <input class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
+            </div>
+
+            {/* =============== */}
+            <div className='col-12 text-center'>
+              {isEditing ? (
+                <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>Update Tenant</button>
+              ) : (
+                <button className='btn btn-warning' type="submit">Add Tenant</button>
+              )}
+            </div>
           </div>
         </form>
- 
-        )
-
+       )
       case t('dashboard.addExpenses'):
         return (
           <form className="row lg-10" onSubmit={expensesHandleSubmit}>
@@ -1454,19 +1468,21 @@ const handleRoomsIntegerChange = (event) => {
     }
   };
 
- 
+
   const onClickCloseBedsPopup = () => {
     setPopupOpen(false);
   }
   const onClickCloseExpensePopup = () => {
     setExpensePopupOpen(false);
   }
-  
+
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("closed")
-      if(popupOpen && event.target.id === "example"){
+      if (popupOpen && event.target.id === "example") {
         setPopupOpen(false)
+        setHasBike(false);
+            setBikeNumber('NA');
       }
     };
     window.addEventListener('click', handleOutsideClick)
@@ -1518,21 +1534,35 @@ const handleRoomsIntegerChange = (event) => {
     'Amount',
   ];
   const expenseRows = currentMonthExpenses.map((expense, index) => ({
-    date:expense.expenseDate,
-    expense:expense.expenseName,
-    amount:expense.expenseAmount,
+    date: expense.expenseDate,
+    expense: expense.expenseName,
+    amount: expense.expenseAmount,
   }));
 
- 
+
   return (
     <div className="dashboardgirls">
       <h1 className="heading">{t('dashboard.women')}</h1>
       <br />
+      {activeGirlsHostelButtons.length > 0 ? (
+        <div className={"flex"}>
+          {activeGirlsHostelButtons.map((button, index) => (
+            <button className={`btn m-2 ${activeGirlsHostel === `${button}` ? 'active-button' : 'inactive-button'}`} onClick={() => setActiveGirlsHostel(button)} key={index} style={{
+              backgroundColor: activeGirlsHostel === button ? '#FF8A00' : '#fac38c', // Example colors
+              color: activeGirlsHostel === button ? 'white' : '#333333' // Set text color (optional)
+            }}
+            >{button}</button>
+          ))}
+        </div>
+      ) : (
+        <p>No active hostels found.</p>
+      )}
+
       <div className="menu">
         {menu.map((item, index) => (
           <div className='cardWithBtnsContainer'>
-            <SmallCard key={index} index={index} item={item} handleClick={handleCardClick}/>
-            <button id="mbladdButton" type="button"  onClick={() => handleClick(item.btntext)}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
+            <SmallCard key={index} index={index} item={item} handleClick={handleCardClick} />
+            <button id="mbladdButton" type="button" onClick={() => handleClick(item.btntext)}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
           </div>
         ))}
         {/* <div className='button-container'>
@@ -1593,7 +1623,7 @@ const handleRoomsIntegerChange = (event) => {
         </div>
       }
 
-{expensePopupOpen &&
+      {expensePopupOpen &&
         <div className="popupBeds" id="example">
           <Button variant="primary" onClick={() => setExpensePopupOpen(true)}>Open Popup</Button>
           <Modal show={expensePopupOpen} onHide={onClickCloseExpensePopup} dialogClassName="modal-90w">
@@ -1621,7 +1651,7 @@ const handleRoomsIntegerChange = (event) => {
               </table>
             </Modal.Body>
             <div>
-             <p>This Month Total Expenses: {totalExpenses}</p>
+              <p>This Month Total Expenses: {totalExpenses}</p>
             </div>
             <Modal.Footer>
               <Button variant="secondary" className='btn btn-warning' onClick={onClickCloseExpensePopup}>Close</Button>
@@ -1629,7 +1659,7 @@ const handleRoomsIntegerChange = (event) => {
           </Modal>
         </div>
       }
- 
+
     </div>
   );
 

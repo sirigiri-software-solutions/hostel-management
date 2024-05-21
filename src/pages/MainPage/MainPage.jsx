@@ -23,9 +23,10 @@ import { AiOutlineClose } from 'react-icons/ai'
 import { DataContext } from '../../ApiData/ContextProvider'
 import { useNavigate } from 'react-router-dom'
 import { RiLogoutCircleRLine } from "react-icons/ri";
+import { useTranslation } from 'react-i18next'
 import { useData } from '../../ApiData/ContextProvider';
 const MainPage = () => {
-
+  const { t } = useTranslation()
   const { activeHostel } = useData();
   const name = localStorage.getItem("username");
   // Refer here for fetched Api Data use like this in all pages don't fetch api url
@@ -40,47 +41,47 @@ const MainPage = () => {
     {
       id: 1,
       path: "/",
-      name: "Dashboard",
-      icon: DashboardImage
+      name: t("menuItems.dashboard"),
+      icon: DashboardImage,
     },
     {
       id: 2,
       path: "/rooms",
-      name: "Rooms",
-      icon: RoomsImage
+      name: t("menuItems.rooms"),
+      icon: RoomsImage,
     },
     {
       id: 3,
       path: "/beds",
-      name: "Beds",
-      icon: BedsImage
+      name: t("menuItems.beds"),
+      icon: BedsImage,
     },
     {
       id: 4,
       path: "/rent",
-      name: "Rent",
-      icon: RentImage
+      name: t("menuItems.rent"),
+      icon: RentImage,
     },
     {
       id: 5,
       path: "/tenants",
-      name: "Tenants",
-      icon: TenantsImage
+      name: t("menuItems.tenants"),
+      icon: TenantsImage,
     },
     {
       id: 6,
       path: "/expenses",
-      name: "Expenses",
-      icon: ExpensesImage
+      name: t("menuItems.expenses"),
+      icon: ExpensesImage,
     },
     {
       id: 7,
-      path: "/expenses",
-      name: "Settings",
-      icon: SettingsImage
+      path: "/settings",
+      name: t("menuItems.settings"),
+      icon: SettingsImage,
     },
-
-  ]
+  ];
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleModal = () => {

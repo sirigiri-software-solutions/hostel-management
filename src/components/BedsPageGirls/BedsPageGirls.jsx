@@ -6,8 +6,10 @@ import {database, ref, push} from '../../firebase'
 import { onValue } from 'firebase/database'
 import "../BedsPageBoys/BedsPageBoys.css"
 import { useData } from '../../ApiData/ContextProvider';
+import { useTranslation } from 'react-i18next';
 
 const BedsPageGirls = () => {
+  const { t } = useTranslation();
   const { activeGirlsHostel } = useData();
   const [girlsRooms, setGirlsRooms]= useState([])
   const [bedsData, setBedsData] = useState([]);
@@ -93,13 +95,13 @@ const BedsPageGirls = () => {
 
 
   const columns = [
-    'S. No',
-    'Name',
-    'Bed Number',
-    'Room. No',
-    'Floor',
-    'Rent',
-    'Status'
+    t('bedsPage.sNo'),
+    t('bedsPage.name'),
+    t('bedsPage.bedNumber'),
+    t('bedsPage.roomNo'),
+    t('bedsPage.floor'),
+    t('bedsPage.rent'),
+    t('bedsPage.status')
   ]
 
   const rows = bedsData.map((beds, index) => ({
@@ -185,7 +187,7 @@ const BedsPageGirls = () => {
         <div className='roomlogo-container'>
           <img src={bedIcon} alt="RoomsIcon" className='roomlogo'/>
         </div>
-        <h1 className='management-heading'>Beds Management</h1>
+        <h1 className='management-heading'>{t('bedsPage.bedsManagement')}</h1>
       </div>
       <div className="col-12 col-md-4 search-wrapper">
         <input onChange={onChangeSearch} value={searchValue} type="text" placeholder='Search' className='search-input'/>
@@ -194,12 +196,12 @@ const BedsPageGirls = () => {
       <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
         <div className='d-flex filterDropDownContainer'>
       <select className="col-4 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
-            <option value="">Status</option>
-            <option value="Occupied">Occupied</option>
-            <option value="Unoccupied">Unoccupied</option>
+            <option value="">{t('bedsPage.status')}</option>
+            <option value="Occupied">{t('bedsPage.occupied')}</option>
+            <option value="Unoccupied">{t('bedsPage.unoccupied')}</option>
           </select>
           <select className="col-4 bedPageFilterDropdown" value={selectedFloor} onChange={onChangeFloor}>
-            <option value="">Floor number</option>
+            <option value="">{t('bedsPage.floorNumber')}</option>
             {
               floorNumbersToShow.map((floor) => (
                 <option key={floor} value={floor}>
@@ -209,7 +211,7 @@ const BedsPageGirls = () => {
             }
           </select>
           <select className='col-4 bedPageFilterDropdown' value={selectedRoomNo} onChange={onChangeRoomNo}>
-            <option value="">Room number</option>
+            <option value="">{t('bedsPage.roomNumber')}</option>
             {roomNumbersToShow.map((room) => (
               <option key={room} value={room}>
                 {room}

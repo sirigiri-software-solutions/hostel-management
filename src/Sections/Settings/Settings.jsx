@@ -3,10 +3,13 @@ import { ref, update } from 'firebase/database';
 import { database } from '../../firebase'; // Adjust the path as necessary
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LanguageSwitch from '../../LanguageSwitch';
+import { useTranslation } from 'react-i18next';
 
 const Settings = () => {
   const [newBoysHostelName, setNewBoysHostelName] = useState('');
   const [newGirlsHostelName, setNewGirlsHostelName] = useState('');
+  const {t} = useTranslation();
 
   const addNewActiveBoysHostel = (e) => {
     e.preventDefault();
@@ -68,7 +71,7 @@ const Settings = () => {
 
   return (
     <div className="settings">
-      <h1>Settings</h1>
+      <h1>{t('menuItems.settings')}</h1>
       <div className="add-Hostel-form">
         <div>
           <h4>Add New Boys Hostel</h4>
@@ -99,6 +102,10 @@ const Settings = () => {
           />
           <button type="submit" className="btn btn-success">Add Hostel</button>
         </form>
+      </div>
+      <div>
+        <label htmlFor="language-selector">Languages:</label>
+        <LanguageSwitch id="language-selector" />
       </div>
     </div>
   );

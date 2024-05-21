@@ -6,8 +6,10 @@ import { database, push, ref } from "../../firebase";
 import { onValue } from 'firebase/database';
 import "../BedsPageBoys/BedsPageBoys.css"
 import { useData } from '../../ApiData/ContextProvider';
+import { useTranslation } from 'react-i18next';
 
 const BedsPageBoys = () => {
+  const { t } = useTranslation();
 
   const { activeBoysHostel } = useData();
   const [boysRooms, setBoysRooms] = useState([])
@@ -93,14 +95,14 @@ const BedsPageBoys = () => {
   }, [boysRooms, tenants, activeBoysHostel]); // Depend on rooms and tenants data
 
   const columns = [
-    'S. No',
-    'Name',
-    'Bed Number',
-    'Room No',
-    'Floor',
-    'Rent',
-    'Status'
-  ];
+    t('bedsPage.sNo'),
+    t('bedsPage.name'),
+    t('bedsPage.bedNumber'),
+    t('bedsPage.roomNo'),
+    t('bedsPage.floor'),
+    t('bedsPage.rent'),
+    t('bedsPage.status')
+  ]
 
   //console.log(bedsData,"DataFromBeds")
 
@@ -177,61 +179,64 @@ const BedsPageBoys = () => {
   });
 
   return (
-    <div className='h-100'>
-      <>
-        <div className="row d-flex flex-wrap align-items-center justify-content-between">
-          <div className="col-12 col-md-4 d-flex align-items-center mr-5 mb-2">
-            <div className='roomlogo-container'>
-              <img src={bedIcon} alt="RoomsIcon" className='roomlogo' />
-            </div>
-            <h1 className='management-heading'>Beds Management</h1>
-          </div>
-          <div className="col-12 col-md-4 search-wrapper ">
-            <input value={searchValue} onChange={onChangeSearch} type="text" placeholder='Search' className='search-input' />
-            <img src={SearchIcon} alt="search-icon" className='search-icon' />
-          </div>
-
-          <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end '>
-            <div className='d-flex filterDropDownContainer'>
-              <select className="col-4 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
-                <option value="">Status</option>
-                <option value="Occupied">Occupied</option>
-                <option value="Unoccupied">Unoccupied</option>
-              </select>
-              <select className='col-4 bedPageFilterDropdown' value={selectedFloor} onChange={onChangeFloor}>
-                <option value="">Floor number</option>
-                {
-                  floorNumbersToShow.map((floor) => (
-                    <option key={floor} value={floor}>
-                      {floor}
-                    </option>
-                  ))
-                }
-              </select>
-              <select className='col-4 bedPageFilterDropdown' value={selectedRoomNo} onChange={onChangeRoomNo}>
-                <option value="">Room number</option>
-                {roomNumbersToShow.map((room) => (
-                  <option key={room} value={room}>
-                    {room}
-                  </option>
-                ))}
-
-              </select>
-
-            </div>
-          </div>
+    <div className='h-100'> 
+    <>
+    <div className="row d-flex flex-wrap align-items-center justify-content-between">
+      <div className="col-12 col-md-4 d-flex align-items-center mr-5 mb-2">
+        <div className='roomlogo-container'>
+          <img src={bedIcon} alt="RoomsIcon" className='roomlogo'/>
         </div>
+        <h1 className='management-heading'>{t('bedsPage.bedsManagement')}</h1>
+      </div>
+      <div className="col-12 col-md-4 search-wrapper ">
+        <input value={searchValue} onChange={onChangeSearch} type="text" placeholder='Search' className='search-input'/>
+        <img src={SearchIcon} alt="search-icon" className='search-icon'/>
+      </div>
 
-        <div>
-          <Table columns={columns} rows={filteredRows} />
+      <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end '>
+        <div className='d-flex filterDropDownContainer'>
+          <select className="col-4 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
+            <option value="">{t('bedsPage.status')}</option>
+            <option value="Occupied">{t('bedsPage.occupied')}</option>
+            <option value="Unoccupied">{t('bedsPage.unoccupied')}</option>
+          </select>
+          <select className='col-4 bedPageFilterDropdown' value={selectedFloor} onChange={onChangeFloor}>
+            <option value="">{t('bedsPage.floorNumber')}</option>
+           
+            {
+              floorNumbersToShow.map((floor) => (
+                <option key={floor} value={floor}>
+                  {floor}
+                </option>
+              ))
+            }
+          </select> 
+          <select className='col-4 bedPageFilterDropdown' value={selectedRoomNo} onChange={onChangeRoomNo}>
+            <option value="">{t('bedsPage.roomNumber')}</option>
+            {roomNumbersToShow.map((room) => (
+              <option key={room} value={room}>
+                {room}
+              </option>
+            ))}
+            
+          </select>
+          
         </div>
+      </div>
+    </div>
 
-        <div class="modal fade" id="exampleModalBedsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+
+    <div>   
+        <Table columns={columns} rows={filteredRows}/>
+    </div>
+
+    <div class="modal fade" id="exampleModalBedsBoys" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <div className="container-fluid">

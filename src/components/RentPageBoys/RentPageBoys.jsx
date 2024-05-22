@@ -532,16 +532,6 @@ Please note that you made your last payment on ${paidDate}.\n`
               </div>
               <div class="modal-body">
                 <div className="container-fluid">
-                  {isEditing ? null :
-                    <div className='monthlyDailyButtons'>
-                      <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => { setShowForm(true); handleResetMonthly(); }} >
-                        <text>Monthly</text>
-                      </div>
-                      <div className={!showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => { setShowForm(false); handleResetDaily(); }}>
-                        <text>Daily</text>
-                      </div>
-                    </div>
-                  }
                   {isEditing ? null : 
                     <div className='monthlyDailyButtons'>
                       <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={()=>{setShowForm(true);  handleResetMonthly();}} >

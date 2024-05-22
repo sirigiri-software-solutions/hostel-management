@@ -313,5 +313,15 @@
             "delete": "Delete"
         
         
+    },
+    "createdBy":{
+        "Admin":"Admin",
+        "Sub-admin":"Sub-admin"
+    },
+    "status":{
+        "Occupied":"Occupied",
+        "Unoccupied":"Unoccupied",
+        "Paid":"Paid",
+        "Unpaid":"Unpaid"
     }
   }

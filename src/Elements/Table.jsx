@@ -5,6 +5,30 @@ import { useTranslation } from 'react-i18next'
  
 const Table = ({columns, rows,onClickTentantRow}) => {
   const { t } = useTranslation();
+
+  const getTranslationCreatedBy = (createdby) => {
+    switch(createdby){
+      case "Admin":
+      case "Sub-admin":
+        return t(`createdBy.${createdby}`)
+      default:
+        return createdby;
+    }
+  }
+
+  const getTranslationStatus = (status) => {
+    switch(status){
+      case "Occupied":
+      case "Unoccupied":
+      case "Paid":
+      case "Unpaid":
+        return t(`status.${status}`)
+      default:
+        return status;
+    }
+  }
+
+
   return (
     <div className='table-container'>
         <table className="table text-center">
@@ -43,10 +67,10 @@ const Table = ({columns, rows,onClickTentantRow}) => {
 {item.created_on && <td data-label={t('mobileTable.createdOn')}>{item.created_on}</td>}
 {item.expense_name && <td data-label={t('mobileTable.expenseName')}>{item.expense_name}</td>}
 {item.expense_amount && <td data-label={t('mobileTable.expenseAmount')}>{item.expense_amount}</td>}
-{item.created_by && <td data-label={t('mobileTable.createdBy')}>{item.created_by}</td>}
+{item.created_by && <td data-label={t('mobileTable.createdBy')}>{getTranslationCreatedBy(item.created_by)}</td>}
 {item.last_updated_by && <td data-label={t('mobileTable.lastUpdatedDate')}>{item.last_updated_by}</td>}
 {item.payment_date && <td data-label={t('mobileTable.paymentDate')}>{item.payment_date}</td>}
-{item.status && <td data-label={t('mobileTable.status')} onClick={onClickTentantRow ? () => onClickTentantRow(item) : null}>{item.status}</td>}
+{item.status && <td data-label={t('mobileTable.status')} onClick={onClickTentantRow ? () => onClickTentantRow(item) : null}>{getTranslationStatus(item.status)}</td>}
 {item.edit_room && <td data-label={t('mobileTable.edit')}>{item.edit_room}</td>}
 {item.actions && <td data-label={t('mobileTable.actions')}>{item.actions}</td>}
 {item.edit && <td data-label={t('mobileTable.edit')}><Button icon={item.edit.icon} variant={item.edit.variant} text={item.edit.text}/></td>}

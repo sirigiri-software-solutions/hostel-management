@@ -13,6 +13,13 @@ import { useTranslation } from 'react-i18next';
 
 const RoomsBoys = () => {
   const { t }=useTranslation();
+  const  role = localStorage.getItem('role');
+  let adminRole = "";
+  if(role === "admin"){
+    adminRole = "Admin";
+  }else if(role === "subAdmin"){
+    adminRole = "Sub-admin"
+  }
   const { activeBoysHostel } = useData();
   const [floorNumber, setFloorNumber] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
@@ -21,10 +28,12 @@ const RoomsBoys = () => {
   const [rooms, setRooms] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState('');
-  const [createdBy, setCreatedBy] = useState('admin'); // Default to 'admin'
+  const [createdBy, setCreatedBy] = useState(adminRole); // Default to 'admin'
   const [updateDate, setUpdateDate] = useState('');
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
+
+
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -360,7 +369,9 @@ const RoomsBoys = () => {
     );
   });
 
-  console.log("active roooom", rooms)
+  const isUneditable = role === 'admin' || role === 'subAdmin';
+
+  console.log("active roooom", role)
   return (
     <div className='h-100'>
       <>
@@ -420,22 +431,22 @@ const RoomsBoys = () => {
                   </div>
                   <div className="col-md-6">
                     <label htmlFor="inputRole" className="form-label">{t('roomsPage.createdBy')}</label>
-                    <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
+                    {/* <select disabled={isUneditable} className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
 
                       <option value="Admin">{t('dashboard.admin')}</option>
                       <option value="Sub-admin">{t('dashboard.subAdmin')}</option>
-                    </select>
+                    </select> */}
+                    <input disabled={isUneditable} type="text" className='form-control' id="inputRole" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}/>
                     {/* {formErrors.role && <div className="text-danger">{formErrors.role}</div>} */}
                   </div>
                   <div className="col-12 text-center">
-                    {isEditing && <p>{t('roomsPage.LastUpdated:')} {updateDate || 'N/A'}</p>}
                     {isEditing ? (
                       <div className="roomsEditBtnsContainer">
                       <button type="button"  className="btn btn-warning roomUpdateBtn" onClick={handleSubmit}>{t('roomsPage.Update Room')}</button>
-                      <button type="button" className='btn btn-warning' onClick={() => handleDeleteRoom(currentId)}>{t('roomsPage.Delete Room')}</button>
+                      {role === "admin" ? <button type="button" className='btn btn-warning' onClick={() => handleDeleteRoom(currentId)}>{t('roomsPage.Delete Room')}</button> : null}
                       </div>
                     ) : (
-                      <button type="submit" className="btn btn-warning" >{t('roomsPage.Create Room')}</button>
+                      <button type="submit" className="btn btn-warning" >{t('roomsPage.CreateRoom')}</button>
                     )}
                     {/* <button type="submit" className="btn btn-warning">Create Room</button> */}
                   </div>

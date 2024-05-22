@@ -18,6 +18,9 @@ import { useData } from '../../ApiData/ContextProvider';
 const TenantsBoys = () => {
   const { t } = useTranslation();
   const { activeBoysHostel } = useData();
+  const role = localStorage.getItem('role');
+
+
   const [selectedRoom, setSelectedRoom] = useState('');
   const [bedOptions, setBedOptions] = useState([]);
   const [selectedBed, setSelectedBed] = useState('');
@@ -54,6 +57,7 @@ const TenantsBoys = () => {
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('NA');
   const [selectedStatus, setSelectedStatus] = useState('');
+  const [showBikeFilter,setShowBikeFilter] = useState(true);
 
   const [permnentAddress, setPermnentAddress] = useState("");
 
@@ -536,8 +540,10 @@ const TenantsBoys = () => {
     t('tenantsPage.roomBedNo'),
     t('tenantsPage.joiningDate'),
     t('tenantsPage.status'),
-    t('tenantsPage.actions'),
   ]
+  if(role === "admin"){
+    columnsEx.push(t('tenantsPage.actions'))
+  }
   const columns = [
     t('tenantsPage.sNo'),
     t('tenantsPage.image'),
@@ -576,23 +582,41 @@ const TenantsBoys = () => {
     </button>
   }));
 
-  const onChangeStatus = (e) => {
-    setSelectedStatus(e.target.value);
-  };
+  
+
+  // const filteredRows = rows.filter((row) => {
+  //   const hasSearchQueryMatch = Object.values(row).some((value) =>
+  //     value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+  //   );
+  
+  //   if (selectedStatus === 'Yes') {
+  //     return row.bike_number !== 'NA' && hasSearchQueryMatch;
+  //   } else if (selectedStatus === 'NA') {
+  //     return row.bike_number === 'NA' && hasSearchQueryMatch;
+  //   } else {
+  //     return hasSearchQueryMatch;
+  //   }
+  // });
 
   const filteredRows = rows.filter((row) => {
+    // Check if any value in the row matches the search query
     const hasSearchQueryMatch = Object.values(row).some((value) =>
       value.toString().toLowerCase().includes(searchQuery.toLowerCase())
     );
-
-    if (selectedStatus === 'Yes') {
+  
+    // Apply additional filtering based on the selected status
+    if (selectedStatus === 'YES') {
+      // Include only rows with a bike number that is not 'NA' and matches the search query
       return row.bike_number !== 'NA' && hasSearchQueryMatch;
     } else if (selectedStatus === 'NA') {
+      // Include only rows with a bike number that is 'NA' and matches the search query
       return row.bike_number === 'NA' && hasSearchQueryMatch;
     } else {
+      // Include all rows that match the search query, regardless of bike number
       return hasSearchQueryMatch;
     }
   });
+  
 
   const handleClosePopUp = () => {
     setShowModal(false);
@@ -757,6 +781,8 @@ const TenantsBoys = () => {
     setShowConfirmation(false);
   };
 
+  
+
   const exTenantRows = exTenants.map((tenant, index) => ({
     s_no: index + 1, // Assuming `id` is a unique identifier for each tenant
     image: tenant.tenantImageUrl,
@@ -766,7 +792,7 @@ const TenantsBoys = () => {
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
     joining_date: tenant.dateOfJoin,
     status: 'Vacated',
-    actions: (
+    actions: role === 'admin' ? (
       <button
         style={{
           backgroundColor: '#ff8a00',
@@ -779,12 +805,18 @@ const TenantsBoys = () => {
       >
         Delete
       </button>
-    ),
+    ) : null,
+  
   }));
   
   const showExTenantsData = () => {
     setShowExTenants(!showExTenants)
+    setShowBikeFilter(!showBikeFilter);
   }
+
+  const onChangeStatus = (e) => {
+    setSelectedStatus(e.target.value);
+  };
 
   const handleChange = (event) => {
     const value = event.target.checked ? 'YES' : 'NA';
@@ -808,20 +840,20 @@ const TenantsBoys = () => {
         </div>
         <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end '>
           <div className='d-flex align-items-center text-center'>
-                  <div className="toggle-container">
-                <label className="toggle-label" htmlFor="status-toggle">{t('tenantsPage.bike')}</label>
+          {showBikeFilter?( <div className="toggle-container">
+                <label className="toggle-label" htmlFor="status-toggleGirl">{t('tenantsPage.bike')}</label>
                 <input
                   type="checkbox"
-                  id="status-toggle"
+                  id="status-toggleGirl"
                   className="toggle-checkbox"
                   checked={selectedStatus === 'YES'}
                   onChange={handleChange}
                 />
-                <label className="toggle-switch" htmlFor="status-toggle">
+                <label className="toggle-switch" htmlFor="status-toggleGirl">
                   <span className="toggle-text">No</span>
                   <span className="toggle-text">Yes</span>
                 </label>
-              </div>
+              </div>) :null}
       <div className='d-flex justify-content-center align-items-center'>
             <div className={showExTenants ? "col-1 bedPageFilterDropdown" : "col-5 bedPageFilterDropdown"}>
               {showExTenants ? '' : <button id="tenantAddButton" type="button" class="add-button" onClick={() => { handleAddNew(); }} >

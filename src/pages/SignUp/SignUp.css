@@ -44,3 +44,24 @@ input[type="submit"]{
     text-align: center;
     width: 100%;
 }
+.confirmationContainer{
+    display:flex;
+  }
+.loginText{
+    font-size:17px;
+    font-family:"Roboto";
+}
+  .checkBoxTextContainer{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-right:10px;
+  }
+  .checkBoxText{
+    font-size:17px;
+    font-family:"Roboto";
+    margin-left:5px;
+  }
+.checkbox{
+    margin-top:10px;
+}

@@ -311,6 +311,16 @@
     "edit": "సవరించు",
     "actions": "చర్యలు",
     "delete": "తొలగించు"
+},
+"createdBy": {
+  "Admin": "అడ్మిన్",
+  "Sub-admin": "సబ్-అడ్మిన్"
+},
+"status":{
+  "Occupied":"భర్తీ",
+  "Unoccupied":"ఖాళీ",
+  "Paid":"చెల్లింపు",
+  "Unpaid":"బాకీ"
 }
 
 }

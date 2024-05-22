@@ -5,18 +5,19 @@ import Table from '../../Elements/Table'
 import ImageIcon from '../../images/Icons (10).png'
 import { useState, useEffect } from 'react'
 import { database, push, ref, storage } from "../../firebase";
-import { DataContext } from '../../ApiData/ContextProvider'
+
 import { FetchData } from '../../ApiData/FetchData'
 import { onValue, remove, set, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { FaDownload } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useTranslation } from 'react-i18next'
+import { useData } from '../../ApiData/ContextProvider';
 
 const TenantsGirls = () => {
+  const { t } = useTranslation();
 
-  const { data } = useContext(DataContext);
-  const [girlsTenants, setGirlsTenants] = useState([]);
-
+  const { activeGirlsHostel } = useData();
   const [searchQuery, setSearchQuery] = useState('');
 
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -47,7 +48,7 @@ const TenantsGirls = () => {
 
   const [exTenants, setExTenants] = useState([]);
   const [showExTenants, setShowExTenants] = useState(false);
-  const [singleTenantProofId,setSingleTenantProofId] = useState("");
+  const [singleTenantProofId, setSingleTenantProofId] = useState("");
 
   const [fileName, setFileName] = useState('');
 
@@ -57,6 +58,48 @@ const TenantsGirls = () => {
 
   const tenantImageInputRef = useRef(null);
   const tenantProofIdRef = useRef(null);
+  const [permnentAddress, setPermnentAddress] = useState("");
+  const [bikeImage, setBikeImage] = useState(null);
+  const [bikeImageField, setBikeImageField] = useState('');
+  const [bikeRcImage, setBikeRcImage] = useState('');
+  const [bikeRcImageField, setBikeRcImageField] = useState('');
+  const [tenantAddress, setTenantAddress] = useState('');
+
+
+
+
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      // Once the file is loaded, set the image in state
+      setBikeImage(reader.result);
+
+    };
+    // console.log(file,"file created");
+
+
+    reader.readAsDataURL(file);
+    console.log(file, "file created");
+  };
+
+
+  const handleRcChange = (e) => {
+    const file1 = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      setBikeRcImage(reader.result);
+    }
+    reader.readAsDataURL(file1);
+    console.log(file1, "file1 created");
+
+  }
+
+
+
 
   const handleCheckboxChange = (e) => {
     setHasBike(e.target.value == 'yes');
@@ -73,37 +116,37 @@ const TenantsGirls = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && (event.target.id === "exampleModalTenantsGirls" || event.key==="Escape")) {
-            setShowModal(false);
-            setTenantIdUrl('')
-        }
-        
-       
-       
+      if (showModal && (event.target.id === "exampleModalTenantsGirls" || event.key === "Escape")) {
+        setShowModal(false);
+        setTenantIdUrl('')
+      }
+
+
+
     };
 
     window.addEventListener('click', handleOutsideClick);
-    window.addEventListener('keydown',handleOutsideClick)
-}, [showModal]);
+    window.addEventListener('keydown', handleOutsideClick)
+  }, [showModal]);
 
-
-
-
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    const popup = document.getElementById('userDetailsTenantPopupIdGirl');
-    if (popup && (!popup.contains(event.target) || event.key === "Escape")) {
-      setUserDetailsTenantsPopup(false);
-    }
-  };
-  document.addEventListener("mousedown", handleClickOutside);
-  document.addEventListener("keydown",handleClickOutside)
-}, []);
 
 
 
   useEffect(() => {
-    const tenantsRef = ref(database, 'Hostel/girls/tenants');
+    const handleClickOutside = (event) => {
+      const popup = document.getElementById('userDetailsTenantPopupIdGirl');
+      if (popup && (!popup.contains(event.target) || event.key === "Escape")) {
+        setUserDetailsTenantsPopup(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleClickOutside)
+  }, []);
+
+
+
+  useEffect(() => {
+    const tenantsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants`);
     onValue(tenantsRef, snapshot => {
       const data = snapshot.val() || {};
       const loadedTenants = Object.entries(data).map(([key, value]) => ({
@@ -112,12 +155,11 @@ useEffect(() => {
       }));
       setTenants(loadedTenants);
     });
-  }, []);
-
+  }, [activeGirlsHostel]);
 
   const [girlsRooms, setGirlsRooms] = useState([]);
   useEffect(() => {
-    const roomsRef = ref(database, 'Hostel/girls/rooms');
+    const roomsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRooms = [];
@@ -130,7 +172,7 @@ useEffect(() => {
       setGirlsRooms(loadedRooms);
     });
     // Fetch tenants
-  }, []);
+  }, [activeGirlsHostel]);
 
 
 
@@ -146,30 +188,30 @@ useEffect(() => {
     }
   }, [selectedRoom, girlsRooms]);
 
- 
+
 
   const validate = () => {
     let tempErrors = {};
-    tempErrors.selectedRoom = selectedRoom ? "" : "Room number is required.";
-    tempErrors.selectedBed = selectedBed ? "" : "Bed number is required.";
-    tempErrors.dateOfJoin = dateOfJoin ? "" : "Date of join is required.";
+    tempErrors.selectedRoom = selectedRoom ? "" : t('errors.roomNumberRequired');
+    tempErrors.selectedBed = selectedBed ? "" : t('errors.bedNumberRequired');
+    tempErrors.dateOfJoin = dateOfJoin ? "" : t('errors.dateOfJoinRequired');
     if (!name) {
-      tempErrors.name = "Name is required.";
+      tempErrors.name = t('errors.nameRequired');
     } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-      tempErrors.name = "Name must contain only letters and spaces.";
+      tempErrors.name = t('errors.nameInvalid');
     }
     // Validate mobile number
     if (!mobileNo) {
-      tempErrors.mobileNo = "Mobile number is required.";
+      tempErrors.mobileNo = t('errors.mobileNumberRequired');
     } else if (!/^\d{10,13}$/.test(mobileNo)) {
-      tempErrors.mobileNo = "Invalid mobile number";
+      tempErrors.mobileNo = t('errors.mobileNumberInvalid');
     }
-    tempErrors.idNumber = idNumber ? "" : "ID number is required.";
+    tempErrors.idNumber = idNumber ? "" : t('errors.idNumberRequired');
     // Validate emergency contact
     if (!emergencyContact) {
-      tempErrors.emergencyContact = "Emergency contact is required.";
+      tempErrors.emergencyContact = t('errors.emergencyContactRequired');
     } else if (!/^\d{10,13}$/.test(emergencyContact)) {
-      tempErrors.emergencyContact = "Invalid emergency contact";
+      tempErrors.emergencyContact = t('errors.emergencyContactInvalid');
     }
 
     // Check if the selected bed is already occupied
@@ -178,10 +220,10 @@ useEffect(() => {
     });
 
     if (isBedOccupied) {
-      tempErrors.selectedBed = "This bed is already occupied.";
+      tempErrors.selectedBed = t('errors.bedAlreadyOccupied');
     }
     if (!tenantImage && !tenantImageUrl) {
-      tempErrors.tenantImage = "Tenant image is required.";
+      tempErrors.tenantImage = t('errors.tenantImageRequired');
     }
 
     setErrors(tempErrors);
@@ -196,7 +238,7 @@ useEffect(() => {
   const handleTenantIdChange = (e) => {
     if (e.target.files[0]) {
       const file = e.target.files[0]
-      console.log(file,"filename");
+      console.log(file, "filename");
       setFileName(file.name)
       setTenantId(e.target.files[0]);
     }
@@ -205,20 +247,20 @@ useEffect(() => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(!isEditing){
+    if (!isEditing) {
       e.target.querySelector('button[type="submit"]').disabled = true;
       if (!validate()) {
-        e.target.querySelector('button[type="submit"]').disabled = false;  
+        e.target.querySelector('button[type="submit"]').disabled = false;
         return
       };
-    } else{
-      if(!validate()) return;
+    } else {
+      if (!validate()) return;
     }
 
     let imageUrlToUpdate = tenantImageUrl;
 
     if (tenantImage) {
-      const imageRef = storageRef(storage, `Hostel/girls/tenants/images/tenantImage/${tenantImage.name}`);
+      const imageRef = storageRef(storage, `Hostel/girls/${activeGirlsHostel}/tenants/images/tenantImage/${tenantImage.name}`);
       try {
         const snapshot = await uploadBytes(imageRef, tenantImage);
         imageUrlToUpdate = await getDownloadURL(snapshot.ref);
@@ -229,7 +271,7 @@ useEffect(() => {
 
     let idUrlToUpdate = tenantIdUrl;
     if (tenantId) {
-      const imageRef = storageRef(storage, `Hostel/girls/tenants/images/tenantId/${tenantId.name}`);
+      const imageRef = storageRef(storage, `Hostel/girls/${activeGirlsHostel}/tenants/images/tenantId/${tenantId.name}`);
       try {
         const snapshot = await uploadBytes(imageRef, tenantId);
         idUrlToUpdate = await getDownloadURL(snapshot.ref);
@@ -244,7 +286,7 @@ useEffect(() => {
       roomNo: selectedRoom,
       bedNo: selectedBed,
       dateOfJoin,
-      name:name.charAt(0).toUpperCase() + name.slice(1),
+      name: name.charAt(0).toUpperCase() + name.slice(1),
       mobileNo,
       idNumber,
       emergencyContact,
@@ -252,12 +294,15 @@ useEffect(() => {
       tenantImageUrl: imageUrlToUpdate,
       tenantIdUrl: idUrlToUpdate,
       bikeNumber,
-      fileName:fileName
+      fileName: fileName,
+      permnentAddress,
+      bikeImage,
+      bikeRcImage
     };
 
     if (isEditing) {
-      await update(ref(database, `Hostel/girls/tenants/${currentId}`), tenantData).then(() => {
-        toast.success("Tenant updated successfully.", {
+      await update(ref(database, `Hostel/girls/${activeGirlsHostel}/tenants/${currentId}`), tenantData).then(() => {
+        toast.success(t('toastMessages.tenantUpdated'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -267,7 +312,7 @@ useEffect(() => {
           progress: undefined,
         });
       }).catch(error => {
-        toast.error("Error updating Tenant: " + error.message, {
+        toast.error(t('toastMessages.errorUpdatingTenant') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -278,8 +323,8 @@ useEffect(() => {
         });
       });;
     } else {
-      await push(ref(database, 'Hostel/girls/tenants'), tenantData).then(() => {
-        toast.success("Tenant added successfully.", {
+      await push(ref(database, `Hostel/girls/${activeGirlsHostel}/tenants`), tenantData).then(() => {
+        toast.success(t('toastMessages.tenantAddedSuccess'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -290,7 +335,7 @@ useEffect(() => {
         });
         e.target.querySelector('button[type="submit"]').disabled = false;
       }).catch(error => {
-        toast.error("Error adding Tenant: " + error.message, {
+        toast.error(t('toastMessages.errorAddingTenant') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -307,7 +352,7 @@ useEffect(() => {
     // imageInputRef.current.value = "";
     // idInputRef.current.value = "";
     setErrors({});
-      
+
   };
 
   const handleEdit = (tenant) => {
@@ -324,17 +369,16 @@ useEffect(() => {
     // setTenantImage(tenant.tenantImageUrl);
     setTenantImageUrl(tenant.tenantImageUrl || ''); // Set the current image URL
     setTenantIdUrl(tenant.tenantIdUrl || '');
-   setFileName(tenant.fileName|| '');
-   console.log(tenant,"tenantDetails")
+    setFileName(tenant.fileName || '');
+    console.log(tenant, "tenantDetails")
     setHasBike(false);
     setShowModal(true);
     setBikeNumber(tenant.bikeNumber);
-    if(tenant.bikeNumber=='NA')
-    {
+    if (tenant.bikeNumber == 'NA') {
       setHasBike(false);
       setBikeNumber(tenant.bikeNumber);
     }
-    else{
+    else {
       setHasBike(true);
       setBikeNumber(tenant.bikeNumber);
     }
@@ -373,80 +417,80 @@ useEffect(() => {
     setTenantImageUrl('');
     setTenantIdUrl('');
     setBikeNumber('NA');
-    
+
     tenantImageInputRef.current.value = null;
     tenantProofIdRef.current.value = null;
   };
 
 
-  useEffect(() => {
-    const fetchDataFromAPI = async () => {
-      try {
-        if (data) {
-          const girlsTenantsData = Object.values(data.girls.tenants);
-          setGirlsTenants(girlsTenantsData);
+  // useEffect(() => {
+  //   const fetchDataFromAPI = async () => {
+  //     try {
+  //       if (data) {
+  //         const girlsTenantsData = Object.values(data.girls.tenants);
+  //         setGirlsTenants(girlsTenantsData);
 
-        } else {
-          const apiData = await FetchData();
-          const girlsTenantsData = Object.values(apiData.girls.tenants);
-          setGirlsTenants(girlsTenantsData);
-        }
-      } catch (error) {
-        console.error('Error fetching tenants data:', error);
-      }
-    };
+  //       } else {
+  //         const apiData = await FetchData();
+  //         const girlsTenantsData = Object.values(apiData.girls.tenants);
+  //         setGirlsTenants(girlsTenantsData);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching tenants data:', error);
+  //     }
+  //   };
 
-    fetchDataFromAPI();
-  }, [data]);
+  //   fetchDataFromAPI();
+  // }, [data]);
 
-  useEffect(() => {
-    const fetchDataFromAPI = async () => {
-      try {
-        if (data) {
-          const girlsRoomsData = Object.values(data.girls.rooms);
-          setGirlsRoomsData(girlsRoomsData);
+  // useEffect(() => {
+  //   const fetchDataFromAPI = async () => {
+  //     try {
+  //       if (data) {
+  //         const girlsRoomsData = Object.values(data.girls.rooms);
+  //         setGirlsRoomsData(girlsRoomsData);
 
-        } else {
-          const apiData = await FetchData();
-          const girlsRoomsData = Object.values(apiData.girls.rooms);
-          setGirlsRoomsData(girlsRoomsData);
-        }
-      } catch (error) {
-        console.error('Error fetching tenants data:', error);
-      }
-    };
+  //       } else {
+  //         const apiData = await FetchData();
+  //         const girlsRoomsData = Object.values(apiData.girls.rooms);
+  //         setGirlsRoomsData(girlsRoomsData);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching tenants data:', error);
+  //     }
+  //   };
 
-    fetchDataFromAPI();
-  }, [data]);
+  //   fetchDataFromAPI();
+  // }, [data]);
 
 
   const columnsEx = [
-    'S.No',
-    'Image',
-    'Name',
-    'ID',
-    'Mobile No',
-    'Room/Bed No',
-    'Joining Date',
-    'Status',
-    'Actions'
+    t('tenantsPage.sNo'),
+    t('tenantsPage.image'),
+    t('tenantsPage.name'),
+    t('tenantsPage.id'),
+    t('tenantsPage.mobileNo'),
+    t('tenantsPage.roomBedNo'),
+    t('tenantsPage.joiningDate'),
+    t('tenantsPage.status'),
+    t('tenantsPage.actions'),
   ]
   const columns = [
-    'S.No',
-    'Image',
-    'Name',
-    'ID',
-    'Mobile No',
-    'Room/Bed No',
-    'Joining Date',
-    'Bike',
-    'Status',
-    'Actions'
+    t('tenantsPage.sNo'),
+    t('tenantsPage.image'),
+    t('tenantsPage.name'),
+    t('tenantsPage.id'),
+    t('tenantsPage.mobileNo'),
+    t('tenantsPage.roomBedNo'),
+    t('tenantsPage.joiningDate'),
+    t('tenantsPage.bike'),
+    t('tenantsPage.status'),
+    t('tenantsPage.actions'),
   ]
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
-}
+  }
 
   const rows = tenants.map((tenant, index) => ({
     s_no: index + 1,
@@ -456,8 +500,8 @@ useEffect(() => {
     mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
     joining_date: tenant.dateOfJoin, // Assuming 'payment_date' property exists in the fetched data
-    bike_number:tenant.bikeNumber,
-    status:capitalizeFirstLetter(tenant.status),
+    bike_number: tenant.bikeNumber,
+    status: capitalizeFirstLetter(tenant.status),
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
       onClick={() => handleEdit(tenant)}
@@ -482,7 +526,7 @@ useEffect(() => {
     const hasSearchQueryMatch = Object.values(row).some((value) =>
       value.toString().toLowerCase().includes(searchQuery.toLowerCase())
     );
-  
+
     if (selectedStatus === 'Yes') {
       return row.bike_number !== 'NA' && hasSearchQueryMatch;
     } else if (selectedStatus === 'NA') {
@@ -502,34 +546,50 @@ useEffect(() => {
   }
 
   const handleTentantRow = (tenant) => {
-  
-      setUserDetailsTenantsPopup(true);
-      setShowModal(false);
-      setSingleTenantDetails(tenant);
-  
-      const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
-  
-      if (singleUserDueDate && singleUserDueDate.rents) {
-        const dataWithDueDate = Object.values(singleUserDueDate.rents);
-        const dueDate = dataWithDueDate[0].dueDate;
-        console.log("Due date:", dueDate);
-        setDueDateOfTenant(dueDate);
-      } else {
-        console.log("Tenant with due date not found or due date is missing");
-      }
-      
-      if(singleUserDueDate && singleUserDueDate.tenantIdUrl){
-        setSingleTenantProofId(singleUserDueDate.tenantIdUrl)
-      }
-      
-    
+
+    setUserDetailsTenantsPopup(true);
+    setShowModal(false);
+    setSingleTenantDetails(tenant);
+
+    const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
+
+    if (singleUserDueDate && singleUserDueDate.rents) {
+      const dataWithDueDate = Object.values(singleUserDueDate.rents);
+      const dueDate = dataWithDueDate[0].dueDate;
+      console.log("Due date:", dueDate);
+      setDueDateOfTenant(dueDate);
+    } else {
+      console.log("Tenant with due date not found or due date is missing");
+    }
+
+    if (singleUserDueDate && singleUserDueDate.tenantIdUrl) {
+      setSingleTenantProofId(singleUserDueDate.tenantIdUrl)
+    }
+
+    if (singleUserDueDate && singleUserDueDate.permnentAddress) {
+      console.log("permnent", "address")
+      setTenantAddress(singleUserDueDate.permnentAddress);
+    }
+    else {
+      setTenantAddress("");
+    }
+    if (singleUserDueDate && singleUserDueDate.bikeImage) {
+      setBikeImageField(singleUserDueDate.bikeImage);
+
+    }
+    else {
+      setBikeImageField("");
+    }
+    if (singleUserDueDate && singleUserDueDate.bikeRcImage) {
+      setBikeRcImageField(singleUserDueDate.bikeRcImage);
+
+    }
+    else {
+      setBikeRcImageField("");
+    }
+
   };
-  
-  
 
-   
-
-  
   const tenantPopupClose = () => {
     setUserDetailsTenantsPopup(false);
     setDueDateOfTenant("")
@@ -538,8 +598,8 @@ useEffect(() => {
 
   //=====Vacate tenant ===========
   const handleVacate = async (id) => {
-    const tenantRef = ref(database, `Hostel/girls/tenants/${currentId}`);
-    const newTenantRef = ref(database, `Hostel/girls/extenants/${currentId}`);
+    const tenantRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants/${currentId}`);
+    const newTenantRef = ref(database, `Hostel/girls/${activeGirlsHostel}/extenants/${currentId}`);
     // Retrieve the data from the original location
     onValue(tenantRef, async (snapshot) => {
       const data = snapshot.val();
@@ -581,7 +641,7 @@ useEffect(() => {
     // idInputRef.current.value = "";
   };
   const fetchExTenants = () => {
-    const exTenantsRef = ref(database, 'Hostel/girls/extenants');
+    const exTenantsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/extenants`);
     onValue(exTenantsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedExTenants = data ? Object.entries(data).map(([key, value]) => ({ id: key, ...value })) : [];
@@ -594,14 +654,14 @@ useEffect(() => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [tenantIdToDelete, setTenantIdToDelete] = useState(null);
 
-  const handleExTenantDelete = (id,name) => {
+  const handleExTenantDelete = (id, name) => {
     setShowConfirmation(true);
     setTenantIdToDelete(id);
     setName(name);
   };
 
   const handleConfirmDelete = async () => {
-    const removeRef = ref(database, `Hostel/girls/extenants/${tenantIdToDelete}`);
+    const removeRef = ref(database, `Hostel/girls/${activeGirlsHostel}/extenants/${tenantIdToDelete}`);
     remove(removeRef)
       .then(() => {
         toast.success('Tenant Deleted', {
@@ -632,7 +692,7 @@ useEffect(() => {
     setShowConfirmation(false);
   };
 
-  
+
   const exTenantRows = exTenants.map((tenant, index) => ({
     s_no: index + 1, // Assuming `id` is a unique identifier for each tenant
     image: tenant.tenantImageUrl,
@@ -641,7 +701,6 @@ useEffect(() => {
     mobile_no: tenant.mobileNo,
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
     joining_date: tenant.dateOfJoin,
-    bike_number:tenant.bikeNumber ? tenant.bikeNumber : '-',
     status: 'Vacated',
     actions: (
       <button
@@ -652,7 +711,7 @@ useEffect(() => {
           color: 'white',
           border: 'none',
         }}
-        onClick={() => handleExTenantDelete(tenant.id,tenant.name)} // Pass the `id` of the tenant
+        onClick={() => handleExTenantDelete(tenant.id, tenant.name)} // Pass the `id` of the tenant
       >
         Delete
       </button>
@@ -662,6 +721,10 @@ useEffect(() => {
   const showExTenantsData = () => {
     setShowExTenants(!showExTenants)
   }
+  const handleChange = (event) => {
+    const value = event.target.checked ? 'YES' : 'NA';
+    onChangeStatus({ target: { value } });
+  };
 
 
   return (
@@ -671,30 +734,42 @@ useEffect(() => {
           <div className='roomlogo-container'>
             <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo' />
           </div>
-          <h1 className='management-heading'>Tenants Management</h1>
+          <h1 className='management-heading'>{t('tenantsPage.tenantsManagement')}</h1>
         </div>
-        <div className="col-5 col-md-4 search-wrapper">
+        <div className="col-12 col-md-4 search-wrapper">
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={onChangeInput} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
         <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
-          <div className='d-flex align-items-center text-center filterDropDownContainer'>
-            <select className="col-3 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
-                <option value="">has bike</option>
-                <option value="NA">No</option>
-                <option value="Yes">Yes</option>
-            </select>
-            <div className="col-5 bedPageFilterDropdown">
-              {showExTenants ? '' : <button type="button" class="add-button" onClick={() => { handleAddNew(); }} >
-                Add Tenants
-              </button>}
+          <div className='d-flex align-items-center text-center'>
+            <div className="toggle-container">
+              <label className="toggle-label" htmlFor="status-toggleGirl">{t('tenantsPage.bike')}</label>
+              <input
+                type="checkbox"
+                id="status-toggleGirl"
+                className="toggle-checkbox"
+                checked={selectedStatus === 'YES'}
+                onChange={handleChange}
+              />
+              <label className="toggle-switch" htmlFor="status-toggleGirl">
+                <span className="toggle-text">No</span>
+                <span className="toggle-text">Yes</span>
+              </label>
             </div>
-            <div className="col-4 bedPageFilterDropdown">
-              {showExTenants ? <button type="button" class="add-button text-center" onClick={showExTenantsData} >
-                Present-Tenants
-              </button> : <button type="button" class="add-button" onClick={showExTenantsData} >
-                Vacated
-              </button>}
+            <div className='d-flex justify-content-center align-items-center'>
+              <div className={showExTenants ? "col-1 bedPageFilterDropdown" : "col-5 bedPageFilterDropdown"}>
+                {showExTenants ? '' : <button id="tenantAddButton" type="button" class="add-button" onClick={() => { handleAddNew(); }} >
+                  {t('dashboard.addTenants')}
+                </button>}
+
+              </div>
+              <div className={showExTenants ? "col-8 bedPageFilterDropdown" : "col-4 bedPageFilterDropdown"}>
+                {showExTenants ? <button type="button" id="presentTenantBtn" class="add-button text-center" onClick={showExTenantsData} >
+                  {t('tenantsPage.presentTenants')}
+                </button> : <button id="tenantVacateButton" type="button" class="add-button" onClick={showExTenantsData} >
+                  {t('tenantsPage.vacated')}
+                </button>}
+              </div>
             </div>
           </div>
         </div>
@@ -708,7 +783,7 @@ useEffect(() => {
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">Add Tenants</h1>
+              <h1 class="modal-title fs-5" id="exampleModalLabel">{t('dashboard.addTenants')}</h1>
               <button onClick={handleClosePopUp} type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -717,10 +792,10 @@ useEffect(() => {
                 <form class="row lg-10" onSubmit={handleSubmit}>
                   <div class="col-md-6">
                     <label htmlFor='roomNo' class="form-label">
-                      Room No:
+                      {t('dashboard.roomNo')}
                     </label>
                     <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
-                      <option value="">Select a Room</option>
+                      <option value="">{t('dashboard.selectRoom')}</option>
                       {girlsRooms.map((room) => (
                         <option key={room.roomNumber} value={room.roomNumber}>
                           {room.roomNumber}
@@ -733,10 +808,10 @@ useEffect(() => {
 
                   <div class="col-md-6">
                     <label htmlFor='bedNo' class="form-label">
-                      Bed No:
+                      {t('dashboard.bedNo')}
                     </label>
                     <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
-                      <option value="">Select a Bed</option>
+                      <option value="">{t('dashboard.selectBed')}</option>
                       {bedOptions.map(bedNumber => (
                         <option key={bedNumber} value={bedNumber}>
                           {bedNumber}
@@ -749,7 +824,7 @@ useEffect(() => {
 
                   <div class="col-md-6">
                     <label htmlFor='dataofJoin' class="form-label">
-                      Date of Join:
+                      {t('dashboard.dateOfJoin')}
                     </label>
                     <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
 
@@ -757,7 +832,7 @@ useEffect(() => {
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantName' class="form-label">
-                      Name:
+                      {t('dashboard.name')}
                     </label>
                     <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
 
@@ -766,7 +841,7 @@ useEffect(() => {
 
                   <div class="col-md-6">
                     <label htmlFor='tenantMobileNo' class="form-label">
-                      Mobile No:
+                      {t('dashboard.mobileNo')}
                     </label>
                     <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
 
@@ -774,7 +849,7 @@ useEffect(() => {
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantIdNum' class="form-label">
-                      ID Number:
+                      {t('dashboard.idNumber')}
                     </label>
                     <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
 
@@ -782,7 +857,7 @@ useEffect(() => {
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantEmergency' class="form-label">
-                      Emergency Contact:
+                      {t('dashboard.emergencyContact')}
                     </label>
                     <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
 
@@ -790,7 +865,7 @@ useEffect(() => {
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantStatus' class="form-label">
-                      Status:
+                      {t('dashboard.status')}
                     </label>
                     <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
                       <option value="occupied">Occupied</option>
@@ -800,56 +875,62 @@ useEffect(() => {
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantUpload' class="form-label">
-                      Upload Image:
+                      {t('dashboard.uploadImage')}
                     </label>
                     {isEditing && tenantImageUrl && (
                       <div>
                         <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
-                        <p>Current Image</p>
+                        <p>{t('dashboard.currentImage')}</p>
                       </div>
                     )}
-                    <input ref={tenantImageInputRef} id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
+                    <input ref={tenantImageInputRef} id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} required />
                     {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantUploadId' class="form-label">
-                      Upload Id:
+                      {t('dashboard.uploadId')}:
                     </label>
                     {isEditing && tenantIdUrl && (
                       <div>
-                      <p>{fileName}</p>
-                    </div>
+                        <p>{fileName}</p>
+                      </div>
                     )}
-                    <input ref={tenantProofIdRef} id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange}  />
+                    <input ref={tenantProofIdRef} id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} />
 
                   </div>
-                  <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
-  <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">Do you have a bike?</label>
-  <input
-    type="radio"
-    className="Radio"
-    id="bikeCheck"
-    name="bike"
-    value="yes"
-    onClick={handleCheckboxChange}
-    checked={hasBike}
-  />
-  <label htmlFor='bikeCheck' className='bike'>Yes</label>
-  <input
-    type="radio"
-    id="bikeCheck1"
-    name="bike"
-    value="no"
-    onClick={handleCheckboxChange}
-    checked={!hasBike}
-    style={{ marginLeft: '30px' }}
-  />
-  <label htmlFor='bikeCheck1' className='bike'>No</label>
-</div>
+                  <div className='col-md-12'>
+                    <label htmlFor="permnentAddress" className='form-label'>{t('tenantsPage.PermanentAddress')}</label>
+                    <textarea name='permnentAddress' value={permnentAddress} onChange={(e) => setPermnentAddress(e.target.value)} placeholder='Enter Address' className='form-control' />
+                  </div>
 
-{hasBike ? (
+
+                  <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
+                    <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">{t('dashboard.doYouHaveBike')}</label>
+                    <input
+                      type="radio"
+                      className="Radio"
+                      id="bikeCheck"
+                      name="bike"
+                      value="yes"
+                      onClick={handleCheckboxChange}
+                      checked={hasBike}
+                    />
+                    <label htmlFor='bikeCheck' className='bike'>{t('dashboard.yes')}</label>
+                    <input
+                      type="radio"
+                      id="bikeCheck1"
+                      name="bike"
+                      value="no"
+                      onClick={handleCheckboxChange}
+                      checked={!hasBike}
+                      style={{ marginLeft: '30px' }}
+                    />
+                    <label htmlFor='bikeCheck1' className='bike'>{t('dashboard.no')}</label>
+                  </div>
+
+                  {hasBike ? (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
                         type="text"
                         id="bikeNumber"
@@ -861,9 +942,9 @@ useEffect(() => {
                         style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
                       />
                     </div>
-                  ):(
+                  ) : (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
                         type="text"
                         id="bikeNumber"
@@ -881,23 +962,24 @@ useEffect(() => {
 
 
                   {/* ===== */}
-                  <div class="col-md-6">
-                    <label for="file-upload" class="custom-file-upload">
-                      {/* <i class="fa fa-cloud-upload"></i> */}
-                      {/* <MdUploadFile /> */}
-                    </label>
-                    <input id="file-upload" type="file" onChange={handleTenantIdChange} style={{ display: 'none' }} />
+                  <div className="col-md-6">
+                    <label htmlFor="bikeimage" className="form-label">{t('tenantsPage.BikePic')}</label>
+                    <input type="file" className="form-control" onChange={handleImageChange} />
+                  </div>
+                  <div className="col-md-6">
+                    <label htmlFor="bikeRc" className="form-label">{t('tenantsPage.BikeRc')}</label>
+                    <input type="file" className="form-control" onChange={handleRcChange} />
                   </div>
 
                   {/* =============== */}
                   <div className='col-12 text-center'>
                     {isEditing ? (
-                      <div className="d-flex justify-content-center gap-2">
-                        <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Tenant</button>
-                        <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
+                      <div className="d-flex justify-content-center gap-2 mt-3">
+                        <button type="button" className="btn btn-warning" onClick={handleSubmit}>{t('tenantsPage.updateTenant')}</button>
+                        <button type="button" className="btn btn-warning" onClick={handleVacate}>{t('tenantsPage.vacateTenant')}</button>
                       </div>
                     ) : (
-                      <button  className="btn btn-warning" type="submit">Add Tenant</button>
+                      <button className="btn btn-warning" type="submit">{t('dashboard.addTenants')}</button>
                     )}
                   </div>
                 </form>
@@ -910,46 +992,64 @@ useEffect(() => {
       </div>
 
 
-      {userDetailsTenantPopup && 
-      <div id="userDetailsTenantPopupIdGirl" className='userDetailsTenantPopup'>
-        <div className='tenants-dialog-container'>
-          <h1 className="tenants-popup-heading">Tenant Details </h1>
-          <div className='tenants-popup-mainContainer'>
-            <div className='tenants-profile-container'>
-             <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
-             </div>
-             <div className='tenants-popup-detailsContainer'>
-                 <p><strong>Name :</strong> {singleTenantDetails.name}</p>
-                  <p><strong>Mobile No :</strong> {singleTenantDetails.mobile_no}</p>
-                  <p><strong>Proof ID :</strong> {singleTenantDetails.id}</p>
-                  <p><strong>Room/Bed No :</strong> {singleTenantDetails.room_bed_no}</p>
-                  <p><strong>Joining Date :</strong> {singleTenantDetails.joining_date}</p>
-                  <p><strong>Due Date :</strong> {dueDateOfTenant}</p>
-                  <p><strong>ID Proof:</strong>
-                    {singleTenantProofId ? (
-                      <a className='downloadPdfText' href={singleTenantProofId} download> <FaDownload /> Download PDF</a>
-                    ) : (
-                      <span className='NotUploadedText'> Not Uploaded</span>
-                    )}
-                  </p>
-             </div>
-          </div>
-          <div className='popup-tenants-closeBtn'>
-          <button className='btn btn-warning' onClick={tenantPopupClose}>Close</button>
+      {userDetailsTenantPopup &&
+        <div id="userDetailsTenantPopupIdGirl" className='userDetailsTenantPopup'>
+          <div className='tenants-dialog-container'>
+            <h1 className="tenants-popup-heading">{t('tenantsPage.tenantDetails')} </h1>
+            <div className='tenants-popup-mainContainer'>
+              <div className='tenants-profile-container'>
+                <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
+              </div>
+              <div className='tenants-popup-detailsContainer'>
+                <p><strong>{t('tenantsPage.name')} :</strong> {singleTenantDetails.name}</p>
+                <p><strong>{t('tenantsPage.mobileNo')} :</strong> {singleTenantDetails.mobile_no}</p>
+                <p><strong>{t('tenantsPage.proofID')} :</strong> {singleTenantDetails.id}</p>
+                <p><strong>{t('tenantsPage.roomBedNo')}:</strong> {singleTenantDetails.room_bed_no}</p>
+                <p><strong>{t('tenantsPage.joiningDate')} :</strong> {singleTenantDetails.joining_date}</p>
+                <p><strong>{t('tenantsPage.dueDate')} :</strong> {dueDateOfTenant}</p>
+                <p><strong>{t('tenantsPage.idProof')} :</strong>
+              
+
+                  {singleTenantProofId ? (
+                    <a className='downloadPdfText' href={singleTenantProofId} download> <FaDownload /> {t('tenantsPage.downloadPdf')}</a>
+                  ) : (
+                    <span className='NotUploadedText'>{t('tenantsPage.notUploaded')}</span>
+                  )}
+                </p>
+                <p><strong>{t('tenantsPage.PermanentAddress')}</strong>{tenantAddress}</p>
+
+                <p><strong>{t('tenantsPage.BikePic')}</strong>
+                  {bikeImageField ? (
+                    <a className="downloadPdfText" href={bikeImageField} download> <FaDownload />{t('tenantsPage.DownloadPic')}</a>
+                  ) : (
+                    <span className="NotUploadedText">{t('tenantsPage.NotUploaded')}</span>
+                  )}
+                </p>
+                <p><strong>{t('tenantsPage.BikeRc')}</strong>
+                  {bikeRcImageField ? (
+                    <a className="downloadPdfText" href={bikeRcImageField} download> <FaDownload />{t('tenantsPage.DownloadRc')}</a>
+                  ) : (
+                    <span className="NotUploadedText">{t('tenantsPage.NotUploaded')}</span>
+                  )}
+                </p>
+              </div>
+            </div>
+            <div className='popup-tenants-closeBtn'>
+              <button className='btn btn-warning' onClick={tenantPopupClose}>{t('tenantsPage.close')}</button>
+            </div>
           </div>
         </div>
-      </div>
       }
 
       {showConfirmation && (
         <div className="confirmation-dialog">
           <div className='confirmation-card'>
-          <p style={{paddingBottom:'0px',marginBottom:'7px',fontSize:'20px'}}>Are you sure you want to delete the tenant with name <span style={{color:'red'}}>{name}</span>?</p>
-          <p style={{color:'red',fontSize:'15px',textAlign:'center'}}>Note : Once you delete he/she from tenant it can't be restored</p>
-          <div className="buttons">
-            <button onClick={handleConfirmDelete}>Yes</button>
-            <button onClick={handleCancelDelete}>No</button>
-          </div>
+            <p style={{ paddingBottom: '0px', marginBottom: '7px', fontSize: '20px' }}>{t('tenantsPage.confirmationMessage')} <span style={{ color: 'red' }}>{name}</span>?</p>
+            <p style={{ color: 'red', fontSize: '15px', textAlign: 'center' }}>{t('tenantsPage.note')}</p>
+            <div className="buttons">
+              <button onClick={handleConfirmDelete}>{t('tenantsPage.yes')}</button>
+              <button onClick={handleCancelDelete}>{t('tenantsPage.no')}</button>
+            </div>
           </div>
         </div>
       )}

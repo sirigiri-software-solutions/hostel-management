@@ -1,28 +1,30 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import bedIcon from '../../images/Icons (3).png'
 import Table from '../../Elements/Table'
 import SearchIcon from '../../images/Icons (9).png'
-import { database, push, ref } from "../../firebase"; 
+import { database, push, ref } from "../../firebase";
 import { onValue } from 'firebase/database';
 import "../BedsPageBoys/BedsPageBoys.css"
+import { useData } from '../../ApiData/ContextProvider';
 import { useTranslation } from 'react-i18next';
 
 const BedsPageBoys = () => {
   const { t } = useTranslation();
 
-  const [boysRooms, setBoysRooms]= useState([])
+  const { activeBoysHostel } = useData();
+  const [boysRooms, setBoysRooms] = useState([])
   const [bedsData, setBedsData] = useState([]);
   const [tenants, setTenants] = useState([]);
 
-  const [searchValue,setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedFloor, setSelectedFloor] = useState('');
-  const [selectedRoomNo,setSelectedRoomNo] = useState('');
-  const [roomNumbersToShow,setRoomNumbersToShow] = useState([]);
-  const [floorNumbersToShow,setFloorNumbersToShow] = useState([]);
+  const [selectedRoomNo, setSelectedRoomNo] = useState('');
+  const [roomNumbersToShow, setRoomNumbersToShow] = useState([]);
+  const [floorNumbersToShow, setFloorNumbersToShow] = useState([]);
 
   useEffect(() => {
-    const roomsRef = ref(database, 'Hostel/boys/rooms');
+    const roomsRef = ref(database, `Hostel/boys/${activeBoysHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRooms = [];
@@ -34,10 +36,10 @@ const BedsPageBoys = () => {
       }
       setBoysRooms(loadedRooms);
     })
-  }, []);
+  }, [activeBoysHostel]);
   // Fetch tenants data
   useEffect(() => {
-    const tenantsRef = ref(database, 'Hostel/boys/tenants');
+    const tenantsRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants`);
     onValue(tenantsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedTenants = [];
@@ -49,7 +51,7 @@ const BedsPageBoys = () => {
       }
       setTenants(loadedTenants);
     });
-  }, []);
+  }, [activeBoysHostel]);
 
   // Construct beds data based on rooms and tenants
   useEffect(() => {
@@ -66,7 +68,7 @@ const BedsPageBoys = () => {
         const tenant = tenants.find(tenant => tenant.roomNo === room.roomNumber && tenant.bedNo === String(bedNumber));
         const tenantName = tenant ? tenant.name : "-";
         return {
-          name:tenantName,
+          name: tenantName,
           floorNumber: room.floorNumber,
           roomNumber: room.roomNumber,
           bedNumber: bedNumber,
@@ -79,19 +81,18 @@ const BedsPageBoys = () => {
     const allFloornumbers = boysRooms.map(each => (
       each.floorNumber
     ))
- 
     const uniqueFloornumbers = [...new Set(allFloornumbers)];
     setFloorNumbersToShow(uniqueFloornumbers);
-    console.log(uniqueFloornumbers,"getting")
+    console.log(uniqueFloornumbers, "getting")
 
     return () => {
       setSelectedStatus('');
       setSelectedFloor('');
       setSelectedRoomNo('');
       setRoomNumbersToShow([]);
-  };
+    };
 
-  }, [boysRooms, tenants]); // Depend on rooms and tenants data
+  }, [boysRooms, tenants, activeBoysHostel]); // Depend on rooms and tenants data
 
   const columns = [
     t('bedsPage.sNo'),
@@ -106,13 +107,13 @@ const BedsPageBoys = () => {
   //console.log(bedsData,"DataFromBeds")
 
   const rows = bedsData.map((beds, index) => ({
-   s_no: index + 1,
-   name:beds.name ,
-   bed_number:beds.bedNumber,
-   room_no:beds.roomNumber,
-   floor:beds.floorNumber,
-   rent:beds.rent,
-   status:beds.status
+    s_no: index + 1,
+    name: beds.name,
+    bed_number: beds.bedNumber,
+    room_no: beds.roomNumber,
+    floor: beds.floorNumber,
+    rent: beds.rent,
+    status: beds.status
   }));
 
   const onChangeSearch = (e) => {
@@ -125,23 +126,23 @@ const BedsPageBoys = () => {
 
   const onChangeFloor = (e) => {
     setSelectedFloor(e.target.value);
-    setSelectedRoomNo(''); 
-  
-    const filteredRows = rows.filter((row)=> (
+    setSelectedRoomNo('');
+
+    const filteredRows = rows.filter((row) => (
       row.floor === e.target.value
     ));
     const uniqueRoomNumbers = [...new Set(filteredRows.map(row => row.room_no))];
     setRoomNumbersToShow(uniqueRoomNumbers);
   };
-  
+
   const onChangeRoomNo = (e) => {
     setSelectedRoomNo(e.target.value);
   }
-  
+
   const compareFloor = (floor1, floor2) => {
     // Check if both floors are purely numeric
     const isNumericFloor = /^\d+$/.test(floor1) && /^\d+$/.test(floor2);
-  
+
     if (isNumericFloor) {
       // If both floors are numeric, compare them as numbers
       const numericPart1 = parseInt(floor1);
@@ -151,36 +152,31 @@ const BedsPageBoys = () => {
       // If floors are not purely numeric, compare them as alphanumeric identifiers
       const prefix1 = floor1.charAt(0);
       const prefix2 = floor2.charAt(0);
-  
+
       // Compare alphanumeric identifiers
       if (prefix1 !== prefix2) {
         return prefix1.localeCompare(prefix2);
       }
-  
+
       // Compare numeric parts if alphanumeric identifiers are the same
       const numericPart1 = parseInt(floor1.substring(1));
       const numericPart2 = parseInt(floor2.substring(1));
-  
+
       return numericPart1 - numericPart2;
     }
   };
-  
+
 
   const filteredRows = rows.filter((row) => {
     return (
       (selectedStatus === '' || row.status === selectedStatus) &&
-      (selectedFloor === '' || compareFloor(row.floor,selectedFloor) === 0) &&
+      (selectedFloor === '' || compareFloor(row.floor, selectedFloor) === 0) &&
       (selectedRoomNo === '' || parseInt(row.room_no) === parseInt(selectedRoomNo)) &&
       Object.values(row).some((value) =>
         value.toString().toLowerCase().includes(searchValue.toLowerCase())
       )
     );
   });
-
-
-
- 
-
 
   return (
     <div className='h-100'> 
@@ -241,23 +237,23 @@ const BedsPageBoys = () => {
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div className="container-fluid">
-              <h1 className='text-center mb-2 fs-5'>
-                Create Beds
-              </h1>
+              </div>
+              <div class="modal-body">
+                <div className="container-fluid">
+                  <h1 className='text-center mb-2 fs-5'>
+                    Create Beds
+                  </h1>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+              </div>
             </div>
           </div>
-          <div className="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
-          </div>
         </div>
-      </div>
-    </div>
 
-    </>
+      </>
     </div>
   )
 }

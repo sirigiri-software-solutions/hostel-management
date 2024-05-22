@@ -12,8 +12,12 @@ import { onValue, remove, set, update } from 'firebase/database'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { FaDownload } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useTranslation } from 'react-i18next'
+import { useData } from '../../ApiData/ContextProvider';
 
 const TenantsBoys = () => {
+  const { t } = useTranslation();
+  const { activeBoysHostel } = useData();
   const [selectedRoom, setSelectedRoom] = useState('');
   const [bedOptions, setBedOptions] = useState([]);
   const [selectedBed, setSelectedBed] = useState('');
@@ -57,19 +61,40 @@ const TenantsBoys = () => {
   const tenantProofIdRef = useRef(null);
   const [bikeImage, setBikeImage] = useState(null);
   const [bikeImageField, setBikeImageField] = useState('');
+  const [bikeRcImage,setBikeRcImage]=useState('');
+  const [bikeRcImageField,setBikeRcImageField]=useState('');
+  
+  
 
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    
     const reader = new FileReader();
 
     reader.onload = () => {
       // Once the file is loaded, set the image in state
       setBikeImage(reader.result);
+      
     };
+    // console.log(file,"file created");
+    
 
     reader.readAsDataURL(file);
+    console.log(file,"file created");
   };
+  
+  
+  const handleRcChange=(e)=>{
+    const file1=e.target.files[0];
+    const reader=new FileReader();
+    reader.onload=()=>{
+      setBikeRcImage(reader.result);
+    }
+    reader.readAsDataURL(file1);
+    console.log(file1,"file1 created");
+
+  }
   // const uploadImage = async () => {
   //   if (bikeImage) {
   //     const imageRef = storageRef(storage, `Hostel/boys/tenants/images/bikeImage/${bikeImage.name}`);
@@ -143,7 +168,7 @@ const TenantsBoys = () => {
 
 
   useEffect(() => {
-    const roomsRef = ref(database, 'Hostel/boys/rooms');
+    const roomsRef = ref(database, `Hostel/boys/${activeBoysHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRooms = [];
@@ -156,8 +181,7 @@ const TenantsBoys = () => {
       setBoysRooms(loadedRooms);
     });
     // Fetch tenants
-
-  }, []);
+  }, [activeBoysHostel]);
 
   useEffect(() => {
     if (selectedRoom) {
@@ -184,7 +208,7 @@ const TenantsBoys = () => {
   }
 
   useEffect(() => {
-    const tenantsRef = ref(database, 'Hostel/boys/tenants');
+    const tenantsRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants`);
     onValue(tenantsRef, snapshot => {
       const data = snapshot.val() || {};
       const loadedTenants = Object.entries(data).map(([key, value]) => ({
@@ -193,7 +217,8 @@ const TenantsBoys = () => {
       }));
       setTenants(loadedTenants);
     });
-  }, []);
+  }, [activeBoysHostel]);
+ 
 
   useEffect(() => {
     const fetchDataFromAPI = async () => {
@@ -216,26 +241,26 @@ const TenantsBoys = () => {
 
   const validate = () => {
     let tempErrors = {};
-    tempErrors.selectedRoom = selectedRoom ? "" : "Room number is required.";
-    tempErrors.selectedBed = selectedBed ? "" : "Bed number is required.";
-    tempErrors.dateOfJoin = dateOfJoin ? "" : "Date of join is required.";
+    tempErrors.selectedRoom = selectedRoom ? "" :  t('errors.roomNumberRequired');
+    tempErrors.selectedBed = selectedBed ? "" : t('errors.bedNumberRequired');
+    tempErrors.dateOfJoin = dateOfJoin ? "" : t('errors.dateOfJoinRequired');
     if (!name) {
-      tempErrors.name = "Name is required.";
+      tempErrors.name = t('errors.nameRequired');
     } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-      tempErrors.name = "Name must contain only letters and spaces.";
+      tempErrors.name =  t('errors.nameInvalid');
     }
     // Validate mobile number
     if (!mobileNo) {
-      tempErrors.mobileNo = "Mobile number is required.";
+      tempErrors.mobileNo = t('errors.mobileNumberRequired');
     } else if (!/^\d{10,13}$/.test(mobileNo)) {
-      tempErrors.mobileNo = "Invalid mobile number";
+      tempErrors.mobileNo = t('errors.mobileNumberInvalid');
     }
-    tempErrors.idNumber = idNumber ? "" : "ID number is required.";
+    tempErrors.idNumber = idNumber ? "" : t('errors.idNumberRequired');
     // Validate emergency contact
     if (!emergencyContact) {
-      tempErrors.emergencyContact = "Emergency contact is required.";
+      tempErrors.emergencyContact = t('errors.emergencyContactRequired');
     } else if (!/^\d{10,13}$/.test(emergencyContact)) {
-      tempErrors.emergencyContact = "Invalid emergency contact";
+      tempErrors.emergencyContact = t('errors.emergencyContactInvalid');
     }
 
     // Check if the selected bed is already occupied
@@ -244,10 +269,10 @@ const TenantsBoys = () => {
     });
 
     if (isBedOccupied) {
-      tempErrors.selectedBed = "This bed is already occupied.";
+      tempErrors.selectedBed = t('errors.bedAlreadyOccupied');
     }
     if (!tenantImage && !tenantImageUrl) {
-      tempErrors.tenantImage = "Tenant image is required.";
+      tempErrors.tenantImage = t('errors.tenantImageRequired');
     }
     setErrors(tempErrors);
     return Object.keys(tempErrors).every((key) => tempErrors[key] === "");
@@ -286,7 +311,7 @@ const TenantsBoys = () => {
     let imageUrlToUpdate = tenantImageUrl;
 
     if (tenantImage) {
-      const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantImage/${tenantImage.name}`);
+      const imageRef = storageRef(storage, `Hostel/boys/${activeBoysHostel}/tenants/images/tenantImage/${tenantImage.name}`);
       try {
         const snapshot = await uploadBytes(imageRef, tenantImage);
         imageUrlToUpdate = await getDownloadURL(snapshot.ref);
@@ -300,7 +325,7 @@ const TenantsBoys = () => {
 
     let idUrlToUpdate = tenantIdUrl;
     if (tenantId) {
-      const imageRef = storageRef(storage, `Hostel/boys/tenants/images/tenantId/${tenantId.name}`);
+      const imageRef = storageRef(storage, `Hostel/boys/${activeBoysHostel}/tenants/images/tenantId/${tenantId.name}`);
       try {
         const snapshot = await uploadBytes(imageRef, tenantId);
         idUrlToUpdate = await getDownloadURL(snapshot.ref);
@@ -370,6 +395,7 @@ const TenantsBoys = () => {
       fileName: fileName,
       permnentAddress,
       bikeImage,
+      bikeRcImage
       //  bikeImage,
       // tenantIdUrl,
     };
@@ -378,8 +404,8 @@ const TenantsBoys = () => {
     console.log(tenantData, "addressWhileSubmiting")
 
     if (isEditing) {
-      await update(ref(database, `Hostel/boys/tenants/${currentId}`), tenantData).then(() => {
-        toast.success("Tenant updated successfully.", {
+      await update(ref(database, `Hostel/boys/${activeBoysHostel}/tenants/${currentId}`), tenantData).then(() => {
+        toast.success(t('toastMessages.tenantUpdated'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -390,7 +416,7 @@ const TenantsBoys = () => {
         });
 
       }).catch(error => {
-        toast.error("Error update Tenant: " + error.message, {
+        toast.error(t('toastMessages.errorUpdatingTenant') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -401,8 +427,8 @@ const TenantsBoys = () => {
         });
       });
     } else {
-      await push(ref(database, 'Hostel/boys/tenants'), tenantData).then(() => {
-        toast.success("Tenant added successfully.", {
+      await push(ref(database, `Hostel/boys/${activeBoysHostel}/tenants`), tenantData).then(() => {
+        toast.success(t('toastMessages.tenantAddedSuccess'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -413,7 +439,7 @@ const TenantsBoys = () => {
         });
         e.target.querySelector('button[type="submit"]').disabled = false;
       }).catch(error => {
-        toast.error("Error adding Tenant: " + error.message, {
+        toast.error(t('toastMessages.errorAddingTenant') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -445,11 +471,7 @@ const TenantsBoys = () => {
     setTenantIdUrl(tenant.tenantIdUrl || '');
     setBikeNumber("");
     setHasBike(false);
-    setFileName(tenant.fileName || '');
-
-
-
-
+    setFileName(tenant.fileName|| '');
     setShowModal(true);
     setBikeNumber(tenant.bikeNumber);
     if (tenant.bikeNumber === 'NA') {
@@ -477,8 +499,6 @@ const TenantsBoys = () => {
     setHasBike(false);
 
   };
-
-
 
   const resetForm = () => {
     setSelectedRoom('');
@@ -508,27 +528,27 @@ const TenantsBoys = () => {
   };
 
   const columnsEx = [
-    'S. No',
-    'Image',
-    'Name',
-    'ID',
-    'Mobile No',
-    'Room/Bed No',
-    'Joining Date',
-    'Status',
-    'Actions'
+    t('tenantsPage.sNo'),
+    t('tenantsPage.image'),
+    t('tenantsPage.name'),
+    t('tenantsPage.id'),
+    t('tenantsPage.mobileNo'),
+    t('tenantsPage.roomBedNo'),
+    t('tenantsPage.joiningDate'),
+    t('tenantsPage.status'),
+    t('tenantsPage.actions'),
   ]
   const columns = [
-    'S. No',
-    'Image',
-    'Name',
-    'ID',
-    'Mobile No',
-    'Room/Bed No',
-    'Joining Date',
-    'Bike',
-    'Status',
-    'Actions'
+    t('tenantsPage.sNo'),
+    t('tenantsPage.image'),
+    t('tenantsPage.name'),
+    t('tenantsPage.id'),
+    t('tenantsPage.mobileNo'),
+    t('tenantsPage.roomBedNo'),
+    t('tenantsPage.joiningDate'),
+    t('tenantsPage.bike'),
+    t('tenantsPage.status'),
+    t('tenantsPage.actions'),
   ]
 
   function capitalizeFirstLetter(string) {
@@ -581,8 +601,6 @@ const TenantsBoys = () => {
     setBikeNumber('');
     console.log("popupclosed");
     setFileName('');
-
-
   }
 
 
@@ -623,6 +641,13 @@ const TenantsBoys = () => {
     else {
       setBikeImageField("");
     }
+    if (singleUserDueDate && singleUserDueDate.bikeRcImage) {
+      setBikeRcImageField(singleUserDueDate.bikeRcImage);
+
+    }
+    else {
+      setBikeRcImageField("");
+    }
 
 
 
@@ -634,13 +659,12 @@ const TenantsBoys = () => {
     setUserDetailsTenantsPopup(false);
     setDueDateOfTenant("")
     setSingleTenantProofId("");
-
   }
 
   //=====Vacate tenant ===========
   const handleVacate = async (id) => {
-    const tenantRef = ref(database, `Hostel/boys/tenants/${currentId}`);
-    const newTenantRef = ref(database, `Hostel/boys/extenants/${currentId}`);
+    const tenantRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants/${currentId}`);
+    const newTenantRef = ref(database, `Hostel/boys/${activeBoysHostel}/extenants/${currentId}`);
     // Retrieve the data from the original location
     onValue(tenantRef, async (snapshot) => {
       const data = snapshot.val();
@@ -682,7 +706,7 @@ const TenantsBoys = () => {
     // idInputRef.current.value = "";
   };
   const fetchExTenants = () => {
-    const exTenantsRef = ref(database, 'Hostel/boys/extenants');
+    const exTenantsRef = ref(database, `Hostel/boys/${activeBoysHostel}/extenants`);
     onValue(exTenantsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedExTenants = data ? Object.entries(data).map(([key, value]) => ({ id: key, ...value })) : [];
@@ -702,7 +726,7 @@ const TenantsBoys = () => {
   };
 
   const handleConfirmDelete = async () => {
-    const removeRef = ref(database, `Hostel/boys/extenants/${tenantIdToDelete}`);
+    const removeRef = ref(database, `Hostel/boys/${activeBoysHostel}/extenants/${tenantIdToDelete}`);
     remove(removeRef)
       .then(() => {
         toast.success('Tenant Deleted', {
@@ -733,7 +757,6 @@ const TenantsBoys = () => {
     setShowConfirmation(false);
   };
 
-
   const exTenantRows = exTenants.map((tenant, index) => ({
     s_no: index + 1, // Assuming `id` is a unique identifier for each tenant
     image: tenant.tenantImageUrl,
@@ -742,7 +765,6 @@ const TenantsBoys = () => {
     mobile_no: tenant.mobileNo,
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
     joining_date: tenant.dateOfJoin,
-    // bike_number:tenant.bikeNumber,
     status: 'Vacated',
     actions: (
       <button
@@ -759,11 +781,15 @@ const TenantsBoys = () => {
       </button>
     ),
   }));
-
-
+  
   const showExTenantsData = () => {
     setShowExTenants(!showExTenants)
   }
+
+  const handleChange = (event) => {
+    const value = event.target.checked ? 'YES' : 'NA';
+    onChangeStatus({ target: { value } });
+  };
 
 
 
@@ -774,31 +800,43 @@ const TenantsBoys = () => {
           <div className='roomlogo-container'>
             <img src={TenantsIcon} alt="RoomsIcon" className='roomlogo' />
           </div>
-          <h1 className='management-heading'>Tenants Management</h1>
+          <h1 className='management-heading'>{t('tenantsPage.tenantsManagement')}</h1>
         </div>
         <div className="col-12 col-md-4 search-wrapper">
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={handleSearchChange} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
-        <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
-          <div className='d-flex align-items-center text-center filterDropDownContainer'>
-            <select className="col-3 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
-              <option value="">has bike</option>
-              <option value="NA">No</option>
-              <option value="Yes">Yes</option>
-            </select>
+        <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end '>
+          <div className='d-flex align-items-center text-center'>
+                  <div className="toggle-container">
+                <label className="toggle-label" htmlFor="status-toggle">{t('tenantsPage.bike')}</label>
+                <input
+                  type="checkbox"
+                  id="status-toggle"
+                  className="toggle-checkbox"
+                  checked={selectedStatus === 'YES'}
+                  onChange={handleChange}
+                />
+                <label className="toggle-switch" htmlFor="status-toggle">
+                  <span className="toggle-text">No</span>
+                  <span className="toggle-text">Yes</span>
+                </label>
+              </div>
+      <div className='d-flex justify-content-center align-items-center'>
             <div className={showExTenants ? "col-1 bedPageFilterDropdown" : "col-5 bedPageFilterDropdown"}>
-              {showExTenants ? '' : <button type="button" class="add-button" onClick={() => { handleAddNew(); }} >
-                Add Tenants
+              {showExTenants ? '' : <button id="tenantAddButton" type="button" class="add-button" onClick={() => { handleAddNew(); }} >
+               {t('dashboard.addTenants')}
               </button>}
+              
             </div>
             <div className={showExTenants ? "col-8 bedPageFilterDropdown" : "col-4 bedPageFilterDropdown"}>
-              {showExTenants ? <button type="button" class="add-button text-center" onClick={showExTenantsData} >
-                Present-Tenants
-              </button> : <button type="button" class="add-button" onClick={showExTenantsData} >
-                Vacated
+              {showExTenants ? <button type="button" id="presentTenantBtn" class="add-button text-center" onClick={showExTenantsData} >
+              {t('tenantsPage.presentTenants')}
+              </button> : <button id="tenantVacateButton" type="button" class="add-button" onClick={showExTenantsData} >
+              {t('tenantsPage.vacated')}
               </button>}
             </div>
+      </div>
           </div>
         </div>
 
@@ -812,7 +850,7 @@ const TenantsBoys = () => {
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title fs-5" id="exampleModalLabel">Add Tenants</h5>
+              <h5 class="modal-title fs-5" id="exampleModalLabel"> {t('dashboard.addTenants')}</h5>
               <button onClick={handleClosePopUp} className="btn-close" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -820,10 +858,10 @@ const TenantsBoys = () => {
                 <form class="row lg-10" onSubmit={handleSubmit}>
                   <div class="col-md-6">
                     <label htmlFor='roomNo' class="form-label">
-                      Room No:
+                    {t('dashboard.roomNo')}
                     </label>
                     <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
-                      <option value="">Select a Room</option>
+                      <option value="">{t('dashboard.selectRoom')}</option>
                       {boysRooms.map((room) => (
                         <option key={room.roomNumber} value={room.roomNumber}>
                           {room.roomNumber}
@@ -836,10 +874,10 @@ const TenantsBoys = () => {
 
                   <div class="col-md-6">
                     <label htmlFor='bedNo' class="form-label">
-                      Bed No:
+                    {t('dashboard.bedNo')}
                     </label>
                     <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
-                      <option value="">Select a Bed</option>
+                      <option value="">{t('dashboard.selectBed')}</option>
                       {bedOptions.map(bedNumber => (
                         <option key={bedNumber} value={bedNumber}>
                           {bedNumber}
@@ -851,7 +889,7 @@ const TenantsBoys = () => {
 
                   <div class="col-md-6">
                     <label htmlFor='dataofJoin' class="form-label">
-                      Date of Join:
+                    {t('dashboard.dateOfJoin')}
                     </label>
                     <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
 
@@ -859,7 +897,7 @@ const TenantsBoys = () => {
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantName' class="form-label">
-                      Name:
+                    {t('dashboard.name')}
                     </label>
                     <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
 
@@ -868,7 +906,7 @@ const TenantsBoys = () => {
 
                   <div class="col-md-6">
                     <label htmlFor='tenantMobileNo' class="form-label">
-                      Mobile No:
+                    {t('dashboard.mobileNo')}
                     </label>
                     <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
 
@@ -876,35 +914,35 @@ const TenantsBoys = () => {
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantIdNum' class="form-label">
-                      ID Number:
+                    {t('dashboard.idNumber')}
                     </label>
                     <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
                     {errors.idNumber && <p style={{ color: 'red' }}>{errors.idNumber}</p>}
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantEmergency' class="form-label">
-                      Emergency Contact:
+                    {t('dashboard.emergencyContact')}
                     </label>
                     <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
                     {errors.emergencyContact && <p style={{ color: 'red' }}>{errors.emergencyContact}</p>}
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantStatus' class="form-label">
-                      Status:
+                    {t('dashboard.status')}
                     </label>
                     <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
-                      <option value="occupied">Occupied</option>
-                      <option value="unoccupied">Unoccupied</option>
+                      <option value="occupied">{t('dashboard.occupied')}</option>
+                      <option value="unoccupied">{t('dashboard.unoccupied')}</option>
                     </select>
                   </div>
                   <div class="col-md-6">
                     <label htmlFor='tenantUpload' class="form-label">
-                      Upload Image:
+                    {t('dashboard.uploadImage')}
                     </label>
                     {isEditing && tenantImageUrl && (
                       <div>
                         <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
-                        <p>Current Image</p>
+                        <p>{t('dashboard.currentImage')}</p>
                       </div>
                     )}
                     <input ref={tenantImageInputRef} id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} required />
@@ -912,7 +950,7 @@ const TenantsBoys = () => {
                   </div>
                   <div className="col-md-6">
                     <label htmlFor='tenantUploadId' className="form-label">
-                      Upload Id:
+                    {t('dashboard.uploadId')}:
                     </label>
                     {isEditing && tenantIdUrl && (
                       <div>
@@ -925,11 +963,11 @@ const TenantsBoys = () => {
 
                   </div>
                   <div className='col-md-12'>
-                    <label htmlFor="permnentAddress" className='form-label'>PermnentAddress:</label>
+                    <label htmlFor="permnentAddress" className='form-label'>{t('tenantsPage.PermanentAddress')}</label>
                     <textarea name='permnentAddress' value={permnentAddress} onChange={(e) => setPermnentAddress(e.target.value)} placeholder='Enter Address' className='form-control' />
                   </div>
                   <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
-                    <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">Do you have a bike?</label>
+                    <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">{t('dashboard.doYouHaveBike')}</label>
                     <input
                       type="radio"
                       className="Radio"
@@ -939,7 +977,7 @@ const TenantsBoys = () => {
                       onClick={handleCheckboxChange}
                       checked={hasBike}
                     />
-                    <label htmlFor='bikeCheck' className='bike'>Yes</label>
+                    <label htmlFor='bikeCheck' className='bike'>{t('dashboard.yes')}</label>
                     <input
                       type="radio"
                       id="bikeCheck1"
@@ -949,12 +987,12 @@ const TenantsBoys = () => {
                       checked={!hasBike}
                       style={{ marginLeft: '30px' }}
                     />
-                    <label htmlFor='bikeCheck1' className='bike'>No</label>
+                    <label htmlFor='bikeCheck1' className='bike'>{t('dashboard.no')}</label>
                   </div>
 
                   {hasBike ? (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
                         type="text"
                         id="bikeNumber"
@@ -968,7 +1006,7 @@ const TenantsBoys = () => {
                     </div>
                   ) : (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >Bike Number:</label>
+                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
                         type="text"
                         id="bikeNumber"
@@ -987,12 +1025,12 @@ const TenantsBoys = () => {
                     <input type='file' className='form-control' value={bikeImage} onChange={(e)=>setBikeImage(e.target.value)}/>
                   </div> */}
                   <div className="col-md-6">
-                    <label htmlFor="bikeimage" className="form-label">Bike Image:</label>
+                    <label htmlFor="bikeimage" className="form-label">{t('tenantsPage.BikePic')}</label>
                     <input type="file" className="form-control" onChange={handleImageChange} />
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="bikeRc" className="form-label">Bike Rc:</label>
-                    <input type="file" className="form-control" onChange={handleImageChange} />
+                    <label htmlFor="bikeRc" className="form-label">{t('tenantsPage.BikeRc')}</label>
+                    <input type="file" className="form-control" onChange={handleRcChange} />
                   </div>
 
 
@@ -1004,11 +1042,11 @@ const TenantsBoys = () => {
                   <div className='col-12 text-center mt-3'>
                     {isEditing ? (
                       <div className="d-flex justify-content-center gap-2">
-                        <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update Tenant</button>
-                        <button type="button" className="btn btn-warning" onClick={handleVacate}>Vacate Tenant</button>
+                        <button type="button" className="btn btn-warning" onClick={handleSubmit}>{t('tenantsPage.updateTenant')}</button>
+                        <button type="button" className="btn btn-warning" onClick={handleVacate}>{t('tenantsPage.vacateTenant')}</button>
                       </div>
                     ) : (
-                      <button id="tenantAddBtn" className="btn btn-warning" type="submit">Add Tenant</button>
+                      <button id="tenantAddBtn" className="btn btn-warning" type="submit">{t('dashboard.addTenants')}</button>
                     )}
                   </div>
                 </form>
@@ -1024,39 +1062,47 @@ const TenantsBoys = () => {
       {userDetailsTenantPopup &&
         <div id="userDetailsTenantPopupId" className='userDetailsTenantPopup'>
           <div className='tenants-dialog-container'>
-            <h1 className="tenants-popup-heading">Tenant Details </h1>
+            <h1 className="tenants-popup-heading">{t('tenantsPage.tenantDetails')}  </h1>
             <div className='tenants-popup-mainContainer'>
               <div className='tenants-profile-container'>
                 <img src={singleTenantDetails.image} alt="profile" className='tenants-popup-profile' />
               </div>
               <div className='tenants-popup-detailsContainer'>
-                <p><strong>Name :</strong> {singleTenantDetails.name}</p>
-                <p><strong>Mobile No :</strong> {singleTenantDetails.mobile_no}</p>
-                <p><strong>Proof ID :</strong> {singleTenantDetails.id}</p>
-                <p><strong>Room/Bed No :</strong> {singleTenantDetails.room_bed_no}</p>
-                <p><strong>Joining Date :</strong> {singleTenantDetails.joining_date}</p>
-                <p><strong>Due Date :</strong> {dueDateOfTenant}</p>
-                <p><strong>Permnent Address :</strong> {tenantAddress}</p>
-
-                <p><strong>ID Proof:</strong>
+              <p><strong>{t('tenantsPage.name')} :</strong> {singleTenantDetails.name}</p>
+                  <p><strong>{t('tenantsPage.mobileNo')} :</strong> {singleTenantDetails.mobile_no}</p>
+                  <p><strong>{t('tenantsPage.proofID')} :</strong> {singleTenantDetails.id}</p>
+                  <p><strong>{t('tenantsPage.roomBedNo')}:</strong> {singleTenantDetails.room_bed_no}</p>
+                  <p><strong>{t('tenantsPage.joiningDate')} :</strong> {singleTenantDetails.joining_date}</p>
+                  <p><strong>{t('tenantsPage.dueDate')} :</strong> {dueDateOfTenant}</p>
+                  <p><strong>{t('tenantsPage.idProof')} :</strong>
+                  
                   {singleTenantProofId ? (
-                    <a className='downloadPdfText' href={singleTenantProofId} download> <FaDownload /> Download PDF</a>
+                    <a className='downloadPdfText' href={singleTenantProofId} download> <FaDownload /> {t('tenantsPage.downloadPdf')}</a>
                   ) : (
-                    <span className='NotUploadedText'> Not Uploaded</span>
+                    <span className='NotUploadedText'>{t('tenantsPage.notUploaded')}</span>
                   )}
                 </p>
-                <p><strong>Bike Pic:</strong>
+                <p><strong>{t('tenantsPage.PermanentAddress')}</strong>{tenantAddress}</p>
+
+                <p><strong>{t('tenantsPage.BikePic')}</strong>
                   {bikeImageField ? (
-                    <a className="downloadPdfText" href={bikeImageField} download> <FaDownload /> Download Image</a>
+                    <a className="downloadPdfText" href={bikeImageField} download> <FaDownload />{t('tenantsPage.DownloadPic')}</a>
                   ) : (
-                    <span className="NotUploadedText"> Not Uploaded</span>
+                    <span className="NotUploadedText">{t('tenantsPage.NotUploaded')}</span>
+                  )}
+                </p>
+                <p><strong>{t('tenantsPage.BikeRc')}</strong>
+                  {bikeRcImageField ? (
+                    <a className="downloadPdfText" href={bikeRcImageField} download> <FaDownload />{t('tenantsPage.DownloadRc')}</a>
+                  ) : (
+                    <span className="NotUploadedText">{t('tenantsPage.NotUploaded')}</span>
                   )}
                 </p>
 
               </div>
             </div>
             <div className='popup-tenants-closeBtn'>
-              <button className='btn btn-warning' onClick={tenantPopupClose}>Close</button>
+              <button className='btn btn-warning' onClick={tenantPopupClose}>{t('tenantsPage.close')}</button>
             </div>
           </div>
         </div>
@@ -1064,12 +1110,12 @@ const TenantsBoys = () => {
       {showConfirmation && (
         <div className="confirmation-dialog">
           <div className='confirmation-card'>
-            <p style={{ paddingBottom: '0px', marginBottom: '7px', fontSize: '20px' }}>Are you sure you want to delete the tenant with name <span style={{ color: 'red' }}>{name}</span>?</p>
-            <p style={{ color: 'red', fontSize: '15px', textAlign: 'center' }}>Note : Once you delete he/she from tenant it can't be restored</p>
-            <div className="buttons">
-              <button onClick={handleConfirmDelete}>Yes</button>
-              <button onClick={handleCancelDelete}>No</button>
-            </div>
+          <p style={{paddingBottom:'0px',marginBottom:'7px',fontSize:'20px'}}>{t('tenantsPage.confirmationMessage')} <span style={{color:'red'}}>{name}</span>?</p>
+          <p style={{color:'red',fontSize:'15px',textAlign:'center'}}>{t('tenantsPage.note')}</p>
+          <div className="buttons">
+            <button onClick={handleConfirmDelete}>{t('tenantsPage.yes')}</button>
+            <button onClick={handleCancelDelete}>{t('tenantsPage.no')}</button>
+          </div>
           </div>
         </div>
       )}

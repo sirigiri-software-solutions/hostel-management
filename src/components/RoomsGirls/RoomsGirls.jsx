@@ -6,9 +6,21 @@ import Table from '../../Elements/Table';
 import { database, push, ref } from "../../firebase";
 import { DataContext } from '../../ApiData/ContextProvider';
 import { onValue, remove, update } from 'firebase/database';
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { useTranslation } from 'react-i18next';
+import { useData } from '../../ApiData/ContextProvider';
 
 const RoomsGirls = () => {
-
+  const { t }=useTranslation();
+  const  role = localStorage.getItem('role');
+  let adminRole = "";
+  if(role === "admin"){
+    adminRole = "Admin";
+  }else if(role === "subAdmin"){
+    adminRole = "Sub-admin"
+  }
+  const { activeGirlsHostel } = useData();
   const [floorNumber, setFloorNumber] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
   const [numberOfBeds, setNumberOfBeds] = useState('');
@@ -16,10 +28,58 @@ const RoomsGirls = () => {
   const [rooms, setRooms] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState('');
-  const [createdBy, setCreatedBy] = useState('admin'); // Default to 'admin'
+  const [createdBy, setCreatedBy] = useState(adminRole); // Default to 'admin'
   const [updateDate, setUpdateDate] = useState('');
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
+
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      console.log("Triggering")
+        if (showModal && event.target.id === "exampleModalGirls") {
+            setShowModal(false);
+        }
+       
+    };
+    window.addEventListener('click', handleOutsideClick);
+    
+}, [showModal]);
+
+const handleRoomsIntegerChange = (event) => {
+  const { name, value } = event.target;
+  // const re = /^[0-9\b]+$/; // Regular expression to allow only numbers
+
+  let sanitizedValue = value;
+
+  if (name === 'floorNumber' || name === 'roomNumber') {
+    // Allow alphanumeric characters and hyphens only
+    sanitizedValue = value.replace(/[^a-zA-Z0-9-]/g, '');
+  } else if (name === 'numberOfBeds' || name === 'bedRent') {
+    // Allow numbers only
+    sanitizedValue = value.replace(/[^0-9]/g, '');
+  }
+
+  // if (value === '' || re.test(sanitizedValue)) {
+      switch(name) {
+          case 'floorNumber':
+              setFloorNumber(sanitizedValue);
+              break;
+          case 'roomNumber':
+              setRoomNumber(sanitizedValue);
+              break;
+          case 'numberOfBeds':
+              setNumberOfBeds(sanitizedValue);
+              break;
+          case 'bedRent':
+              setBedRent(sanitizedValue);
+              break;
+          default:
+              break;
+      }
+  // }
+};
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -44,7 +104,7 @@ const RoomsGirls = () => {
     }
     // ---------------------------------------
     if (isEditing) {
-      const roomRef = ref(database, `Hostel/girls/rooms/${currentId}`);
+      const roomRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms/${currentId}`);
       update(roomRef, {
         floorNumber,
         roomNumber,
@@ -52,10 +112,30 @@ const RoomsGirls = () => {
         bedRent,
         createdBy,
         updateDate: now
+      }).then(() => {
+        toast.success("Room updated successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setIsEditing(false); // Reset editing state
+      }).catch(error => {
+        toast.error("Error updating room: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       });
-      setIsEditing(false); // Reset editing state
     } else {
-      const roomsRef = ref(database, 'Hostel/girls/rooms');
+      const roomsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms`);
       push(roomsRef, {
         floorNumber,
         roomNumber,
@@ -63,24 +143,97 @@ const RoomsGirls = () => {
         bedRent,
         createdBy,
         updateDate: now
+      }).then(() => {
+        toast.success("Room added successfully.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }).catch(error => {
+        toast.error("Error adding room: " + error.message, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       });
     }
     // Close the modal
     setShowModal(false);
     // Reset form
-    setFloorNumber('');
-    setRoomNumber('');
-    setNumberOfBeds('');
-    setBedRent('');
-    setCurrentId('');
-    setUpdateDate(now); // Update state with current date-time
-    setErrors({}); // Clear errors
+    resetForm();
+    // Set update date
+    setUpdateDate(now);
+    // Clear errors
+    setErrors({});
+  };
+  const [showConfirmationPopUp,setShowConfirmationPopUp] = useState(false);
+
+  const handleDeleteRoom = (id) => {
+    // const roomRef = ref(database, `Hostel/girls/rooms/${id}`);
+    // remove(roomRef).then(() => {
+    //   toast.success("Room deleted successfully.", {
+    //     position: "top-center",
+    //     autoClose: 2000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //   });
+    // }).catch(error => {
+    //   toast.error("Error deleting room: " + error.message, {
+    //     position: "top-center",
+    //     autoClose: 2000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //   });
+    // });
+    setShowConfirmationPopUp(true);
+    setShowModal(false);
   };
 
-  const handleDelete = (id) => {
-    const roomRef = ref(database, `Hostel/girls/rooms/${id}`);
-    remove(roomRef);
-  };
+  const confirmDeleteYes = () => {
+    const roomRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms/${currentId}`);
+    remove(roomRef).then(() => {
+      toast.success("Room deleted successfully.", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }).catch(error => {
+      toast.error("Error deleting room: " + error.message, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    });
+    setShowConfirmationPopUp(false);
+
+  }
+
+  const confirmDeleteNo = () => {
+    setShowConfirmationPopUp(false);
+  }
+  
 
   const handleEdit = (room) => {
     setFloorNumber(room.floorNumber);
@@ -89,31 +242,32 @@ const RoomsGirls = () => {
     setBedRent(room.bedRent || '');
     setIsEditing(true);
     setCurrentId(room.id);
-     // Open the modal
-     setShowModal(true);
+    // Open the modal
+    setShowModal(true);
+    const formatedDate = formatDate(room.updateDate)
+    setUpdateDate(formatedDate);
   };
 
-  
   const handleAddNew = () => {
-    // Reset any previous data
+    // Reset form and errors
     resetForm();
     // Set modal for a new entry
     setIsEditing(false);
     // Open the modal
     setShowModal(true);
   };
-  
-const resetForm = () => {
-  setFloorNumber('');
-  setRoomNumber('');
-  setNumberOfBeds('');
-  setBedRent('');
-  setCurrentId('');
-  setErrors({});
-};
+
+  const resetForm = () => {
+    setFloorNumber('');
+    setRoomNumber('');
+    setNumberOfBeds('');
+    setBedRent('');
+    setCurrentId('');
+    setErrors({});
+  };
 
   useEffect(() => {
-    const roomsRef = ref(database, 'Hostel/girls/rooms');
+    const roomsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRooms = [];
@@ -125,257 +279,146 @@ const resetForm = () => {
       }
       setRooms(loadedRooms);
     });
-  }, []);
-
-
-
-
-  //==========================================
-  let roomsData = []
-  const { data } = useContext(DataContext);
-  const [searchQuery, setSearchQuery] = useState("")
-
-  // console.log(data && data, "ApiData")
-
-  if (data !== null) {
-    const RoomsBoysData = data.girls.rooms
-    // console.log(RoomsBoysData, "RoomsBoys")
-
-    roomsData = Object.values(RoomsBoysData)
-    // console.log(roomsData)
-  }
-
-
-  //=================================================
-  // const [formData, setFormData] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: '',
-  //   role: ''
-  // });
-
-  // const [formErrors, setFormErrors] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: '',
-  //   role: ''
-  // });
-
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: value
-  //   });
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   let errors = {};
-  //   let formIsValid = true;
-
-  //   // Basic validation for required fields
-  //   if (!formData.number) {
-  //     errors.number = 'Number is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rent) {
-  //     errors.rent = 'Rent is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rooms) {
-  //     errors.rooms = 'Rooms is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.status) {
-  //     errors.status = 'Status is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.role) {
-  //     errors.role = 'Role is required';
-  //     formIsValid = false;
-  //   }
-
-  //   // If form is valid, proceed with submission
-  //   if (formIsValid) {
-  //     const newData = {
-  //       number: formData.number,
-  //       rent: formData.rent,
-  //       rooms: formData.rooms,
-  //       status: formData.status,
-  //       role: formData.role // Assuming role corresponds to createdBy
-  //     };
-
-  //     // Push the new data to the 'beds' node
-  //     push(ref(database, 'beds'), newData)
-  //       .then(() => {
-  //         // Clear the form after submission if needed
-  //         setFormData({
-  //           number: '',
-  //           rent: '',
-  //           rooms: '',
-  //           status: '',
-  //           role: ''
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         // Handle errors
-  //         console.error('Error storing data in Firebase: ', error.message);
-  //       });
-  //   } else {
-  //     // Set errors for form validation
-  //     setFormErrors(errors);
-  //   }
-  // };
+  }, [activeGirlsHostel]);
 
   const columns = [
-    'S. No',
-    'Room.No',
-    'Floor',
-    'Remarks',
-    'Created By',
-    'Last Updated date',
-    'Edit'
+    t('roomsPage.S.No'),
+    t('roomsPage.Room.No'),
+    t('roomsPage.Floor'),
+    t('roomsPage.No.of Beds'),
+    t('roomsPage.Bed Rent'),
+    t('roomsPage.Created By'),
+    t('roomsPage.Last Updated Date'),
+    t('roomsPage.Edit')
   ];
 
   
+  //for date format
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = ('0' + date.getDate()).slice(-2); // Add leading zero if needed
+    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Add leading zero if needed
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+}
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+
+
+
   useEffect(() => {
-    // if (data !== null) {
-      const rows = rooms.map((room, index) => ({
-        s_no: index + 1,
-        room_no: room.roomNumber,
-        floor: `${room.floorNumber}`,
-        remarks: room.numberOfBeds,
-        created_by: room.createdBy,
-        last_updated_by: room.updateDate,
-        edit_room: <button
-          style={{ backgroundColor: '#ff8a00', padding:'4px', borderRadius: '5px', color: 'white', border: 'none',  }}
-          onClick={() => handleEdit(room)}
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModalGirls"
-        >
-          Edit
-        </button>
-      }));
-      setInitialRows(rows);
-    // }
-  }, [rooms]);
+    const rows = rooms.map((room, index) => ({
+      s_no: index + 1,
+      room_no: room.roomNumber,
+      floor:capitalizeFirstLetter(room.floorNumber),
+      noofBeds: room.numberOfBeds,
+      bedRent: room.bedRent,
+      created_by: capitalizeFirstLetter(room.createdBy),
+      last_updated_by: formatDate(room.updateDate),
+      edit_room: <button
+        style={{ backgroundColor: '#ff8a00', padding:'4px', borderRadius: '5px', color: 'white', border: 'none' }}
+        onClick={() => handleEdit(room)}
+      >
+        Edit
+      </button>
+    }));
+    setInitialRows(rows);
+  }, [rooms, activeGirlsHostel]);
 
-
-  // const rows = Object.keys(roomsData).map(index => {
-  //   const data = roomsData[index];
-  //   return {
-  //     s_no: parseInt(index) + 1, // Adding 1 to index to make it 1-based
-  //     room_no: data.roomNumber,
-  //     floor: `${data.floorNumber}st`, // Assuming you want to concatenate "st"
-  //     remarks: data.numberOfBeds,
-  //     created_by: data.createdBy,
-  //     last_updated_by: data.updateDate,
-  //     edit: {
-  //       icon: false,
-  //       variant: { color: '#ff8a00', radius: '10px' },
-  //       text: 'Edit'
-  //     }
-  //   };
-  // });
-
-  // console.log(rows);
   const [searchTerm, setSearchTerm] = useState('');
   const [initialRows, setInitialRows] = useState([]);
 
   const handleChange = (event) => {
-    setSearchTerm(event.target.value)
-  }
+    setSearchTerm(event.target.value);
+  };
 
   const filteredRows = initialRows.filter(row => {
     return Object.values(row).some(value =>
       value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
-  const onChangeInput = (e) => {
-    setSearchQuery(e.target.value)
+
+  const  closePopupModal = () => {
+    setShowModal(false);
   }
 
+  const isUneditable = role === 'admin' || role === 'subAdmin';
   return (
     <div className='h-100'>
-      <div className="row d-flex align-items-center justify-content-between">
-        <div className="col-md-4 d-flex align-items-center mr-5 image-section">
+      <>
+      <div className="row d-flex flex-wrap align-items-center justify-content-between">
+        <div className="col-12 col-md-4 d-flex align-items-center mr-5 mb-2">
           <div className='roomlogo-container'>
             <img src={RoomsIcon} alt="RoomsIcon" className='roomlogo' />
           </div>
-          <h1 className='fs-5'>Rooms Management</h1>
+          <h1 className='management-heading'>{t('roomsPage.RoomsManagement')}</h1>
         </div>
         <div className="col-6 col-md-4 search-wrapper">
-          <input type="text" placeholder='Search' className='search-input' value={searchTerm} onChange={handleChange} />
+          <input type="text" placeholder={t('common.search')} className='search-input' value={searchTerm} onChange={handleChange} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
-          <button type="button" className="add-button" data-bs-toggle="modal"  onClick={handleAddNew} data-bs-target="#exampleModalGirls">
-            Add Rooms
+          <button id="roomGirlsPageBtn" type="button" className="add-button" onClick={handleAddNew}>
+          {t('dashboard.addRooms')}
           </button>
         </div>
       </div>
-
+<div>
       <Table columns={columns} rows={filteredRows} />
-
+      </div>
       <div className={`modal fade ${showModal ? 'show' : ''}`} style={{ display: showModal ? 'block' : 'none' }} id="exampleModalGirls" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden={!showModal}>
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id="exampleModalLabel">Create Rooms</h1>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <h1 className="modal-title fs-5" id="exampleModalLabel">{t('roomsPage.Create Rooms')}</h1>
+              <button onClick={closePopupModal} className="btn-close" aria-label="Close"></button>
             </div>
             <div className="modal-body">
               <div className="container-fluid">
                 <form className="row g-3" onSubmit={handleSubmit}>
                   <div className="col-md-6">
-                    <label htmlFor="inputNumber" className="form-label">Floor Number</label>
-                    <input type="number" className="form-control" id="inputNumber" name="number" value={floorNumber} onChange={(e) => setFloorNumber(e.target.value)} />
-                    {/* {formErrors.number && <div className="text-danger">{formErrors.number}</div>} */}
+                    <label htmlFor="inputNumber" className="form-label">{t('roomsPage.floorNumber')}</label>
+                    <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange} />
                     {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="inputRent" className="form-label">Room Number</label>
-                    <input type="number" className="form-control" id="inputRent" name="rent" value={roomNumber} onChange={(e) => setRoomNumber(e.target.value)} />
+                    <label htmlFor="inputRent" className="form-label">{t('roomsPage.roomNumber')}</label>
+                    <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} />
                     {/* {formErrors.rent && <div className="text-danger">{formErrors.rent}</div>} */}
                     {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
-                    <input type="number" className="form-control" id="inputRooms" name="rooms" value={numberOfBeds} onChange={(e) => setNumberOfBeds(e.target.value)} />
+                    <label htmlFor="inputRooms" className="form-label">{t('roomsPage.numberOfBeds')}</label>
+                    <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} />
                     {/* {formErrors.rooms && <div className="text-danger">{formErrors.rooms}</div>} */}
                     {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
-                    <input type="text" className="form-control" id="inputStatus" name="status" value={bedRent} onChange={(e) => setBedRent(e.target.value)} />
+                    <label htmlFor="inputStatus" className="form-label">{t('roomsPage.bedRent')}</label>
+                    <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} />
                     {/* {formErrors.status && <div className="text-danger">{formErrors.status}</div>} */}
                     {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="inputRole" className="form-label">Created By</label>
-                    <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
-
-                      <option value="admin">Admin</option>
-                      <option value="sub-admin">Sub-admin</option>
-                    </select>
-                    {/* {formErrors.role && <div className="text-danger">{formErrors.role}</div>} */}
+                    <label htmlFor="inputRole" className="form-label">{t('roomsPage.createdBy')}</label>
+                    {/* <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
+                      <option value="admin">{t('dashboard.admin')}</option>
+                      <option value="sub-admin">{t('dashboard.subAdmin')}</option>
+                    </select> */}
+                    <input disabled={isUneditable} type="text" className='form-control' id="inputRole" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}/>
                   </div>
-
                   <div className="col-12 text-center">
-                    {isEditing && <p>Last Updated: {updateDate || 'N/A'}</p>}
                     {isEditing ? (
-                      <button type="button" className="btn btn-warning" onClick={handleSubmit}>Update</button>
+                      <>
+                      <button type="button" className="btn btn-warning roomUpdateBtn" onClick={handleSubmit}>{t('roomsPage.Update Room')}</button>
+                      {role === "admin" ? <button type="button" className='btn btn-warning' onClick={() => handleDeleteRoom(currentId)}>{t('roomsPage.Delete Room')}</button> : null}
+                      </>
                     ) : (
-                      <button type="submit" className="btn btn-warning" onClick={handleSubmit}>Submit</button>
+                      <button type="submit" className="btn btn-warning">{t('roomsPage.CreateRoom')}</button>
                     )}
-                    {/* <button type="submit" className="btn btn-warning">Create</button> */}
                   </div>
                 </form>
               </div>
@@ -383,6 +426,19 @@ const resetForm = () => {
           </div>
         </div>
       </div>
+      {showConfirmationPopUp && (
+         <div className="confirmation-dialog">
+         <div className='confirmation-card'>
+         <p style={{paddingBottom:'0px',marginBottom:'7px'}}>{t('roomsPage.Are you sure you want to delete the room with number')} <span style={{color:'red'}}>{roomNumber}</span> ?</p>
+         <p style={{fontSize:'15px',color:'red',textAlign:'center',paddingTop:'0px'}}>{t('roomsPage.Once you delete the room it will not be restored')}</p>
+         <div className="buttons">
+           <button onClick={confirmDeleteYes} >{t('roomsPage.Yes')}</button>
+           <button onClick={confirmDeleteNo} >{t('roomsPage.No')}</button>
+         </div>
+         </div>
+       </div>
+      )}
+      </>
     </div>
   );
 }

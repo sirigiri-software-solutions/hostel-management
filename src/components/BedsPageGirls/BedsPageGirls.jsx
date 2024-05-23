@@ -4,15 +4,25 @@ import Table from '../../Elements/Table'
 import SearchIcon from '../../images/Icons (9).png'
 import {database, ref, push} from '../../firebase'
 import { onValue } from 'firebase/database'
+import "../BedsPageBoys/BedsPageBoys.css"
+import { useData } from '../../ApiData/ContextProvider';
+import { useTranslation } from 'react-i18next';
 
 const BedsPageGirls = () => {
-
+  const { t } = useTranslation();
+  const { activeGirlsHostel } = useData();
   const [girlsRooms, setGirlsRooms]= useState([])
   const [bedsData, setBedsData] = useState([]);
   const [tenants, setTenants] = useState([]);
 
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedFloor, setSelectedFloor] = useState('');
+  const [selectedRoomNo,setSelectedRoomNo] = useState('');
+  const [roomNumbersToShow,setRoomNumbersToShow] = useState([]);
+  const [floorNumbersToShow,setFloorNumbersToShow] = useState([]);
+
   useEffect(() => {
-    const roomsRef = ref(database, 'Hostel/girls/rooms');
+    const roomsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRooms = [];
@@ -24,10 +34,10 @@ const BedsPageGirls = () => {
       }
       setGirlsRooms(loadedRooms);
     })
-  }, []);
+  }, [activeGirlsHostel]);
   // Fetch tenants data
   useEffect(() => {
-    const tenantsRef = ref(database, 'Hostel/girls/tenants');
+    const tenantsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants`);
     onValue(tenantsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedTenants = [];
@@ -39,7 +49,7 @@ const BedsPageGirls = () => {
       }
       setTenants(loadedTenants);
     });
-  }, []);
+  }, [activeGirlsHostel]);
 
   // Construct beds data based on rooms and tenants
   useEffect(() => {
@@ -54,7 +64,9 @@ const BedsPageGirls = () => {
         const bedNumber = i + 1;
         // Find if there's a tenant for the current bed
         const tenant = tenants.find(tenant => tenant.roomNo === room.roomNumber && tenant.bedNo === String(bedNumber));
+        const tenantName = tenant ? tenant.name :"-";
         return {
+          name:tenantName,
           floorNumber: room.floorNumber,
           roomNumber: room.roomNumber,
           bedNumber: bedNumber,
@@ -64,133 +76,156 @@ const BedsPageGirls = () => {
       });
     });
     setBedsData(allBeds);
-  }, [girlsRooms, tenants]); // Depend on rooms and tenants data
+    const allFloornumbers = girlsRooms.map(each => (
+      each.floorNumber
+    ))
+ 
+    const uniqueFloornumbers = [...new Set(allFloornumbers)];
+    setFloorNumbersToShow(uniqueFloornumbers);
+
+    return () => {
+      setSelectedStatus('');
+      setSelectedFloor('');
+      setSelectedRoomNo('');
+      setRoomNumbersToShow([]);
+  };
 
 
-  // const [formData, setFormData] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: ''
-  // });
-  
-  // const [formErrors, setFormErrors] = useState({
-  //   number: '',
-  //   rent: '',
-  //   rooms: '',
-  //   status: ''
-  // });
+  }, [girlsRooms, tenants, activeGirlsHostel]); // Depend on rooms and tenants data
 
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: value
-  //   });
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   let errors = {};
-  //   let formIsValid = true;
-
-  //   // Basic validation for required fields
-  //   if (!formData.number) {
-  //     errors.number = 'Number is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rent) {
-  //     errors.rent = 'Rent is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.rooms) {
-  //     errors.rooms = 'Rooms is required';
-  //     formIsValid = false;
-  //   }
-
-  //   if (!formData.status) {
-  //     errors.status = 'Status is required';
-  //     formIsValid = false;
-  //   }
-
-  //   // If form is valid, proceed with submission
-  //   if (formIsValid) {
-  //     // console.log('Form submitted successfully:', formData);
-  //     const newData = {
-  //       number: formData.number,
-  //       rent: formData.rent,
-  //       rooms: formData.rooms,
-  //       status: formData.status
-  //     };
-
-  //     // Push the new data to the 'beds' node
-  //     push(ref(database, 'beds'), newData)
-  //       .then(() => {
-  //         // Data successfully stored in Firebase
-  //         // console.log('Data successfully stored in Firebase');
-  //         // Clear the form after submission if needed
-  //         setFormData({
-  //           number: '',
-  //           rent: '',
-  //           rooms: '',
-  //           status: ''
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         // Handle errors
-  //         // console.error('Error storing data in Firebase: ', error.message);
-  //       });
-  //   } else {
-  //     // Set errors for form validation
-  //     setFormErrors(errors);
-  //   }
-  // };
 
   const columns = [
-    'S. No',
-    'Bed Number',
-    'Room. No',
-    'Floor',
-    'Rent',
-    'Status'
+    t('bedsPage.sNo'),
+    t('bedsPage.name'),
+    t('bedsPage.bedNumber'),
+    t('bedsPage.roomNo'),
+    t('bedsPage.floor'),
+    t('bedsPage.rent'),
+    t('bedsPage.status')
   ]
 
   const rows = bedsData.map((beds, index) => ({
     s_no: index + 1,
+    name:beds.name,
     bed_number:beds.bedNumber,
     room_no:beds.roomNumber,
    floor:beds.floorNumber,
    rent:beds.rent,
    status:beds.status
   }));
+
+  const [searchValue,setSearchValue] = useState("");
+
+  const onChangeSearch = (e) => {
+    setSearchValue(e.target.value);
+  }
+
+  const onChangeStatus = (e) => {
+    setSelectedStatus(e.target.value);
+  };
+
+  const onChangeFloor = (e) => {
+    setSelectedFloor(e.target.value);
+    setSelectedRoomNo(''); 
+    const filteredRows = rows.filter((row)=> (
+      row.floor === e.target.value
+    ))
+    const uniqueRoomNumbers = [...new Set(filteredRows.map(row => row.room_no))];
+    console.log(uniqueRoomNumbers,"filteredRows")
+    setRoomNumbersToShow(uniqueRoomNumbers);
+  };
+  const onChangeRoomNo = (e) => {
+    setSelectedRoomNo(e.target.value);
+  }
+
+  const compareFloor = (floor1, floor2) => {
+    // Check if both floors are purely numeric
+    const isNumericFloor = /^\d+$/.test(floor1) && /^\d+$/.test(floor2);
+  
+    if (isNumericFloor) {
+      // If both floors are numeric, compare them as numbers
+      const numericPart1 = parseInt(floor1);
+      const numericPart2 = parseInt(floor2);
+      return numericPart1 - numericPart2;
+    } else {
+      // If floors are not purely numeric, compare them as alphanumeric identifiers
+      const prefix1 = floor1.charAt(0);
+      const prefix2 = floor2.charAt(0);
+  
+      // Compare alphanumeric identifiers
+      if (prefix1 !== prefix2) {
+        return prefix1.localeCompare(prefix2);
+      }
+  
+      // Compare numeric parts if alphanumeric identifiers are the same
+      const numericPart1 = parseInt(floor1.substring(1));
+      const numericPart2 = parseInt(floor2.substring(1));
+  
+      return numericPart1 - numericPart2;
+    }
+  };
+
+
+  const filteredRows = rows.filter((row) => {
+    return (
+      (selectedStatus === '' || row.status === selectedStatus) &&
+      (selectedFloor === '' || compareFloor(row.floor,selectedFloor) === 0)  &&
+      (selectedRoomNo === '' || parseInt(row.room_no) === parseInt(selectedRoomNo)) &&
+      Object.values(row).some((value) =>
+        value.toString().toLowerCase().includes(searchValue.toLowerCase())
+      )
+    );
+  });
  
 
   return (
     <div className='h-100'>
       
     <>
-    <div className="row d-flex align-items-center justify-content-between">
-      <div className="col-12 col-md-4 d-flex align-items-center mr-5">
+    <div className="row d-flex flex-wrap align-items-center justify-content-between">
+      <div className="col-12 col-md-4 d-flex align-items-center mr-5 mb-2">
         <div className='roomlogo-container'>
           <img src={bedIcon} alt="RoomsIcon" className='roomlogo'/>
         </div>
-        <h1 className='fs-5'>Beds Management</h1>
+        <h1 className='management-heading'>{t('bedsPage.bedsManagement')}</h1>
       </div>
-      <div className="col-6 col-md-4 search-wrapper">
-        <input type="text" placeholder='Search' className='search-input'/>
+      <div className="col-12 col-md-4 search-wrapper">
+        <input onChange={onChangeSearch} value={searchValue} type="text" placeholder='Search' className='search-input'/>
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
       </div>
-      <div className="col-6 col-md-4 d-flex justify-content-end">
-        {/* <button type="button" class="add-button" data-bs-toggle="modal" data-bs-target="#exampleModalBedsGirls">
-          Add Beds
-        </button> */}
+      <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
+        <div className='d-flex filterDropDownContainer'>
+      <select className="col-4 bedPageFilterDropdown" value={selectedStatus} onChange={onChangeStatus}>
+            <option value="">{t('bedsPage.status')}</option>
+            <option value="Occupied">{t('bedsPage.occupied')}</option>
+            <option value="Unoccupied">{t('bedsPage.unoccupied')}</option>
+          </select>
+          <select className="col-4 bedPageFilterDropdown" value={selectedFloor} onChange={onChangeFloor}>
+            <option value="">{t('bedsPage.floorNumber')}</option>
+            {
+              floorNumbersToShow.map((floor) => (
+                <option key={floor} value={floor}>
+                  {floor}
+                </option>
+              ))
+            }
+          </select>
+          <select className='col-4 bedPageFilterDropdown' value={selectedRoomNo} onChange={onChangeRoomNo}>
+            <option value="">{t('bedsPage.roomNumber')}</option>
+            {roomNumbersToShow.map((room) => (
+              <option key={room} value={room}>
+                {room}
+              </option>
+            ))}
+            
+          </select>
+          </div>
       </div>
+     
     </div>
 
     <div>   
-        <Table columns={columns} rows={rows}/>
+        <Table columns={columns} rows={filteredRows}/>
     </div>
 
     <div class="modal fade" id="exampleModalBedsGirls" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -205,31 +240,6 @@ const BedsPageGirls = () => {
               <h1 className='text-center mb-2 fs-5'>
                 Create Beds
               </h1>
-              {/* <form className="row g-3" onSubmit={handleSubmit}>
-                <div className="col-md-6">
-                  <label htmlFor="inputNumber" className="form-label">Number</label>
-                  <input type="number" className="form-control" id="inputNumber" name="number" value={formData.number} onChange={handleInputChange} />
-                  {formErrors.number && <div className="text-danger">{formErrors.number}</div>}
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="inputRent" className="form-label">Rent</label>
-                  <input type="number" className="form-control" id="inputRent" name="rent" value={formData.rent} onChange={handleInputChange} />
-                  {formErrors.rent && <div className="text-danger">{formErrors.rent}</div>}
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="inputRooms" className="form-label">Select Rooms</label>
-                  <input type="number" className="form-control" id="inputRooms" name="rooms" value={formData.rooms} onChange={handleInputChange} />
-                  {formErrors.rooms && <div className="text-danger">{formErrors.rooms}</div>}
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="inputStatus" className="form-label">Select Status</label>
-                  <input type="text" className="form-control" id="inputStatus" name="status" value={formData.status} onChange={handleInputChange} />
-                  {formErrors.status && <div className="text-danger">{formErrors.status}</div>}
-                </div>
-                <div className="col-12 text-center">
-                  <button type="submit" className="btn btn-warning">Create</button>
-                </div>
-              </form> */}
             </div>
           </div>
           <div className="modal-footer">

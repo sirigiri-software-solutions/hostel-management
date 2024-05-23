@@ -1,27 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import Admin from '../../images/Icons.png';
 import DashboardBoys from '../../components/DashboardBoys/DashboardBoys';
-import DashboardGirls from '../../components/DashboardGirls/DashboardGirls';
+//import DashboardGirls from '../../components/DashboardGirls/DashboardGirls';
 import { Tab, Tabs } from 'react-bootstrap';
 import './Dashboard.css';
+import { useTranslation } from 'react-i18next';
+import DashboardGirls from '../../components/DashboardGirls/DashboardGirls'
+import { useData } from '../../ApiData/ContextProvider';
 
 const Dashboard = () => {
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const {t} = useTranslation()
+  const { activeBoysHostel } = useData();
   const [activeTab, setActiveTab] = useState('boys');
-  const name = localStorage.getItem("username")
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 650);
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  const name = localStorage.getItem("username");
 
   const handleTabSelect = (tab) => {
     setActiveTab(tab);
@@ -29,28 +20,21 @@ const Dashboard = () => {
 
   return (
     <div className='container_main'>
-      {/* <div className='top-div'>
-        <img src={Admin} alt="admin" className='dashboard-icon' />
-        <h1 className='dashboard-heading'>{name}</h1>
-      </div> */}
-      <h1 className='dashboard-welcome'>Welcome</h1>
-      {isSmallScreen ? 
-      (
-      <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
-        <Tab eventKey="boys" title="Men's">
-          <DashboardBoys />
-        </Tab>
-        <Tab eventKey="girls" title="Women's">
-          <DashboardGirls />
-        </Tab>
-      </Tabs>
-      ) : (
-        <div style={{display:'flex', flexDirection:'column', gap:'40px'}}>
+      {/* <h1 className='dashboard-welcome'>{t('dashboard.welcome')} to {activeBoysHostel} Hostel</h1> */}
+      <div className='mobile-layout'>
+        <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
+          <Tab eventKey="boys" title="Men's">
             <DashboardBoys />
+          </Tab>
+          <Tab eventKey="girls" title="Women's">
             <DashboardGirls />
-        </div>
-      )
-      }
+          </Tab>
+        </Tabs>
+      </div>
+      <div className='desktop-layout' >
+        <DashboardBoys />
+        <DashboardGirls />
+      </div>
     </div>
   );
 }

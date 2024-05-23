@@ -15,7 +15,6 @@
 // import Rent from '../../Sections/Rents/Rents'
 // import Tenants from '../../Sections/Tenants/Tenants'
 // import Settings from '../../Sections/Settings/Settings'
-
 // const Sidebar = () => {
 
 //   const menuItems = [

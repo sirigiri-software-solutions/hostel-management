@@ -1,30 +1,27 @@
-
 import React, { useState } from 'react';
-import Adminlogo from '../../images/Icons.png';
 import { Tab, Tabs } from 'react-bootstrap';
 import TenantsBoys from '../../components/TenantsBoys/TenantsBoys';
 import TenantsGirls from '../../components/TenantsGirls/TenantsGirls';
+import { useTranslation } from 'react-i18next';
  
 function Tenants() {
+    const { t }=useTranslation();
     const [activeTab, setActiveTab] = useState('boys');
-    // const name=localStorage.getItem("username");
+    const [key, setKey] = useState('boys');
  
     const handleTabSelect = (tab) => {
         setActiveTab(tab);
+        setKey(tab);
     };
  
     return (
         <div className="container">
-            {/* <div className='top-div'>
-                <img src={Adminlogo} alt="admin" className='dashboard-icon' />
-                <h1 className='dashboard-heading'>{name}</h1>
-            </div> */}
             <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
-                <Tab eventKey="boys" title="Men's">
-                    <TenantsBoys/>
+                <Tab eventKey="boys" title={t('dashboard.mens')}>
+                    <TenantsBoys key={key}/>
                 </Tab>
-                <Tab eventKey="girls" title="Women's">
-                    <TenantsGirls/>
+                <Tab eventKey="girls" title={t('dashboard.womens')}>
+                    <TenantsGirls key={key}/>
                 </Tab>
             </Tabs>
         </div>

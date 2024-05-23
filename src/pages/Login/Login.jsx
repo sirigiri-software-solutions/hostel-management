@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ImageOne from "../../images/Vector 1 (1).png";
 import ImageTwo from "../../images/Vector 3 (2).png";
-import Logo from "../../images/Kiran Reddy Boys Hostel 1.png";
+import Logo from "../../images/image.png";
 import './Login.css'
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,34 +17,24 @@ const Login = () => {
   const [data, setData] = useState([]);
   const [flag, setFlag] = useState(false);
   const [loginErrors, setLoginErrors] = useState({});
-  // const [oldPassword,setoldPassword]=useState("");
-  // const [username, setUsername] = useState('');
-  // const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  // setLoginData({...loginData,[loginData.email]:localStorage.getItem('rememberedUsername')|| " "})
-  // setLoginData({...loginData,[]})
 
   useEffect(()=>{
     const rememberedUsername=localStorage.getItem('rememberedUsername');
     const rememberedPassword=localStorage.getItem('rememberedPassword');
     if (rememberedUsername && rememberedPassword) {
          setLoginData({...loginData, [loginData.email]: rememberedUsername, [loginData.password]: rememberedPassword});
-      // setLoginData({...loginData,[loginData.email]:rememberedUsername});
-      // setLoginData({...loginData,[loginData.password]:rememberedPassword});
       setRememberMe(true);
     }
   },[])
 
   const handleRememberme=(e)=>{
-    // console.log(e);
-    // setRememberMe(e.target.checked)
     setRememberMe(!rememberMe);
   }
 
   useEffect(() => {
     axios
          .get("https://kiranreddy-58a8c-default-rtdb.firebaseio.com/register.json")
-      // .get("https://signuppage-2f4c8-default-rtdb.firebaseio.com/register.json")
       .then((response) => {
         let data = Object.values(response.data);
         setData(data);
@@ -86,6 +76,7 @@ const Login = () => {
           setLoginData(initialState);
           navigate("/mainPage");
           localStorage.setItem("username",singleLoginuser.firstname)
+          localStorage.setItem("role",singleLoginuser.role)
           // console.log(flag, "flag");
         } else {
           toast.error("Password Wrong, please enter correct password.", {
@@ -156,87 +147,69 @@ const Login = () => {
   };
 
   return (
-    <React.Fragment>
-      <main  className="  col-lg-11 col-md-8 col-sm-8 col-12" id="main">
-        <div className="" >
-          <img src={ImageOne} alt="" className="img-fluid animatedimg"/>
-         <div className="smallscrn">
-          <div className="d-flex flex-column align-items-center imgcontainer">
-            <img src={Logo} alt="" className="img" />
-            <p className="p"><b>A Home away from home, where strangers become friends and every
-                day is an adventure.</b></p>
-          </div>
-          <form onSubmit={checkData} className="d-flex flex-column frm ">
-            <div className="text-center font-weight-bold login">LOGIN</div>
-            <div>
-            <input
-                  type="email"
-                  className={`form-control ${loginErrors?.email && "is-invalid"}`}
-                  placeholder="Username or Email"
-                  onChange={handleData}
-                  onFocus={hideErrors}
-                  onBlur={checkErrors}
-                  value={loginData.email}
-                  name="email"
-                  id="mail"
-                />
-                {loginErrors.email && (
-                  <div className="invalid-feedback">{loginErrors.email}</div>
-                )}
-                </div>
-                <div className="d-flex flex-column">
-                <input
-                  type="password"
-                  className={`form-control ${loginErrors?.password && "is-invalid"}`}
-                  placeholder="Password"
-                  onChange={handleData}
-                  onFocus={hideErrors}
-                  onBlur={checkErrors}
-                  value={loginData.password}
-                  name="password"
-                  id="pass"
-                />
-                {loginErrors.password && (
-                  <div className="invalid-feedback">{loginErrors.password}</div>
-                )}
-                </div>
-                <div className="check">
-                  <div>
-                  <input
-                    type="checkbox"
-                    id="remember"
-                    className="form-check-input"
-                    checked={rememberMe}
-                    onChange={handleRememberme}
-                  />
-                  <label id="rememberText" className="form-check-label">
-                    Remember me
-                  </label>
-                  </div>
-                  <p className="text" >Forgot Password?</p>
-                  {/* <Updatepass oldPassword={oldPassword} /> */}
-                </div>
-                <div className="text-center btndiv">
-                <button
-                type="submit"
-                className="btn btn-lg btn-block "
-                Id='btn'
-              >
-                 Login
-              </button>
-              </div>
-          </form>
-        </div>
-          <img src={ImageTwo} alt="" className="img-fluid animatedimg" id="imgtwo"/>
-        </div>
-      </main>
-    </React.Fragment>
+    <>
+  <div className="main-div">
+    <div className="left-div">
+      <div className="image-container">
+        <img src={ImageOne} alt="imageone" className="up-image" />
+      </div>
+      <div className="logo-container">
+        <img src={Logo} alt="logo" className="img" />
+        <p className="p"><b>A Home away from home, where strangers become friends and every day is an adventure.</b></p>
+      </div>
+    </div>
+  <div className="right-div">
+    <div className="right-div-content">
+    <div className="form-container">
+    <form onSubmit={checkData} className="input-form">
+      <h1 className="login-heading">LOGIN</h1>
+      <div className="mbl-inputField">
+        <input
+          type="email"
+          className={`form-control ${loginErrors?.email && "is-invalid"} ${loginData.email.trim() === "" && "empty-field"}`}
+          placeholder="Username or Email"
+          onChange={handleData}
+          onFocus={hideErrors}
+          onBlur={checkErrors}
+          value={loginData.email}
+          name="email"
+          id="mail"
+        />
+        {loginErrors.email && <div className="invalid-feedback">{loginErrors.email}</div>}
+      </div>
+      <div>
+        <input
+          type="password"
+          className={`form-control ${loginErrors?.password && "is-invalid"} ${loginData.password.trim() === "" && "empty-field"}`}
+          placeholder="Password"
+          onChange={handleData}
+          onFocus={hideErrors}
+          onBlur={checkErrors}
+          value={loginData.password}
+          name="password"
+          id="pass"
+        />
+        {loginErrors.password && <div className="invalid-feedback">{loginErrors.password}</div>}
+      </div>
+      <div className="check">
+       
+        <p className="text">Forgot Password?</p>
+      </div>
+      <div>
+        <button type="submit" className="login-button">
+          Login
+        </button>
+      </div>
+    </form>
+    </div>
+    <div className="image-right-container">
+      <img src={ImageTwo} alt="imagetwo" className="down-image" />
+    </div>
+    </div>
+  </div>
+    </div>
+    </>
   );
 };
 
 export default Login;
-
-
-
-
-

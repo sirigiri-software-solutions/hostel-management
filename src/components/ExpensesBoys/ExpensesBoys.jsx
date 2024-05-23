@@ -12,12 +12,24 @@ import { useData } from '../../ApiData/ContextProvider';
 
 const ExpensesBoys = () => {
   const { t } = useTranslation();
+
+  const  role = localStorage.getItem('role');
+  let adminRole = "";
+  if(role === "admin"){
+    adminRole = "Admin";
+  }else if(role === "subAdmin"){
+    adminRole = "Sub-admin"
+  }
+
+  const isUneditable = role === 'admin' || role === 'subAdmin';
   const { activeBoysHostel } = useData();
   const [searchTerm, setSearchTerm] = useState('');
   const [initialRows, setInitialRows] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [editingExpense, setEditingExpense] = useState(null);
   const [showModal, setShowModal] = useState(false);
+
+
 
   const getCurrentMonth = () => {
     const monthNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
@@ -37,7 +49,7 @@ const ExpensesBoys = () => {
     expenseName: '',
     expenseAmount: '',
     expenseDate: '',
-    createdBy: 'admin'
+    createdBy: adminRole
   });
 
   const [formErrors, setFormErrors] = useState({
@@ -223,7 +235,7 @@ const ExpensesBoys = () => {
       expenseName: expense.expenseName,
       expenseAmount: expense.expenseAmount,
       expenseDate: formattedDate,
-      createdBy: expense.createdBy
+      createdBy: adminRole
     });
     setShowModal(true);
     setFormErrors({
@@ -306,7 +318,7 @@ const ExpensesBoys = () => {
         expenseName: '',
         expenseAmount: '',
         expenseDate: '',
-        createdBy: 'admin'
+        createdBy: adminRole
       });
     } else {
 
@@ -346,7 +358,7 @@ const ExpensesBoys = () => {
       expenseName: '',
       expenseAmount: '',
       expenseDate: '',
-      createdBy: 'admin'
+      createdBy: adminRole
     });
   };
 
@@ -368,7 +380,7 @@ const ExpensesBoys = () => {
       expenseName: '',
       expenseAmount: '',
       expenseDate: '',
-      createdBy: 'admin'
+      createdBy: adminRole
     });
     setFormErrors({
       expenseName: '',
@@ -386,7 +398,7 @@ const ExpensesBoys = () => {
       expenseName: '',
       expenseAmount: '',
       expenseDate: '',
-      createdBy: 'admin'
+      createdBy: adminRole
     });
   }
 
@@ -511,10 +523,11 @@ const ExpensesBoys = () => {
                     </div>
                     <div className="col-md-6">
                       <label htmlFor="inputRole" className="form-label">{t('expensesPage.createdBy')} :</label>
-                      <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
+                      {/* <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
                         <option value="admin">{t('expensesPage.admin')} </option>
                         <option value="sub-admin">{t('expensesPage.subAdmin')} </option>
-                      </select>
+                      </select> */}
+                       <input disabled={isUneditable} type="text" className='form-control' id="inputRole" value={formData.createdBy} />
                     </div>
                     <div className="col-md-6">
                       <label htmlFor="inputDate" className="form-label">{t('expensesPage.expenseDate')} : </label>
@@ -529,7 +542,7 @@ const ExpensesBoys = () => {
                       {editingExpense && (
                         <>
                           <button type="button" className="btn btn-success" style={{ marginRight: '10px' }} onClick={handleUpdate}>{t('expensesPage.updateExpense')}</button>
-                          <button type="button" className="btn btn-danger" onClick={handleDelete}>{t('expensesPage.deleteExpense')}</button>
+                        {role === "admin" ? <button type="button" className="btn btn-danger" onClick={handleDelete}>{t('expensesPage.deleteExpense')}</button> : null }
                         </>
                       )}
                     </div>

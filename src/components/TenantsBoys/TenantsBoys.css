@@ -113,8 +113,8 @@
     padding: 20px ;
     border-radius: 5px ;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3) ;
-    width:500px;
-    height:400px;
+    width:600px;
+    height:500px;
     display:flex;
     flex-direction:column;
     justify-content:center;
@@ -136,8 +136,8 @@
       align-items:center;
     }
     .tenants-dialog-container{
-      width:340px;
-      height:550px;
+      width:300px;
+      height:650px;
       top:58%;
     }
   }

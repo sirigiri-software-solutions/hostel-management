@@ -21,6 +21,18 @@ import { useTranslation } from 'react-i18next';
 
 const DashboardGirls = () => {
   const { t } = useTranslation();
+
+   // created by admin or subAdmin 
+   const  role = localStorage.getItem('role');
+   let adminRole = "";
+   if(role === "admin"){
+     adminRole = "Admin";
+   }else if(role === "subAdmin"){
+     adminRole = "Sub-admin"
+   }
+   const isUneditable = role === 'admin' || role === 'subAdmin';
+
+
   const { activeGirlsHostel, setActiveGirlsHostel, activeGirlsHostelButtons } = useData();
   const [modelText, setModelText] = useState('');
   const [formLayout, setFormLayout] = useState('');
@@ -30,7 +42,7 @@ const DashboardGirls = () => {
   const [rooms, setRooms] = useState([]);
   const [bedRent, setBedRent] = useState('');
   const [currentId, setCurrentId] = useState('');
-  const [createdBy, setCreatedBy] = useState('admin'); // Default to 'admin'
+  const [createdBy, setCreatedBy] = useState(adminRole); // Default to 'admin'
   const [updateDate, setUpdateDate] = useState('');
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
@@ -798,7 +810,6 @@ Please note that you made your last payment on ${paidDate}.\n`
     setRoomNumber('');
     setNumberOfBeds('');
     setBedRent('');
-    setCreatedBy('admin');
     setTenantErrors({});
     setSelectedTenant('');
     setRoomNumber('');
@@ -1010,11 +1021,12 @@ Please note that you made your last payment on ${paidDate}.\n`
             </div>
             <div className="col-md-6">
               <label htmlFor="inputRole" className="form-label">{t('dashboard.createdBy')}</label>
-              <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
+              {/* <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
 
                 <option value="admin">{t('dashboard.admin')}</option>
                 <option value="sub-admin">{t('dashboard.subAdmin')}</option>
-              </select>
+              </select> */}
+              <input disabled={isUneditable} type="text" className='form-control' id="inputRole" value={createdBy} />
             </div>
             <div className="col-12 text-center">
               <button type="submit" className="btn btn-warning" onClick={handleGirlsRoomsSubmit}>{t('dashboard.createRoom')}</button>
@@ -1430,10 +1442,11 @@ Please note that you made your last payment on ${paidDate}.\n`
             </div>
             <div className="col-md-6">
               <label htmlFor="inputRole" className="form-label">{t('dashboard.createdBy')}</label>
-              <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
+              {/* <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
                 <option value="admin">{t('dashboard.admin')}</option>
                 <option value="sub-admin">{t('dashboard.subAdmin')}</option>
-              </select>
+              </select> */}
+              <input disabled={isUneditable} type="text" className='form-control' id="inputRole" value={createdBy} />
             </div>
             <div className="col-md-6">
               <label htmlFor="inputDate" className="form-label">{t('dashboard.expenseDate')}</label>

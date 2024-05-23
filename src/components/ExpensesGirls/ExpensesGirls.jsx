@@ -15,8 +15,22 @@ import { useData } from '../../ApiData/ContextProvider';
 const ExpensesGirls = () => {
   const { t } = useTranslation();
   const { activeGirlsHostel } = useData();
+
+  const  role = localStorage.getItem('role');
+  let adminRole = "";
+  if(role === "admin"){
+    adminRole = "Admin";
+  }else if(role === "subAdmin"){
+    adminRole = "Sub-admin"
+  }
+
+  const isUneditable = role === 'admin' || role === 'subAdmin';
+
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [initialRows, setInitialRows] = useState([]);
+
+
 
   const [expenses, setExpenses] = useState([]);
   const [editingExpense, setEditingExpense] = useState(null);
@@ -40,7 +54,7 @@ const ExpensesGirls = () => {
     expenseName: '',
     expenseAmount: '',
     expenseDate: '',
-    createdBy: 'admin'
+    createdBy: adminRole
   });
 
 
@@ -228,7 +242,7 @@ window.addEventListener('keydown',handleOutsideClick);
       expenseName: expense.expenseName,
       expenseAmount: expense.expenseAmount,
       expenseDate: formattedDate,
-      createdBy: expense.createdBy
+      createdBy: adminRole,
     });
     setShowModal(true);
     setFormErrors({
@@ -311,7 +325,7 @@ window.addEventListener('keydown',handleOutsideClick);
         expenseName: '',
         expenseAmount: '',
         expenseDate: '',
-        createdBy: 'admin'
+        createdBy: adminRole
       });
     } else {
       // Set errors in state if form is not valid
@@ -353,7 +367,7 @@ window.addEventListener('keydown',handleOutsideClick);
       expenseName: '',
       expenseAmount: '',
       expenseDate: '',
-      createdBy: 'admin'
+      createdBy: adminRole
     });
 
   };
@@ -375,7 +389,7 @@ window.addEventListener('keydown',handleOutsideClick);
       expenseName: '',
       expenseAmount: '',
       expenseDate: '',
-      createdBy: 'admin'
+      createdBy: adminRole
     });
     setFormErrors({
       expenseName: '',
@@ -392,7 +406,7 @@ window.addEventListener('keydown',handleOutsideClick);
       expenseName: '',
       expenseAmount: '',
       expenseDate: '',
-      createdBy: 'admin'
+      createdBy: adminRole
     });
   }
 
@@ -518,10 +532,11 @@ function capitalizeFirstLetter(string) {
                     </div>
                     <div className="col-md-6">
                       <label htmlFor="inputRole" className="form-label">{t('expensesPage.createdBy')} :</label>
-                      <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
+                      {/* <select className="form-select" id="inputRole" name="createdBy" value={formData.createdBy} onChange={handleInputChange}>
                         <option value="admin">{t('expensesPage.admin')}</option>
                         <option value="sub-admin">{t('expensesPage.subAdmin')} </option>
-                      </select>
+                      </select> */}
+                      <input disabled={isUneditable} type="text" className='form-control' id="inputRole" value={formData.createdBy} />
                     </div>
                     <div className="col-md-6">
                       <label htmlFor="inputDate" className="form-label">{t('expensesPage.expenseDate')} : </label>
@@ -536,7 +551,7 @@ function capitalizeFirstLetter(string) {
                       {editingExpense && (
                         <>
                           <button type="button" className="btn btn-success" style={{ marginRight: '10px' }} onClick={handleUpdate}>{t('expensesPage.updateExpense')}</button>
-                          <button type="button" className="btn btn-danger" onClick={handleDelete}>{t('expensesPage.deleteExpense')}</button>
+                          {role === "admin" ? <button type="button" className="btn btn-danger" onClick={handleDelete}>{t('expensesPage.deleteExpense')}</button> : null }
                         </>
                       )}
                     </div>

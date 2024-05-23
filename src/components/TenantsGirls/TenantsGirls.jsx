@@ -13,6 +13,8 @@ import { FaDownload } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useTranslation } from 'react-i18next'
 import { useData } from '../../ApiData/ContextProvider';
+import '../TenantsBoys/TenantsBoys.css'
+import './TenantsGirls.css';
 
 const TenantsGirls = () => {
   const { t } = useTranslation();
@@ -57,7 +59,7 @@ const TenantsGirls = () => {
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('NA');
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [showBikeFilter,setShowBikeFilter] = useState(true);
+  const [showBikeFilter, setShowBikeFilter] = useState(true);
 
   const tenantImageInputRef = useRef(null);
   const tenantProofIdRef = useRef(null);
@@ -477,7 +479,7 @@ const TenantsGirls = () => {
     t('tenantsPage.joiningDate'),
     t('tenantsPage.status'),
   ]
-  if(role === "admin"){
+  if (role === "admin") {
     columnsEx.push(t('tenantsPage.actions'))
   }
   const columns = [
@@ -532,7 +534,7 @@ const TenantsGirls = () => {
     const hasSearchQueryMatch = Object.values(row).some((value) =>
       value.toString().toLowerCase().includes(searchQuery.toLowerCase())
     );
-  
+
     // Apply additional filtering based on the selected status
     if (selectedStatus === 'YES') {
       // Include only rows with a bike number that is not 'NA' and matches the search query
@@ -545,7 +547,7 @@ const TenantsGirls = () => {
       return hasSearchQueryMatch;
     }
   });
-  
+
 
   const handleClosePopUp = () => {
     setShowModal(false);
@@ -712,7 +714,7 @@ const TenantsGirls = () => {
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
     joining_date: tenant.dateOfJoin,
     status: 'Vacated',
-   actions: role === 'admin' ? (
+    actions: role === 'admin' ? (
       <button
         style={{
           backgroundColor: '#ff8a00',
@@ -753,30 +755,39 @@ const TenantsGirls = () => {
         </div>
         <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
           <div className='d-flex align-items-center text-center'>
-            {showBikeFilter?( <div className="toggle-container">
-                <label className="toggle-label" htmlFor="status-toggleGirl">{t('tenantsPage.bike')}</label>
-                <input
-                  type="checkbox"
-                  id="status-toggleGirl"
-                  className="toggle-checkbox"
-                  checked={selectedStatus === 'YES'}
-                  onChange={handleChange}
-                />
-                <label className="toggle-switch" htmlFor="status-toggleGirl">
-                  <span className="toggle-text">No</span>
-                  <span className="toggle-text">Yes</span>
-                </label>
-              </div>) :null}
-              <div className='d-flex justify-content-center align-items-center'>
-            <div className={showExTenants ? "col-1 bedPageFilterDropdown" : "col-5 bedPageFilterDropdown"}>
-              {showExTenants ? '' : <button id="tenantAddButton" type="button" class="add-button" onClick={() => { handleAddNew(); }} >
-               {t('dashboard.addTenants')}
+            {showBikeFilter ? (<div className="toggle-container">
+              <label className="toggle-label" htmlFor="status-toggleGirl">{t('tenantsPage.bike')}</label>
+              <input
+                type="checkbox"
+                id="status-toggleGirl"
+                className="toggle-checkbox"
+                checked={selectedStatus === 'YES'}
+                onChange={handleChange}
+              />
+              <label className="toggle-switch" htmlFor="status-toggleGirl">
+                <span className="toggle-text">No</span>
+                <span className="toggle-text">Yes</span>
+              </label>
+            </div>) : null}
+            <div className='d-flex justify-content-center align-items-center'>
+              <div className={showExTenants ? "col-1 bedPageFilterDropdown" : "col-5 bedPageFilterDropdown"}>
+                {showExTenants ? '' : <button id="tenantAddButton" type="button" class="add-button" onClick={() => { handleAddNew(); }} >
+                  {t('dashboard.addTenants')}
+                </button>}
+
+              </div>
+              <div className={showExTenants ? "col-8 bedPageFilterDropdown" : "col-4 bedPageFilterDropdown"}>
+              {showExTenants ? <button type="button" id="presentTenantBtn1" class="add-button text-center" onClick={showExTenantsData} >
+              {t('tenantsPage.presentTenants')}
+              </button> : <button id="tenantVacateButton" type="button" class="add-button" onClick={showExTenantsData} >
+              {t('tenantsPage.vacated')}
               </button>}
-              
+            </div>
+
+
             </div>
           </div>
         </div>
-      </div>
       </div>
 
       <div>
@@ -966,14 +977,19 @@ const TenantsGirls = () => {
 
 
                   {/* ===== */}
-                  <div className="col-md-6">
-                    <label htmlFor="bikeimage" className="form-label">{t('tenantsPage.BikePic')}</label>
-                    <input type="file" className="form-control" onChange={handleImageChange} />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="bikeRc" className="form-label">{t('tenantsPage.BikeRc')}</label>
-                    <input type="file" className="form-control" onChange={handleRcChange} />
-                  </div>
+                  {hasBike && (
+                    <>
+                      <div className="col-md-6">
+                        <label htmlFor="bikeimage" className="form-label">{t('tenantsPage.BikePic')}</label>
+                        <input type="file" className="form-control" onChange={handleImageChange} />
+                      </div>
+                      <div className="col-md-6">
+                        <label htmlFor="bikeRc" className="form-label">{t('tenantsPage.BikeRc')}</label>
+                        <input type="file" className="form-control" onChange={handleRcChange} />
+                      </div>
+                    </>
+                  )}
+
 
                   {/* =============== */}
                   <div className='col-12 text-center'>
@@ -1012,7 +1028,7 @@ const TenantsGirls = () => {
                 <p><strong>{t('tenantsPage.joiningDate')} :</strong> {singleTenantDetails.joining_date}</p>
                 <p><strong>{t('tenantsPage.dueDate')} :</strong> {dueDateOfTenant}</p>
                 <p><strong>{t('tenantsPage.idProof')} :</strong>
-              
+
 
                   {singleTenantProofId ? (
                     <a className='downloadPdfText' href={singleTenantProofId} download> <FaDownload /> {t('tenantsPage.downloadPdf')}</a>

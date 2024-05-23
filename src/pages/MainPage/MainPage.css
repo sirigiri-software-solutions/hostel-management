@@ -166,6 +166,17 @@
 .logout-closeBtn:hover{
     background-color: #ffa135; 
 }
+@media  screen and (max-width:764px) {
+    .menufontchange{
+        display:flex;
+        flex-direction:row;
+        align-items: center;
+        margin-right: 13px;
+    }
+    .mb-dashboard-name{
+        font-size: 1.2rem;
+    }
+}  
 
 .dashBoarWelcome{
     font-size: 18px;

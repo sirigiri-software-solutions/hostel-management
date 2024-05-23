@@ -834,6 +834,7 @@ const TenantsBoys = () => {
           </div>
           <h1 className='management-heading'>{t('tenantsPage.tenantsManagement')}</h1>
         </div>
+
         <div className="col-12 col-md-4 search-wrapper">
           <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={handleSearchChange} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
@@ -861,7 +862,7 @@ const TenantsBoys = () => {
               </button>}
               
             </div>
-            <div className={showExTenants ? "col-8 bedPageFilterDropdown" : "col-4 bedPageFilterDropdown"}>
+            <div className={showExTenants ? "col-4 bedPageFilterDropdown" : "col-4 bedPageFilterDropdown"}>
               {showExTenants ? <button type="button" id="presentTenantBtn" class="add-button text-center" onClick={showExTenantsData} >
               {t('tenantsPage.presentTenants')}
               </button> : <button id="tenantVacateButton" type="button" class="add-button" onClick={showExTenantsData} >
@@ -869,8 +870,9 @@ const TenantsBoys = () => {
               </button>}
             </div>
       </div>
+      </div>
           </div>
-        </div>
+        
 
 
 
@@ -1022,7 +1024,7 @@ const TenantsBoys = () => {
                     <label htmlFor='bikeCheck1' className='bike'>{t('dashboard.no')}</label>
                   </div>
 
-                  {hasBike ? (
+                  {hasBike && (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
                       <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
@@ -1036,34 +1038,42 @@ const TenantsBoys = () => {
                         style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
                       />
                     </div>
-                  ) : (
-                    <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
-                      <input
-                        type="text"
-                        id="bikeNumber"
+                  )
+                  // ) : (
+                  //   <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+                  //     <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
+                  //     <input
+                  //       type="text"
+                  //       id="bikeNumber"
 
-                        className='form-control'
-                        placeholder="Enter number plate ID"
-                        value={bikeNumber}
-                        onChange={(event) => setBikeNumber(event.target.value)}
-                        style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
-                      />
-                    </div>
+                  //       className='form-control'
+                  //       placeholder="Enter number plate ID"
+                  //       value={bikeNumber}
+                  //       onChange={(event) => setBikeNumber(event.target.value)}
+                  //       style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                  //     />
+                  //   </div>
 
-                  )}
+                  // )}
+}
                   {/* <div className="col-md-6">
                     <label htmlFor="bikeimage" className='form-label'>BikeImage:</label>
                     <input type='file' className='form-control' value={bikeImage} onChange={(e)=>setBikeImage(e.target.value)}/>
                   </div> */}
-                  <div className="col-md-6">
-                    <label htmlFor="bikeimage" className="form-label">{t('tenantsPage.BikePic')}</label>
-                    <input type="file" className="form-control" onChange={handleImageChange} />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="bikeRc" className="form-label">{t('tenantsPage.BikeRc')}</label>
-                    <input type="file" className="form-control" onChange={handleRcChange} />
-                  </div>
+                 {hasBike && (
+  <>
+    <div className="col-md-6">
+      <label htmlFor="bikeimage" className="form-label">{t('tenantsPage.BikePic')}</label>
+      <input type="file" className="form-control" onChange={handleImageChange} />
+    </div>
+    <div className="col-md-6">
+      <label htmlFor="bikeRc" className="form-label">{t('tenantsPage.BikeRc')}</label>
+      <input type="file" className="form-control" onChange={handleRcChange} />
+    </div>
+  </>
+)}
+
+
 
 
 

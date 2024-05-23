@@ -47,7 +47,6 @@ const DashboardGirls = () => {
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
 
-
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [currentMonthExpenses, setCurrentMonthExpenses] = useState([])
 
@@ -1551,7 +1550,7 @@ Please note that you made your last payment on ${paidDate}.\n`
     expense: expense.expenseName,
     amount: expense.expenseAmount,
   }));
-
+console.log("hostels names", activeGirlsHostelButtons)
 
   return (
     <div className="dashboardgirls">

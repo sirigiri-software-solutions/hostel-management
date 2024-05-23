@@ -116,7 +116,6 @@
    
   }
 
-  
 
 @media screen and (max-width:768px) {
     .popup {
@@ -166,4 +165,14 @@
 }
 .logout-closeBtn:hover{
     background-color: #ffa135; 
+}
+
+.dashBoarWelcome{
+    font-size: 18px;
+    font-weight: 700;
+}
+.dashboardHead{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

@@ -6,3 +6,28 @@
         display:block;
     }
 }
+
+.new-Hostel-input{
+    width: 250px;
+    padding: 2px;
+    border: #FF8A00 2px solid;
+    border-radius: 5px 0 0 5px;  
+    outline: none;
+}
+.new-Hostel-input:focus {
+    border-color: #FF8A00; /* Sets the border color on focus */
+    box-shadow: 0 0 8px rgba(248, 179, 67, 0.8); /* Optional: Adds a glow effect */
+}
+
+.addHostelBtn{
+    width: 100px;
+    padding: 3px;
+    border-radius:0 5px 5px 0;
+    border: 1px solid #FF8A00;
+    background: #FF8A00;
+    color: white;
+}
+.languageLable{
+    font-size: 18px;
+    font-weight: 600;
+}

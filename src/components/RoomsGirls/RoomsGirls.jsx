@@ -8,9 +8,19 @@ import { DataContext } from '../../ApiData/ContextProvider';
 import { onValue, remove, update } from 'firebase/database';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { useTranslation } from 'react-i18next';
+import { useData } from '../../ApiData/ContextProvider';
 
 const RoomsGirls = () => {
-
+  const { t }=useTranslation();
+  const  role = localStorage.getItem('role');
+  let adminRole = "";
+  if(role === "admin"){
+    adminRole = "Admin";
+  }else if(role === "subAdmin"){
+    adminRole = "Sub-admin"
+  }
+  const { activeGirlsHostel } = useData();
   const [floorNumber, setFloorNumber] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
   const [numberOfBeds, setNumberOfBeds] = useState('');
@@ -18,10 +28,11 @@ const RoomsGirls = () => {
   const [rooms, setRooms] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState('');
-  const [createdBy, setCreatedBy] = useState('admin'); // Default to 'admin'
+  const [createdBy, setCreatedBy] = useState(adminRole); // Default to 'admin'
   const [updateDate, setUpdateDate] = useState('');
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
+
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -93,7 +104,7 @@ const handleRoomsIntegerChange = (event) => {
     }
     // ---------------------------------------
     if (isEditing) {
-      const roomRef = ref(database, `Hostel/girls/rooms/${currentId}`);
+      const roomRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms/${currentId}`);
       update(roomRef, {
         floorNumber,
         roomNumber,
@@ -124,7 +135,7 @@ const handleRoomsIntegerChange = (event) => {
         });
       });
     } else {
-      const roomsRef = ref(database, 'Hostel/girls/rooms');
+      const roomsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms`);
       push(roomsRef, {
         floorNumber,
         roomNumber,
@@ -193,7 +204,7 @@ const handleRoomsIntegerChange = (event) => {
   };
 
   const confirmDeleteYes = () => {
-    const roomRef = ref(database, `Hostel/girls/rooms/${currentId}`);
+    const roomRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms/${currentId}`);
     remove(roomRef).then(() => {
       toast.success("Room deleted successfully.", {
         position: "top-center",
@@ -256,7 +267,7 @@ const handleRoomsIntegerChange = (event) => {
   };
 
   useEffect(() => {
-    const roomsRef = ref(database, 'Hostel/girls/rooms');
+    const roomsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedRooms = [];
@@ -268,17 +279,17 @@ const handleRoomsIntegerChange = (event) => {
       }
       setRooms(loadedRooms);
     });
-  }, []);
+  }, [activeGirlsHostel]);
 
   const columns = [
-    'S.No',
-    'Room.No',
-    'Floor',
-    'No.of Beds',
-    'Bed Rent',
-    'Created By',
-    'Last Updated Date',
-    'Edit'
+    t('roomsPage.S.No'),
+    t('roomsPage.Room.No'),
+    t('roomsPage.Floor'),
+    t('roomsPage.No.of Beds'),
+    t('roomsPage.Bed Rent'),
+    t('roomsPage.Created By'),
+    t('roomsPage.Last Updated Date'),
+    t('roomsPage.Edit')
   ];
 
   
@@ -315,7 +326,7 @@ function capitalizeFirstLetter(string) {
       </button>
     }));
     setInitialRows(rows);
-  }, [rooms]);
+  }, [rooms, activeGirlsHostel]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [initialRows, setInitialRows] = useState([]);
@@ -334,6 +345,7 @@ function capitalizeFirstLetter(string) {
     setShowModal(false);
   }
 
+  const isUneditable = role === 'admin' || role === 'subAdmin';
   return (
     <div className='h-100'>
       <>
@@ -342,15 +354,15 @@ function capitalizeFirstLetter(string) {
           <div className='roomlogo-container'>
             <img src={RoomsIcon} alt="RoomsIcon" className='roomlogo' />
           </div>
-          <h1 className='management-heading'>Rooms Management</h1>
+          <h1 className='management-heading'>{t('roomsPage.RoomsManagement')}</h1>
         </div>
         <div className="col-6 col-md-4 search-wrapper">
-          <input type="text" placeholder='Search' className='search-input' value={searchTerm} onChange={handleChange} />
+          <input type="text" placeholder={t('common.search')} className='search-input' value={searchTerm} onChange={handleChange} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
         <div className="col-6 col-md-4 d-flex justify-content-end">
           <button id="roomGirlsPageBtn" type="button" className="add-button" onClick={handleAddNew}>
-            Add Rooms
+          {t('dashboard.addRooms')}
           </button>
         </div>
       </div>
@@ -361,51 +373,51 @@ function capitalizeFirstLetter(string) {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id="exampleModalLabel">Create Rooms</h1>
+              <h1 className="modal-title fs-5" id="exampleModalLabel">{t('roomsPage.Create Rooms')}</h1>
               <button onClick={closePopupModal} className="btn-close" aria-label="Close"></button>
             </div>
             <div className="modal-body">
               <div className="container-fluid">
                 <form className="row g-3" onSubmit={handleSubmit}>
                   <div className="col-md-6">
-                    <label htmlFor="inputNumber" className="form-label">Floor Number</label>
+                    <label htmlFor="inputNumber" className="form-label">{t('roomsPage.floorNumber')}</label>
                     <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange} />
                     {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="inputRent" className="form-label">Room Number</label>
+                    <label htmlFor="inputRent" className="form-label">{t('roomsPage.roomNumber')}</label>
                     <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} />
                     {/* {formErrors.rent && <div className="text-danger">{formErrors.rent}</div>} */}
                     {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="inputRooms" className="form-label">Number of Beds</label>
+                    <label htmlFor="inputRooms" className="form-label">{t('roomsPage.numberOfBeds')}</label>
                     <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} />
                     {/* {formErrors.rooms && <div className="text-danger">{formErrors.rooms}</div>} */}
                     {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="inputStatus" className="form-label">Bed Rent</label>
+                    <label htmlFor="inputStatus" className="form-label">{t('roomsPage.bedRent')}</label>
                     <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} />
                     {/* {formErrors.status && <div className="text-danger">{formErrors.status}</div>} */}
                     {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="inputRole" className="form-label">Created By</label>
-                    <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
-                      <option value="admin">Admin</option>
-                      <option value="sub-admin">Sub-admin</option>
-                    </select>
+                    <label htmlFor="inputRole" className="form-label">{t('roomsPage.createdBy')}</label>
+                    {/* <select className="form-select" id="inputRole" name="role" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}>
+                      <option value="admin">{t('dashboard.admin')}</option>
+                      <option value="sub-admin">{t('dashboard.subAdmin')}</option>
+                    </select> */}
+                    <input disabled={isUneditable} type="text" className='form-control' id="inputRole" value={createdBy} onChange={(e) => setCreatedBy(e.target.value)}/>
                   </div>
                   <div className="col-12 text-center">
-                    {isEditing && <p>Last Updated: {updateDate || 'N/A'}</p>}
                     {isEditing ? (
                       <>
-                      <button type="button" className="btn btn-warning roomUpdateBtn" onClick={handleSubmit}>Update Room</button>
-                      <button type="button" className='btn btn-warning' onClick={() => handleDeleteRoom(currentId)}>Delete Room</button>
+                      <button type="button" className="btn btn-warning roomUpdateBtn" onClick={handleSubmit}>{t('roomsPage.Update Room')}</button>
+                      {role === "admin" ? <button type="button" className='btn btn-warning' onClick={() => handleDeleteRoom(currentId)}>{t('roomsPage.Delete Room')}</button> : null}
                       </>
                     ) : (
-                      <button type="submit" className="btn btn-warning">Submit</button>
+                      <button type="submit" className="btn btn-warning">{t('roomsPage.CreateRoom')}</button>
                     )}
                   </div>
                 </form>
@@ -417,11 +429,11 @@ function capitalizeFirstLetter(string) {
       {showConfirmationPopUp && (
          <div className="confirmation-dialog">
          <div className='confirmation-card'>
-         <p style={{paddingBottom:'0px',marginBottom:'7px'}}>Are you sure you want to delete the room with number <span style={{color:'red'}}>{roomNumber}</span> ?</p>
-         <p style={{fontSize:'15px',color:'red',textAlign:'center',paddingTop:'0px'}}>Note : Once you delete the room it will not be restored</p>
+         <p style={{paddingBottom:'0px',marginBottom:'7px'}}>{t('roomsPage.Are you sure you want to delete the room with number')} <span style={{color:'red'}}>{roomNumber}</span> ?</p>
+         <p style={{fontSize:'15px',color:'red',textAlign:'center',paddingTop:'0px'}}>{t('roomsPage.Once you delete the room it will not be restored')}</p>
          <div className="buttons">
-           <button onClick={confirmDeleteYes} >Yes</button>
-           <button onClick={confirmDeleteNo} >No</button>
+           <button onClick={confirmDeleteYes} >{t('roomsPage.Yes')}</button>
+           <button onClick={confirmDeleteNo} >{t('roomsPage.No')}</button>
          </div>
          </div>
        </div>

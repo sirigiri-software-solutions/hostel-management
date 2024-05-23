@@ -75,7 +75,12 @@ const Login = () => {
           })
           setLoginData(initialState);
           navigate("/mainPage");
+<<<<<<< HEAD
            localStorage.setItem("username",singleLoginuser.firstname)
+=======
+          localStorage.setItem("username",singleLoginuser.firstname)
+          localStorage.setItem("role",singleLoginuser.role)
+>>>>>>> e4ae99f30974381048360837b4bdc7d1da4a758f
           // console.log(flag, "flag");
         } else {
           toast.error("Password Wrong, please enter correct password.", {

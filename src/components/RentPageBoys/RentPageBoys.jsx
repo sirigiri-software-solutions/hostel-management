@@ -11,12 +11,14 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FaWhatsapp } from "react-icons/fa";
 import "../../App.css"
+import { useTranslation } from 'react-i18next';
+import { useData } from '../../ApiData/ContextProvider';
+
 const RentPageBoys = () => {
-
+  const { t } = useTranslation();
   const { data } = useContext(DataContext);
+  const { activeBoysHostel } = useData();
   const [searchQuery, setSearchQuery] = useState('');
-
-
   const [tenants, setTenants] = useState([]);
   const [rooms, setRooms] = useState({});
   const [selectedTenant, setSelectedTenant] = useState('');
@@ -43,13 +45,13 @@ const RentPageBoys = () => {
   const sendMessage = (tenant, rentRecord) => {
     const totalFee = rentRecord.totalFee;
     const tenantName = tenant.name;
-  const amount = rentRecord.due;
-  const dateOfJoin = tenant.dateOfJoin;
-  const dueDate = rentRecord.dueDate;
-  const paidAmount = rentRecord.paidAmount;
-  const paidDate = rentRecord.paidDate;
+    const amount = rentRecord.due;
+    const dateOfJoin = tenant.dateOfJoin;
+    const dueDate = rentRecord.dueDate;
+    const paidAmount = rentRecord.paidAmount;
+    const paidDate = rentRecord.paidDate;
 
-  const message = `Hi ${tenantName},\n
+    const message = `Hi ${tenantName},\n
 Hope you are doing fine.\n
 Your total fee is ${totalFee}.\n
 You have paid ${paidAmount} so far.\n
@@ -88,20 +90,20 @@ Please note that you made your last payment on ${paidDate}.\n`
   useEffect(() => {
     const handleOutsideClick = (event) => {
       console.log("Triggering")
-        if (showModal && (event.target.id === "exampleModalRentsBoys" || event.key==="Escape")) {
-            setShowModal(false);
-        }
-       
+      if (showModal && (event.target.id === "exampleModalRentsBoys" || event.key === "Escape")) {
+        setShowModal(false);
+      }
+
     };
     window.addEventListener('click', handleOutsideClick);
-    window.addEventListener('keydown',handleOutsideClick)
-}, [showModal]);
+    window.addEventListener('keydown', handleOutsideClick)
+  }, [showModal]);
 
 
 
   useEffect(() => {
     // Fetch tenants data once when component mounts
-    const tenantsRef = ref(database, 'Hostel/boys/tenants');
+    const tenantsRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants`);
     onValue(tenantsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedTenants = data ? Object.keys(data).map(key => ({
@@ -112,12 +114,12 @@ Please note that you made your last payment on ${paidDate}.\n`
     });
 
     // Fetch room data once when component mounts
-    const roomsRef = ref(database, 'Hostel/boys/rooms');
+    const roomsRef = ref(database, `Hostel/boys/${activeBoysHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val() || {};
       setRooms(data);
     });
-  }, []);
+  }, [activeBoysHostel]);
 
   useEffect(() => {
     const updateTotalFeeFromRoom = () => {
@@ -171,7 +173,7 @@ Please note that you made your last payment on ${paidDate}.\n`
 
     // Optionally, you can store availableTenants in a state if you need to use it elsewhere
     setAvailableTenants(availableTenants);
-  }, [tenants, tenantsWithRents]);
+  }, [tenants, tenantsWithRents, activeBoysHostel]);
 
 
   useEffect(() => {
@@ -182,7 +184,7 @@ Please note that you made your last payment on ${paidDate}.\n`
 
   useEffect(() => {
     // Fetch tenants data once when component mounts
-    const tenantsRef = ref(database, 'Hostel/boys/tenants');
+    const tenantsRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants`);
     onValue(tenantsRef, (snapshot) => {
       const tenantsData = snapshot.val();
       const tenantIds = tenantsData ? Object.keys(tenantsData) : [];
@@ -190,7 +192,7 @@ Please note that you made your last payment on ${paidDate}.\n`
       // Initialize an array to hold promises for fetching each tenant's rents
       const rentsPromises = tenantIds.map(tenantId => {
         return new Promise((resolve) => {
-          const rentsRef = ref(database, `Hostel/boys/tenants/${tenantId}/rents`);
+          const rentsRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants/${tenantId}/rents`);
           onValue(rentsRef, (rentSnapshot) => {
             const rents = rentSnapshot.val() ? Object.keys(rentSnapshot.val()).map(key => ({
               id: key,
@@ -208,7 +210,7 @@ Please note that you made your last payment on ${paidDate}.\n`
         setTenantsWithRents(tenantsWithTheirRents);
       });
     });
-  }, []);
+  }, [activeBoysHostel]);
 
   // edit======================
   const loadRentForEditing = (tenantId, rentId) => {
@@ -241,25 +243,25 @@ Please note that you made your last payment on ${paidDate}.\n`
 
     if (!selectedTenant) {
       formIsValid = false;
-      errors["selectedTenant"] = "Selecting a tenant is required.";
+      errors["selectedTenant"] =t('errors.selectedTenantRequired');
     }
 
     // Paid Amount
     if (!paidAmount) {
       formIsValid = false;
-      errors["paidAmount"] = "Paid amount is required.";
+      errors["paidAmount"] = t('errors.paidAmountRequired');
     }
 
     // Paid Date
     if (!paidDate) {
       formIsValid = false;
-      errors["paidDate"] = "Paid date is required.";
+      errors["paidDate"] = t('errors.paidDateRequired');
     }
 
     // Due Date
     if (!dueDate) {
       formIsValid = false;
-      errors["dueDate"] = "Due date is required.";
+      errors["dueDate"] = t('errors.dueDateRequired');
     }
 
     setErrors(errors);
@@ -273,7 +275,7 @@ Please note that you made your last payment on ${paidDate}.\n`
       if (tenant) {
         // Set the date of join
         setDateOfJoin(tenant.dateOfJoin || '');
-  
+
         // Calculate the due date (one day less than adding one month)
         const currentDate = new Date(tenant.dateOfJoin); // Get the join date
         const dueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate(-1)); // Add one month and subtract one day
@@ -282,10 +284,6 @@ Please note that you made your last payment on ${paidDate}.\n`
       }
     }
   }, [selectedTenant, tenants]);
-  
-  
-  
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -310,9 +308,9 @@ Please note that you made your last payment on ${paidDate}.\n`
 
     if (isEditing) {
       // Update the existing rent record
-      const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents/${editingRentId}`);
+      const rentRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants/${selectedTenant}/rents/${editingRentId}`);
       await update(rentRef, rentData).then(() => {
-        toast.success("Rent updated successfully.", {
+        toast.success(t('toastMessages.rentUpdatedSuccess'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -328,7 +326,7 @@ Please note that you made your last payment on ${paidDate}.\n`
           handleNotifyCheckbox(rentData);
         }
       }).catch(error => {
-        toast.error("Error updating rent: " + error.message, {
+        toast.error(t('toastMessages.errorUpdatingRent')  + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -339,19 +337,11 @@ Please note that you made your last payment on ${paidDate}.\n`
         });
       });
 
-
-
-
-
-
-
-
-
     } else {
       // Create a new rent record
-      const rentRef = ref(database, `Hostel/boys/tenants/${selectedTenant}/rents`);
+      const rentRef = ref(database, `Hostel/boys/${activeBoysHostel}/tenants/${selectedTenant}/rents`);
       await push(rentRef, rentData).then(() => {
-        toast.success("Rent added successfully.", {
+        toast.success(t('toastMessages.rentAddedSuccess'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -362,7 +352,7 @@ Please note that you made your last payment on ${paidDate}.\n`
         });
         setIsEditing(false); // Reset editing state
       }).catch(error => {
-        toast.error("Error adding rent: " + error.message, {
+        toast.error(t('toastMessages.errorAddingRent') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -411,22 +401,22 @@ Please note that you made your last payment on ${paidDate}.\n`
 
 
   const columns = [
-    'S.No',
-    'Room.No',
-    'Person Name',
-    'Person Mobile',
-    'Bed No',
-    'Rent',
-    'Paid',
-    'Due',
-    'Joining Date',
-    'Due Date',
-    'Last Fee',
-    'Status',
-    'Update'
+    t('rentsPage.sNo'),
+    t('rentsPage.roomNo'),
+    t('rentsPage.personName'),
+    t('rentsPage.personMobile'),
+    t('rentsPage.bedNo'),
+    t('rentsPage.rent'),
+    t('rentsPage.paid'),
+    t('rentsPage.due'),
+    t('rentsPage.joiningDate'),
+    t('rentsPage.dueDate'),
+    t('rentsPage.lastFee'),
+    t('rentsPage.status'),
+    t('rentsPage.update')
   ];
 
- 
+
   const rentsRows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map((rent) => ({
     roomNumber: rent.roomNumber,
     name: tenant.name,
@@ -459,7 +449,7 @@ Please note that you made your last payment on ${paidDate}.\n`
     status: rent.status === 'Unpaid' ? 'Unpaid' : 'Paid',
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
-      onClick={() =>{ loadRentForEditing(rent.tenantId, rent.rentId); setShowForm(true)}}
+      onClick={() => { loadRentForEditing(rent.tenantId, rent.rentId); setShowForm(true) }}
     // data-bs-toggle="modal"
     // data-bs-target="#exampleModalRentsBoys"
     >
@@ -467,7 +457,7 @@ Please note that you made your last payment on ${paidDate}.\n`
     </button>,
   }));
 
-  
+
   const filteredRows = rows.filter(row => {
     return Object.values(row).some(value =>
       value.toString().toLowerCase().includes(searchQuery.toLowerCase())
@@ -517,7 +507,7 @@ Please note that you made your last payment on ${paidDate}.\n`
             <div className='roomlogo-container'>
               <img src={RentIcon} alt="RoomsIcon" className='roomlogo' />
             </div>
-            <h1 className='management-heading'>Rents Management</h1>
+            <h1 className='management-heading'>{t('rentsPage.rentsManagement')}</h1>
           </div>
           <div className="col-6 col-md-4 search-wrapper">
             <input type="text" placeholder='Search' className='search-input' value={searchQuery}
@@ -525,8 +515,8 @@ Please note that you made your last payment on ${paidDate}.\n`
             <img src={SearchIcon} alt="search-icon" className='search-icon' />
           </div>
           <div className="col-6 col-md-4 d-flex justify-content-end">
-            <button id="roomPageAddBtn" type="button" class="add-button" onClick={()=>{handleAddNew(); setShowForm(true)}} >
-              Add Rents
+            <button id="roomPageAddBtn" type="button" class="add-button" onClick={() => { handleAddNew(); setShowForm(true) }} >
+              {t('rentsPage.addRent')}
             </button>
           </div>
         </div>
@@ -537,110 +527,105 @@ Please note that you made your last payment on ${paidDate}.\n`
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Rents</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel"> {t('rentsPage.addRent')}</h1>
                 <button type="button" onClick={handleClosePopUp} className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <div className="container-fluid">
                   {isEditing ? null : 
-                  <div className='monthlyDailyButtons'>
-                    <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={()=>{setShowForm(true);  handleResetMonthly();}} >
-                      <text>Monthly</text>
-                    </div>
-                    <div className={!showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={()=>{setShowForm(false);  handleResetDaily();}}>
-                    <text>Daily</text>
-                    </div>
-                  </div>
-}
-                  {showForm?
-                  <div className='monthlyAddForm'>
-                  <form class="row lg-10" onSubmit={handleSubmit}>
-                    <div class='col-12 mb-3'>
-                      <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
-                        <option value="">Select a Tenant *</option>
-                        
-
-{isEditing ? (
-    <option key={selectedTenant} value={selectedTenant}>{tenantsWithRents.find(tenant => tenant.id === selectedTenant)?.name}</option>
-  ) : (
-    availableTenants.map(tenant => (
-      <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
-    ))
-  )}
-
-
-
-
-                      </select>
-                      {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor='roomNo' class="form-label">Room Number:</label>
-                      <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
-                      <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
-                      <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
-                      <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
-                      {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor="Due" class="form-label">Due:</label>
-                      <input id="Due" class="form-control" type="number" value={due} readOnly />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
-                      <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
-                      />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
-                      <input
-                        id="PaidDate"
-                        class="form-control"
-                        type="date"
-                        value={paidDate}
-                        onChange={e => setPaidDate(e.target.value)}
-                      />
-                      {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label htmlFor="DueDate" class="form-label">Due Date:</label>
-                      <input
-                        id="DueDate"
-                        class="form-control"
-                        type="date"
-                        value={dueDate}
-                        onChange={e => setDueDate(e.target.value)}
-                      />
-                      {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
-                    </div>
-                    <div className="col-12 mb-3">
-                      <div className="form-check">
-                        <input
-                          id="notifyCheckbox"
-                          className="form-check-input"
-                          type="checkbox"
-                          checked={notify}
-                          onChange={onClickCheckbox}
-                        // Toggle the state on change
-                        />
-                        <label className="form-check-label" htmlFor="notifyCheckbox">
-                          Notify
-                        </label>
-                        <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
+                    <div className='monthlyDailyButtons'>
+                      <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={()=>{setShowForm(true);  handleResetMonthly();}} >
+                        <text>{t('dashboard.monthly')}</text>
+                      </div>
+                      <div className={!showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={()=>{setShowForm(false);  handleResetDaily();}}>
+                      <text>{t('dashboard.daily')}</text>
                       </div>
                     </div>
+                  }
+                  {showForm?
+                    <div className='monthlyAddForm'>
+                    <form class="row lg-10" onSubmit={handleSubmit}>
+                      <div class='col-12 mb-3'>
+                        <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
+                          <option value="">{t('dashboard.selectTenant')} *</option>
+                            {isEditing ? (
+                                <option key={selectedTenant} value={selectedTenant}>{tenantsWithRents.find(tenant => tenant.id === selectedTenant)?.name}</option>
+                              ) : (
+                                availableTenants.map(tenant => (
+                                  <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
+                                ))
+                              )
+                            }
+                        </select>
+                        {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNumber')}:</label>
+                        <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label htmlFor='BedNumber' class="form-label">{t('dashboard.bedNumber')}:</label>
+                        <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label htmlFor='TotalFee' class="form-label">{t('dashboard.totalFee')}:</label>
+                        <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}:</label>
+                        <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
+                        {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label htmlFor="Due" class="form-label">{t('dashboard.due')}:</label>
+                        <input id="Due" class="form-control" type="number" value={due} readOnly />
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}:</label>
+                        <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
+                        />
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label htmlFor='PaidDate' class="form-label">{t('dashboard.paidDate')}:</label>
+                        <input
+                          id="PaidDate"
+                          class="form-control"
+                          type="date"
+                          value={paidDate}
+                          onChange={e => setPaidDate(e.target.value)}
+                        />
+                        {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label htmlFor="DueDate" class="form-label">{t('dashboard.dueDate')}:</label>
+                        <input
+                          id="DueDate"
+                          class="form-control"
+                          type="date"
+                          value={dueDate}
+                          onChange={e => setDueDate(e.target.value)}
+                        />
+                        {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
+                      </div>
+                      <div className="col-12 mb-3">
+                        <div className="form-check">
+                          <input
+                            id="notifyCheckbox"
+                            className="form-check-input"
+                            type="checkbox"
+                            checked={notify}
+                            onChange={onClickCheckbox}
+                          // Toggle the state on change
+                          />
+                          <label className="form-check-label" htmlFor="notifyCheckbox">
+                          {t('dashboard.notify')}
+                          </label>
+                          <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
+                            </div>
+                          </div>
 
                     <div class="col-12 text-center mt-2">
-                      <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                      <button type="submit" className="btn btn-warning">{isEditing ? t('dashboard.updateRent') : t('dashboard.submitRentDetails')}</button>
                     </div>
                   </form>
                   </div> :
@@ -648,7 +633,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                   <form class="row lg-10" onSubmit={handleSubmit}>
                     <div class='col-12 mb-3'>
                       <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
-                        <option value="">Select a Tenant*</option>
+                        <option value="">{t('dashboard.selectTenant')} *</option>
                         {/* {availableTenants.map(tenant => (
                           <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
                         ))} */}
@@ -663,33 +648,33 @@ Please note that you made your last payment on ${paidDate}.\n`
                       {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                     </div>
                     <div class="col-md-6 mb-3">
-                      <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                      <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNumber')}:</label>
                       <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
                     </div>
                     <div class="col-md-6 mb-3">
-                      <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                      <label htmlFor='BedNumber' class="form-label">{t('dashboard.bedNumber')}:</label>
                       <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
                     </div>
                     <div class="col-md-6 mb-3">
-                      <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                      <label htmlFor='TotalFee' class="form-label">{t('dashboard.totalFee')}:</label>
                       <input id="TotalFee" class="form-control" type="number" value={totalFee} onChange={e => setTotalFee(e.target.value)} />
                     </div>
                     <div class="col-md-6 mb-3">
-                      <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                      <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}:</label>
                       <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                       {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                     </div>
                     <div class="col-md-6 mb-3">
-                      <label htmlFor="Due" class="form-label">Due:</label>
+                      <label htmlFor="Due" class="form-label">{t('dashboard.due')}:</label>
                       <input id="Due" class="form-control" type="number" value={due} readOnly />
                     </div>
                     <div class="col-md-6 mb-3">
-                      <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                      <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}:</label>
                       <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
                       />
                     </div>
                     <div class="col-md-6 mb-3">
-                      <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                      <label htmlFor='PaidDate' class="form-label">{t('dashboard.paidDate')}:</label>
                       <input
                         id="PaidDate"
                         class="form-control"
@@ -700,7 +685,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                       {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
                     </div>
                     <div class="col-md-6 mb-3">
-                      <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                      <label htmlFor="DueDate" class="form-label">{t('dashboard.dueDate')}:</label>
                       <input
                         id="DueDate"
                         class="form-control"
@@ -721,14 +706,14 @@ Please note that you made your last payment on ${paidDate}.\n`
                         // Toggle the state on change
                         />
                         <label className="form-check-label" htmlFor="notifyCheckbox">
-                          Notify
+                        {t('dashboard.notify')}
                         </label>
                         <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
                       </div>
                     </div>
 
                     <div class="col-12 text-center mt-2">
-                      <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                      <button type="submit" className="btn btn-warning">{isEditing ? t('dashboard.updateRent') : t('dashboard.submitRentDetails')}</button>
                     </div>
                   </form>
                   </div>}

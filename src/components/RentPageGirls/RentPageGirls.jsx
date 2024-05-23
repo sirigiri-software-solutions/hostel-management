@@ -10,11 +10,14 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FaWhatsapp } from "react-icons/fa";
 import "../../App.css"
-const RentPageGirls = () => {
-  const { data } = useContext(DataContext);
-  // console.log(data && data, 'rentsBoysApi')
-  const [searchQuery, setSearchQuery] = useState('');
+import { useData } from '../../ApiData/ContextProvider';
+import { useTranslation } from 'react-i18next';
 
+const RentPageGirls = () => {
+  const { t } = useTranslation();
+  const { data } = useContext(DataContext);
+  const { activeGirlsHostel } = useData();
+  const [searchQuery, setSearchQuery] = useState('');
   const [tenants, setTenants] = useState([]);
   const [rooms, setRooms] = useState({});
   const [selectedTenant, setSelectedTenant] = useState('');
@@ -106,7 +109,7 @@ Please note that you made your last payment on ${paidDate}.\n`
 
   useEffect(() => {
     // Fetch tenants data once when component mounts
-    const tenantsRef = ref(database, 'Hostel/girls/tenants');
+    const tenantsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants`);
     onValue(tenantsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedTenants = data ? Object.keys(data).map(key => ({
@@ -117,12 +120,12 @@ Please note that you made your last payment on ${paidDate}.\n`
     });
 
     // Fetch room data once when component mounts
-    const roomsRef = ref(database, 'Hostel/girls/rooms');
+    const roomsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/rooms`);
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val() || {};
       setRooms(data);
     });
-  }, []);
+  }, [activeGirlsHostel]);
 
 
   useEffect(() => {
@@ -177,7 +180,7 @@ Please note that you made your last payment on ${paidDate}.\n`
 
     // Optionally, you can store availableTenants in a state if you need to use it elsewhere
     setAvailableTenants(availableTenants);
-  }, [tenants, tenantsWithRents]);
+  }, [tenants, tenantsWithRents, activeGirlsHostel]);
 
 
   useEffect(() => {
@@ -186,11 +189,9 @@ Please note that you made your last payment on ${paidDate}.\n`
     setDue(calculatedDue);
   }, [paidAmount, totalFee]);
 
-
-
   useEffect(() => {
     // Fetch tenants data once when component mounts
-    const tenantsRef = ref(database, 'Hostel/girls/tenants');
+    const tenantsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants`);
     onValue(tenantsRef, (snapshot) => {
       const tenantsData = snapshot.val();
       const tenantIds = tenantsData ? Object.keys(tenantsData) : [];
@@ -198,7 +199,7 @@ Please note that you made your last payment on ${paidDate}.\n`
       // Initialize an array to hold promises for fetching each tenant's rents
       const rentsPromises = tenantIds.map(tenantId => {
         return new Promise((resolve) => {
-          const rentsRef = ref(database, `Hostel/girls/tenants/${tenantId}/rents`);
+          const rentsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants/${tenantId}/rents`);
           onValue(rentsRef, (rentSnapshot) => {
             const rents = rentSnapshot.val() ? Object.keys(rentSnapshot.val()).map(key => ({
               id: key,
@@ -216,7 +217,7 @@ Please note that you made your last payment on ${paidDate}.\n`
         setTenantsWithRents(tenantsWithTheirRents);
       });
     });
-  }, []);
+  }, [activeGirlsHostel]);
 
   // edit======================
   const loadRentForEditing = (tenantId, rentId) => {
@@ -245,25 +246,25 @@ Please note that you made your last payment on ${paidDate}.\n`
 
     if (!selectedTenant) {
       formIsValid = false;
-      errors["selectedTenant"] = "Selecting a tenant is required.";
+      errors["selectedTenant"] = t('errors.selectedTenantRequired');
     }
 
     // Paid Amount
     if (!paidAmount) {
       formIsValid = false;
-      errors["paidAmount"] = "Paid amount is required.";
+      errors["paidAmount"] = t('errors.paidAmountRequired');
     }
 
     // Paid Date
     if (!paidDate) {
       formIsValid = false;
-      errors["paidDate"] = "Paid date is required.";
+      errors["paidDate"] = t('errors.paidDateRequired');
     }
 
     // Due Date
     if (!dueDate) {
       formIsValid = false;
-      errors["dueDate"] = "Due date is required.";
+      errors["dueDate"] = t('errors.dueDateRequired');
     }
 
     setErrors(errors);
@@ -311,9 +312,9 @@ Please note that you made your last payment on ${paidDate}.\n`
 
     if (isEditing) {
       // Update the existing rent record
-      const rentRef = ref(database, `Hostel/girls/tenants/${selectedTenant}/rents/${editingRentId}`);
+      const rentRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants/${selectedTenant}/rents/${editingRentId}`);
       await update(rentRef, rentData).then(() => {
-        toast.success("Rent updated successfully.", {
+        toast.success(t('toastMessages.rentAddedSuccess'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -327,7 +328,7 @@ Please note that you made your last payment on ${paidDate}.\n`
           handleNotifyCheckbox(rentData);
         } // Reset editing state
       }).catch(error => {
-        toast.error("Error updating rent: " + error.message, {
+        toast.error(t('toastMessages.errorAddingRent')+ error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -339,9 +340,9 @@ Please note that you made your last payment on ${paidDate}.\n`
       });
     } else {
       // Create a new rent record
-      const rentRef = ref(database, `Hostel/girls/tenants/${selectedTenant}/rents`);
+      const rentRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants/${selectedTenant}/rents`);
       await push(rentRef, rentData).then(() => {
-        toast.success("Rent added successfully.", {
+        toast.success(t('toastMessages.rentAddedSuccess'), {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -352,7 +353,7 @@ Please note that you made your last payment on ${paidDate}.\n`
         });
         setIsEditing(false); // Reset editing state
       }).catch(error => {
-        toast.error("Error adding rent: " + error.message, {
+        toast.error(t('toastMessages.errorAddingRent') + error.message, {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -407,19 +408,19 @@ Please note that you made your last payment on ${paidDate}.\n`
 
 
   const columns = [
-    'S.No',
-    'Room.No',
-    'Person Name',
-    'Person Mobile',
-    'Bed No',
-    'Rent',
-    'Paid',
-    'Due',
-    'Joining Date',
-    'Due Date',
-    'Last Fee',
-    'Status',
-    'Update'
+    t('rentsPage.sNo'),
+    t('rentsPage.roomNo'),
+    t('rentsPage.personName'),
+    t('rentsPage.personMobile'),
+    t('rentsPage.bedNo'),
+    t('rentsPage.rent'),
+    t('rentsPage.paid'),
+    t('rentsPage.due'),
+    t('rentsPage.joiningDate'),
+    t('rentsPage.dueDate'),
+    t('rentsPage.lastFee'),
+    t('rentsPage.status'),
+    t('rentsPage.update')
   ];
 
   const rentsRows = tenantsWithRents.flatMap((tenant, index) => tenant.rents.map((rent) => ({
@@ -487,7 +488,7 @@ Please note that you made your last payment on ${paidDate}.\n`
             <div className='roomlogo-container'>
               <img src={RentIcon} alt="RoomsIcon" className='roomlogo' />
             </div>
-            <h1 className='management-heading'>Rents Management</h1>
+            <h1 className='management-heading'>{t('rentsPage.rentsManagement')}</h1>
           </div>
           <div className="col-6 col-md-4 search-wrapper">
             <input type="text" placeholder='Search' className='search-input' value={searchQuery}
@@ -496,7 +497,7 @@ Please note that you made your last payment on ${paidDate}.\n`
           </div>
           <div className="col-6 col-md-4 d-flex justify-content-end">
             <button id="roomGirlsPageBtn" type="button" class="add-button" onClick={()=>{handleAddNew(); setShowForm(true)}} >
-              Add Rents
+            {t('rentsPage.addRent')}
             </button>
           </div>
         </div>
@@ -509,7 +510,7 @@ Please note that you made your last payment on ${paidDate}.\n`
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Create Rents</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel"> {t('rentsPage.addRent')}</h1>
                 <button onClick={handleClosePopUp} type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
@@ -517,10 +518,10 @@ Please note that you made your last payment on ${paidDate}.\n`
                   {isEditing ? null :
                   <div className='monthlyDailyButtons'>
                     <div className={showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(true)}>
-                      <text>Monthly</text>
+                      <text>{t('dashboard.monthly')}</text>
                     </div>
                     <div className={!showForm ? 'manageRentButton active' : 'manageRentButton'} onClick={() => setShowForm(false)}>
-                      <text>Daily</text>
+                      <text>{t('dashboard.daily')}</text>
                     </div>
                   </div>
 }
@@ -529,7 +530,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                       <form class="row lg-10" onSubmit={handleSubmit}>
                         <div class='col-12 mb-3'>
                           <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
-                            <option value="">Select a Tenant *</option>
+                            <option value="">{t('dashboard.selectTenant')} *</option>
                             {/* {availableTenants.map(tenant => (
                           <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
                         ))} */}
@@ -547,33 +548,33 @@ Please note that you made your last payment on ${paidDate}.\n`
                           {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                          <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNumber')}:</label>
                           <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                          <label htmlFor='BedNumber' class="form-label">{t('dashboard.bedNumber')}:</label>
                           <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                          <label htmlFor='TotalFee' class="form-label">{t('dashboard.totalFee')}:</label>
                           <input id="TotalFee" class="form-control" type="number" value={totalFee} readOnly />
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                          <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}:</label>
                           <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                           {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor="Due" class="form-label">Due:</label>
+                          <label htmlFor="Due" class="form-label">{t('dashboard.due')}:</label>
                           <input id="Due" class="form-control" type="number" value={due} readOnly />
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                          <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}:</label>
                           <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
                           />
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                          <label htmlFor='PaidDate' class="form-label">{t('dashboard.paidDate')}:</label>
                           <input
                             id="PaidDate"
                             class="form-control"
@@ -584,7 +585,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                           {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                          <label htmlFor="DueDate" class="form-label">{t('dashboard.dueDate')}:</label>
                           <input
                             id="DueDate"
                             class="form-control"
@@ -604,13 +605,13 @@ Please note that you made your last payment on ${paidDate}.\n`
                               onChange={onClickCheckbox} // Toggle the state on change
                             />
                             <label className="form-check-label" htmlFor="notifyCheckbox">
-                              Notify
+                            {t('dashboard.notify')}
                             </label>
                             <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
                           </div>
                         </div>
                         <div class="col-12 text-center mt-2">
-                          <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                          <button type="submit" className="btn btn-warning">{isEditing ? t('dashboard.updateRent') : t('dashboard.submitRentDetails')}</button>
                         </div>
                       </form>
                     </div> :
@@ -618,7 +619,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                       <form class="row lg-10" onSubmit={handleSubmit}>
                         <div class='col-12 mb-3'>
                           <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
-                            <option value="">Select a Tenant *</option>
+                            <option value="">{t('dashboard.selectTenant')} *</option>
                             {/* {availableTenants.map(tenant => (
                                             <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
                                           ))} */}
@@ -636,33 +637,33 @@ Please note that you made your last payment on ${paidDate}.\n`
                           {errors.selectedTenant && <div style={{ color: 'red' }}>{errors.selectedTenant}</div>}
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor='roomNo' class="form-label">Room Number:</label>
+                          <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNumber')}:</label>
                           <input id="roomNo" class="form-control" type="text" value={roomNumber} readOnly />
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor='BedNumber' class="form-label">Bed Number:</label>
+                          <label htmlFor='BedNumber' class="form-label">{t('dashboard.bedNumber')}:</label>
                           <input id="BedNumber" class="form-control" type="text" value={bedNumber} readOnly />
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor='TotalFee' class="form-label">Total Fee:</label>
+                          <label htmlFor='TotalFee' class="form-label">{t('dashboard.totalFee')}:</label>
                           <input id="TotalFee" class="form-control" type="number" value={totalFee}  onChange={e => setTotalFee(e.target.value)} />
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor="PaidAmount" class="form-label">Paid Amount:</label>
+                          <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}:</label>
                           <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
                           {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor="Due" class="form-label">Due:</label>
+                          <label htmlFor="Due" class="form-label">{t('dashboard.due')}:</label>
                           <input id="Due" class="form-control" type="number" value={due} readOnly />
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor='DateOfJoin' class="form-label">Date of Join:</label>
+                          <label htmlFor='DateOfJoin' class="form-label">{t('dashboard.dateOfJoin')}:</label>
                           <input id="DateOfJoin" class="form-control" type="date" value={dateOfJoin} readOnly // Make this field read-only since it's auto-populated 
                           />
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor='PaidDate' class="form-label">Paid Date:</label>
+                          <label htmlFor='PaidDate' class="form-label">{t('dashboard.paidDate')}:</label>
                           <input
                             id="PaidDate"
                             class="form-control"
@@ -673,7 +674,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                           {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label htmlFor="DueDate" class="form-label">Due Date:</label>
+                          <label htmlFor="DueDate" class="form-label">{t('dashboard.dueDate')}:</label>
                           <input
                             id="DueDate"
                             class="form-control"
@@ -693,13 +694,13 @@ Please note that you made your last payment on ${paidDate}.\n`
                               onChange={onClickCheckbox} // Toggle the state on change
                             />
                             <label className="form-check-label" htmlFor="notifyCheckbox">
-                              Notify
+                            {t('dashboard.notify')}
                             </label>
                             <FaWhatsapp style={{ backgroundColor: 'green', color: 'white', marginLeft: '7px', marginBottom: '4px' }} />
                           </div>
                         </div>
                         <div class="col-12 text-center mt-2">
-                          <button type="submit" className="btn btn-warning">{isEditing ? "Update Rent" : "Submit Rent Details"}</button>
+                          <button type="submit" className="btn btn-warning">{isEditing ? t('dashboard.updateRent') : t('dashboard.submitRentDetails')}</button>
                         </div>
                       </form>
                     </div>

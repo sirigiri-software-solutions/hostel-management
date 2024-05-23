@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/hostel-management/static/css/main.8c08bbd8.css",
-    "main.js": "/hostel-management/static/js/main.75466e8e.js",
+    "main.css": "/hostel-management/static/css/main.fbd5b0fd.css",
+    "main.js": "/hostel-management/static/js/main.e8114e04.js",
     "static/js/592.e8d05619.chunk.js": "/hostel-management/static/js/592.e8d05619.chunk.js",
     "static/media/image.png": "/hostel-management/static/media/image.b149bafe601317132631.png",
     "index.html": "/hostel-management/index.html",
-    "main.8c08bbd8.css.map": "/hostel-management/static/css/main.8c08bbd8.css.map",
-    "main.75466e8e.js.map": "/hostel-management/static/js/main.75466e8e.js.map",
+    "main.fbd5b0fd.css.map": "/hostel-management/static/css/main.fbd5b0fd.css.map",
+    "main.e8114e04.js.map": "/hostel-management/static/js/main.e8114e04.js.map",
     "592.e8d05619.chunk.js.map": "/hostel-management/static/js/592.e8d05619.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.8c08bbd8.css",
-    "static/js/main.75466e8e.js"
+    "static/css/main.fbd5b0fd.css",
+    "static/js/main.e8114e04.js"
   ]
 }

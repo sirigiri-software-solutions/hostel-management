@@ -21,7 +21,7 @@ const Dashboard = () => {
 
   return (
     <div className='container_main'>
-      <h1 className='dashboard-welcome'>{t('dashboard.welcome')} to {activeBoysHostel} Hostel</h1>
+      {/* <h1 className='dashboard-welcome'>{t('dashboard.welcome')} to {activeBoysHostel} Hostel</h1> */}
       <div className='mobile-layout'>
         <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
           <Tab eventKey="boys" title={t('dashboard.mens')}>
@@ -36,7 +36,6 @@ const Dashboard = () => {
         <DashboardBoys />
         <DashboardGirls />
       </div>
-
     </div>
   );
 }

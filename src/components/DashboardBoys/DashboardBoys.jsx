@@ -1465,7 +1465,7 @@ const DashboardBoys = () => {
               <button type="submit" className="btn btn-warning">{t('dashboard.create')}</button>
             </div>
           </form>
- 
+
         )
  
       default:
@@ -1572,12 +1572,11 @@ const DashboardBoys = () => {
       ) : (
         <p>No active hostels found.</p>
       )}
-
       <div className="menu">
         {menu.map((item, index) => (
           <div className='cardWithBtnsContainer'>
             <SmallCard key={index} index={index} item={item} handleClick={handleCardClick} />
-            <button id="mbladdButton" type="button" onClick={() => { handleClick(item.btntext) }}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext} </button>
+            <button id="mbladdButton" type="button" onClick={() => { handleClick(item.btntext) }}><img src={PlusIcon} alt="plusIcon" className='plusIconProperties' /> {item.btntext}</button>
           </div>
         ))}
         {/* <div className='button-container'>

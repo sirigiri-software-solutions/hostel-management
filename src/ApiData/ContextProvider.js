@@ -9,7 +9,6 @@ const DataProvider = ({ children }) => {
   const [data, setData] = useState(null);
   const [activeBoysHostel, setActiveBoysHostel] = useState(null);
   const [activeBoysHostelButtons, setActiveBoysHostelButtons] = useState([]);
-
   const [activeGirlsHostel, setActiveGirlsHostel] = useState(null);
   const [activeGirlsHostelButtons, setActiveGirlsHostelButtons] = useState([]);
 
@@ -63,14 +62,25 @@ const DataProvider = ({ children }) => {
     // Cleanup the listener when the component unmounts
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (activeBoysHostelButtons.length > 0) {
+      setActiveBoysHostel(activeBoysHostelButtons[0]);
+    }
+  }, [activeBoysHostelButtons]);
+
+  useEffect(() => {
+    if (activeGirlsHostelButtons.length > 0) {
+      setActiveGirlsHostel(activeGirlsHostelButtons[0]);
+    }
+  }, [activeGirlsHostelButtons]);
  
   return (
-    <DataContext.Provider value={{ data, activeBoysHostel, setActiveBoysHostel, activeBoysHostelButtons, activeGirlsHostel, setActiveGirlsHostel, activeGirlsHostelButtons }}>
+    <DataContext.Provider value={{ data, activeBoysHostel, setActiveBoysHostel, activeBoysHostelButtons,  activeGirlsHostel,setActiveBoysHostelButtons,setActiveGirlsHostelButtons, setActiveGirlsHostel, activeGirlsHostelButtons }}>
       {children}
     </DataContext.Provider>
   );
 };
 // Define the useData hook using the DataContext
 const useData = () => useContext(DataContext);
-
 export { DataContext, useData, DataProvider };

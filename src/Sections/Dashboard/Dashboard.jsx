@@ -8,9 +8,8 @@ import { useTranslation } from 'react-i18next';
 import DashboardGirls from '../../components/DashboardGirls/DashboardGirls'
 import { useData } from '../../ApiData/ContextProvider';
 
-
 const Dashboard = () => {
-  const { t } = useTranslation()
+  const {t} = useTranslation()
   const { activeBoysHostel } = useData();
   const [activeTab, setActiveTab] = useState('boys');
   const name = localStorage.getItem("username");
@@ -24,10 +23,10 @@ const Dashboard = () => {
       {/* <h1 className='dashboard-welcome'>{t('dashboard.welcome')} to {activeBoysHostel} Hostel</h1> */}
       <div className='mobile-layout'>
         <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
-          <Tab eventKey="boys" title={t('dashboard.mens')}>
+          <Tab eventKey="boys" title="Men's">
             <DashboardBoys />
           </Tab>
-          <Tab eventKey="girls" title={t('dashboard.womens')}>
+          <Tab eventKey="girls" title="Women's">
             <DashboardGirls />
           </Tab>
         </Tabs>

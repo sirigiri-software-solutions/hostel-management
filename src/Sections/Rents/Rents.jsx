@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { Tab, Tabs } from 'react-bootstrap';
 import RentPageBoys from '../../components/RentPageBoys/RentPageBoys';
 import RentPageGirls from '../../components/RentPageGirls/RentPageGirls';
-import { useTranslation } from 'react-i18next';
 
 
 const Rents = () => {
-    const { t }=useTranslation();
     
     const [activeTab, setActiveTab] = useState('boys');
     
@@ -17,10 +15,10 @@ const Rents = () => {
     return (
         <div className="container">
             <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
-                <Tab eventKey="boys" title={t('dashboard.mens')}>
+                <Tab eventKey="boys" title="Men's">
                     <RentPageBoys  />
                 </Tab>
-                <Tab eventKey="girls" title={t('dashboard.womens')}>
+                <Tab eventKey="girls" title="Women's">
                     <RentPageGirls />
                 </Tab>
             </Tabs>

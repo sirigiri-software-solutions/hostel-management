@@ -3,10 +3,8 @@ import Admin from '../../images/Icons.png';
 import { Tab, Tabs } from 'react-bootstrap';
 import BedsPageBoys from '../../components/BedsPageBoys/BedsPageBoys';
 import BedsPageGirls from '../../components/BedsPageGirls/BedsPageGirls';
-import { useTranslation } from 'react-i18next';
 
 const Beds = () => {
-    const { t }=useTranslation();
     const [activeTab, setActiveTab] = useState('boys');
     const [key, setKey] = useState('boys');
 
@@ -19,10 +17,10 @@ const Beds = () => {
     return (
         <div className="container">
             <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
-                <Tab eventKey="boys" title={t('dashboard.mens')}>
+                <Tab eventKey="boys" title="Men's">
                     <BedsPageBoys key={key}  />
                 </Tab>
-                <Tab eventKey="girls" title={t('dashboard.womens')}>
+                <Tab eventKey="girls" title="Women's">
                     <BedsPageGirls key={key}  />
                 </Tab>
             </Tabs>

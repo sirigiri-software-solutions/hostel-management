@@ -186,7 +186,13 @@
          "image":"Image",
          "id":"ID",
          "status":"Status",
-         "actions":"Actions"
+         "actions":"Actions",
+         "PermanentAddress": "Permanent Address:",
+  "BikePic": "Bike Pic:",
+  "BikeRc": "Bike RC:",
+  "DownloadPic": "Download Pic",
+  "DownloadRc": "Download RC",
+  "NotUploaded": "Not Uploaded"
 
         
     },

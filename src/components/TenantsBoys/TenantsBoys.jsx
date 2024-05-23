@@ -46,6 +46,7 @@ const TenantsBoys = () => {
   const [userDetailsTenantPopup, setUserDetailsTenantsPopup] = useState(false);
   const [singleTenantDetails, setSingleTenantDetails] = useState(false);
   const [dueDateOfTenant, setDueDateOfTenant] = useState("");
+  const [tenantAddress, setTenantAddress] = useState("");
   const [singleTenantProofId, setSingleTenantProofId] = useState("");
 
   const [fileName, setFileName] = useState('');
@@ -58,8 +59,63 @@ const TenantsBoys = () => {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [showBikeFilter,setShowBikeFilter] = useState(true);
 
+  const [permnentAddress, setPermnentAddress] = useState("");
+
   const tenantImageInputRef = useRef(null);
   const tenantProofIdRef = useRef(null);
+  const [bikeImage, setBikeImage] = useState(null);
+  const [bikeImageField, setBikeImageField] = useState('');
+  const [bikeRcImage,setBikeRcImage]=useState('');
+  const [bikeRcImageField,setBikeRcImageField]=useState('');
+  
+  
+
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      // Once the file is loaded, set the image in state
+      setBikeImage(reader.result);
+      
+    };
+    // console.log(file,"file created");
+    
+
+    reader.readAsDataURL(file);
+    console.log(file,"file created");
+  };
+  
+  
+  const handleRcChange=(e)=>{
+    const file1=e.target.files[0];
+    const reader=new FileReader();
+    reader.onload=()=>{
+      setBikeRcImage(reader.result);
+    }
+    reader.readAsDataURL(file1);
+    console.log(file1,"file1 created");
+
+  }
+  // const uploadImage = async () => {
+  //   if (bikeImage) {
+  //     const imageRef = storageRef(storage, `Hostel/boys/tenants/images/bikeImage/${bikeImage.name}`);
+  //     try {
+  //       const snapshot = await uploadBytes(imageRef, bikeImage);
+  //       const bikeimageUrl = await getDownloadURL(snapshot.ref);
+  //       setBikeImageField(bikeimageUrl);
+
+  //       // Optionally, send the URL to your backend for further processing
+  //       // For demonstration purposes, let's just log the image URL
+  //       console.log("Image URL:", bikeImageField);
+  //     } catch (error) {
+  //       console.error("Error uploading bike image:", error);
+  //     }
+  //   }
+  // };
+  // uploadImage();
 
   const handleCheckboxChange = (e) => {
     setHasBike(e.target.value == 'yes');
@@ -102,18 +158,18 @@ const TenantsBoys = () => {
   }, []);
 
 
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    const popup = document.getElementById('userDetailsTenantPopupId');
-    if (popup && (!popup.contains(event.target) || event.key === "Escape")) {
-      setUserDetailsTenantsPopup(false);
-    }
-  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const popup = document.getElementById('userDetailsTenantPopupId');
+      if (popup && (!popup.contains(event.target) || event.key === "Escape")) {
+        setUserDetailsTenantsPopup(false);
+      }
+    };
 
-  document.addEventListener("mousedown", handleClickOutside);
-  document.addEventListener("keydown",handleClickOutside)
-}, []);
-  
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleClickOutside)
+  }, []);
+
 
   useEffect(() => {
     const roomsRef = ref(database, `Hostel/boys/${activeBoysHostel}/rooms`);
@@ -141,7 +197,7 @@ useEffect(() => {
     } else {
       setBedOptions([]);
     }
-    
+
   }, [selectedRoom, boysRooms]);
 
 
@@ -184,7 +240,7 @@ useEffect(() => {
       }
     };
     fetchDataFromAPI();
-  
+
   }, [data]);
 
   const validate = () => {
@@ -238,7 +294,7 @@ useEffect(() => {
   const handleTenantIdChange = (e) => {
     if (e.target.files[0]) {
       const file = e.target.files[0]
-      console.log(file,"filename");
+      console.log(file, "filename");
       setFileName(file.name)
       setTenantId(e.target.files[0]);
     }
@@ -269,6 +325,8 @@ useEffect(() => {
       }
     }
 
+
+
     let idUrlToUpdate = tenantIdUrl;
     if (tenantId) {
       const imageRef = storageRef(storage, `Hostel/boys/${activeBoysHostel}/tenants/images/tenantId/${tenantId.name}`);
@@ -280,21 +338,74 @@ useEffect(() => {
       }
     }
 
+    // const uploadBikeImage = async (file) => {
+    //   const storage = getStorage(); // Initialize Firebase storage
+    //   const imageRef = storageRef(storage, `Hostel/boys/tenants/images/bikeImage/${file.name}`);
+
+    //   try {
+    //     const snapshot = await uploadBytes(imageRef, file);
+    //     const downloadURL = await getDownloadURL(snapshot.ref);
+    //     return downloadURL;
+    //   } catch (error) {
+    //     console.error("Error uploading bike image:", error);
+    //     return null;
+    //   }
+    // };
+    // const saveTenantData = async () => {
+    //   let bikeImageUrl = '';
+
+    //   if (bikeImage) {
+    //     bikeImageUrl = await uploadBikeImage(bikeImage);
+    //     setBikeImageField(bikeImageUrl); // Update the state with the URL
+    //   }
+
+
+    // const uploadFile = async (file) => {
+    //   // This is a placeholder function. Replace with your actual file upload logic.
+    //   const formData = new FormData();
+    //   formData.append('file', file);
+
+    //   const response = await fetch('your-upload-url', {
+    //     method: 'POST',
+    //     body: formData,
+    //   });
+
+    //   const data = await response.json();
+    //   return data.fileUrl; // Adjust based on your response structure
+    // };
+    // const bikeImageUrl = bikeImage ? await uploadFile(bikeImage) : '';
+
+    // const saveTenantData = async () => {
+    //   let bikeImageUrl = '';
+
+    //   if (bikeImage) {
+    //     bikeImageUrl = await uploadFile(bikeImage);
+    //     setBikeImageField(bikeImageUrl); // Update the state with the URL
+    //   }
+
+
     const tenantData = {
       roomNo: selectedRoom,
       bedNo: selectedBed,
       dateOfJoin,
-      name:name.charAt(0).toUpperCase() + name.slice(1),
+      name: name.charAt(0).toUpperCase() + name.slice(1),
       mobileNo,
       idNumber,
       emergencyContact,
       status,
       tenantImageUrl: imageUrlToUpdate,
-      tenantIdUrl:idUrlToUpdate,
+      tenantIdUrl: idUrlToUpdate,
       bikeNumber,
-      fileName:fileName
+      fileName: fileName,
+      permnentAddress,
+      bikeImage,
+      bikeRcImage
+      //  bikeImage,
       // tenantIdUrl,
     };
+
+    console.log(permnentAddress, "addressWhileSubmiting")
+    console.log(tenantData, "addressWhileSubmiting")
 
     if (isEditing) {
       await update(ref(database, `Hostel/boys/${activeBoysHostel}/tenants/${currentId}`), tenantData).then(() => {
@@ -307,7 +418,7 @@ useEffect(() => {
           draggable: true,
           progress: undefined,
         });
-        
+
       }).catch(error => {
         toast.error(t('toastMessages.errorUpdatingTenant') + error.message, {
           position: "top-center",
@@ -367,12 +478,11 @@ useEffect(() => {
     setFileName(tenant.fileName|| '');
     setShowModal(true);
     setBikeNumber(tenant.bikeNumber);
-    if(tenant.bikeNumber==='NA')
-    {
+    if (tenant.bikeNumber === 'NA') {
       setHasBike(false);
       setBikeNumber(tenant.bikeNumber);
     }
-    else{
+    else {
       setHasBike(true);
       setBikeNumber(tenant.bikeNumber);
     }
@@ -413,7 +523,7 @@ useEffect(() => {
     setBikeNumber('NA');
     tenantImageInputRef.current.value = null;
     tenantProofIdRef.current.value = null;
-    
+
   };
 
   // Filter tenants based on search query
@@ -449,7 +559,7 @@ useEffect(() => {
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
-}
+  }
 
 
   const rows = tenants.map((tenant, index) => ({
@@ -460,11 +570,11 @@ useEffect(() => {
     mobile_no: tenant.mobileNo, // Assuming 'mobile_no' property exists in the fetched data
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`, // Assuming 'room_bed_no' property exists in the fetched data
     joining_date: tenant.dateOfJoin,
-    bike_number:tenant.bikeNumber ? tenant.bikeNumber : '-',
-    status:capitalizeFirstLetter(tenant.status),
+    bike_number: tenant.bikeNumber ? tenant.bikeNumber : '-',
+    status: capitalizeFirstLetter(tenant.status),
     actions: <button
       style={{ backgroundColor: '#ff8a00', padding: '4px', borderRadius: '5px', color: 'white', border: 'none', }}
-      onClick={() =>{ handleEdit(tenant); }}
+      onClick={() => { handleEdit(tenant); }}
     // data-bs-toggle="modal"
     // data-bs-target="#exampleModalTenantsBoys"
     >
@@ -524,8 +634,11 @@ useEffect(() => {
     setShowModal(false);
     setSingleTenantDetails(tenant);
 
-    const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
 
+
+
+    const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
+    console.log(singleUserDueDate, "tenantdetails")
     if (singleUserDueDate && singleUserDueDate.rents) {
       const dataWithDueDate = Object.values(singleUserDueDate.rents);
       const dueDate = dataWithDueDate[0].dueDate;
@@ -538,7 +651,33 @@ useEffect(() => {
     if (singleUserDueDate && singleUserDueDate.tenantIdUrl) {
       setSingleTenantProofId(singleUserDueDate.tenantIdUrl)
     }
+    if (singleUserDueDate && singleUserDueDate.permnentAddress) {
+      console.log("permnent", "address")
+      setTenantAddress(singleUserDueDate.permnentAddress);
+    }
+    else {
+      setTenantAddress("");
+    }
+    if (singleUserDueDate && singleUserDueDate.bikeImage) {
+      setBikeImageField(singleUserDueDate.bikeImage);
+
+    }
+    else {
+      setBikeImageField("");
+    }
+    if (singleUserDueDate && singleUserDueDate.bikeRcImage) {
+      setBikeRcImageField(singleUserDueDate.bikeRcImage);
+
+    }
+    else {
+      setBikeRcImageField("");
+    }
+
+
+
+
   };
+
 
   const tenantPopupClose = () => {
     setUserDetailsTenantsPopup(false);
@@ -603,11 +742,11 @@ useEffect(() => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [tenantIdToDelete, setTenantIdToDelete] = useState(null);
 
-  const handleExTenantDelete = (id,name) => {
+  const handleExTenantDelete = (id, name) => {
     setShowConfirmation(true);
     setTenantIdToDelete(id);
     setName(name);
-    
+
   };
 
   const handleConfirmDelete = async () => {
@@ -685,6 +824,7 @@ useEffect(() => {
   };
 
 
+
   return (
     <>
       <div className="row d-flex flex-wrap align-items-center justify-content-between">
@@ -731,7 +871,7 @@ useEffect(() => {
       </div>
           </div>
         </div>
-       
+
 
 
       </div>
@@ -837,7 +977,7 @@ useEffect(() => {
                         <p>{t('dashboard.currentImage')}</p>
                       </div>
                     )}
-                    <input ref={tenantImageInputRef} id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange}  required />
+                    <input ref={tenantImageInputRef} id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} required />
                     {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
                   </div>
                   <div className="col-md-6">
@@ -845,15 +985,19 @@ useEffect(() => {
                     {t('dashboard.uploadId')}:
                     </label>
                     {isEditing && tenantIdUrl && (
-                     <div>
-                     <p>{fileName}</p>
-                   </div>
+                      <div>
+                        <p>{fileName}</p>
+                      </div>
                     )}
                     {/* Show input for uploading ID only if not editing or tenantIdUrl doesn't exist */}
-                    
-                      <input ref={tenantProofIdRef} id="tenantUploadId" className="form-control" type="file" onChange={handleTenantIdChange} />
-                    
-                  </div> 
+
+                    <input ref={tenantProofIdRef} id="tenantUploadId" className="form-control" type="file" onChange={handleTenantIdChange} />
+
+                  </div>
+                  <div className='col-md-12'>
+                    <label htmlFor="permnentAddress" className='form-label'>{t('tenantsPage.PermanentAddress')}</label>
+                    <textarea name='permnentAddress' value={permnentAddress} onChange={(e) => setPermnentAddress(e.target.value)} placeholder='Enter Address' className='form-control' />
+                  </div>
                   <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
                     <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">{t('dashboard.doYouHaveBike')}</label>
                     <input
@@ -892,7 +1036,7 @@ useEffect(() => {
                         style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
                       />
                     </div>
-                  ):(
+                  ) : (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
                       <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
@@ -908,6 +1052,18 @@ useEffect(() => {
                     </div>
 
                   )}
+                  {/* <div className="col-md-6">
+                    <label htmlFor="bikeimage" className='form-label'>BikeImage:</label>
+                    <input type='file' className='form-control' value={bikeImage} onChange={(e)=>setBikeImage(e.target.value)}/>
+                  </div> */}
+                  <div className="col-md-6">
+                    <label htmlFor="bikeimage" className="form-label">{t('tenantsPage.BikePic')}</label>
+                    <input type="file" className="form-control" onChange={handleImageChange} />
+                  </div>
+                  <div className="col-md-6">
+                    <label htmlFor="bikeRc" className="form-label">{t('tenantsPage.BikeRc')}</label>
+                    <input type="file" className="form-control" onChange={handleRcChange} />
+                  </div>
 
 
 
@@ -951,12 +1107,30 @@ useEffect(() => {
                   <p><strong>{t('tenantsPage.joiningDate')} :</strong> {singleTenantDetails.joining_date}</p>
                   <p><strong>{t('tenantsPage.dueDate')} :</strong> {dueDateOfTenant}</p>
                   <p><strong>{t('tenantsPage.idProof')} :</strong>
+                  
                   {singleTenantProofId ? (
                     <a className='downloadPdfText' href={singleTenantProofId} download> <FaDownload /> {t('tenantsPage.downloadPdf')}</a>
                   ) : (
                     <span className='NotUploadedText'>{t('tenantsPage.notUploaded')}</span>
                   )}
                 </p>
+                <p><strong>{t('tenantsPage.PermanentAddress')}</strong>{tenantAddress}</p>
+
+                <p><strong>{t('tenantsPage.BikePic')}</strong>
+                  {bikeImageField ? (
+                    <a className="downloadPdfText" href={bikeImageField} download> <FaDownload />{t('tenantsPage.DownloadPic')}</a>
+                  ) : (
+                    <span className="NotUploadedText">{t('tenantsPage.NotUploaded')}</span>
+                  )}
+                </p>
+                <p><strong>{t('tenantsPage.BikeRc')}</strong>
+                  {bikeRcImageField ? (
+                    <a className="downloadPdfText" href={bikeRcImageField} download> <FaDownload />{t('tenantsPage.DownloadRc')}</a>
+                  ) : (
+                    <span className="NotUploadedText">{t('tenantsPage.NotUploaded')}</span>
+                  )}
+                </p>
+
               </div>
             </div>
             <div className='popup-tenants-closeBtn'>

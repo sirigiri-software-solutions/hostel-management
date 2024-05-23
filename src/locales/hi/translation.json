@@ -185,7 +185,13 @@
     "image": "चित्र",
     "id": "आईडी",
     "status": "स्थिति",
-    "actions": "क्रियाएँ"
+    "actions": "क्रियाएँ",
+    "PermanentAddress": "स्थायी पता:",
+  "BikePic": "बाइक चित्र:",
+  "BikeRc": "बाइक आरसी:",
+  "DownloadPic": "चित्र डाउनलोड करें",
+  "DownloadRc": "आरसी डाउनलोड करें",
+  "NotUploaded": "अपलोड नहीं हुआ"
         
     },
     "expensesPage": {

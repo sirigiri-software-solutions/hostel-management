@@ -18,7 +18,7 @@
   },
   "dashboard": {
     "welcome": "స్వాగతం",
-    "women": "మహిళలు",
+    "womens": "మహిళలు",
     "mens": "పురుషులు",
     "totalRooms": "మొత్తం గదులు",
     "totalTenants": "మొత్తం అద్దెకూ",
@@ -180,7 +180,13 @@
   "image": "చిత్రం",
   "id": "ఐడి",
   "status": "స్థితి",
-  "actions": "చర్యలు"
+  "actions": "చర్యలు",
+  "PermanentAddress": "స్థిర నివాసం:",
+  "BikePic": "బైక్ పిక్:",
+  "BikeRc": "బైక్ ఆర్సీ:",
+  "DownloadPic": "పిక్ డౌన్‌లోడ్ చేయండి",
+  "DownloadRc": "ఆర్సీ డౌన్‌లోడ్ చేయండి",
+  "NotUploaded": "ఎక్కించబడలేదు"
 
     
   },

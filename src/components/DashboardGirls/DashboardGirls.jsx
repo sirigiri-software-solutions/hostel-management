@@ -83,6 +83,42 @@ const DashboardGirls = () => {
   const [notify, setNotify] = useState(false);
   const [notifyUserInfo, setNotifyUserInfo] = useState(null);
   const [totalTenantsData,setTotalTenantData] = useState({});
+  const [permnentAddress, setPermnentAddress] = useState("");
+  const [bikeImage, setBikeImage] = useState(null);
+  const [bikeImageField, setBikeImageField] = useState('');
+  const [bikeRcImage, setBikeRcImage] = useState('');
+  const [bikeRcImageField, setBikeRcImageField] = useState('');
+  const [tenantAddress, setTenantAddress] = useState('');
+
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      // Once the file is loaded, set the image in state
+      setBikeImage(reader.result);
+
+    };
+    // console.log(file,"file created");
+
+
+    reader.readAsDataURL(file);
+    console.log(file, "file created");
+  };
+
+
+  const handleRcChange = (e) => {
+    const file1 = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      setBikeRcImage(reader.result);
+    }
+    reader.readAsDataURL(file1);
+    console.log(file1, "file1 created");
+
+  }
 
   useEffect(()=>{
     const tenantsRef = ref(database, 'Hostel/girls/tenants');
@@ -510,8 +546,13 @@ Please note that you made your last payment on ${paidDate}.\n`
       tenantImageUrl: imageUrlToUpdate,
       tenantIdUrl: idUrlToUpdate,
       bikeNumber,
+      permnentAddress,
+      bikeImage,
+      bikeRcImage
+
       // tenantIdUrl,
     };
+    console.log(tenantData,"dashtenant");
 
     if (isEditing) {
       await update(ref(database, `Hostel/girls/${activeGirlsHostel}/tenants/${currentTenantId}`), tenantData).then(() => {
@@ -1225,208 +1266,190 @@ Please note that you made your last payment on ${paidDate}.\n`
             }
           </div>
         )
-      case t('dashboard.addTenants'):
-        return (
-          <form class="row lg-10" onSubmit={handleTenantSubmit}>
-            <div class="col-md-6">
-              <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNo')}</label>
-              <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
-                <option value="">{t('dashboard.selectRoom')}</option>
-                {girlsRooms.map((room) => (
-                  <option key={room.roomNumber} value={room.roomNumber}>
-                    {room.roomNumber}
-                  </option>
-                ))}
-              </select>
-              {tenatErrors.selectedRoom && <p style={{ color: 'red' }}>{tenatErrors.selectedRoom}</p>}
-            </div>
-
-            <div class="col-md-6">
-              <label htmlFor='bedNo' class="form-label">
-              {t('dashboard.bedNo')}
-              </label>
-              <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
-                <option value="">{t('dashboard.selectBed')}</option>
-                {bedOptions.map(bedNumber => (
-                  <option key={bedNumber} value={bedNumber}>
-                    {bedNumber}
-                  </option>
-                ))}
-              </select>
-
-              {tenatErrors.selectedBed && <p style={{ color: 'red' }}>{tenatErrors.selectedBed}</p>}
-            </div>
-            <div class="col-md-6">
-              <label htmlFor='dataofJoin' class="form-label">
-              {t('dashboard.dateOfJoin')}
-              </label>
-              <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
-
-              {tenatErrors.dateOfJoin && <p style={{ color: 'red' }}>{tenatErrors.dateOfJoin}</p>}
-            </div>
-            <div class="col-md-6">
-              <label htmlFor='tenantName' class="form-label">
-              {t('dashboard.name')}
-              </label>
-              <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
-
-              {tenatErrors.name && <p style={{ color: 'red' }}>{tenatErrors.name}</p>}
-            </div>
-            <div class="col-md-6">
-              <label htmlFor='tenantMobileNo' class="form-label">
-              {t('dashboard.mobileNo')}
-              </label>
-              <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
-
-              {tenatErrors.mobileNo && <p style={{ color: 'red' }}>{tenatErrors.mobileNo}</p>}
-            </div>
-            <div class="col-md-6">
-              <label htmlFor='tenantIdNum' class="form-label">
-              {t('dashboard.idNumber')}
-              </label>
-              <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
-
-              {tenatErrors.idNumber && <p style={{ color: 'red' }}>{tenatErrors.idNumber}</p>}
-            </div>
-            <div class="col-md-6">
-              <label htmlFor='tenantEmergency' class="form-label">
-              {t('dashboard.emergencyContact')}
-              </label>
-              <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
-
-              {tenatErrors.emergencyContact && <p style={{ color: 'red' }}>{tenatErrors.emergencyContact}</p>}
-            </div>
-            <div class="col-md-6">
-              <label htmlFor='tenantStatus' class="form-label">
-              {t('dashboard.status')}
-              </label>
-              <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
-                <option value="occupied">{t('dashboard.occupied')}</option>
-                <option value="unoccupied">{t('dashboard.unoccupied')}</option>
-              </select>
-
-            </div>
-            <div class="col-md-6">
-              <label htmlFor='tenantUpload' class="form-label">
-              {t('dashboard.uploadImage')}
-              </label>
-              {isEditing && tenantImageUrl && (
-                <div>
-                  <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
-                  <p>{t('dashboard.currentImage')}</p>
-                </div>
-              )}
-              <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required />
-              {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
-            </div>
-            <div class="col-md-6">
-              <label htmlFor='tenantUploadId' class="form-label">
-              {t('dashboard.uploadId')}:
-              </label>
-              {isEditing && tenantIdUrl && (
-                <object
-                  data={tenantIdUrl}
-                  type="application/pdf"
-                  width="50%"
-                  height="200px"
-                >
-                  <a href={tenantIdUrl}>{t('dashboard.downloadPdf')}</a>
-                </object>
-              )}
-              <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
-            </div>
-            <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
-              <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">{t('dashboard.doYouHaveBike')}</label>
-              <input
-                type="radio"
-                className="Radio"
-                id="bikeCheck"
-                name="bike"
-                value="yes"
-                onClick={handleCheckboxChange}
-                checked={hasBike}
-              />
-              <label htmlFor='bikeCheck' className='bike'>{t('dashboard.yes')}</label>
-              <input
-                type="radio"
-                id="bikeCheck1"
-                name="bike"
-                value="no"
-                onClick={handleCheckboxChange}
-                checked={!hasBike} 
-                style={{ marginLeft: '30px' }}
-              />
-              <label htmlFor='bikeCheck1' className='bike'>{t('dashboard.no')}</label>
-            </div>
-            {hasBike ? (
-              <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
-                <input
-                  type="text"
-                  id="bikeNumber"
-
-                  className='form-control'
-                  placeholder="Enter number plate ID"
-                  value={bikeNumber}
-                  onChange={(event) => setBikeNumber(event.target.value)}
-                  style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
-                />
+        case t('dashboard.addTenants'):
+          return (
+            <form class="row lg-10" onSubmit={handleTenantSubmit}>
+              <div class="col-md-6">
+                <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNo')}</label>
+                <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
+                  <option value="">{t('dashboard.selectRoom')}</option>
+                  {girlsRooms.map((room) => (
+                    <option key={room.roomNumber} value={room.roomNumber}>
+                      {room.roomNumber}
+                    </option>
+                  ))}
+                </select>
+                {tenatErrors.selectedRoom && <p style={{ color: 'red' }}>{tenatErrors.selectedRoom}</p>}
               </div>
-            ):(
-              <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
-                <input
-                  type="text"
-                  id="bikeNumber"
-
-                  className='form-control'
-                  placeholder="Enter number plate ID"
-                  value={bikeNumber}
-                  onChange={(event) => setBikeNumber(event.target.value)}
-                  style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
-                />
+   
+              <div class="col-md-6">
+                <label htmlFor='bedNo' class="form-label">
+                {t('dashboard.bedNo')}
+                </label>
+                <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
+                  <option value="">{t('dashboard.selectBed')}</option>
+                  {bedOptions.map(bedNumber => (
+                    <option key={bedNumber} value={bedNumber}>
+                      {bedNumber}
+                    </option>
+                  ))}
+                </select>
+   
+                {tenatErrors.selectedBed && <p style={{ color: 'red' }}>{tenatErrors.selectedBed}</p>}
               </div>
-            )}
-    
-
-            {/* ===== */}
-            <div class="col-md-6">
-              <label htmlFor='tenantIdInput'  for="file-upload" class="custom-file-upload form-label">
-                {/* <i class="fa fa-cloud-upload"></i> */}
-                {/* <MdUploadFile /> */}
-              </label>
-              <input  class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
-            </div>
- 
-            {/* =============== */}
-          <div className='col-12 text-center'>
-            {isEditing ? (
-              <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>Update Tenant</button>
-            ) : (
-              <button className='btn btn-warning' type="submit">{t('dashboard.addTenants')}</button>
-            )}
-
-
-            {/* ===== */}
-            <div class="col-md-6">
-              <label htmlFor='tenantIdInput' for="file-upload" class="custom-file-upload form-label">
-                {/* <i class="fa fa-cloud-upload"></i> */}
-                {/* <MdUploadFile /> */}
-              </label>
-              <input class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
-            </div>
-
-            {/* =============== */}
-            <div className='col-12 text-center'>
-              {isEditing ? (
-                <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>Update Tenant</button>
-              ) : (
-                <button className='btn btn-warning' type="submit">Add Tenant</button>
-              )}
-            </div>
-          </div>
-        </form>
-       )
+              <div class="col-md-6">
+                <label htmlFor='dataofJoin' class="form-label">
+                {t('dashboard.dateOfJoin')}
+                </label>
+                <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
+   
+                {tenatErrors.dateOfJoin && <p style={{ color: 'red' }}>{tenatErrors.dateOfJoin}</p>}
+              </div>
+              <div class="col-md-6">
+                <label htmlFor='tenantName' class="form-label">
+                {t('dashboard.name')}
+                </label>
+                <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
+   
+                {tenatErrors.name && <p style={{ color: 'red' }}>{tenatErrors.name}</p>}
+              </div>
+              <div class="col-md-6">
+                <label htmlFor='tenantMobileNo' class="form-label">
+                {t('dashboard.mobileNo')}
+                </label>
+                <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
+   
+                {tenatErrors.mobileNo && <p style={{ color: 'red' }}>{tenatErrors.mobileNo}</p>}
+              </div>
+              <div class="col-md-6">
+                <label htmlFor='tenantIdNum' class="form-label">
+                {t('dashboard.idNumber')}
+                </label>
+                <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
+   
+                {tenatErrors.idNumber && <p style={{ color: 'red' }}>{tenatErrors.idNumber}</p>}
+              </div>
+              <div class="col-md-6">
+                <label htmlFor='tenantEmergency' class="form-label">
+                {t('dashboard.emergencyContact')}
+                </label>
+                <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
+   
+                {tenatErrors.emergencyContact && <p style={{ color: 'red' }}>{tenatErrors.emergencyContact}</p>}
+              </div>
+              <div class="col-md-6">
+                <label htmlFor='tenantStatus' class="form-label">
+                {t('dashboard.status')}
+                </label>
+                <select id="tenantStatus" class="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
+                  <option value="occupied">{t('dashboard.occupied')}</option>
+                  <option value="unoccupied">{t('dashboard.unoccupied')}</option>
+                </select>
+   
+              </div>
+              <div class="col-md-6">
+                <label htmlFor='tenantUpload' class="form-label">
+                {t('dashboard.uploadImage')}
+                </label>
+                {isEditing && tenantImageUrl && (
+                  <div>
+                    <img src={tenantImageUrl} alt="Current Tenant" style={{ width: "100px", height: "100px" }} />
+                    <p>{t('dashboard.currentImage')}</p>
+                  </div>
+                )}
+                <input id="tenantUpload" class="form-control" type="file" onChange={handleTenantImageChange} ref={imageInputRef} required />
+                {errors.tenantImage && <p style={{ color: 'red' }}>{errors.tenantImage}</p>}
+              </div>
+              <div class="col-md-6">
+                <label htmlFor='tenantUploadId' class="form-label">
+                {t('dashboard.uploadId')}:
+                </label>
+                {isEditing && tenantIdUrl && (
+                  <object
+                    data={tenantIdUrl}
+                    type="application/pdf"
+                    width="50%"
+                    height="200px"
+                  >
+                    <a href={tenantIdUrl}>{t('dashboard.downloadPdf')}</a>
+                  </object>
+                )}
+                <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
+   
+              </div>
+              <div className='col-md-12'>
+                      <label htmlFor="permnentAddress" className='form-label'>{t('tenantsPage.PermanentAddress')}</label>
+                      <textarea name='permnentAddress' value={permnentAddress} onChange={(e) => setPermnentAddress(e.target.value)} placeholder='Enter Address' className='form-control' />
+                    </div>
+   
+              <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
+                <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">{t('dashboard.doYouHaveBike')}</label>
+                <input
+                  type="radio"
+                  className="Radio"
+                  id="bikeCheck"
+                  name="bike"
+                  value="yes"
+                  onClick={handleCheckboxChange}
+                  checked={hasBike}
+                />
+                <label htmlFor='bikeCheck' className='bike'>{t('dashboard.yes')}</label>
+                <input
+                  type="radio"
+                  id="bikeCheck1"
+                  name="bike"
+                  value="no"
+                  onClick={handleCheckboxChange}
+                  checked={!hasBike}
+                  style={{ marginLeft: '30px' }}
+                />
+                <label htmlFor='bikeCheck1' className='bike'>{t('dashboard.no')}</label>
+              </div>
+   
+             {hasBike && (
+                      <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+                        <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
+                        <input
+                          type="text"
+                          id="bikeNumber"
+  
+                          className='form-control'
+                          placeholder="Enter number plate ID"
+                          value={bikeNumber}
+                          onChange={(event) => setBikeNumber(event.target.value)}
+                          style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                        />
+                      </div>
+                    )
+                  }
+   
+   
+   
+              {/* ===== */}
+              {hasBike && (
+    <>
+      <div className="col-md-6">
+        <label htmlFor="bikeimage" className="form-label">{t('tenantsPage.BikePic')}</label>
+        <input type="file" className="form-control" onChange={handleImageChange} />
+      </div>
+      <div className="col-md-6">
+        <label htmlFor="bikeRc" className="form-label">{t('tenantsPage.BikeRc')}</label>
+        <input type="file" className="form-control" onChange={handleRcChange} />
+      </div>
+    </>
+  )}
+  
+   
+              {/* =============== */}
+              <div className='col-12 text-center mt-3'>
+                {isEditing ? (
+                  <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>{t('dashboard.updateTenant')}</button>
+                ) : (
+                  <button className='btn btn-warning' type="submit">{t('dashboard.addTenants')}</button>
+                )}
+              </div>
+            </form>
+          )
       case t('dashboard.addExpenses'):
         return (
           <form className="row lg-10" onSubmit={expensesHandleSubmit}>
@@ -1554,7 +1577,7 @@ console.log("hostels names", activeGirlsHostelButtons)
 
   return (
     <div className="dashboardgirls">
-      <h1 className="heading">{t('dashboard.women')}</h1>
+        <h1 className="heading">{t('dashboard.womens')}</h1>
       <br />
       {activeGirlsHostelButtons.length > 0 ? (
         <div className={"flex"}>

@@ -18,7 +18,7 @@ function Rooms() {
                 <Tab eventKey="boys" title={t('dashboard.mens')}>
                     <RoomsBoys />
                 </Tab>
-                <Tab eventKey="girls" title={t('dashboard.women')}>
+                <Tab eventKey="girls" title={t('dashboard.womens')}>
                     <RoomsGirls />
                 </Tab>
             </Tabs>

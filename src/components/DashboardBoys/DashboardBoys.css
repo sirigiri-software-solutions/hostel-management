@@ -36,6 +36,7 @@
     font-size: 24px;
     background-color: rgba(255,141,7, 0.41);
     width: fit-content;
+    /* display:inline-block; */
     font-weight: bold;
     padding: 10px 15px;
     border-radius: 10px;

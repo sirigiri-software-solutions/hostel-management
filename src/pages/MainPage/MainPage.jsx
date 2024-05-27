@@ -198,8 +198,10 @@ const MainPage = () => {
           <img src={logo} alt="logo" className='logo' />
         </div>
         <div className='nav-div' >
+        <div className='menufontchange'>
           <img src={Admin} alt="admin" className='mbl-dashboard-icon' />
           <h1 className='mb-dashboard-name'>{name}</h1>
+          </div>
           <div className='logoutButton' onClick={toggleModal}>
             <RiLogoutCircleRLine />
           </div>

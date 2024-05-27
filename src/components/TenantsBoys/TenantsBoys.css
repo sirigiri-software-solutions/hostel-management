@@ -449,3 +449,11 @@
   }
  
 }
+@media  screen and (max-width:768px) {
+
+  #presentTenantBtn{
+
+   float: right;
+   margin-left: 20px;
+  }
+ }

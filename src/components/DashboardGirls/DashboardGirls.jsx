@@ -121,7 +121,7 @@ const DashboardGirls = () => {
   }
 
   useEffect(()=>{
-    const tenantsRef = ref(database, 'Hostel/girls/tenants');
+    const tenantsRef = ref(database, `Hostel/girls/${activeGirlsHostel}/tenants`);
     onValue(tenantsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedTenants = data ? Object.keys(data).map(key => ({
@@ -245,11 +245,11 @@ Please note that you made your last payment on ${paidDate}.\n`
   };
   useEffect(() => {
     const handleOutsideClick = (event) => {
-      console.log("Triggering")
         if (showModal && (event.target.id === "exampleModalRoomsGirls" || event.key === "Escape")) {
             setShowModal(false);
             setHasBike(false);
             setBikeNumber('NA');
+            handleCloseModal();
         }
        
     };
@@ -869,6 +869,12 @@ Please note that you made your last payment on ${paidDate}.\n`
       rooms: '',
       status: ''
     });
+    setFormData({
+      expenseName: '',
+      expenseAmount: '',
+      expenseDate: '',
+      createdBy: 'admin'
+    })
   };
 
   const menu = [
@@ -1032,6 +1038,30 @@ Please note that you made your last payment on ${paidDate}.\n`
     setNotifyUserInfo(singleTenantData)
     
   }
+
+  const handleFocus = (e) => {
+    const { name } = e.target;
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: '',  
+    }));
+  };
+
+  const handleTenantFocus = (e) => {
+    const { name } = e.target;
+    setTenantErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: '',  // Clear the error message for the focused field
+    }));
+  };
+
+  const handleExpensesFocus = (e) => {
+    const fieldName = e.target.name;
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      [fieldName]: ''
+    }));
+  };
   
  
   const renderFormLayout = () => {
@@ -1042,22 +1072,22 @@ Please note that you made your last payment on ${paidDate}.\n`
           <form className="row g-3" onSubmit={handleGirlsRoomsSubmit}>
             <div className="col-md-6">
               <label htmlFor="inputNumber" className="form-label">{t('dashboard.floorNumber')}</label>
-              <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange} />
+              <input type="text" className="form-control" id="inputNumber" name="floorNumber" value={floorNumber} onChange={handleRoomsIntegerChange} onFocus={handleFocus} />
               {errors.floorNumber && <div style={{ color: 'red' }}>{errors.floorNumber}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="inputRent" className="form-label">{t('dashboard.roomNumber')}</label>
-              <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} />
+              <input type="text" className="form-control" id="inputRent" name="roomNumber" value={roomNumber} onChange={handleRoomsIntegerChange} onFocus={handleFocus} />
               {errors.roomNumber && <div style={{ color: 'red' }}>{errors.roomNumber}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="inputRooms" className="form-label">{t('dashboard.numberOfBeds')}</label>
-              <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} />
+              <input type="text" className="form-control" id="inputRooms" name="numberOfBeds" value={numberOfBeds} onChange={handleRoomsIntegerChange} onFocus={handleFocus} />
               {errors.numberOfBeds && <div style={{ color: 'red' }}>{errors.numberOfBeds}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="inputStatus" className="form-label">{t('dashboard.bedRent')}</label>
-              <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} />
+              <input type="text" className="form-control" id="inputStatus" name="bedRent" value={bedRent} onChange={handleRoomsIntegerChange} onFocus={handleFocus} />
               {errors.bedRent && <div style={{ color: 'red' }}>{errors.bedRent}</div>}
             </div>
             <div className="col-md-6">
@@ -1089,7 +1119,7 @@ Please note that you made your last payment on ${paidDate}.\n`
               <div className='monthlyAddForm'>
                 <form class="row lg-10" onSubmit={handleRentSubmit}>
                   <div class='col-12 mb-3'>
-                    <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
+                    <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing} name="selectedTenant" onFocus={handleFocus}>
                       <option value="">{t('dashboard.selectTenant')} *</option>
                       {/* {availableTenants.map(tenant => (
                   <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
@@ -1119,7 +1149,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                   </div>
                   <div class="col-md-6 mb-3">
                     <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}:</label>
-                    <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
+                    <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} name="paidAmount" onFocus={handleFocus} />
                     {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
@@ -1139,6 +1169,8 @@ Please note that you made your last payment on ${paidDate}.\n`
                       type="date"
                       value={paidDate}
                       onChange={e => setPaidDate(e.target.value)}
+                      name="paidDate"
+                      onFocus={handleFocus}
                     />
                     {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
                   </div>
@@ -1150,6 +1182,8 @@ Please note that you made your last payment on ${paidDate}.\n`
                       type="date"
                       value={dueDate}
                       onChange={e => setDueDate(e.target.value)}
+                      name="dueDate"
+                      onFocus={handleFocus}
                     />
                     {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
                   </div>
@@ -1176,7 +1210,7 @@ Please note that you made your last payment on ${paidDate}.\n`
               <div className='monthlyAddForm'>
                 <form class="row lg-10" onSubmit={handleRentSubmit}>
                   <div class='col-12 mb-3'>
-                    <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing}>
+                    <select id="bedNo" class="form-select" value={selectedTenant} onChange={e => setSelectedTenant(e.target.value)} disabled={isEditing} name="selectedTenant" onFocus={handleFocus}>
                       <option value="">{t('dashboard.selectTenant')} *</option>
                       {/* {availableTenants.map(tenant => (
                                     <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
@@ -1208,7 +1242,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                   </div>
                   <div class="col-md-6 mb-3">
                     <label htmlFor="PaidAmount" class="form-label">{t('dashboard.paidAmount')}</label>
-                    <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} />
+                    <input id="PaidAmount" class="form-control" type="number" value={paidAmount} onChange={e => setPaidAmount(e.target.value)} name="paidAmount" onFocus={handleFocus} />
                     {errors.paidAmount && <div style={{ color: 'red' }}>{errors.paidAmount}</div>}
                   </div>
                   <div class="col-md-6 mb-3">
@@ -1228,6 +1262,8 @@ Please note that you made your last payment on ${paidDate}.\n`
                       type="date"
                       value={paidDate}
                       onChange={e => setPaidDate(e.target.value)}
+                      name="paidDate"
+                      onFocus={handleFocus}
                     />
                     {errors.paidDate && <div style={{ color: 'red' }}>{errors.paidDate}</div>}
                   </div>
@@ -1239,6 +1275,8 @@ Please note that you made your last payment on ${paidDate}.\n`
                       type="date"
                       value={dueDate}
                       onChange={e => setDueDate(e.target.value)}
+                      name="dueDate"
+                      onFocus={handleFocus}
                     />
                     {errors.dueDate && <div style={{ color: 'red' }}>{errors.dueDate}</div>}
                   </div>
@@ -1271,7 +1309,7 @@ Please note that you made your last payment on ${paidDate}.\n`
             <form class="row lg-10" onSubmit={handleTenantSubmit}>
               <div class="col-md-6">
                 <label htmlFor='roomNo' class="form-label">{t('dashboard.roomNo')}</label>
-                <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
+                <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)} name="selectedBed" onFocus={handleTenantFocus}>
                   <option value="">{t('dashboard.selectRoom')}</option>
                   {girlsRooms.map((room) => (
                     <option key={room.roomNumber} value={room.roomNumber}>
@@ -1286,7 +1324,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                 <label htmlFor='bedNo' class="form-label">
                 {t('dashboard.bedNo')}
                 </label>
-                <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
+                <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)} name="selectedBed" onFocus={handleTenantFocus}>
                   <option value="">{t('dashboard.selectBed')}</option>
                   {bedOptions.map(bedNumber => (
                     <option key={bedNumber} value={bedNumber}>
@@ -1301,7 +1339,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                 <label htmlFor='dataofJoin' class="form-label">
                 {t('dashboard.dateOfJoin')}
                 </label>
-                <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
+                <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} name="dateOfJoin" onFocus={handleTenantFocus} />
    
                 {tenatErrors.dateOfJoin && <p style={{ color: 'red' }}>{tenatErrors.dateOfJoin}</p>}
               </div>
@@ -1309,7 +1347,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                 <label htmlFor='tenantName' class="form-label">
                 {t('dashboard.name')}
                 </label>
-                <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
+                <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} name="name" onFocus={handleTenantFocus} />
    
                 {tenatErrors.name && <p style={{ color: 'red' }}>{tenatErrors.name}</p>}
               </div>
@@ -1317,7 +1355,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                 <label htmlFor='tenantMobileNo' class="form-label">
                 {t('dashboard.mobileNo')}
                 </label>
-                <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
+                <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} name="mobileNo" onFocus={handleTenantFocus} />
    
                 {tenatErrors.mobileNo && <p style={{ color: 'red' }}>{tenatErrors.mobileNo}</p>}
               </div>
@@ -1325,7 +1363,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                 <label htmlFor='tenantIdNum' class="form-label">
                 {t('dashboard.idNumber')}
                 </label>
-                <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
+                <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)}  name="idNumber" onFocus={handleTenantFocus} />
    
                 {tenatErrors.idNumber && <p style={{ color: 'red' }}>{tenatErrors.idNumber}</p>}
               </div>
@@ -1333,7 +1371,7 @@ Please note that you made your last payment on ${paidDate}.\n`
                 <label htmlFor='tenantEmergency' class="form-label">
                 {t('dashboard.emergencyContact')}
                 </label>
-                <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
+                <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)}  name="emergencyContact" onFocus={handleTenantFocus} />
    
                 {tenatErrors.emergencyContact && <p style={{ color: 'red' }}>{tenatErrors.emergencyContact}</p>}
               </div>
@@ -1455,12 +1493,12 @@ Please note that you made your last payment on ${paidDate}.\n`
           <form className="row lg-10" onSubmit={expensesHandleSubmit}>
             <div className="col-md-6">
               <label htmlFor="inputExpenseName" className="form-label">{t('dashboard.expenseName')}</label>
-              <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} />
+              <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} onFocus={handleExpensesFocus} />
               {formErrors.expenseName && <div className="text-danger">{formErrors.expenseName}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="inputRent" className="form-label">{t('dashboard.expenseAmount')}</label>
-              <input type="number" className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} />
+              <input type="number" className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} onFocus={handleExpensesFocus} />
               {formErrors.expenseAmount && <div className="text-danger">{formErrors.expenseAmount}</div>}
             </div>
             <div className="col-md-6">
@@ -1473,7 +1511,7 @@ Please note that you made your last payment on ${paidDate}.\n`
             </div>
             <div className="col-md-6">
               <label htmlFor="inputDate" className="form-label">{t('dashboard.expenseDate')}</label>
-              <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
+              <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} onFocus={handleExpensesFocus} />
               {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
             </div>
 

@@ -747,6 +747,14 @@ const TenantsGirls = () => {
     onChangeStatus({ target: { value } });
   };
 
+  const handleTenantFocus = (e) => {
+    const { name } = e.target;
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: '',  
+    }));
+  };
+
 
   return (
     <>
@@ -816,7 +824,7 @@ const TenantsGirls = () => {
                     <label htmlFor='roomNo' class="form-label">
                       {t('dashboard.roomNo')}
                     </label>
-                    <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
+                    <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)} name="selectedRoom" onFocus={handleTenantFocus}>
                       <option value="">{t('dashboard.selectRoom')}</option>
                       {girlsRooms.map((room) => (
                         <option key={room.roomNumber} value={room.roomNumber}>
@@ -832,7 +840,7 @@ const TenantsGirls = () => {
                     <label htmlFor='bedNo' class="form-label">
                       {t('dashboard.bedNo')}
                     </label>
-                    <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
+                    <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)} name="selectedBed" onFocus={handleTenantFocus}>
                       <option value="">{t('dashboard.selectBed')}</option>
                       {bedOptions.map(bedNumber => (
                         <option key={bedNumber} value={bedNumber}>
@@ -848,7 +856,7 @@ const TenantsGirls = () => {
                     <label htmlFor='dataofJoin' class="form-label">
                       {t('dashboard.dateOfJoin')}
                     </label>
-                    <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
+                    <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)}  name="dateOfJoin" onFocus={handleTenantFocus} />
 
                     {errors.dateOfJoin && <p style={{ color: 'red' }}>{errors.dateOfJoin}</p>}
                   </div>
@@ -856,7 +864,7 @@ const TenantsGirls = () => {
                     <label htmlFor='tenantName' class="form-label">
                       {t('dashboard.name')}
                     </label>
-                    <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
+                    <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} name="name" onFocus={handleTenantFocus}  />
 
                     {errors.name && <p style={{ color: 'red' }}>{errors.name}</p>}
                   </div>
@@ -865,7 +873,7 @@ const TenantsGirls = () => {
                     <label htmlFor='tenantMobileNo' class="form-label">
                       {t('dashboard.mobileNo')}
                     </label>
-                    <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
+                    <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} name="mobileNo" onFocus={handleTenantFocus} />
 
                     {errors.mobileNo && <p style={{ color: 'red' }}>{errors.mobileNo}</p>}
                   </div>
@@ -873,7 +881,7 @@ const TenantsGirls = () => {
                     <label htmlFor='tenantIdNum' class="form-label">
                       {t('dashboard.idNumber')}
                     </label>
-                    <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
+                    <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} name="idNumber" onFocus={handleTenantFocus} />
 
                     {errors.idNumber && <p style={{ color: 'red' }}>{errors.idNumber}</p>}
                   </div>
@@ -881,7 +889,7 @@ const TenantsGirls = () => {
                     <label htmlFor='tenantEmergency' class="form-label">
                       {t('dashboard.emergencyContact')}
                     </label>
-                    <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
+                    <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} name="emergencyContact" onFocus={handleTenantFocus} />
 
                     {errors.emergencyContact && <p style={{ color: 'red' }}>{errors.emergencyContact}</p>}
                   </div>

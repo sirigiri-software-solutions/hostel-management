@@ -1618,7 +1618,7 @@ console.log("hostels names", activeGirlsHostelButtons)
         <h1 className="heading">{t('dashboard.womens')}</h1>
       <br />
       {activeGirlsHostelButtons.length > 0 ? (
-        <div className={"flex"}>
+        <div className={"flex1"}>
           {activeGirlsHostelButtons.map((button, index) => (
             <button className={`btn m-2 ${activeGirlsHostel === `${button}` ? 'active-button' : 'inactive-button'}`} onClick={() => setActiveGirlsHostel(button)} key={index} style={{
               backgroundColor: activeGirlsHostel === button ? '#FF8A00' : '#fac38c', // Example colors

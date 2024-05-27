@@ -1655,7 +1655,7 @@ const DashboardBoys = () => {
       {activeBoysHostelButtons.length > 0 ? (
         <div className={"flex"}>
           {activeBoysHostelButtons.map((button, index) => (
-            <button className={`btn m-2 ${activeBoysHostel === `${button}` ? 'active-button' : 'inactive-button'}`} onClick={() => setActiveBoysHostel(button)} key={index} style={{
+            <button className={`btn m-1 ${activeBoysHostel === `${button}` ? 'active-button' : 'inactive-button'}`} onClick={() => setActiveBoysHostel(button)} key={index} style={{
               backgroundColor: activeBoysHostel === button ? '#FF8A00' : '#fac38c', // Example colors
               color: activeBoysHostel === button ? 'white' : '#333333' // Set text color (optional)
             }}

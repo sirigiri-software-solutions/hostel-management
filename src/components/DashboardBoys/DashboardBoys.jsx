@@ -80,7 +80,46 @@ const DashboardBoys = () => {
   const [notifyUserInfo, setNotifyUserInfo] = useState(null);
   const [totalTenantsData,setTotalTenantData] = useState({});
   const [selectedTenant, setSelectedTenant] = useState('');
+  const [tenantAddress, setTenantAddress] = useState("");
+  const [permnentAddress, setPermnentAddress] = useState("");
 
+  const tenantImageInputRef = useRef(null);
+  const tenantProofIdRef = useRef(null);
+  const [bikeImage, setBikeImage] = useState(null);
+  const [bikeImageField, setBikeImageField] = useState('');
+  const [bikeRcImage,setBikeRcImage]=useState('');
+  const [bikeRcImageField,setBikeRcImageField]=useState('');
+
+  
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      // Once the file is loaded, set the image in state
+      setBikeImage(reader.result);
+      
+    };
+    // console.log(file,"file created");
+    
+
+    reader.readAsDataURL(file);
+    console.log(file,"file2 created");
+  };
+  
+  
+  const handleRcChange=(e)=>{
+    const file1=e.target.files[0];
+    const reader=new FileReader();
+    reader.onload=()=>{
+      setBikeRcImage(reader.result);
+    }
+    reader.readAsDataURL(file1);
+    console.log(file1,"file1 created");
+
+  }
  
 
   useEffect(()=>{
@@ -535,6 +574,10 @@ const DashboardBoys = () => {
       tenantImageUrl: imageUrlToUpdate,
       tenantIdUrl: idUrlToUpdate,
       bikeNumber,
+      permnentAddress,
+      bikeImage,
+      bikeRcImage
+
       // tenantIdUrl,
     };
  
@@ -1354,8 +1397,10 @@ const DashboardBoys = () => {
               <input id="tenantUploadId" class="form-control" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple />
  
             </div>
- 
- 
+            <div className='col-md-12'>
+                    <label htmlFor="permnentAddress" className='form-label'>{t('tenantsPage.PermanentAddress')}</label>
+                    <textarea name='permnentAddress' value={permnentAddress} onChange={(e) => setPermnentAddress(e.target.value)} placeholder='Enter Address' className='form-control' />
+                  </div>
  
             <div className="col-12 col-sm-12 col-md-12" style={{ marginTop: '20px' }}>
               <label className='col-sm-12 col-md-4' htmlFor="bikeCheck">{t('dashboard.doYouHaveBike')}</label>
@@ -1381,13 +1426,13 @@ const DashboardBoys = () => {
               <label htmlFor='bikeCheck1' className='bike'>{t('dashboard.no')}</label>
             </div>
  
-            {hasBike ? (
+           {hasBike && (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
                       <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
                         type="text"
                         id="bikeNumber"
- 
+
                         className='form-control'
                         placeholder="Enter number plate ID"
                         value={bikeNumber}
@@ -1395,36 +1440,28 @@ const DashboardBoys = () => {
                         style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
                       />
                     </div>
-                  ):(
-                    <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
-                      <input
-                        type="text"
-                        id="bikeNumber"
- 
-                  className='form-control'
-                  placeholder="Enter number plate ID"
-                  value={bikeNumber}
-                  onChange={(event) => setBikeNumber(event.target.value)}
-                  style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
-                />
-              </div>
- 
-            )}
+                  )
+                }
  
  
  
             {/* ===== */}
-            <div class="col-md-6">
-              <label htmlFor='tenantIdInput' for="file-upload" class="custom-file-upload form-label">
-                {/* <i class="fa fa-cloud-upload"></i> */}
-                {/* <MdUploadFile /> */}
-              </label>
-              <input class="form-control" id="file-upload" type="file" onChange={handleTenantIdChange} ref={idInputRef} multiple style={{ display: 'none' }} />
-            </div>
+            {hasBike && (
+  <>
+    <div className="col-md-6">
+      <label htmlFor="bikeimage" className="form-label">{t('tenantsPage.BikePic')}</label>
+      <input type="file" className="form-control" onChange={handleImageChange} />
+    </div>
+    <div className="col-md-6">
+      <label htmlFor="bikeRc" className="form-label">{t('tenantsPage.BikeRc')}</label>
+      <input type="file" className="form-control" onChange={handleRcChange} />
+    </div>
+  </>
+)}
+
  
             {/* =============== */}
-            <div className='col-12 text-center'>
+            <div className='col-12 text-center mt-3'>
               {isEditing ? (
                 <button type="button" className="btn btn-warning" onClick={handleTenantSubmit}>{t('dashboard.updateTenant')}</button>
               ) : (

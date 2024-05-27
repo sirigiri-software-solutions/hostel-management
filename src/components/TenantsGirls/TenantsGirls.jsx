@@ -59,7 +59,7 @@ const TenantsGirls = () => {
   const [hasBike, setHasBike] = useState(false);
   const [bikeNumber, setBikeNumber] = useState('NA');
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [showBikeFilter, setShowBikeFilter] = useState(true);
+  const [showBikeFilter,setShowBikeFilter] = useState(true);
 
   const tenantImageInputRef = useRef(null);
   const tenantProofIdRef = useRef(null);
@@ -299,7 +299,7 @@ const TenantsGirls = () => {
       tenantImageUrl: imageUrlToUpdate,
       tenantIdUrl: idUrlToUpdate,
       bikeNumber,
-      fileName: fileName,
+      // fileName: fileName,
       permnentAddress,
       bikeImage,
       bikeRcImage
@@ -479,7 +479,7 @@ const TenantsGirls = () => {
     t('tenantsPage.joiningDate'),
     t('tenantsPage.status'),
   ]
-  if (role === "admin") {
+  if(role === "admin"){
     columnsEx.push(t('tenantsPage.actions'))
   }
   const columns = [
@@ -534,7 +534,7 @@ const TenantsGirls = () => {
     const hasSearchQueryMatch = Object.values(row).some((value) =>
       value.toString().toLowerCase().includes(searchQuery.toLowerCase())
     );
-
+  
     // Apply additional filtering based on the selected status
     if (selectedStatus === 'YES') {
       // Include only rows with a bike number that is not 'NA' and matches the search query
@@ -547,7 +547,7 @@ const TenantsGirls = () => {
       return hasSearchQueryMatch;
     }
   });
-
+  
 
   const handleClosePopUp = () => {
     setShowModal(false);
@@ -563,8 +563,16 @@ const TenantsGirls = () => {
     setShowModal(false);
     setSingleTenantDetails(tenant);
 
-    const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
 
+
+    const [roomNo, bedNo] = tenant.room_bed_no.split('/');
+    const singleUserDueDate = tenants.find(eachTenant => 
+      eachTenant.name === tenant.name && 
+      eachTenant.mobileNo === tenant.mobile_no &&
+      eachTenant.roomNo === roomNo &&
+      eachTenant.bedNo === bedNo
+    );
+    console.log(singleUserDueDate, "tenantdetails5")
     if (singleUserDueDate && singleUserDueDate.rents) {
       const dataWithDueDate = Object.values(singleUserDueDate.rents);
       const dueDate = dataWithDueDate[0].dueDate;
@@ -714,7 +722,7 @@ const TenantsGirls = () => {
     room_bed_no: `${tenant.roomNo}/${tenant.bedNo}`,
     joining_date: tenant.dateOfJoin,
     status: 'Vacated',
-    actions: role === 'admin' ? (
+   actions: role === 'admin' ? (
       <button
         style={{
           backgroundColor: '#ff8a00',
@@ -755,7 +763,7 @@ const TenantsGirls = () => {
         </div>
         <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
           <div className='d-flex align-items-center text-center'>
-            {showBikeFilter ? (<div className="toggle-container">
+          {showBikeFilter ? (<div className="toggle-container">
               <label className="toggle-label" htmlFor="status-toggleGirl">{t('tenantsPage.bike')}</label>
               <input
                 type="checkbox"
@@ -782,12 +790,11 @@ const TenantsGirls = () => {
               </button> : <button id="tenantVacateButton" type="button" class="add-button" onClick={showExTenantsData} >
               {t('tenantsPage.vacated')}
               </button>}
-            </div>
-
-
+              
             </div>
           </div>
         </div>
+      </div>
       </div>
 
       <div>
@@ -943,7 +950,7 @@ const TenantsGirls = () => {
                     <label htmlFor='bikeCheck1' className='bike'>{t('dashboard.no')}</label>
                   </div>
 
-                  {hasBike ? (
+                  {hasBike && (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
                       <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
@@ -957,21 +964,22 @@ const TenantsGirls = () => {
                         style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
                       />
                     </div>
-                  ) : (
-                    <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
-                      <input
-                        type="text"
-                        id="bikeNumber"
+                  // ) : (
+                  //   <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+                  //     <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
+                  //     <input
+                  //       type="text"
+                  //       id="bikeNumber"
 
-                        className='form-control'
-                        placeholder="Enter number plate ID"
-                        value={bikeNumber}
-                        onChange={(event) => setBikeNumber(event.target.value)}
-                        style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
-                      />
-                    </div>
+                  //       className='form-control'
+                  //       placeholder="Enter number plate ID"
+                  //       value={bikeNumber}
+                  //       onChange={(event) => setBikeNumber(event.target.value)}
+                  //       style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                  //     />
+                  //   </div>
 
+                  // )}
                   )}
 
 
@@ -989,7 +997,6 @@ const TenantsGirls = () => {
                       </div>
                     </>
                   )}
-
 
                   {/* =============== */}
                   <div className='col-12 text-center'>
@@ -1028,7 +1035,7 @@ const TenantsGirls = () => {
                 <p><strong>{t('tenantsPage.joiningDate')} :</strong> {singleTenantDetails.joining_date}</p>
                 <p><strong>{t('tenantsPage.dueDate')} :</strong> {dueDateOfTenant}</p>
                 <p><strong>{t('tenantsPage.idProof')} :</strong>
-
+              
 
                   {singleTenantProofId ? (
                     <a className='downloadPdfText' href={singleTenantProofId} download> <FaDownload /> {t('tenantsPage.downloadPdf')}</a>

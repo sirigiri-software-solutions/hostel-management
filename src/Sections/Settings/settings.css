@@ -22,7 +22,7 @@
 .addHostelBtn{
     width: 100px;
     padding: 3px;
-    border-radius:0 5px 5px 0;
+    border-radius: 5px;
     border: 1px solid #FF8A00;
     background: #FF8A00;
     color: white;
@@ -30,4 +30,11 @@
 .languageLable{
     font-size: 18px;
     font-weight: 600;
+}
+.add-hostel-text{
+    font-size: 20px;
+    font-weight: 500;
+}
+.add-hostel-form{
+    display: flex;
 }

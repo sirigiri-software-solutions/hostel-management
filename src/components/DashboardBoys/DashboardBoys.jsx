@@ -123,7 +123,7 @@ const DashboardBoys = () => {
  
 
   useEffect(()=>{
-    const tenantsRef = ref(database, 'Hostel/boys/tenants');
+    const tenantsRef = ref(database,  `Hostel/boys/${activeBoysHostel}/tenants`);
     onValue(tenantsRef, (snapshot) => {
       const data = snapshot.val();
       const loadedTenants = data ? Object.keys(data).map(key => ({

@@ -351,6 +351,10 @@ Please note that you made your last payment on ${paidDate}.\n`
           progress: undefined,
         });
         setIsEditing(false); // Reset editing state
+        console.log(rentData, "Getting");
+        if (notify) {
+          handleNotifyCheckbox(rentData);
+        }
       }).catch(error => {
         toast.error(t('toastMessages.errorAddingRent') + error.message, {
           position: "top-center",
@@ -469,8 +473,17 @@ Please note that you made your last payment on ${paidDate}.\n`
     setNotify(false)
   }
 
-  const onClickCheckbox = () => {
+  const onClickCheckbox =async () => {
     setNotify(!notify)
+   
+    if(selectedTenant){
+    const tenant = tenantsWithRents.find(t => t.id === selectedTenant);
+    console.log(tenant,"unique")
+    console.log(selectedTenant,"unique")
+    const rentRecord = tenant.rents
+    setNotifyUserInfo({ tenant, rentRecord });
+    }
+ 
   }
 
   const handleResetMonthly = () => {

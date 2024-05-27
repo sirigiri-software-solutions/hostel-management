@@ -1518,6 +1518,9 @@ const DashboardBoys = () => {
         // Logic to open the popup for "Total Beds" card
         setPopupOpen(true);
     }
+    if (item.heading === 'Total Expenses') {
+      setExpensePopupOpen(true);
+    }
   };
  
  

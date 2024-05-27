@@ -13,6 +13,8 @@ import { FaDownload } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useTranslation } from 'react-i18next'
 import { useData } from '../../ApiData/ContextProvider';
+import '../TenantsBoys/TenantsBoys.css'
+import './TenantsGirls.css';
 
 const TenantsGirls = () => {
   const { t } = useTranslation();
@@ -297,7 +299,7 @@ const TenantsGirls = () => {
       tenantImageUrl: imageUrlToUpdate,
       tenantIdUrl: idUrlToUpdate,
       bikeNumber,
-      fileName: fileName,
+      // fileName: fileName,
       permnentAddress,
       bikeImage,
       bikeRcImage
@@ -561,8 +563,16 @@ const TenantsGirls = () => {
     setShowModal(false);
     setSingleTenantDetails(tenant);
 
-    const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
 
+
+    const [roomNo, bedNo] = tenant.room_bed_no.split('/');
+    const singleUserDueDate = tenants.find(eachTenant => 
+      eachTenant.name === tenant.name && 
+      eachTenant.mobileNo === tenant.mobile_no &&
+      eachTenant.roomNo === roomNo &&
+      eachTenant.bedNo === bedNo
+    );
+    console.log(singleUserDueDate, "tenantdetails5")
     if (singleUserDueDate && singleUserDueDate.rents) {
       const dataWithDueDate = Object.values(singleUserDueDate.rents);
       const dueDate = dataWithDueDate[0].dueDate;
@@ -761,24 +771,32 @@ const TenantsGirls = () => {
         </div>
         <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
           <div className='d-flex align-items-center text-center'>
-            {showBikeFilter?( <div className="toggle-container">
-                <label className="toggle-label" htmlFor="status-toggleGirl">{t('tenantsPage.bike')}</label>
-                <input
-                  type="checkbox"
-                  id="status-toggleGirl"
-                  className="toggle-checkbox"
-                  checked={selectedStatus === 'YES'}
-                  onChange={handleChange}
-                />
-                <label className="toggle-switch" htmlFor="status-toggleGirl">
-                  <span className="toggle-text">No</span>
-                  <span className="toggle-text">Yes</span>
-                </label>
-              </div>) :null}
-              <div className='d-flex justify-content-center align-items-center'>
-            <div className={showExTenants ? "col-1 bedPageFilterDropdown" : "col-5 bedPageFilterDropdown"}>
-              {showExTenants ? '' : <button id="tenantAddButton" type="button" class="add-button" onClick={() => { handleAddNew(); }} >
-               {t('dashboard.addTenants')}
+          {showBikeFilter ? (<div className="toggle-container">
+              <label className="toggle-label" htmlFor="status-toggleGirl">{t('tenantsPage.bike')}</label>
+              <input
+                type="checkbox"
+                id="status-toggleGirl"
+                className="toggle-checkbox"
+                checked={selectedStatus === 'YES'}
+                onChange={handleChange}
+              />
+              <label className="toggle-switch" htmlFor="status-toggleGirl">
+                <span className="toggle-text">No</span>
+                <span className="toggle-text">Yes</span>
+              </label>
+            </div>) : null}
+            <div className='d-flex justify-content-center align-items-center'>
+              <div className={showExTenants ? "col-1 bedPageFilterDropdown" : "col-5 bedPageFilterDropdown"}>
+                {showExTenants ? '' : <button id="tenantAddButton" type="button" class="add-button" onClick={() => { handleAddNew(); }} >
+                  {t('dashboard.addTenants')}
+                </button>}
+
+              </div>
+              <div className={showExTenants ? "col-8 bedPageFilterDropdown" : "col-4 bedPageFilterDropdown"}>
+              {showExTenants ? <button type="button" id="presentTenantBtn1" class="add-button text-center" onClick={showExTenantsData} >
+              {t('tenantsPage.presentTenants')}
+              </button> : <button id="tenantVacateButton" type="button" class="add-button" onClick={showExTenantsData} >
+              {t('tenantsPage.vacated')}
               </button>}
               
             </div>
@@ -940,7 +958,7 @@ const TenantsGirls = () => {
                     <label htmlFor='bikeCheck1' className='bike'>{t('dashboard.no')}</label>
                   </div>
 
-                  {hasBike ? (
+                  {hasBike && (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
                       <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
@@ -954,34 +972,39 @@ const TenantsGirls = () => {
                         style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
                       />
                     </div>
-                  ) : (
-                    <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
-                      <input
-                        type="text"
-                        id="bikeNumber"
+                  // ) : (
+                  //   <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+                  //     <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
+                  //     <input
+                  //       type="text"
+                  //       id="bikeNumber"
 
-                        className='form-control'
-                        placeholder="Enter number plate ID"
-                        value={bikeNumber}
-                        onChange={(event) => setBikeNumber(event.target.value)}
-                        style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
-                      />
-                    </div>
+                  //       className='form-control'
+                  //       placeholder="Enter number plate ID"
+                  //       value={bikeNumber}
+                  //       onChange={(event) => setBikeNumber(event.target.value)}
+                  //       style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                  //     />
+                  //   </div>
 
+                  // )}
                   )}
 
 
 
                   {/* ===== */}
-                  <div className="col-md-6">
-                    <label htmlFor="bikeimage" className="form-label">{t('tenantsPage.BikePic')}</label>
-                    <input type="file" className="form-control" onChange={handleImageChange} />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="bikeRc" className="form-label">{t('tenantsPage.BikeRc')}</label>
-                    <input type="file" className="form-control" onChange={handleRcChange} />
-                  </div>
+                  {hasBike && (
+                    <>
+                      <div className="col-md-6">
+                        <label htmlFor="bikeimage" className="form-label">{t('tenantsPage.BikePic')}</label>
+                        <input type="file" className="form-control" onChange={handleImageChange} />
+                      </div>
+                      <div className="col-md-6">
+                        <label htmlFor="bikeRc" className="form-label">{t('tenantsPage.BikeRc')}</label>
+                        <input type="file" className="form-control" onChange={handleRcChange} />
+                      </div>
+                    </>
+                  )}
 
                   {/* =============== */}
                   <div className='col-12 text-center'>

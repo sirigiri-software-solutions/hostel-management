@@ -168,7 +168,7 @@ const Hostels = () => {
                 <input
                   type="text"
                   value={isEditing.address}
-                  onChange={(e) => handleEditChange('address', e.target.value)}
+                  onChange={(e) => handleEditChange('address',capitalizeFirstLetter( e.target.value))}
                   className="edit-hostel-input"
                 />
               </td>

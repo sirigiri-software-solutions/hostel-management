@@ -256,7 +256,7 @@ const MainPage = () => {
         <div >
           <div className='dashboardHead'>
             <div className='dashBoarWelcome'>
-              <text>Well Come to {activeBoysHostel} Boys Hostel , {activeGirlsHostel} Girls Hostel</text>
+              <text>Welcome to {activeBoysHostel} Boys Hostel , {activeGirlsHostel} Girls Hostel</text>
             </div>
             <div className='top-div'>
               <img src={Admin} alt="admin" className='dashboard-icon' />

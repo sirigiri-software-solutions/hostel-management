@@ -1,68 +1,56 @@
 import React, { useState } from 'react';
-import { ref, update } from 'firebase/database';
-import { database } from '../../firebase'; // Adjust the path as necessary
+import { ref, set } from 'firebase/database';
+import { database } from '../../firebase';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LanguageSwitch from '../../LanguageSwitch';
 import { useTranslation } from 'react-i18next';
+import './settings.css';
+import { Modal, Button } from 'react-bootstrap';
 
 const Settings = () => {
   const [newBoysHostelName, setNewBoysHostelName] = useState('');
+  const [newBoysHostelAddress, setNewBoysHostelAddress] = useState('');
   const [newGirlsHostelName, setNewGirlsHostelName] = useState('');
-  const {t} = useTranslation();
+  const [newGirlsHostelAddress, setNewGirlsHostelAddress] = useState('');
+  const { t } = useTranslation();
+  const [isBoysModalOpen, setIsBoysModalOpen] = useState(false);
+  const [isGirlsModalOpen, setIsGirlsModalOpen] = useState(false);
 
-  const addNewActiveBoysHostel = (e) => {
+  const addNewHostel = (e, isBoys) => {
     e.preventDefault();
-    if (newBoysHostelName.trim() === '') {
-      toast.error("Hostel name cannot be empty.", {
+    const name = isBoys ? newBoysHostelName : newGirlsHostelName;
+    const address = isBoys ? newBoysHostelAddress : newGirlsHostelAddress;
+
+    if (name.trim() === '' || address.trim() === '') {
+      toast.error("Hostel name and address cannot be empty.", {
         position: "top-center",
         autoClose: 3000,
       });
       return;
     }
 
-    const newButtonRef = ref(database, `Hostel/boys/${newBoysHostelName}`);
+    const hostelRef = ref(database, `Hostel/${isBoys ? 'boys' : 'girls'}/${name}`);
+    const hostelDetails = { name, address };
 
-    // Initialize with placeholder data or any default structure you like
-    update(newButtonRef, { placeholderData: true })
+    set(hostelRef, hostelDetails)
       .then(() => {
-        toast.success(`New Hostel '${newBoysHostelName}' added successfully.`, {
+        toast.success(`New ${isBoys ? 'boys' : 'girls'} hostel '${name}' added successfully.`, {
           position: "top-center",
           autoClose: 3000,
         });
-        setNewBoysHostelName(''); // Reset the input field
+        if (isBoys) {
+          setNewBoysHostelName('');
+          setNewBoysHostelAddress('');
+          setIsBoysModalOpen(false);
+        } else {
+          setNewGirlsHostelName('');
+          setNewGirlsHostelAddress('');
+          setIsGirlsModalOpen(false);
+        }
       })
       .catch(error => {
-        toast.error("Failed to add new Hostel: " + error.message, {
-          position: "top-center",
-          autoClose: 3000,
-        });
-      });
-  };
-
-  const addNewActiveGirlsHostel = (e) => {
-    e.preventDefault();
-    if (newGirlsHostelName.trim() === '') {
-      toast.error("Hostel name cannot be empty.", {
-        position: "top-center",
-        autoClose: 3000,
-      });
-      return;
-    }
-
-    const newButtonRef = ref(database, `Hostel/girls/${newGirlsHostelName}`);
-
-    // Initialize with placeholder data or any default structure you like
-    update(newButtonRef, { placeholderData: true })
-      .then(() => {
-        toast.success(`New Hostel '${newGirlsHostelName}' added successfully.`, {
-          position: "top-center",
-          autoClose: 3000,
-        });
-        setNewGirlsHostelName(''); // Reset the input field
-      })
-      .catch(error => {
-        toast.error("Failed to add new Hostel: " + error.message, {
+        toast.error("Failed to add new hostel: " + error.message, {
           position: "top-center",
           autoClose: 3000,
         });
@@ -72,41 +60,98 @@ const Settings = () => {
   return (
     <div className="settings">
       <h1>{t('menuItems.settings')}</h1>
-      <div className="add-Hostel-form">
-        <div>
-          <h4>Add New Boys Hostel</h4>
+      <div className="settings-top">
+        <div className="language-switch-section">
+          <label className="languageLabel" htmlFor="language-selector">Languages:</label>
+          <LanguageSwitch id="language-selector" />
         </div>
-        <form onSubmit={addNewActiveBoysHostel}>
-          <input
-            type="text"
-            placeholder="Enter new Hostel name"
-            value={newBoysHostelName}
-            onChange={(e) => setNewBoysHostelName(e.target.value)}
-            className="new-Hostel-input"
-          />
-          <button type="submit" className="btn btn-success">Add Hostel</button>
-        </form>
+        <div className="hostel-section">
+          <div className="add-hostel-form">
+            <div>
+              <text>Boys Hostels</text>
+            </div>
+            <div>
+              <button className="addHostelBtn" onClick={() => setIsBoysModalOpen(true)}>Add Hostel</button>
+            </div>
+          </div>
+          <div className="add-hostel-form">
+            <div>
+              <text>Girls Hostels</text>
+            </div>
+            <div>
+              <button className="addHostelBtn" onClick={() => setIsGirlsModalOpen(true)}>Add Hostel</button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="add-Hostel-form">
-        <div>
-          <h4>Add New Girls Hostel</h4>
-        </div>
-        <form onSubmit={addNewActiveGirlsHostel}>
-          <input
-            type="text"
-            placeholder="Enter new Hostel name"
-            value={newGirlsHostelName}
-            onChange={(e) => setNewGirlsHostelName(e.target.value)}
-            className="new-Hostel-input"
-          />
-          <button type="submit" className="btn btn-success">Add Hostel</button>
-        </form>
-      </div>
-      <div>
-        <label htmlFor="language-selector">Languages:</label>
-        <LanguageSwitch id="language-selector" />
-      </div>
+      <Modal show={isBoysModalOpen} onHide={() => setIsBoysModalOpen(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Boys Hostel</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form onSubmit={(e) => addNewHostel(e, true)}>
+            <div className="form-group">
+              <label htmlFor="newBoysHostelName">Hostel Name</label>
+              <input
+                type="text"
+                className="form-control"
+                id="newBoysHostelName"
+                placeholder="Enter new Hostel name"
+                value={newBoysHostelName}
+                onChange={(e) => setNewBoysHostelName(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="newBoysHostelAddress">Hostel Address</label>
+              <input
+                type="text"
+                className="form-control"
+                id="newBoysHostelAddress"
+                placeholder="Enter Hostel address"
+                value={newBoysHostelAddress}
+                onChange={(e) => setNewBoysHostelAddress(e.target.value)}
+              />
+            </div>
+            <Button variant="primary" type="submit">Add Hostel</Button>
+            <Button variant="secondary" onClick={() => setIsBoysModalOpen(false)}>Close</Button>
+          </form>
+        </Modal.Body>
+      </Modal>
+
+      <Modal show={isGirlsModalOpen} onHide={() => setIsGirlsModalOpen(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Girls Hostel</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form onSubmit={(e) => addNewHostel(e, false)}>
+            <div className="form-group">
+              <label htmlFor="newGirlsHostelName">Hostel Name</label>
+              <input
+                type="text"
+                className="form-control"
+                id="newGirlsHostelName"
+                placeholder="Enter new Hostel name"
+                value={newGirlsHostelName}
+                onChange={(e) => setNewGirlsHostelName(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="newGirlsHostelAddress">Hostel Address</label>
+              <input
+                type="text"
+                className="form-control"
+                id="newGirlsHostelAddress"
+                placeholder="Enter Hostel address"
+                value={newGirlsHostelAddress}
+                onChange={(e) => setNewGirlsHostelAddress(e.target.value)}
+              />
+            </div>
+            <Button variant="primary" type="submit">Add Hostel</Button>
+            <Button variant="secondary" onClick={() => setIsGirlsModalOpen(false)}>Close</Button>
+          </form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

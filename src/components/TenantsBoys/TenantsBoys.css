@@ -393,12 +393,14 @@
     width:80px;
     padding:5px;
   }
+
   
 #presentTenantBtn{
-  width:100px;
-  font-size:12px;
+  width:150px;
+  font-size:14px;
   padding:px;
 }
+
 }
 @media screen and (max-width:1200px){
   #tenantAddButton{
@@ -449,3 +451,11 @@
   }
  
 }
+@media  screen and (max-width:768px) {
+
+  #presentTenantBtn{
+
+   float: right;
+   margin-left: 20px;
+  }
+ }

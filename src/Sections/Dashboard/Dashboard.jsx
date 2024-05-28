@@ -20,13 +20,13 @@ const Dashboard = () => {
 
   return (
     <div className='container_main'>
-      <h1 className='dashboard-welcome'>{t('dashboard.welcome')} to {activeBoysHostel} Hostel</h1>
+      {/* <h1 className='dashboard-welcome'>{t('dashboard.welcome')} to {activeBoysHostel} Hostel</h1> */}
       <div className='mobile-layout'>
         <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
-          <Tab eventKey="boys" title="Men's">
+        <Tab eventKey="boys" title={t('dashboard.mens')}>
             <DashboardBoys />
           </Tab>
-          <Tab eventKey="girls" title="Women's">
+          <Tab eventKey="girls" title={t('dashboard.womens')}>
             <DashboardGirls />
           </Tab>
         </Tabs>
@@ -35,7 +35,6 @@ const Dashboard = () => {
         <DashboardBoys />
         <DashboardGirls />
       </div>
-
     </div>
   );
 }

@@ -447,6 +447,14 @@ function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+const handleExpensesFocus = (e) => {
+  const fieldName = e.target.name;
+  setFormErrors((prevErrors) => ({
+    ...prevErrors,
+    [fieldName]: ''
+  }));
+};
+
   return (
     <div className='h-100'>
       <>
@@ -522,12 +530,12 @@ function capitalizeFirstLetter(string) {
                   <form className="row g-3" onSubmit={handleSubmit}>
                     <div className="col-md-6">
                       <label htmlFor="inputExpenseName" className="form-label">{t('expensesPage.expenseName')} :</label>
-                      <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} />
+                      <input type="text" className="form-control" name="expenseName" value={formData.expenseName} onChange={handleInputChange} onFocus={handleExpensesFocus} />
                       {formErrors.expenseName && <div className="text-danger">{formErrors.expenseName}</div>}
                     </div>
                     <div className="col-md-6">
                       <label htmlFor="inputRent" className="form-label">{t('expensesPage.expenseAmount')} :</label>
-                      <input type="number" className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} />
+                      <input type="number" className="form-control" name="expenseAmount" value={formData.expenseAmount} onChange={handleInputChange} onFocus={handleExpensesFocus} />
                       {formErrors.expenseAmount && <div className="text-danger">{formErrors.expenseAmount}</div>}
                     </div>
                     <div className="col-md-6">
@@ -540,7 +548,7 @@ function capitalizeFirstLetter(string) {
                     </div>
                     <div className="col-md-6">
                       <label htmlFor="inputDate" className="form-label">{t('expensesPage.expenseDate')} : </label>
-                      <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} />
+                      <input type="date" className="form-control" name="expenseDate" value={formData.expenseDate} onChange={handleInputChange} onFocus={handleExpensesFocus} />
                       {formErrors.expenseDate && <div className="text-danger">{formErrors.expenseDate}</div>}
                     </div>
 

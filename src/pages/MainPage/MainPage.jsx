@@ -25,9 +25,10 @@ import { useNavigate } from 'react-router-dom'
 import { RiLogoutCircleRLine } from "react-icons/ri";
 import { useTranslation } from 'react-i18next'
 import { useData } from '../../ApiData/ContextProvider';
+import Hostels from '../../Sections/Hostels/Hostels'
 const MainPage = () => {
   const { t } = useTranslation()
-  const { activeHostel } = useData();
+  const { activeBoysHostel, activeGirlsHostel } = useData();
   const name = localStorage.getItem("username");
   // Refer here for fetched Api Data use like this in all pages don't fetch api url
   const { data } = useContext(DataContext);
@@ -75,6 +76,12 @@ const MainPage = () => {
     },
     {
       id: 7,
+      path: "/hostels",
+      name: "Hostels",
+      icon: RoomsImage,
+    },
+    {
+      id: 8,
       path: "/settings",
       name: t("menuItems.settings"),
       icon: SettingsImage,
@@ -86,7 +93,7 @@ const MainPage = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-  const Components = [<Dashboard />, <Rooms />, <Beds />, <Rents />, <Tenants />, <Expenses />, <Settings />]
+  const Components = [<Dashboard />, <Rooms />, <Beds />, <Rents />, <Tenants />, <Expenses />, <Hostels/>, <Settings />]
 
   const [flag, setFlag] = useState(1);
 
@@ -125,7 +132,7 @@ const MainPage = () => {
 
     // Cleanup the event listener
     return () => window.removeEventListener('resize', handleResize);
-  }, []); // Empty dependency array ensures that the effect only runs once after component mount
+  }, []);
 
 
 
@@ -188,15 +195,21 @@ const MainPage = () => {
     // Redirect to login page
     navigate('/');
   };
+
   return (
     <div className='bg-container' style={mainBackgroundContainerStyle}>
       <div className='sidebar' style={sidebarStyle}>
         <div className='top-section'>
           <img src={logo} alt="logo" className='logo' />
         </div>
-        <div className='nav-div'  onClick={toggleModal}>
-          <img src={Admin} alt="admin" className='dashboard-icon' />
-          <h1 className='dashboard-heading'>{name}</h1>
+        <div className='nav-div' >
+        <div className='menufontchange'>
+          <img src={Admin} alt="admin" className='mbl-dashboard-icon' />
+          <h1 className='mb-dashboard-name'>{name}</h1>
+          </div>
+          <div className='logoutButton' onClick={toggleModal}>
+            <RiLogoutCircleRLine />
+          </div>
         </div>
         <div style={sidebarItems}>
           {
@@ -208,19 +221,6 @@ const MainPage = () => {
             ))
           }
         </div>
-
-
-        {/* Hamberger icon */}
-        {/* <GiHamburgerMenu style={hamburgerMenu} onClick={handleHamburgerMenu} /> */}
-        {/* {
-              hamburgerMenuItems && menuItems.map((item, index) => (
-                <label key={index}>{item.name}</label>
-              ))
-            } */}
-
-        {/*another approach popup model */}
-
-
         <Popup modal
           trigger={<GiHamburgerMenu style={hamburgerMenu} onClick={handleHamburgerMenu} />}>
           {close => (
@@ -250,47 +250,44 @@ const MainPage = () => {
                   position: "absolute",
                   top: "10px",
                   right: "10px",
-
                 }}
                 onClick={() => close()} />
-
             </div>
           )}
         </Popup>
       </div>
-      {/* <div style={mobileMenuItems}>
-        {
-              hamburgerMenu && (
-                hamburgerMenuItems && menuItems.map((item, index) => (
-                  <div key={index} className="link" style={flag === item.id ? {backgroundColor: 'hsla(30, 100%, 50%, 0.41)',  borderRadius: '10px'} : {borderRadius:'10px'} } onClick={() => handlesideBar(item.id)}>
-                    <label className='link-text'>{item.name}</label>
-                    </div>
-                ))
-              )
-            }
-            </div> */}
 
       <div style={rightSectionMainContainer} >
-        <div>
-          <div className='top-div' onClick={toggleModal}>
-            <img src={Admin} alt="admin" className='dashboard-icon' />
-            <h1 className='dashboard-heading'>{name}</h1>
+        <div >
+          <div className='dashboardHead'>
+            <div className='dashBoarWelcome'>
+              <text>Welcome to {activeBoysHostel} Boys Hostel , {activeGirlsHostel} Girls Hostel</text>
+            </div>
+            <div className='top-div'>
+              <img src={Admin} alt="admin" className='dashboard-icon' />
+              <h1 className='dashboard-heading'>{name}</h1>
+              <div className='logoutButton' onClick={toggleModal}>
+                <RiLogoutCircleRLine />
+              </div>
+            </div>
           </div>
+
           {isModalOpen && (
-            <div className="popup">
+            <div id="poplogoutbtn" className="popup">
               <div>
                 <p>Manage your account</p>
               </div>
               <p>Are you sure you want to logout?</p>
               <button onClick={logout} className="logout-button">Logout</button>
-              <br/><br/>
-              <button onClick={toggleModal}>Close</button>
+
+              <button className='logout-closeBtn' onClick={toggleModal}>Close</button>
             </div>
           )}
         </div>
-        {Components && Components.map((item, index) => <div key={index} style={flag === index + 1 ? { display: 'block' } : { display: 'none' }}>
-          {item}
-        </div>)}
+        {Components && Components.map((item, index) =>
+          <div key={index} style={flag === index + 1 ? { display: 'block' } : { display: 'none' }}>
+            {item}
+          </div>)}
 
       </div>
     </div>

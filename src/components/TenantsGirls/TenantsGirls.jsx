@@ -16,6 +16,8 @@ import { useData } from '../../ApiData/ContextProvider';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import '../TenantsBoys/TenantsBoys.css'
+import './TenantsGirls.css';
 
 const TenantsGirls = () => {
   const { t } = useTranslation();
@@ -368,7 +370,7 @@ const TenantsGirls = () => {
       tenantImageUrl: imageUrlToUpdate,
       tenantIdUrl: idUrlToUpdate,
       bikeNumber,
-      fileName: fileName,
+      // fileName: fileName,
       permnentAddress,
       bikeImage,
       bikeRcImage
@@ -636,8 +638,16 @@ setBikeNumber('NA');
     setShowModal(false);
     setSingleTenantDetails(tenant);
 
-    const singleUserDueDate = tenants.find(eachTenant => eachTenant.name === tenant.name && eachTenant.mobileNo === tenant.mobile_no);
 
+
+    const [roomNo, bedNo] = tenant.room_bed_no.split('/');
+    const singleUserDueDate = tenants.find(eachTenant => 
+      eachTenant.name === tenant.name && 
+      eachTenant.mobileNo === tenant.mobile_no &&
+      eachTenant.roomNo === roomNo &&
+      eachTenant.bedNo === bedNo
+    );
+    console.log(singleUserDueDate, "tenantdetails5")
     if (singleUserDueDate && singleUserDueDate.rents) {
       const dataWithDueDate = Object.values(singleUserDueDate.rents);
       const dueDate = dataWithDueDate[0].dueDate;
@@ -812,6 +822,14 @@ setBikeNumber('NA');
     onChangeStatus({ target: { value } });
   };
 
+  const handleTenantFocus = (e) => {
+    const { name } = e.target;
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: '',  
+    }));
+  };
+
 
   return (
     <>
@@ -828,24 +846,32 @@ setBikeNumber('NA');
         </div>
         <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
           <div className='d-flex align-items-center text-center'>
-            {showBikeFilter?( <div className="toggle-container">
-                <label className="toggle-label" htmlFor="status-toggleGirl">{t('tenantsPage.bike')}</label>
-                <input
-                  type="checkbox"
-                  id="status-toggleGirl"
-                  className="toggle-checkbox"
-                  checked={selectedStatus === 'YES'}
-                  onChange={handleChange}
-                />
-                <label className="toggle-switch" htmlFor="status-toggleGirl">
-                  <span className="toggle-text">No</span>
-                  <span className="toggle-text">Yes</span>
-                </label>
-              </div>) :null}
-              <div className='d-flex justify-content-center align-items-center'>
-            <div className={showExTenants ? "col-1 bedPageFilterDropdown" : "col-5 bedPageFilterDropdown"}>
-              {showExTenants ? '' : <button id="tenantAddButton" type="button" class="add-button" onClick={() => { handleAddNew(); }} >
-               {t('dashboard.addTenants')}
+          {showBikeFilter ? (<div className="toggle-container">
+              <label className="toggle-label" htmlFor="status-toggleGirl">{t('tenantsPage.bike')}</label>
+              <input
+                type="checkbox"
+                id="status-toggleGirl"
+                className="toggle-checkbox"
+                checked={selectedStatus === 'YES'}
+                onChange={handleChange}
+              />
+              <label className="toggle-switch" htmlFor="status-toggleGirl">
+                <span className="toggle-text">No</span>
+                <span className="toggle-text">Yes</span>
+              </label>
+            </div>) : null}
+            <div className='d-flex justify-content-center align-items-center'>
+              <div className={showExTenants ? "col-1 bedPageFilterDropdown" : "col-5 bedPageFilterDropdown"}>
+                {showExTenants ? '' : <button id="tenantAddButton" type="button" class="add-button" onClick={() => { handleAddNew(); }} >
+                  {t('dashboard.addTenants')}
+                </button>}
+
+              </div>
+              <div className={showExTenants ? "col-8 bedPageFilterDropdown" : "col-4 bedPageFilterDropdown"}>
+              {showExTenants ? <button type="button" id="presentTenantBtn1" class="add-button text-center" onClick={showExTenantsData} >
+              {t('tenantsPage.presentTenants')}
+              </button> : <button id="tenantVacateButton" type="button" class="add-button" onClick={showExTenantsData} >
+              {t('tenantsPage.vacated')}
               </button>}
               
             </div>
@@ -873,7 +899,7 @@ setBikeNumber('NA');
                     <label htmlFor='roomNo' class="form-label">
                       {t('dashboard.roomNo')}
                     </label>
-                    <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
+                    <select id="roomNo" class="form-select" value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)} name="selectedRoom" onFocus={handleTenantFocus}>
                       <option value="">{t('dashboard.selectRoom')}</option>
                       {girlsRooms.map((room) => (
                         <option key={room.roomNumber} value={room.roomNumber}>
@@ -889,7 +915,7 @@ setBikeNumber('NA');
                     <label htmlFor='bedNo' class="form-label">
                       {t('dashboard.bedNo')}
                     </label>
-                    <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)}>
+                    <select id="bedNo" class="form-select" value={selectedBed} onChange={(e) => setSelectedBed(e.target.value)} name="selectedBed" onFocus={handleTenantFocus}>
                       <option value="">{t('dashboard.selectBed')}</option>
                       {bedOptions.map(bedNumber => (
                         <option key={bedNumber} value={bedNumber}>
@@ -905,7 +931,7 @@ setBikeNumber('NA');
                     <label htmlFor='dataofJoin' class="form-label">
                       {t('dashboard.dateOfJoin')}
                     </label>
-                    <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} />
+                    <input id="dataofJoin" class="form-control" type="date" value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)}  name="dateOfJoin" onFocus={handleTenantFocus} />
 
                     {errors.dateOfJoin && <p style={{ color: 'red' }}>{errors.dateOfJoin}</p>}
                   </div>
@@ -913,7 +939,7 @@ setBikeNumber('NA');
                     <label htmlFor='tenantName' class="form-label">
                       {t('dashboard.name')}
                     </label>
-                    <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} />
+                    <input id="tenantName" class="form-control" type="text" value={name} onChange={(e) => setName(e.target.value)} onInput={e => e.target.value = e.target.value.replace(/[^a-zA-Z ]/g, '')} name="name" onFocus={handleTenantFocus}  />
 
                     {errors.name && <p style={{ color: 'red' }}>{errors.name}</p>}
                   </div>
@@ -922,7 +948,7 @@ setBikeNumber('NA');
                     <label htmlFor='tenantMobileNo' class="form-label">
                       {t('dashboard.mobileNo')}
                     </label>
-                    <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} />
+                    <input id="tenantMobileNo" class="form-control" type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} name="mobileNo" onFocus={handleTenantFocus} />
 
                     {errors.mobileNo && <p style={{ color: 'red' }}>{errors.mobileNo}</p>}
                   </div>
@@ -930,7 +956,7 @@ setBikeNumber('NA');
                     <label htmlFor='tenantIdNum' class="form-label">
                       {t('dashboard.idNumber')}
                     </label>
-                    <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
+                    <input id="tenantIdNum" class="form-control" type="text" value={idNumber} onChange={(e) => setIdNumber(e.target.value)} name="idNumber" onFocus={handleTenantFocus} />
 
                     {errors.idNumber && <p style={{ color: 'red' }}>{errors.idNumber}</p>}
                   </div>
@@ -938,7 +964,8 @@ setBikeNumber('NA');
                     <label htmlFor='tenantEmergency' class="form-label">
                       {t('dashboard.emergencyContact')}
                     </label>
-                    <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
+                    <input id="tenantEmergency" class="form-control" type="text" value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} name="emergencyContact" onFocus={handleTenantFocus} />
+
                     {errors.emergencyContact && <p style={{ color: 'red' }}>{errors.emergencyContact}</p>}
                   </div>
                   <div class="col-md-6">
@@ -1027,7 +1054,7 @@ setBikeNumber('NA');
                     <label htmlFor='bikeCheck1' className='bike'>{t('dashboard.no')}</label>
                   </div>
 
-                  {hasBike ? (
+                  {hasBike && (
                     <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
                       <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
                       <input
@@ -1041,34 +1068,39 @@ setBikeNumber('NA');
                         style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
                       />
                     </div>
-                  ) : (
-                    <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
-                      <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
-                      <input
-                        type="text"
-                        id="bikeNumber"
+                  // ) : (
+                  //   <div className='bikeField' style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+                  //     <label class="bikenumber" htmlFor="bikeNumber" >{t('dashboard.bikeNumber')}</label>
+                  //     <input
+                  //       type="text"
+                  //       id="bikeNumber"
 
-                        className='form-control'
-                        placeholder="Enter number plate ID"
-                        value={bikeNumber}
-                        onChange={(event) => setBikeNumber(event.target.value)}
-                        style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
-                      />
-                    </div>
+                  //       className='form-control'
+                  //       placeholder="Enter number plate ID"
+                  //       value={bikeNumber}
+                  //       onChange={(event) => setBikeNumber(event.target.value)}
+                  //       style={{ flex: '2', borderRadius: '5px', borderColor: 'beize', outline: 'none', marginTop: '0', borderStyle: 'solid', borderWidth: '1px', borderHeight: '40px', marginLeft: '8px' }}
+                  //     />
+                  //   </div>
 
+                  // )}
                   )}
 
 
 
                   {/* ===== */}
-                  <div className="col-md-6">
-                    <label htmlFor="bikeimage" className="form-label">{t('tenantsPage.BikePic')}</label>
-                    <input type="file" className="form-control" onChange={handleImageChange} />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="bikeRc" className="form-label">{t('tenantsPage.BikeRc')}</label>
-                    <input type="file" className="form-control" onChange={handleRcChange} />
-                  </div>
+                  {hasBike && (
+                    <>
+                      <div className="col-md-6">
+                        <label htmlFor="bikeimage" className="form-label">{t('tenantsPage.BikePic')}</label>
+                        <input type="file" className="form-control" onChange={handleImageChange} />
+                      </div>
+                      <div className="col-md-6">
+                        <label htmlFor="bikeRc" className="form-label">{t('tenantsPage.BikeRc')}</label>
+                        <input type="file" className="form-control" onChange={handleRcChange} />
+                      </div>
+                    </>
+                  )}
 
                   {/* =============== */}
                   <div className='col-12 text-center'>

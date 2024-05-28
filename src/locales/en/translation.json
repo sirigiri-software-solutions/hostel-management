@@ -185,6 +185,8 @@
          "sNo":"S.No",
          "image":"Image",
          "id":"ID",
+         "or": "or",
+        "takePhoto": "take photo",
          "status":"Status",
          "actions":"Actions",
          "PermanentAddress": "Permanent Address:",
@@ -282,7 +284,12 @@
         "expensesUpdatedSuccessfully":"Expense updated successfully.",
         "errorUpdatinExpense":"Error updating Expense",
         "expenseDeteledSuccessfully":"Expense deleted successfully",
-        "errorDeletingExpense":"Error deleting Expense"
+        "errorDeletingExpense":"Error deleting Expense",
+        
+        "Image not Uploaded": "Image not Uploaded",
+        "Id not Uploaded": "Id not Uploaded"
+          
+          
     },
     "mobileTable":{
 

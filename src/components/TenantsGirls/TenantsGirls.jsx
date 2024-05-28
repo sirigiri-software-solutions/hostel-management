@@ -98,7 +98,7 @@ const TenantsGirls = () => {
       // setPhotoUrl(photo.webPath);
     } catch (error) {
       console.error("Error accessing the camera", error);
-      toast.error("Image not Uploaded");
+      toast.error(t("toastMessages.Image not Uploaded"));
     }
   };
   
@@ -125,7 +125,7 @@ const TenantsGirls = () => {
       // setPhotoUrl(photo.webPath);
     } catch (error) {
       console.error("Error accessing the camera", error);
-      toast.error("Id not Uploaded");
+      toast.error(t("toastMessages.Id not Uploaded"));
     }
   };
   

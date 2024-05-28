@@ -7,30 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 const SignUp = () => {
   const [data, setData] = useState({
-<<<<<<< HEAD
-    firstname: '',
-    lastname: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmpassword: '',
-    favouritequestion:'',
-    answer:'',
-  });
-  const [errors, setErrors] = useState({
-    firstname: '',
-    lastname: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmpassword: '',
-    favouritequestion:'',
-    answer:'',
-  });
- 
-  const { firstname, lastname, email, phone, password, confirmpassword,favouritequestion,answer } = data;
- 
-=======
     firstname: "",
     lastname: "",
     email: "",
@@ -57,7 +33,6 @@ const SignUp = () => {
 
   const { firstname, lastname, email, phone, password, confirmpassword } = data;
 
->>>>>>> e4ae99f30974381048360837b4bdc7d1da4a758f
   const changeHandler = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" }); // Reset error when input changes
@@ -109,26 +84,12 @@ const SignUp = () => {
       newErrors.confirmpassword = "Passwords do not match";
       formValid = false;
     }
-<<<<<<< HEAD
-     // favourite question validation
-     if (favouritequestion.trim() === '') {
-      newErrors.favouritequestion = 'Please enter your favouritequestion';
-      formValid = false;
-    }
-    if (answer.trim() === '') {
-      newErrors.answer = 'Please enter your answer';
-      formValid = false;
-    }
-
- 
-=======
 
     if (!selectedRole) {
       newErrors.role = "Please select a role";
       formValid = false;
     }
 
->>>>>>> e4ae99f30974381048360837b4bdc7d1da4a758f
     if (!formValid) {
       setErrors(newErrors);
       return; // Don't proceed with submission if form is invalid
@@ -142,13 +103,7 @@ const SignUp = () => {
       phone,
       password,
       confirmpassword,
-<<<<<<< HEAD
-      favouritequestion,
-      answer,
-   
-=======
       role:selectedRole
->>>>>>> e4ae99f30974381048360837b4bdc7d1da4a758f
     };
     console.log(formData)
     // Proceed with form submission if all fields are filled
@@ -170,24 +125,12 @@ const SignUp = () => {
           theme: "light",
         });
         setData({
-<<<<<<< HEAD
-          firstname: '',
-          lastname: '',
-          email: '',
-          phone: '',
-          password: '',
-          confirmpassword: '',
-          favouritequestion:'',
-          answer:'',
-
-=======
           firstname: "",
           lastname: "",
           email: "",
           phone: "",
           password: "",
           confirmpassword: "",
->>>>>>> e4ae99f30974381048360837b4bdc7d1da4a758f
         }); // Clear input fields after successful submission
       })
       .catch((error) => {
@@ -279,32 +222,6 @@ const SignUp = () => {
             onFocus={() => clearErrorOnFocus("confirmpassword")}
           />
           <br />
-<<<<<<< HEAD
-          {errors.confirmpassword && <div className='error'>{errors.confirmpassword}</div>}
-          <div>
-            <select className='selct' name='favouritequestion' value={favouritequestion} onChange={changeHandler}>
-              <option value=""></option>
-              <option value="what is your school name?">What is your school name?</option>
-              <option value="What is your favourite game?">What is your favourite game?</option>
-              <option value="What is your mother name?">What is your mother name?</option>
-              <option value="What is your favorite place?">What is your favourite place?</option>
-              <option value="What is your nick name?">What is your nick name?</option>
-            </select>
-            {errors.favouritequestion && <div className='error'>{errors.favouritequestion}</div>}
-          </div>
-          <div>
-          <textarea
-            type='textarea'
-            name='answer'
-            value={answer}
-            onChange={changeHandler}
-            placeholder='Enter answer'
-          />
-          {errors.answer && <div className='error'>{errors.answer}</div>}
-          </div>
-          
-          <input type='submit' className='Signup' value='Sign up' />
-=======
           {errors.confirmpassword && (
             <div className="error">{errors.confirmpassword}</div>
           )}
@@ -343,7 +260,6 @@ const SignUp = () => {
           </div>
           {errors.role && <div className="error">{errors.role}</div>}
           <input type="submit" className="Signup" value="Sign up" />
->>>>>>> e4ae99f30974381048360837b4bdc7d1da4a758f
         </form>
         <p>
           Already have an account <Link to="/login">Login</Link>

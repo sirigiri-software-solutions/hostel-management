@@ -184,6 +184,8 @@
     "sNo": "क्रमांक",
     "image": "चित्र",
     "id": "आईडी",
+    "or": "या",
+    "takePhoto": "फोटो खींचे",
     "status": "स्थिति",
     "actions": "क्रियाएँ",
     "PermanentAddress": "स्थायी पता:",
@@ -281,7 +283,12 @@
         "expensesUpdatedSuccessfully": "खर्च सफलतापूर्वक अपडेट किया गया।",
         "errorUpdatinExpense": "खर्च अपडेट करने में त्रुटि।",
         "expenseDeteledSuccessfully": "खर्च सफलतापूर्वक हटा दिया गया।",
-    "errorDeletingExpense": "खर्च हटाने में त्रुटि।"
+       "errorDeletingExpense": "खर्च हटाने में त्रुटि।",
+       
+        "Image not Uploaded": "छवि अपलोड नहीं की गई",
+        "Id not Uploaded": "आईडी अपलोड नहीं की गई"
+      
+      
       },
       "mobileTable":{
         "serialNumber": "क्रमांक",

@@ -407,7 +407,7 @@ const RoomsBoys = () => {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id="exampleModalLabel">{t('roomsPage.Create Rooms')}</h1>
+              <h1 className="modal-title fs-5" id="exampleModalLabel">{t('roomsPage.CreateRoom')}</h1>
               <button onClick={closePopupModal} className="btn-close" aria-label="Close"></button>
             </div>
             <div className="modal-body">

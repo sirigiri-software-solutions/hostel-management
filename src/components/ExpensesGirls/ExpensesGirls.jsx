@@ -466,7 +466,7 @@ const handleExpensesFocus = (e) => {
             <h1 className='management-heading'>{t('expensesPage.expensesManagement')}</h1>
           </div>
           <div className="col-6 col-md-4 search-wrapper">
-            <input type="text" placeholder='Search' className='search-input' onChange={handleChange} value={searchTerm} />
+            <input type="text" placeholder={t('common.search')} className='search-input' onChange={handleChange} value={searchTerm} />
             <img src={SearchIcon} alt="search-icon" className='search-icon' />
           </div>
           <div className="col-6 col-md-4 d-flex justify-content-end">

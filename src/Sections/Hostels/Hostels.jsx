@@ -5,8 +5,10 @@ import { database } from '../../firebase';
 import { toast } from 'react-toastify';
 import './Hostels.css';
 import { Modal, Button } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 const Hostels = () => {
+  const { t } = useTranslation();
   const { activeBoysHostel, setActiveBoysHostel, activeBoysHostelButtons, setActiveBoysHostelButtons } = useData();
   const [isEditing, setIsEditing] = useState(null);
   const [hostels, setHostels] = useState({ boys: [], girls: [] });
@@ -144,10 +146,10 @@ const Hostels = () => {
     <table className="hostel-table">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Address</th>
-          <th>Actions</th>
-          <th>Delete Data</th>
+          <th>{t("hostels.name")}</th>
+          <th>{t("hostels.address")}</th>
+          <th>{t("hostels.actions")}</th>
+          <th>{t("hostels.deleteData")}</th>
         </tr>
       </thead>
       <tbody>
@@ -166,7 +168,7 @@ const Hostels = () => {
                 <input
                   type="text"
                   value={isEditing.address}
-                  onChange={(e) => handleEditChange('address', e.target.value)}
+                  onChange={(e) => handleEditChange('address',capitalizeFirstLetter( e.target.value))}
                   className="edit-hostel-input"
                 />
               </td>
@@ -193,33 +195,37 @@ const Hostels = () => {
   );
 
   return (
-    <div className='mainhostelcontainer'>
-      <h2>Hostels</h2>
+    <div>
+      <h2 className='hostelPageHeading'>{t("menuItems.hostels")}</h2>
       <div className="hostels-container">
-        <div className="hostel1-section">
-          <text className='fontsize'>Boys Hostels</text>
+        <div className="hostel-section">
+          <h3 className='hostelPageTableHeading'>{t("hostels.boysHostels")}</h3>
+         
           {renderHostelTable(hostels.boys, true)}
+        
         </div>
         <div className="hostel-section">
-        <text className='fontsize'>Girls Hostels</text>
+          <h3 className='hostelPageTableHeading'>{t("hostels.girlsHostels")}</h3>
+
           {renderHostelTable(hostels.girls, false)}
+
         </div>
       </div>
       <Modal show={isEditing !== null} onHide={cancelEdit}>
         <Modal.Header closeButton>
-          <Modal.Title>Edit Hostel</Modal.Title>
+          <Modal.Title>{t("hostels.editHostel")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {isEditing && (
             <div>
-              <p>Edit Name:</p>
+              <p>{t("hostels.editName")}</p>
               <input
                 type="text"
                 value={isEditing.name}
                 onChange={(e) => handleEditChange('name', e.target.value)}
                 className="edit-hostel-input"
               />
-              <p>Edit Address:</p>
+              <p>{t("hostels.editAddress")}</p>
               <input
                 type="text"
                 value={isEditing.address}
@@ -231,26 +237,26 @@ const Hostels = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={cancelEdit}>
-            Cancel
+          {t("hostels.cancel")}
           </Button>
           <Button variant="primary" onClick={submitHostelEdit}>
-            Save
+          {t("hostels.save")}
           </Button>
         </Modal.Footer>
       </Modal>
       <Modal show={isDeleteConfirmationOpen} onHide={cancelDeleteHostel}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Delete</Modal.Title>
+          <Modal.Title>{t("hostels.confirmDelete")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete this hostel?
+        {t("hostels.confirmMsg")}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={cancelDeleteHostel}>
-            Cancel
+          {t("hostels.cancel")}
           </Button>
           <Button variant="danger" onClick={confirmDeleteHostel}>
-            Delete
+          {t("hostels.delete")}
           </Button>
         </Modal.Footer>
       </Modal>

@@ -1,23 +1,26 @@
+
+
 .hostels-container {
     display: flex;
     flex-direction: row;
     max-width: 100%;
-    justify-content: space-between;
-    /* gap: 20px; */
+    /* justify-content: space-between; */
+    gap: 10%;
     flex-wrap: wrap;
   }
   
-  .hostel-section {
+   .hostel-section {
     display:flex;
     flex-direction: column;
-    min-width: 300px;
-    width:45%;
-  }
+    /* min-width: 300px;  */
+    width:40%;
+  } 
+ 
   
   .hostel-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 10px;
   }
   
   .hostel-table th, .hostel-table td {
@@ -64,6 +67,19 @@
       flex-direction: column;
       align-items: center;
     }
+    .fontsize{
+      margin-top: 20px;
+      margin-bottom: -40px;
+    }
+ 
     
+
+    
+    
+  }
+  .fontsize{
+    font-weight: 800;
+    margin-top:30px;
+    margin-bottom: -20px;
   }
   

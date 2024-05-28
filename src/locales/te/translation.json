@@ -5,7 +5,8 @@
     "saveChanges": "మార్పులను సేవ్ చేయండి",
     "submit": "సమర్పించండి",
     "update": "నవీకరించు",
-    "create": "సృష్టించు"
+    "create": "సృష్టించు",
+    "edit": "మార్చు"
   },
   "menuItems": {
     "dashboard": "డాష్‌బోర్డ్",
@@ -14,10 +15,10 @@
     "rent": "అద్దె",
     "tenants": "నివాసులు",
     "expenses": "ఖర్చులు",
-    "settings": "సెట్టింగులు"
+    "settings": "సెట్టింగులు",
+    "hostels": "వసతి గృహాలు"
   },
   "dashboard": {
-    "welcome": "స్వాగతం",
     "womens": "మహిళలు",
     "mens": "పురుషులు",
     "totalRooms": "మొత్తం గదులు",
@@ -79,7 +80,10 @@
     "subAdmin": "ఉప-అడ్మిన్",
     "expenseDate": "ఖర్చు తేదీ",
     "create": "సృష్టించండి",
-    "notify": "తెలియజేయండి"
+    "notify": "తెలియజేయండి",
+    "welcomeTo": "స్వాగతం",
+    "boysHostel": "బాలురు హాస్టల్‌కీ",
+    "girlsHostel": "మహిళా హాస్టల్‌కీ"
   },
   "roomsPage": {
     "S.No": "క్రమ సంఖ్య",
@@ -114,7 +118,7 @@
     "Delete Room": "గదిని తొలగించు",
     "Create Room": "గదిని సృష్టించు",
     "LastUpdated:": "చివరి నవీకరణ:",
-      "CreateRooms": "గదులు సృష్టించు",
+      "CreateRoom": "గదులు సృష్టించు",
       "Are you sure you want to delete the room with number": "నమోదు నంబరుతో గదిని తొలగించాలని మీరు ఖచ్చితంగా భావిస్తున్నారా",
       "Once you delete the room it will not be restored": "గమనిక: మీరు గదిని తొలగించిన తర్వాత ఇది పునరుద్ధరించబడదు",
       "Yes": "అవును",
@@ -321,6 +325,36 @@
   "Unoccupied":"ఖాళీ",
   "Paid":"చెల్లింపు",
   "Unpaid":"బాకీ"
+},
+"hostels": {
+  "boysHostels": "బాలురు హాస్టల్స్",
+  "girlsHostels": "మహిళా హాస్టల్స్",
+  "name": "పేరు",
+    "address": "చిరునామా",
+    "actions": "చర్యలు",
+    "deleteData": "డేటా తొలగించు",
+    "editHostel": "హాస్టల్ సవరించు",
+    "editName": "పేరు సవరించు :",
+    "editAddress": "చిరునామా సవరించు :",
+    "cancel": "రద్దు చేయి",
+    "save": "భద్రపరచు",
+    "confirmDelete": "తొలగించు నిర్ధారించు",
+    "confirmMsg": "ఈ హాస్టల్ తొలగించడానికి ఖచ్చితమైనదియా?",
+    "delete": "తొలగించు"
+},
+"settings": {
+  "languages": "భాషలు",
+  "boysHostels": "బాలురు హాస్టల్స్",
+  "girlsHostels": "మహిళా హాస్టల్స్",
+  "addHostel": "హాస్టల్ జోడించు",
+  "addboysHostel": "బాలురు హాస్టల్ జోడించు",
+  "addGirlsHostel": "మహిళా హాస్టల్ జోడించు",
+  "hostelName": "హాస్టల్ పేరు",
+  "hostelAddress": "హాస్టల్ చిరునామా",
+  "close": "మూసివేయి",
+  "enterhostelName": "హాస్టల్ పేరు నమోదు చేయండి",
+  "enterhostelAddress": "హాస్టల్ చిరునామా నమోదు చేయండి"
+
 }
 
 }

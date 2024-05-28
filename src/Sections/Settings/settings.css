@@ -4,9 +4,9 @@
   
   .settings-top {
     display: flex;
-    /* justify-content: space-between; */
-    flex-direction: row;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    flex-direction: column;
+    margin-top:30px;
   }
   
   .language-switch-section, .hostel-section {
@@ -14,29 +14,36 @@
     flex-direction: row;
     align-items: center;
     gap: 20px;
+    justify-content:space-between;
+    width:300px;
   }
   
   .languageLabel {
-    font-size: 18px;
+    font-size:24px;
     font-weight: 600;
   }
+  .languageDropdown{
+    width:100px;
+    margin-left:18px;
+    height:35px;
+    border-radius:8px;
+  }
   
-  .hostel-section {
+  .settingPageHostelSection {
     display: flex;
-    flex-direction: column;
+    flex-direction:column;
+    margin-top:30px;
   
   }
   
   .add-hostel-form {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    margin-bottom:30px;
+    justify-content:space-between;
+    width:300px;
   }
   
-  .add-hostel-form text {
-    font-size: 20px;
-    font-weight: 500;
-  }
   
   .new-hostel-input {
     width: 250px;
@@ -53,11 +60,12 @@
   
   .addHostelBtn {
     width: 100px;
-    padding: 3px;
+    padding: 5px;
     border-radius: 5px;
     border: 1px solid #FF8A00;
     background: #FF8A00;
     color: white;
+    margin-left:20px;
   }
   
   .confirmation-dialog {
@@ -82,6 +90,25 @@
   @media screen and (max-width: 768px) {
     .settings-top {
       flex-direction: column;
+    }
+    .settingPageHostelSection{
+      margin-left:0px;
+      flex-direction:column;
+    }
+    .settingsPageHeading{
+      text-align:center;
+    }
+    .languageLabel{
+      font-size:20px;
+    }
+    .settingPageSideHeading{
+      font-size:20px;
+    }
+    .add-hostel-form{
+      width:240px;
+    }
+    .language-switch-section{
+      width:240px;
     }
   }
   

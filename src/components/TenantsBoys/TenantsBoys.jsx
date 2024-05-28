@@ -844,7 +844,7 @@ const TenantsBoys = () => {
           <h1 className='management-heading'>{t('tenantsPage.tenantsManagement')}</h1>
         </div>
         <div className="col-12 col-md-4 search-wrapper">
-          <input type="text" placeholder='Search' className='search-input' value={searchQuery} onChange={handleSearchChange} />
+          <input type="text" placeholder={t('common.search')} className='search-input' value={searchQuery} onChange={handleSearchChange} />
           <img src={SearchIcon} alt="search-icon" className='search-icon' />
         </div>
         <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end '>

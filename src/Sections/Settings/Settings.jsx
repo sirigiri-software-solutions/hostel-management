@@ -17,10 +17,14 @@ const Settings = () => {
   const [isBoysModalOpen, setIsBoysModalOpen] = useState(false);
   const [isGirlsModalOpen, setIsGirlsModalOpen] = useState(false);
 
+  const capitalizeFirstLetter = (string) => {
+    return string.replace(/\b\w/g, char => char.toUpperCase());
+  };
+
   const addNewHostel = (e, isBoys) => {
     e.preventDefault();
-    const name = isBoys ? newBoysHostelName : newGirlsHostelName;
-    const address = isBoys ? newBoysHostelAddress : newGirlsHostelAddress;
+    const name = isBoys ? capitalizeFirstLetter(newBoysHostelName) : capitalizeFirstLetter(newGirlsHostelName);
+    const address = isBoys ? capitalizeFirstLetter(newBoysHostelAddress) : capitalizeFirstLetter(newGirlsHostelAddress);
 
     if (name.trim() === '' || address.trim() === '') {
       toast.error("Hostel name and address cannot be empty.", {
@@ -149,3 +153,4 @@ const Settings = () => {
 };
 
 export default Settings;
+

@@ -138,6 +138,10 @@ const Hostels = () => {
     setIsEditing(prev => ({ ...prev, [field]: value }));
   };
 
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   const renderHostelTable = (hostelData, isBoys) => (
     <table className="hostel-table">
       <thead>
@@ -156,7 +160,7 @@ const Hostels = () => {
                 <input
                   type="text"
                   value={isEditing.name}
-                  onChange={(e) => handleEditChange('name', e.target.value)}
+                  onChange={(e) => handleEditChange('name', capitalizeFirstLetter(e.target.value))}
                   className="edit-hostel-input"
                 />
               </td>
@@ -175,8 +179,8 @@ const Hostels = () => {
             </tr>
           ) : (
             <tr key={id}>
-              <td>{name}</td>
-              <td>{address}</td>
+              <td>{capitalizeFirstLetter(name)}</td>
+              <td>{capitalizeFirstLetter(address)}</td>
               <td>
                 <button onClick={() => startEdit(id, name, address, isBoys)} className="action-btn">Edit</button>
               </td>
@@ -256,7 +260,8 @@ const Hostels = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+   </div>
+
   );
 };
 

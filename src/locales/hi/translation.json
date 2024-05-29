@@ -5,7 +5,8 @@
       "saveChanges": "परिवर्तन सहेजें",
       "submit": "जमा करें",
       "update": "अपडेट करें",
-      "create": "सृजन करें"
+      "create": "सृजन करें",
+      "edit": "संपादित करें"
     },
     "menuItems": {
       "dashboard": "डैशबोर्ड",
@@ -14,10 +15,10 @@
       "rent": "किराया",
       "tenants": "किरायेदार",
       "expenses": "खर्चे",
-      "settings": "सेटिंग्स"
+      "settings": "सेटिंग्स",
+      "hostels": "छात्रावास"
     },
     "dashboard": {
-      "welcome": "स्वागत है",
       "womens": "महिलाएं",
       "mens": "पुरुष",
       "totalRooms": "कुल कमरे",
@@ -79,7 +80,10 @@
       "subAdmin": "उप-प्रशासक",
       "expenseDate": "व्यय तिथि",
       "create": "बनाएँ",
-      "notify": "सूचित करें"
+      "notify": "सूचित करें",
+      "welcomeTo": "स्वागत है",
+    "boysHostel": "लड़कों के हॉस्टल",
+    "girlsHostel": "लड़कियों के हॉस्टल"
     },
     "roomsPage": {
       "S.No": "क्रमांक",
@@ -116,7 +120,7 @@
   "columns": "कॉलम",
   "Update Room": "कक्ष अपडेट करें",
   "Delete Room": "कक्ष हटाएं",
-  "Create Room": "कक्ष बनाएं",
+  "CreateRoom": "कक्ष बनाएं",
   "Last Updated:": "अंतिम अद्यतन:",
   "Create Rooms": "कक्ष बनाएं",
     "Are you sure you want to delete the room with number": "क्या आप वाकई नंबर वाले कमरे को हटाना चाहते हैं",
@@ -332,7 +336,37 @@
       "Unoccupied":"अव्याप्त",
       "Paid":"भुगतानित",
       "Unpaid":"अवितरित"
-  }
+  },
+  "hostels": {
+    "boysHostels": "लड़कों के हॉस्टल",
+    "girlsHostels": "लड़कियों के हॉस्टल",
+    "name": "नाम",
+    "address": "पता",
+    "actions": "क्रियाएँ",
+    "deleteData": "डेटा हटाएं",
+    "editHostel": "हॉस्टल संपादित करें",
+    "editName": "नाम संपादित करें :",
+    "editAddress": "पता संपादित करें :",
+    "cancel": "रद्द करें",
+    "save": "सहेजें",
+    "confirmDelete": "हटाने की पुष्टि करें",
+    "confirmMsg": "क्या आप निश्चित हैं कि आप इस हॉस्टल को हटाना चाहते हैं?",
+    "delete": "हटाएं"
+
+},
+"settings": {
+  "languages": "भाषाएँ",
+  "boysHostels": "लड़कों के हॉस्टल",
+  "girlsHostels": "लड़कियों के हॉस्टल",
+  "addHostel": "हॉस्टल जोड़ें",
+  "addboysHostel": "लड़कों के हॉस्टल जोड़ें",
+  "addGirlsHostel": "लड़कियों के हॉस्टल जोड़ें",
+  "hostelName": "हॉस्टल का नाम",
+  "hostelAddress": "हॉस्टल का पता",
+  "close": "बंद करें",
+  "enterhostelName": "हॉस्टल का नया नाम दर्ज करें",
+  "enterhostelAddress": "हॉस्टल का पता दर्ज करें"
+}
   
     
 }

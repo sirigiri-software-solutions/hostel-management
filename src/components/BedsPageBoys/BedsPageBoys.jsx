@@ -189,7 +189,7 @@ const BedsPageBoys = () => {
         <h1 className='management-heading'>{t('bedsPage.bedsManagement')}</h1>
       </div>
       <div className="col-12 col-md-4 search-wrapper ">
-        <input value={searchValue} onChange={onChangeSearch} type="text" placeholder='Search' className='search-input'/>
+        <input value={searchValue} onChange={onChangeSearch} type="text" placeholder={t('common.search')} className='search-input'/>
         <img src={SearchIcon} alt="search-icon" className='search-icon'/>
       </div>
 

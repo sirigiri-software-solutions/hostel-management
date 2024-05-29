@@ -77,7 +77,7 @@ const MainPage = () => {
     {
       id: 7,
       path: "/hostels",
-      name: "Hostels",
+      name: t("menuItems.hostels"),
       icon: RoomsImage,
     },
     {
@@ -261,7 +261,7 @@ const MainPage = () => {
         <div >
           <div className='dashboardHead'>
             <div className='dashBoarWelcome'>
-              <text>Welcome to {activeBoysHostel} Boys Hostel , {activeGirlsHostel} Girls Hostel</text>
+              <text>{t('dashboard.welcomeTo')} {activeBoysHostel} {t('dashboard.boysHostel')}  , {activeGirlsHostel} {t('dashboard.girlsHostel')} </text>
             </div>
             <div className='top-div'>
               <img src={Admin} alt="admin" className='dashboard-icon' />

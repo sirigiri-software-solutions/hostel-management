@@ -511,7 +511,7 @@ Please note that you made your last payment on ${paidDate}.\n`
             <h1 className='management-heading'>{t('rentsPage.rentsManagement')}</h1>
           </div>
           <div className="col-6 col-md-4 search-wrapper">
-            <input type="text" placeholder='Search' className='search-input' value={searchQuery}
+            <input type="text" placeholder={t('common.search')}  className='search-input' value={searchQuery}
               onChange={handleSearch} />
             <img src={SearchIcon} alt="search-icon" className='search-icon' />
           </div>

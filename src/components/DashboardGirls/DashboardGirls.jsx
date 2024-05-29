@@ -1702,7 +1702,7 @@ console.log("hostels names", activeGirlsHostelButtons)
 
   return (
     <div className="dashboardgirls">
-        <h1 className="heading">{t('dashboard.womens')}</h1>
+        <h1 className="heading1">{t('dashboard.womens')}</h1>
       <br />
       {activeGirlsHostelButtons.length > 0 ? (
         <div className={"flex1"}>

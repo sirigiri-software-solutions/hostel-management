@@ -17,10 +17,14 @@ const Settings = () => {
   const [isBoysModalOpen, setIsBoysModalOpen] = useState(false);
   const [isGirlsModalOpen, setIsGirlsModalOpen] = useState(false);
 
+  const capitalizeFirstLetter = (string) => {
+    return string.replace(/\b\w/g, char => char.toUpperCase());
+  };
+
   const addNewHostel = (e, isBoys) => {
     e.preventDefault();
-    const name = isBoys ? newBoysHostelName : newGirlsHostelName;
-    const address = isBoys ? newBoysHostelAddress : newGirlsHostelAddress;
+    const name = isBoys ? capitalizeFirstLetter(newBoysHostelName) : capitalizeFirstLetter(newGirlsHostelName);
+    const address = isBoys ? capitalizeFirstLetter(newBoysHostelAddress) : capitalizeFirstLetter(newGirlsHostelAddress);
 
     if (name.trim() === '' || address.trim() === '') {
       toast.error("Hostel name and address cannot be empty.", {
@@ -59,96 +63,88 @@ const Settings = () => {
 
   return (
     <div className="settings">
-      <h1>{t('menuItems.settings')}</h1>
+      <h1 className='settingsPageHeading'>{t('menuItems.settings')}</h1>
       <div className="settings-top">
         <div className="language-switch-section">
-          <label className="languageLabel" htmlFor="language-selector">Languages:</label>
+          <label className="languageLabel" htmlFor="language-selector">{t("settings.languages")} </label>
           <LanguageSwitch id="language-selector" />
         </div>
-        <div className="hostel-section">
+        <div className="settingPageHostelSection">
           <div className="add-hostel-form">
-            <div>
-              <text>Boys Hostels</text>
-            </div>
-            <div>
-              <button className="addHostelBtn" onClick={() => setIsBoysModalOpen(true)}>Add Hostel</button>
-            </div>
+              <h4 className="settingPageSideHeading">{t("settings.boysHostels")}</h4>
+              <button className="addHostelBtn" onClick={() => setIsBoysModalOpen(true)}>{t("settings.addHostel")}</button>
           </div>
           <div className="add-hostel-form">
-            <div>
-              <text>Girls Hostels</text>
-            </div>
-            <div>
-              <button className="addHostelBtn" onClick={() => setIsGirlsModalOpen(true)}>Add Hostel</button>
-            </div>
+              <h4 className="settingPageSideHeading">{t("settings.girlsHostels")}</h4>
+              <button className="addHostelBtn" onClick={() => setIsGirlsModalOpen(true)}>{t("settings.addHostel")}</button>
           </div>
         </div>
       </div>
 
       <Modal show={isBoysModalOpen} onHide={() => setIsBoysModalOpen(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Add Boys Hostel</Modal.Title>
+          <Modal.Title>{t("settings.addboysHostel")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={(e) => addNewHostel(e, true)}>
             <div className="form-group">
-              <label htmlFor="newBoysHostelName">Hostel Name</label>
+              <label htmlFor="newBoysHostelName">{t("settings.hostelName")}</label>
               <input
                 type="text"
                 className="form-control"
                 id="newBoysHostelName"
-                placeholder="Enter new Hostel name"
+                placeholder={t("settings.hostelName")}
                 value={newBoysHostelName}
                 onChange={(e) => setNewBoysHostelName(e.target.value)}
               />
             </div>
             <div className="form-group">
-              <label htmlFor="newBoysHostelAddress">Hostel Address</label>
+              <label htmlFor="newBoysHostelAddress">{t("settings.hostelAddress")}</label>
               <input
                 type="text"
                 className="form-control"
                 id="newBoysHostelAddress"
-                placeholder="Enter Hostel address"
+                placeholder={t("settings.hostelAddress")}
                 value={newBoysHostelAddress}
                 onChange={(e) => setNewBoysHostelAddress(e.target.value)}
               />
             </div>
-            <Button variant="primary" type="submit">Add Hostel</Button>
-            <Button variant="secondary" onClick={() => setIsBoysModalOpen(false)}>Close</Button>
+            <Button variant="primary" type="submit">{t("settings.addHostel")}</Button>
+            <Button variant="secondary" onClick={() => setIsBoysModalOpen(false)}>{t("settings.close")}</Button>
           </form>
         </Modal.Body>
       </Modal>
 
       <Modal show={isGirlsModalOpen} onHide={() => setIsGirlsModalOpen(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Add Girls Hostel</Modal.Title>
+          <Modal.Title>{t("settings.addGirlsHostel")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={(e) => addNewHostel(e, false)}>
             <div className="form-group">
-              <label htmlFor="newGirlsHostelName">Hostel Name</label>
+              <label htmlFor="newGirlsHostelName">{t("settings.hostelName")}</label>
               <input
                 type="text"
                 className="form-control"
                 id="newGirlsHostelName"
-                placeholder="Enter new Hostel name"
+                placeholder={t("settings.hostelName")}
                 value={newGirlsHostelName}
                 onChange={(e) => setNewGirlsHostelName(e.target.value)}
               />
             </div>
             <div className="form-group">
-              <label htmlFor="newGirlsHostelAddress">Hostel Address</label>
+              <label htmlFor="newGirlsHostelAddress">{t("settings.hostelAddress")}</label>
               <input
                 type="text"
                 className="form-control"
                 id="newGirlsHostelAddress"
-                placeholder="Enter Hostel address"
+                placeholder={t("settings.hostelAddress")}
                 value={newGirlsHostelAddress}
                 onChange={(e) => setNewGirlsHostelAddress(e.target.value)}
               />
             </div>
-            <Button variant="primary" type="submit">Add Hostel</Button>
-            <Button variant="secondary" onClick={() => setIsGirlsModalOpen(false)}>Close</Button>
+            <Button variant="primary" type="submit">{t("settings.addHostel")}</Button>
+            <Button variant="secondary" onClick={() => setIsGirlsModalOpen(false)}>{t("settings.close")}</Button>
           </form>
         </Modal.Body>
       </Modal>
@@ -157,3 +153,4 @@ const Settings = () => {
 };
 
 export default Settings;
+

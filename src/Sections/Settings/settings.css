@@ -4,15 +4,16 @@
 
 .settings-top {
   display: flex;
-  flex-direction:column;
+  flex-direction:row;
   flex-wrap: wrap;
+  gap: 20px;
 }
 
 .language-switch-section, .hostel-section {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 20px;
+  gap: 40px;
 }
 
 .languageLabel {
@@ -107,12 +108,12 @@
     border-radius:8px;
   }
   
-  .settingPageHostelSection {
+  /* .settingPageHostelSection {
     display: flex;
     flex-direction:column;
     margin-top:30px;
   
-  }
+  } */
   .add-hostel-form {
     display: flex;
     align-items: center;
@@ -170,7 +171,12 @@
     }
     .settingPageHostelSection{
       margin-left:0px;
+      display: flex;
       flex-direction:column;
+    }
+    .add-hostel-form{
+      display:flex;
+      flex-direction: row;
     }
     .settingsPageHeading{
       text-align:center;
@@ -179,7 +185,7 @@
       font-size:20px;
     }
     .settingPageSideHeading{
-      font-size:20px;
+      font-size:19px;
     }
     .add-hostel-form{
       width:240px;
@@ -188,4 +194,10 @@
       width:240px;
     }
   }
+  .settingPageHostelSection{
+    display:flex;
+    /* flex-direction: row; */
+    gap:30px;
+  }
+
   

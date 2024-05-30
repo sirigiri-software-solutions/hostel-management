@@ -109,8 +109,10 @@ const Settings = () => {
                 onChange={(e) => setNewBoysHostelAddress(e.target.value)}
               />
             </div>
-            <Button variant="primary" type="submit">{t("settings.addHostel")}</Button>
+            <div className='settingsBtn'>
+            <Button variant="primary"style={{marginRight:'10px' }} type="submit">{t("settings.addHostel")}</Button>
             <Button variant="secondary" onClick={() => setIsBoysModalOpen(false)}>{t("settings.close")}</Button>
+            </div>
           </form>
         </Modal.Body>
       </Modal>
@@ -143,7 +145,7 @@ const Settings = () => {
                 onChange={(e) => setNewGirlsHostelAddress(e.target.value)}
               />
             </div>
-            <Button variant="primary" type="submit">{t("settings.addHostel")}</Button>
+            <Button variant="primary" type="submit" style={{marginRight:'10px' }}>{t("settings.addHostel")}</Button>
             <Button variant="secondary" onClick={() => setIsGirlsModalOpen(false)}>{t("settings.close")}</Button>
           </form>
         </Modal.Body>

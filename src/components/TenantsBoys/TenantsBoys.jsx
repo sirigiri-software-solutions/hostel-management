@@ -218,7 +218,7 @@ const [bikeNumber, setBikeNumber] = useState('NA');
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      const popup = document.getElementById('userDetailsTenantPopupId');
+      const popup = document.getElementById('userDetailsTenantPopupIdBoy');
       if (popup && (!popup.contains(event.target) || event.key === "Escape")) {
         setUserDetailsTenantsPopup(false);
       }
@@ -229,17 +229,7 @@ const [bikeNumber, setBikeNumber] = useState('NA');
   }, []);
 
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      const popup = document.getElementById('userDetailsTenantPopupId');
-      if (popup && (!popup.contains(event.target) || event.key === "Escape")) {
-        setUserDetailsTenantsPopup(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleClickOutside)
-  }, []);
+ 
 
 //   document.addEventListener("mousedown", handleClickOutside);
 //   document.addEventListener("keydown",handleClickOutside)
@@ -1213,7 +1203,7 @@ setBikeNumber('NA');
 
      
       {userDetailsTenantPopup &&
-        <div id="userDetailsTenantPopupIdGirl" className='userDetailsTenantPopup'>
+        <div id="userDetailsTenantPopupIdBoy" className='userDetailsTenantPopup'>
           <div className='tenants-dialog-container'>
             <h1 className="tenants-popup-heading">{t('tenantsPage.tenantDetails')} </h1>
             <div className='tenants-popup-mainContainer'>

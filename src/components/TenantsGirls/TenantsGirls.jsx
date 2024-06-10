@@ -847,15 +847,15 @@ setBikeNumber('NA');
         <div className='col-12 col-md-4 d-flex mt-2 justify-content-md-end'>
           <div className='d-flex align-items-center text-center'>
           {showBikeFilter ? (<div className="toggle-container">
-              <label className="toggle-label" htmlFor="status-toggleGirl">{t('tenantsPage.bike')}</label>
+              <label className="toggle-label" htmlFor="status-toggleGirl1">{t('tenantsPage.bike')}</label>
               <input
                 type="checkbox"
-                id="status-toggleGirl"
+                id="status-toggleGirl1"
                 className="toggle-checkbox"
                 checked={selectedStatus === 'YES'}
                 onChange={handleChange}
               />
-              <label className="toggle-switch" htmlFor="status-toggleGirl">
+              <label className="toggle-switch" htmlFor="status-toggleGirl1">
                 <span className="toggle-text">No</span>
                 <span className="toggle-text">Yes</span>
               </label>

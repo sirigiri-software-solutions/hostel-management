@@ -138,9 +138,15 @@ const Hostels = () => {
     setIsEditing(prev => ({ ...prev, [field]: value }));
   };
 
+  // const capitalizeFirstLetter = (string) => {
+  //   return string.charAt(0).toUpperCase() + string.slice(1);
+  // };
   const capitalizeFirstLetter = (string) => {
+    if (typeof string !== 'string' || string.length === 0) {
+        return '';
+    }
     return string.charAt(0).toUpperCase() + string.slice(1);
-  };
+};
 
   const renderHostelTable = (hostelData, isBoys) => (
     <table className="hostel-table">

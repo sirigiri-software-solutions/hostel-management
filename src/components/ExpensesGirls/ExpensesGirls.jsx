@@ -14,7 +14,7 @@ import { useData } from '../../ApiData/ContextProvider';
 
 const ExpensesGirls = () => {
   const { t } = useTranslation();
-  const { activeGirlsHostel } = useData();
+  const { activeGirlsHostel, activeGirlsHostelButtons } = useData();
 
   const  role = localStorage.getItem('role');
   let adminRole = "";
@@ -384,6 +384,17 @@ window.addEventListener('keydown',handleOutsideClick);
   });
 
   const handleAddNew = () => {
+    if (activeGirlsHostelButtons.length == 0) {
+      toast.warn("You have not added any girls hostel, please add your first Hostel in Settings", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      })
+    } else {
     setShowModal(true);
     setFormData({
       expenseName: '',
@@ -397,6 +408,7 @@ window.addEventListener('keydown',handleOutsideClick);
       expenseDate: ''
     });
     setEditingExpense(null);
+  }
   };
 
 

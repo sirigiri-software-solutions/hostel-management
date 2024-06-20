@@ -17,7 +17,7 @@ import { useData } from '../../ApiData/ContextProvider';
 
 const TenantsBoys = () => {
   const { t } = useTranslation();
-  const { activeBoysHostel } = useData();
+  const { activeBoysHostel, activeBoysHostelButtons } = useData();
   const role = localStorage.getItem('role');
 
 
@@ -482,6 +482,17 @@ const TenantsBoys = () => {
 
 
   const handleAddNew = () => {
+    if (activeBoysHostelButtons.length == 0) {
+      toast.warn("You have not added any boys hostel, please add your first Hostel in Settings", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      })
+    } else {
     // Reset any previous data
     resetForm();
     // Set modal for a new entry
@@ -491,7 +502,7 @@ const TenantsBoys = () => {
     setUserDetailsTenantsPopup(false);
     setTenantIdUrl('')
     setHasBike(false);
-
+    }
   };
 
   const resetForm = () => {

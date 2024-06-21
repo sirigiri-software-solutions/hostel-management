@@ -20,7 +20,7 @@ const RoomsBoys = () => {
   }else if(role === "subAdmin"){
     adminRole = "Sub-admin"
   }
-  const { activeBoysHostel } = useData();
+  const { activeBoysHostel, activeBoysHostelButtons } = useData();
   const [floorNumber, setFloorNumber] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
   const [numberOfBeds, setNumberOfBeds] = useState('');
@@ -257,12 +257,22 @@ const RoomsBoys = () => {
   };
 
   const handleAddNew = () => {
-    // Reset any previous data
-    resetForm();
-    // Set modal for a new entry
-    setIsEditing(false);
-    // Open the modal
-    setShowModal(true);
+    if (activeBoysHostelButtons.length == 0) {
+      toast.warn("You have not added any boys hostel, please add your first Hostel in Settings", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      })
+    } else {
+      resetForm();
+      setIsEditing(false);
+      setShowModal(true);
+    }
+   
   };
 
   const closePopupModal = () => {

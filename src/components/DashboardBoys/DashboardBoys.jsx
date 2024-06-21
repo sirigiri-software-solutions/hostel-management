@@ -946,9 +946,21 @@ const DashboardBoys = () => {
   const Buttons = ['Add Rooms', 'Add Tenants', 'Add Rent', 'Add Expenses'];
  
   const handleClick = (text) => {
-    setModelText(text);
-    setFormLayout(text);
-    setShowModal(true);
+    if (activeBoysHostelButtons.length == 0) {
+      toast.warn("You have not added any boys hostel, please add your first Hostel in Settings", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      })
+    } else {
+      setModelText(text);
+      setFormLayout(text);
+      setShowModal(true);
+    }
   };
  
   const handleCloseModal = () => {
